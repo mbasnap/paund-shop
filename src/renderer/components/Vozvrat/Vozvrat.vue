@@ -1,5 +1,5 @@
 <template>
-  <p>Vidacha route</p>
+  <p>Vozvrat route</p>
 </template>
 
 <script>

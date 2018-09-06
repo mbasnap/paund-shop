@@ -1,5 +1,5 @@
 <template>
-  <p>Vidacha route</p>
+  <p>Footer</p>
 </template>
 
 <script>

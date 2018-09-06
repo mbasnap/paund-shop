@@ -6,11 +6,6 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/',
-      name: 'home',
-      component: require('@/components/Home').default
-    },
-    {
       path: '/vidacha',
       name: 'vidacha',
       component: require('@/components/Vidacha').default
@@ -20,9 +15,13 @@ export default new Router({
       name: 'vozvrat',
       component: require('@/components/Vozvrat').default
     },
+    // {
+    //   path: '/',
+    //   redirect: '/vidacha'
+    // },
     {
       path: '/*',
-      redirect: '/'
+      redirect: '/vidacha'
     }
   ]
 })
