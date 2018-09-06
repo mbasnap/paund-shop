@@ -7,11 +7,21 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'landing-page',
-      component: require('@/components/LandingPage').default
+      name: 'home',
+      component: require('@/components/Home').default
     },
     {
-      path: '*',
+      path: '/vidacha',
+      name: 'vidacha',
+      component: require('@/components/Vidacha').default
+    },
+    {
+      path: '/vozvrat',
+      name: 'vozvrat',
+      component: require('@/components/Vozvrat').default
+    },
+    {
+      path: '/*',
       redirect: '/'
     }
   ]
