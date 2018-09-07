@@ -1,5 +1,10 @@
 <template>
-  <div id="vidacha"></div>
+  <div id="vidacha">
+    <div class="vidacha-top">
+      
+    </div>
+    <div class="vidacha-botom"></div>
+  </div>
 </template>
 
 <script>
