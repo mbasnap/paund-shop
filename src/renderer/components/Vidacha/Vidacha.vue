@@ -9,3 +9,9 @@
 
   }
 </script>
+
+<style>
+#vidacha {
+  border: 1px solid black
+}
+</style>

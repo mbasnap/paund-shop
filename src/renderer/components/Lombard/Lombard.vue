@@ -1,14 +1,8 @@
 <template>
-    <div id="lombard">
-        <main>
-            <div class="left-side">
-            <router-view></router-view>
-            </div>
-            <div class="vr"></div>
-            <div class="right-side">
-                <kassa></kassa>
-            </div>
-        </main>
+    <div id="lombard" class="flex">
+      <router-view class="flex" style="width: 70%;"></router-view>
+      <vr style="margin: -10px 10px;"></vr>
+      <kassa style="width: 30%;"></kassa>
     </div>
 
 </template>
@@ -31,24 +25,8 @@ export default {
         rgba(255, 255, 255, 1) 40%,
         rgba(229, 229, 229, .9) 100%
       );   
-    padding: 20px;
+    border: 1px solid #0d0e0d; 
+    padding: 10px;
   }
-  main {
-    display: flex;
-    border: 1px solid #0d0e0d;
-  }
-
-  .left-side {
-    display: flex;
-    padding: 20px;
-    width: 80%;
-  }
-
-  .right-side {
-    display: flex;
-    padding: 20px;
-    
-  }
-
 </style>
 

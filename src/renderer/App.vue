@@ -16,14 +16,14 @@
 </script>
 
 <style>
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-  body { font-family: 'Source Sans Pro', sans-serif; }
-  div .vr {
-    background: rgb(20, 20, 20);
-    width: 1px;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body { font-family: 'Source Sans Pro', sans-serif; }
+
+.flex {
+  display: flex;
 }
 </style>
