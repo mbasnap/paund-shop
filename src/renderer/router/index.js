@@ -5,23 +5,40 @@ Vue.use(Router)
 
 export default new Router({
   routes: [
+
     {
-      path: '/vidacha',
-      name: 'vidacha',
-      component: require('@/components/Vidacha').default
+      path: '/lombard',
+      name: 'lombard',
+      component: require('@/components/Lombard').default,
+      children: [
+        {
+          path: 'vidacha',
+          name: 'vidacha',
+          component: require('@/components/Vidacha').default
+        },
+        {
+          path: 'vozvrat',
+          name: 'vozvrat',
+          component: require('@/components/Vozvrat').default
+        },
+        {
+          path: '/*',
+          redirect: {
+          name: "vidacha"
+          }
+        }
+      ]
     },
-    {
-      path: '/vozvrat',
-      name: 'vozvrat',
-      component: require('@/components/Vozvrat').default
-    },
+
     // {
     //   path: '/',
     //   redirect: '/vidacha'
     // },
     {
       path: '/*',
-      redirect: '/vidacha'
+      redirect: {
+        name: "lombard"
+      }
     }
   ]
 })
