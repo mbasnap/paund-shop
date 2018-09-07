@@ -29,11 +29,6 @@ export default new Router({
         }
       ]
     },
-
-    // {
-    //   path: '/',
-    //   redirect: '/vidacha'
-    // },
     {
       path: '/*',
       redirect: {

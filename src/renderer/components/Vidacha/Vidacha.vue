@@ -1,5 +1,5 @@
 <template>
-  <p>Vidacha route</p>
+  <div id="vidacha"></div>
 </template>
 
 <script>
