@@ -18,6 +18,8 @@
 </script>
 
 <style>
+ @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -36,9 +38,8 @@ body { font-family: 'Source Sans Pro', sans-serif; }
   }
   .app-header {
     background: rgb(195, 195, 228);
-    display: flex;
-    align-items: center;     /*Центрирование по вертикали */
-    padding: 10px
   }
-
+  .app-header * {
+    padding: 10px;
+  }
 </style>

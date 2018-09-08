@@ -1,6 +1,6 @@
 <template>
   <div  id="footer" class="app-header">
-    footer
+    <p>footer</p>
   </div>
 </template>
 
