@@ -1,5 +1,7 @@
 <template>
-  <p>Footer</p>
+  <div  id="footer" class="app-header">
+    footer
+  </div>
 </template>
 
 <script>
@@ -9,3 +11,7 @@
 
   }
 </script>
+
+<style>
+
+</style>

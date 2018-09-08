@@ -1,8 +1,10 @@
 <template>
-    <div id="lombard" class="flex">
-      <router-view class="flex" style="width: 70%;"></router-view>
-      <vr style="margin: -10px 10px;"></vr>
-      <kassa style="width: 30%;"></kassa>
+    <div id="lombard" >
+      <div class="lombard-wraper">
+        <router-view  style="width: 70%;"></router-view>
+        <hr>
+        <kassa style="width: 30%;"></kassa>
+      </div>
     </div>
 
 </template>
@@ -25,8 +27,15 @@ export default {
         rgba(255, 255, 255, 1) 40%,
         rgba(229, 229, 229, .9) 100%
       );   
-    border: 1px solid #0d0e0d; 
     padding: 10px;
+    
+    display: flex;
+  }
+  
+  .lombard-wraper {
+    flex-grow: 1;
+    display: flex;
+    border: 1px solid #677067;
   }
 </style>
 

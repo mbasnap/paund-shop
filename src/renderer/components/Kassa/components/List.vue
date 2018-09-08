@@ -2,12 +2,10 @@
     <div class="kassa-column">list</div>
 </template>
 
-<style>
+<style scoped>
     .kassa-column {
-    width: 200px;
-    display: flex;
-
-
+        display: flex;
+        flex-grow: 1
     }
 </style>
 
