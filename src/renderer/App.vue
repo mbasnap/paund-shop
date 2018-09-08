@@ -1,10 +1,10 @@
 <template>
-  <div id="app" style="height: 600px;">
-    <app-header style="height: 10%"></app-header>
+  <div id="app" class="row" style="height: 600px">
+    <app-header></app-header>
     <hr>
-    <router-view style="height: 90%;"></router-view>   
+    <router-view style="height: 80%;"></router-view>   
     <hr>
-    <app-footer style="height: 10%;"></app-footer>
+    <app-footer ></app-footer>
   </div>
 </template>
 
@@ -27,14 +27,12 @@ body { font-family: 'Source Sans Pro', sans-serif; }
   .row {
     display: flex;
     flex-direction: column;
-    flex-grow: 1;  
-    height: 100%;
   }
-  .column {
+  .row div {
+    flex: auto;
+  }
+  .col {
     display: flex;
-    /* flex-direction: row; */
-    flex-grow: 1; 
-    width: 100%; 
   }
   .app-header {
     background: rgb(195, 195, 228);

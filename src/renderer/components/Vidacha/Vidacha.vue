@@ -1,14 +1,14 @@
 <template>
   <div id="vidacha" class="row">
-        <div class="column" style="flex-grow: 0.7;">
-          <div style="width: 40%;">Klient</div>
+        <div class="col">
+          <div>Klient</div>
             <hr>
-          <div class="row" style="width: 30%; height: 100%;">
-            <div style="height: 100px;">Bilet</div> <hr>
-            <div style="height: 100px;">Actions</div> <hr>
+          <div class="row">
+            <div>Bilet</div> <hr>
+            <div>Actions</div>
           </div>
             <hr>
-          <div style="width: 30%;">Calculator</div>
+          <div>Calculator</div>
         </div>
         <hr>
       <div > Obespechenie</div>
@@ -23,6 +23,6 @@
   }
 </script>
 
-<style>
+<style scoped>
 
 </style>
