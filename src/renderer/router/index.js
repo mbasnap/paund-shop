@@ -39,6 +39,11 @@ export default new Router({
       component: require('@/components/Zvit').default
     },
     {
+      path: '/login',
+      name: 'login',
+      component: require('@/components/Login').default
+    },
+    {
       path: '/*',
       redirect: {
         name: "lombard"

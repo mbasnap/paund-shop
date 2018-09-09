@@ -39,10 +39,14 @@ body { font-family: 'Source Sans Pro', sans-serif; }
   .col div {
     flex: auto;
   }
-  .app-header {
+  .header {
     background: rgb(195, 195, 228);
   }
-  .app-header * {
+  .header * {
     padding: 10px;
   }
+  .border{
+    border: 1px solid black;
+  }
+
 </style>

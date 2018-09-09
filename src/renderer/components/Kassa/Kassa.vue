@@ -1,26 +1,28 @@
 <template>
-    <div id="kassa" class="row">
-        <div class="app-header" style="height: 10%;">
-            <p>Ok start {{ok_start}}</p>
-        </div>
-            <div class="col"  style="height: 80%;">
-                <kassa-column rows="rows" data="debet"></kassa-column>
-                <hr>
-                <kassa-column rows="rows" data="kredit"></kassa-column>
-            </div>
-        <div class="app-header" style="height: 10%;">
-            <p>Ok end {{ok_end}}</p>
-        </div>
+    <div class="row">
+        <kassa-header ><span>Ok start: </span><span>{{ok_start}}</span></kassa-header> <hr>
+        <div class="col"  style="height: 80%;">
+            <kassa-list :rowCount="rowCount" :data="debet"></kassa-list>
+            <hr>
+            <kassa-list :rowCount="rowCount" :data="kredit"></kassa-list>
+        </div> <hr>
+        <kassa-header ><span>Ok end: </span><span>{{ok_end}}</span></kassa-header> <hr>
     </div>
 </template>
 <script>
-import KassaColumn from './components/List.vue'
+import {Header, List} from '@/components/List'
 export default {
-    components: {KassaColumn},
+    components: {
+        KassaHeader: Header,
+        KassaList: List
+        },
     data () {
         return{
             ok_start: 0,
-            ok_end: 0
+            ok_end: 0,
+            debet: [],
+            kredit: [],
+            rowCount: 0
         }
     }
 }
@@ -28,5 +30,6 @@ export default {
 
 
 <style>
+
 </style>
 

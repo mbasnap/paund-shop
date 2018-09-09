@@ -1,5 +1,5 @@
 <template>
-  <div  id="footer" class="app-header">
+  <div class="header col">
     <p>footer</p>
   </div>
 </template>
