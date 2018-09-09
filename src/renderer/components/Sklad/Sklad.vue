@@ -1,19 +1,15 @@
 <template>
-    <div class="sklad row" >
-        <div class="col">
-            <div ></div> 
-            <sklad-left class="border" style="width: 40%;"></sklad-left>
-            <div ></div> 
-            <sklad-right class="border" style="width: 40%;"></sklad-right> 
-            <div></div>           
-        </div>
+    <div class="sklad col">
+          <header-list style="width: 60%;"></header-list>
+          <div></div>
+          <header-list style="width: 30%;"></header-list>
     </div>
 </template>
 <script>
-import SkladLeft from "./components/Left.vue"
-import SkladRight from "./components/Right.vue"
+
+import {HeaderList} from "@/components/Widgets"
 export default {
-    components: {SkladLeft, SkladRight}
+    components: {HeaderList}
 }
 </script>
 <style>

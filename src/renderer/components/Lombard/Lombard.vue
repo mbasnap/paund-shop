@@ -1,10 +1,8 @@
 <template>
-    <div class="lombard row">
-        <div class="col" style="border: 1px solid #677067;">
-          <router-view  style="width: 70%;"></router-view>
-          <hr>
-          <kassa style="width: 30%;"></kassa>
-        </div>
+    <div class="lombard col">
+          <router-view class="border" style="width: 60%;">></router-view>
+          <div></div>
+          <kassa class="border" style="width: 30%;"></kassa>
     </div>
 </template>
 
@@ -17,7 +15,7 @@ export default {
 
 
 <style>
-  .lombard {
+  .lombard  {
     padding: 10px;
   }
 
