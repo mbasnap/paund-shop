@@ -22,12 +22,21 @@ export default new Router({
           component: require('@/components/Vozvrat').default
         },
         {
-          path: '/*',
-          redirect: {
-          name: "vidacha"
-          }
+          path: 'prixod-rasxod',
+          name: 'prixod-rasxod',
+          component: require('@/components/PrixodRasxod').default
         }
       ]
+    },
+    {
+      path: '/sklad',
+      name: 'sklad',
+      component: require('@/components/Sklad').default
+    },
+    {
+      path: '/zvit',
+      name: 'zvit',
+      component: require('@/components/Zvit').default
     },
     {
       path: '/*',

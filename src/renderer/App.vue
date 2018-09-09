@@ -36,6 +36,9 @@ body { font-family: 'Source Sans Pro', sans-serif; }
   .col {
     display: flex;
   }
+  .col div {
+    flex: auto;
+  }
   .app-header {
     background: rgb(195, 195, 228);
   }
