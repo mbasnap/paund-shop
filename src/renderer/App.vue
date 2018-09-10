@@ -1,10 +1,8 @@
 <template>
-  <div id="app" class="row" style="height: 600px">
-    <app-header></app-header>
-    <hr>
-    <router-view style="height: 80%;"></router-view>   
-    <hr>
-    <app-footer ></app-footer>
+  <div id="app" style="height: 450px">
+      <app-header ></app-header>
+      <router-view  style="height: -webkit-fill-available;"></router-view>   
+      <app-footer ></app-footer>
   </div>
 </template>
 
@@ -18,35 +16,14 @@
 </script>
 
 <style>
- @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
+ /* @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
-body { font-family: 'Source Sans Pro', sans-serif; }
-  .row {
-    display: flex;
-    flex-direction: column;
-  }
-  .row div {
-    flex: auto;
-  }
-  .col {
-    display: flex;
-  }
-  .col div {
-    flex: auto;
-  }
-  .header {
-    background: rgb(195, 195, 228);
-  }
-  .header * {
-    padding: 10px;
-  }
-  .border{
-    border: 1px solid black;
-  }
+body { font-family: 'Source Sans Pro', sans-serif; } */
+
 
 </style>

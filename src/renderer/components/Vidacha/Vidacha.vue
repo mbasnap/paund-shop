@@ -1,25 +1,20 @@
 <template>
-  <div id="vidacha" class="row">
-        <div class="col">
-          <div>Klient</div>
-            <hr>
-          <div class="row">
-            <div>Bilet</div> <hr>
-            <div>Actions</div>
-          </div>
-            <hr>
-          <div>Calculator</div>
-        </div>
-        <hr>
-      <div > Obespechenie</div>
+  <div class="">
+    <b-container>
+      <b-row>
+      <b-col >
+        <b-row>
+          <b-col><div >Klient</div></b-col>
+          
+          <b-col><div>Bilet</div></b-col>
+          <b-col><div>Calculator</div></b-col>
+        </b-row>
+        <b-row align-items-end>
+          <div > Obespechenie</div>
+        </b-row>
+      </b-col>
+      </b-row>
+    </b-container>
   </div>
 </template>
-<script>
-  export default {
 
-  }
-</script>
-
-<style>
-
-</style>

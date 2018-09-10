@@ -1,8 +1,10 @@
 <template>
-    <div class="lombard col">
-          <router-view class="border" style="width: 60%;">></router-view>
-          <div></div>
-          <kassa class="border" style="width: 30%;"></kassa>
+    <div class="container-fluid  d-flex ">
+      <div class="row flex-fill p-3">
+        <router-view class="col-sm-8"></router-view>
+        <div class="col-sm-0 v-divider"></div>
+        <kassa class="col-sm-4  border"></kassa>
+      </div>
     </div>
 </template>
 
@@ -15,9 +17,7 @@ export default {
 
 
 <style>
-  .lombard  {
-    padding: 10px;
-  }
+
 
 </style>
 
