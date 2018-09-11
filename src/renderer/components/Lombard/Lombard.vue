@@ -1,9 +1,11 @@
 <template>
     <div class="container-fluid  d-flex ">
-      <div class="row flex-fill p-3">
-        <router-view class="col-sm-8"></router-view>
-        <div class="col-sm-0 v-divider"></div>
-        <kassa class="col-sm-4  border"></kassa>
+      <div class="row flex-fill">
+        <div class="col" ></div>
+        <router-view class="col-sm-7 "></router-view>
+        <div class="col"></div>
+        <kassa class="col-sm-4  bg-dark "></kassa>
+        <div class="col"></div>
       </div>
     </div>
 </template>

@@ -1,20 +1,15 @@
 <template>
   <div class="">
-    <b-container>
-      <b-row>
-      <b-col >
-        <b-row>
-          <b-col><div >Klient</div></b-col>
-          
-          <b-col><div>Bilet</div></b-col>
-          <b-col><div>Calculator</div></b-col>
-        </b-row>
-        <b-row align-items-end>
-          <div > Obespechenie</div>
-        </b-row>
-      </b-col>
-      </b-row>
-    </b-container>
+        <div class="row h-50 bg-info  " >
+          <div class="col-sm-4">Klient</div>        
+          <div class="col-sm-4">Bilet</div>
+          <div class="col-sm-4">Calculator</div>
+        </div>
+        <div class="row mb-3" ></div>
+        <div class="row h-50  bg-danger ">
+          <div class="col  "> Obespechenie</div>
+        </div>
+        <div class="row mb-3" ></div>
   </div>
 </template>
 
