@@ -1,16 +1,13 @@
 <template>
-  <div class="">
-    <div class="col h-100">
-        <div class="row bg-info  " >
-          <div class="col-sm-5">Klient</div>        
-          <div class="col-sm-3">Bilet</div>
-          <div class="col-sm-4">Calculator</div>
-        </div>
-        <div class="row"></div>
-        <div class="row  bg-danger ">
-          <div class="col  "> Obespechenie</div>
-        </div>     
-    </div>
+
+<div class="h-100">
+  <div class="row pb-2" style="height: 70%">
+    <div class="card bg-success w-100"></div>
   </div>
+  <div class="row" style="height: 30%">
+    <div class="card bg-success w-100"></div>
+  </div>
+</div>
+
 </template>
 

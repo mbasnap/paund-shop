@@ -1,7 +1,9 @@
 <template>
   <div id="app">
         <app-header></app-header>
-        <router-view class="p-3" style="height: -webkit-fill-available;"></router-view>   
+        <div class="container-fluid   d-flex" style="height: 500px;">
+          <router-view class="row flex-fill p-2"></router-view>   
+        </div>       
         <app-footer></app-footer>
   </div>
 </template>

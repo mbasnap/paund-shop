@@ -1,8 +1,7 @@
 <template>
-    <div class="kassa-column">list</div>
+    
+        <div class="bg-success w-100">dadssa</div>
+
 </template>
 
-<style scoped>
-
-</style>
 
