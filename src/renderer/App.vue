@@ -1,12 +1,8 @@
 <template>
-  <div id="app" style="">
-
-
+  <div id="app">
         <app-header></app-header>
         <router-view class="p-3" style="height: -webkit-fill-available;"></router-view>   
         <app-footer></app-footer>
-
-    <!-- </div> -->
   </div>
 </template>
 
