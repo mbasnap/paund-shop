@@ -1,7 +1,7 @@
 <template>
-    <div>
-        <router-view class="col-sm-8 "></router-view>    
-        <kassa class="col-sm-4 "></kassa>       
+    <div class="row ">
+        <router-view class="mr-2" style="width: 60%"></router-view>    
+        <kassa style="width: 40%"></kassa>       
     </div>
 </template>
 

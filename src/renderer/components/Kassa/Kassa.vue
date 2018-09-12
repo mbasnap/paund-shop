@@ -1,17 +1,19 @@
 <template>
-  <b-card class="h-100"
+  <b-card 
           header="OK start"
           header-bg-variant="secondary"
           header-tag="header"
           footer="OK end"
           footer-bg-variant="secondary"
           footer-tag="footer"
-          body-class="row  pt-0  bg-secondary pb-0 "
+
   >
+<div class="row ">
+    <kassa-list class="col bg-success mr-2">Debet</kassa-list>
+    <kassa-list class="col bg-success">Kredit</kassa-list>
+</div>
 
-    <kassa-list class="col bg-light mr-2" :rowCount="rowCount" :data="debet">Debet</kassa-list>
-    <kassa-list class="col bg-light" :rowCount="rowCount" :data="kredit">Kredit</kassa-list>
-
+    
   </b-card>
 </template>
 <script>
