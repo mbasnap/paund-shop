@@ -1,13 +1,7 @@
 <template>
-
     <div>
-      <div class="col-sm-8 ">
-        <router-view ></router-view>
-      </div>
-      
-      <div class="col-sm-4 ">       
-          <kassa class=""></kassa>       
-      </div>
+        <router-view class="col-sm-8 "></router-view>    
+        <kassa class="col-sm-4 "></kassa>       
     </div>
 </template>
 

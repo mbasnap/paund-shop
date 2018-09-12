@@ -1,7 +1,10 @@
-<template>
-    
-        <div class="bg-success w-100">dadssa</div>
-
+<template>  
+        <div class="">
+                <slot></slot>
+        </div>
 </template>
+
+
+
 
 
