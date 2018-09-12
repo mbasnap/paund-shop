@@ -1,5 +1,5 @@
 <template>
-  <b-card class=""
+  <b-card class="h-100"
           header="OK start"
           header-bg-variant="secondary"
           header-tag="header"
@@ -9,21 +9,18 @@
 
   >
 <div class="row ">
-    <!-- <div class="col "></div> -->
     <kassa-list class="col "></kassa-list>
     <kassa-list class="col"></kassa-list>
-    <!-- <div class="col "></div> -->
+
 </div>
 
     
   </b-card>
 </template>
 <script>
-import {List} from '@/components/List'
+import KassaList from './KassaList.vue'
 export default {
-    components: {
-        KassaList: List
-        },
+    components: {KassaList},
     data () {
         return{
             ok_start: 0,

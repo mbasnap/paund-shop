@@ -1,9 +1,9 @@
 <template>
   <div id="app">
         <app-header></app-header>
-        <div class="container-fluid   d-flex" style="height: 500px;">
-          <router-view class="row flex-fill p-2 h-100"></router-view>   
-        </div>       
+        <div class="container-fluid d-flex" style="height: 500px;">
+          <router-view ></router-view>   
+        </div>
         <app-footer></app-footer>
   </div>
 </template>

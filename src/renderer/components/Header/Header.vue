@@ -1,4 +1,4 @@
-/* eslint no-use-before-define: 0 */  // --> OFF
+
 <template>
   <div>
 <b-navbar toggleable="md" type="dark" variant="info">
@@ -26,18 +26,14 @@
 export default {
   data() {
     return {
-      links: [
+      links: [ 
           {
-            name: "Vidachd",
-            value: "/lombard/vidacha"
+            name: "Vidacha",
+            value: "/lombard"
           },
           {
-            name: "vozvrat",
-            value: "/lombard/vozvrat"
-          },
-          {
-            name: "prixod-rasxod",
-            value: "/lombard/prixod-rasxod"
+            name: "kassa",
+            value: "/kassa"
           },
           {
             name: "sklad",

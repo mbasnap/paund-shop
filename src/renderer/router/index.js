@@ -10,23 +10,11 @@ export default new Router({
       path: '/lombard',
       name: 'lombard',
       component: require('@/components/Lombard').default,
-      children: [
-        {
-          path: 'vidacha',
-          name: 'vidacha',
-          component: require('@/components/Vidacha').default
-        },
-        {
-          path: 'vozvrat',
-          name: 'vozvrat',
-          component: require('@/components/Vozvrat').default
-        },
-        {
-          path: 'prixod-rasxod',
-          name: 'prixod-rasxod',
-          component: require('@/components/PrixodRasxod').default
-        }
-      ]
+    },
+    {
+      path: '/kassa',
+      name: 'sklad',
+      component: require('@/components/Kassa').default
     },
     {
       path: '/sklad',
@@ -43,10 +31,10 @@ export default new Router({
       name: 'login',
       component: require('@/components/Login').default
     },
-    {
-      path: '/*',
+      {
+        path: '/*',
       redirect: {
-        name: "lombard"
+         name: "lombard"
       }
     }
   ]
