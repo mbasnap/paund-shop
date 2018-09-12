@@ -2,7 +2,7 @@
 
 <div class="col">
 
-    <div class="row pb-2" style="height: 60%">
+    <div class="row" style="height: 58%">
       <div class="col mr-2 bg-success">Klient</div>
       <div class="col ">
         <div class="row pb-2" style="height: 70%">
@@ -15,11 +15,18 @@
     </div>
 
 
-    <div class="row " style="height: 40%">
-      <div class="col bg-success">Obespechenie</div>
+    <div class="row ">
+      <obespechenie class="col"></obespechenie>
     </div>
 
 </div>
 
 </template>
+
+<script>
+import Obespechenie from "@/components/Obespechenie"
+export default {
+  components: {Obespechenie}
+}
+</script>
 

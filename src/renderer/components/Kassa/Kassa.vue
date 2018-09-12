@@ -1,5 +1,5 @@
 <template>
-  <b-card 
+  <b-card class=""
           header="OK start"
           header-bg-variant="secondary"
           header-tag="header"
@@ -9,8 +9,10 @@
 
   >
 <div class="row ">
-    <kassa-list class="col bg-success mr-2">Debet</kassa-list>
-    <kassa-list class="col bg-success">Kredit</kassa-list>
+    <!-- <div class="col "></div> -->
+    <kassa-list class="col "></kassa-list>
+    <kassa-list class="col"></kassa-list>
+    <!-- <div class="col "></div> -->
 </div>
 
     
