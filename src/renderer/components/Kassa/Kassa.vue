@@ -6,11 +6,12 @@
           footer="OK end"
           footer-bg-variant="secondary"
           footer-tag="footer"
+          body-class="scroll-auto"
 
   >
 <div class="row ">
-    <kassa-list class="col "></kassa-list>
-    <kassa-list class="col"></kassa-list>
+    <kassa-list class="col" style="padding-right: 0;"></kassa-list>
+    <kassa-list class="col" style="padding-right: 0;"></kassa-list>
 
 </div>
 
@@ -32,4 +33,12 @@ export default {
     }
 }
 </script>
+
+<style>
+.scroll-auto {
+    overflow: auto;
+    padding-top: 0 !important;
+}
+</style>
+
 
