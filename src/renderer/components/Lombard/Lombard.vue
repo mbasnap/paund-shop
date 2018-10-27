@@ -1,14 +1,16 @@
 <template>
     <div class="row flex-fill">
         <div class="col-md-8">
-            <div class="row h-50">
-                <klient class="col-md-7 pr-2"></klient>
-                <calculator class="col-md-5"></calculator>
+            <div class="row  h-50">
+                <klient class=" col "></klient>                  
+                <calculator class=" col border-left "></calculator>
             </div>
-            <obespechenie></obespechenie>
+            <div class="row  h-50">
+                <obespechenie></obespechenie>
+            </div>
         </div>
         <div class="col">
-        <kassa></kassa>       
+            <kassa class="row"></kassa>       
         </div>
     </div>
 </template>
@@ -23,9 +25,4 @@ export default {
     }
 </script>
 
-
-<style>
-
-
-</style>
 

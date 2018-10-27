@@ -10,12 +10,17 @@
   <b-collapse is-nav id="nav_collapse">
 
     <b-navbar-nav >
-      <b-link  class="nav-link" v-for="link in links" :key="link.name" :to="link.value ">{{link.name}}</b-link>     
+      <b-link  class="nav-link" v-for="link in links"
+        :key="link.name" 
+        :to="link.value "
+       >{{link.name}}</b-link>     
     </b-navbar-nav>
     <b-navbar-nav class="ml-auto">
-      <b-nav-item-dropdown text="User" right>
-        <b-dropdown-item href="#">Profile</b-dropdown-item>
-        <b-dropdown-item href="#">Signout</b-dropdown-item>
+      <b-nav-item-dropdown 
+        @click="alert1"
+        right>
+        <b-nav-text>asda</b-nav-text>
+        <b-link class="dropdown-item" :to="'/vidacha'">vidacha</b-link>
       </b-nav-item-dropdown>
     </b-navbar-nav>
   </b-collapse>
@@ -26,9 +31,10 @@
 export default {
   data() {
     return {
+
       links: [ 
           {
-            name: "Vidacha",
+            name: "lombard",
             value: "/lombard"
           },
           {
@@ -44,6 +50,11 @@ export default {
             value: "/zvit"
           }
         ]
+    }
+  },
+  methods: {
+    alert1(){
+      alert("dasdsa")
     }
   }
 }
