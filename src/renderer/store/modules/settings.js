@@ -3,9 +3,13 @@ const path = require ('path');
 const defaultMainPath = path.dirname (remote.app.getPath ('exe'))
 
 const state = {
+    settings: {
+        logoText: 'logo'
+    },
     mainPath: null
 }
 const getters = {
+    getAll: (state) => {return state.settings},
     mainPath: state => {
         if (!state.mainPath) return defaultMainPath
     }

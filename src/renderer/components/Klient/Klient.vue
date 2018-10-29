@@ -19,7 +19,7 @@ export default {
     },
     methods: {
         ...mapActions({
-            save: 'klient/save'
+            save: 'saveSettings'
         })
     }
 
