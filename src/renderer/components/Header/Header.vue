@@ -5,7 +5,11 @@
 
   <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
+<<<<<<< HEAD
   <b-navbar-brand href="#">{{settings.logoText}}</b-navbar-brand>
+=======
+  <b-navbar-brand href="#">{{settings.logo}}</b-navbar-brand>
+>>>>>>> 145846c28cbd3d758a0a6c5140c354fd4bef56ff
 
   <b-collapse is-nav id="nav_collapse">
 
@@ -28,10 +32,17 @@
   </div>
 </template>
 <script>
+<<<<<<< HEAD
 import {mapState, mapGetters, mapActions} from 'vuex'
 export default {
   computed: {
     ...mapGetters(['settings'])
+=======
+  import {mapGetters, mapState} from 'vuex'
+export default {
+  computed: {
+     ...mapGetters('settings', ['settings'])
+>>>>>>> 145846c28cbd3d758a0a6c5140c354fd4bef56ff
   },
   data() {
     return {
