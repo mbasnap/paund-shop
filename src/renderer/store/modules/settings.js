@@ -8,10 +8,10 @@ const state = {
     }
 }
 const getters = {
-    getSettings: state => state.settings
+    settings: state => state.settings
 }
 const mutations = {
-    changeSettings: (state, payload) => state.settings = payload
+    settings: (state, payload) => state.settings = payload
 }
 const actions = {
     save: ({commit}, payload) => commit('settings', payload)
