@@ -1,7 +1,7 @@
 <template>
     <b-navbar type="dark" variant="info">
-      <b-navbar-brand href="#">PS</b-navbar-brand>
-      <p>{{mainPath}}</p>
+      <b-navbar-brand href="#">{{settings.logo}}</b-navbar-brand>
+      <!-- <p>{{mainPath}}</p> -->
     </b-navbar>
 </template>
 
@@ -9,9 +9,7 @@
 import {mapGetters, mapActions} from 'vuex'
 export default {
   computed: {
-    ...mapGetters({
-      mainPath: 'settings/mainPath'
-    })
+    ...mapGetters('settings', ['settings'])
   }
 }
 </script>

@@ -3,20 +3,18 @@ const path = require ('path');
 const defaultMainPath = path.dirname (remote.app.getPath ('exe'))
 
 const state = {
-    mainPath: null
+    settings: {
+        logo: "Logo"
+    }
 }
 const getters = {
-    mainPath: state => {
-        if (!state.mainPath) return defaultMainPath
-    }
+    settings: state => state.settings
 }
 const mutations = {
-
+    settings: (state, payload) => state.settings = payload
 }
 const actions = {
-    save ({commit}){
-        console.log('saved')
-    }
+    save: ({commit}, payload) => commit('settings', payload)
 }
 
 export default {
