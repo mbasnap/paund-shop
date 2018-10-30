@@ -1,9 +1,8 @@
 <template>
     <div>
-        <h1>{{title}}</h1>
-        <p>{{isSaved}}</p>
+        <h1>{{klient.title}}</h1>
         <p>
-        <button @click="save">save</button>
+        <button @click="save({logoText:'savedLogo'})">save</button>
         </p>
     </div>
 </template>
@@ -12,15 +11,10 @@
 import {mapGetters, mapActions} from 'vuex'
 export default {
     computed: {
-        ...mapGetters({
-            title: 'klient/title',
-            isSaved: 'klient/isSaved'
-        })
+        ...mapGetters(['klient'])
     },
     methods: {
-        ...mapActions({
-            save: 'klient/save'
-        })
+        ...mapActions(['saveSettings'])
     }
 
 }
