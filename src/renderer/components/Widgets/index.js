@@ -1,7 +1,8 @@
 import List from "./components/List.vue"
 import Header from "./components/Header.vue"
 import HeaderList from "./components/HeaderList.vue"
+import Searcher from "./components/Searcher.vue"
 
-export default List
+// export default List
 
-export {List, Header, HeaderList}
+export {List, Header, HeaderList, Searcher}
