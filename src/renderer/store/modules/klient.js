@@ -1,29 +1,26 @@
-const defaultKlient = {
-    title: "Klient"
-}
+
 
 const state = {
-    current: null
+    current: null,
+    editStatus: false
 }
 const getters = {
-    current: state => {
+    getCurrent: state => {
         let current = state.current
-        return current ? current : defaultKlient
-    },
-    isSaved: state => {
-        let current = state.current
-        if (current && current.id) return true
+        return current ? current : {}
     }
 }
 const mutations = {
-    changeCurrent: (state, payload) => state.current = payload
+    current: (state, payload) => state.current = payload,
+    editStatus: (state, payload) => state.editStatus = payload,
 }
 const actions = {
-    setCurrent: ({commit}, payload) => commit('changeCurrent', payload),
-    clearCurrent: ({commit}) => commit('changeCurrent', null),
-    saveCurrent: ({state, commit}) => {
-        let Klient = {title: 'name', id: 22}
-        commit('changeCurrent', Klient)
+    clear: ({commit}) => {
+        commit('current', null)
+        commit('editStatus', false)
+    },
+    save: ({dispatch, commit}, payload) => {
+        commit('current', payload)
     },
 }
 
