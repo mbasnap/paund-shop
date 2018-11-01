@@ -19,7 +19,7 @@
       <b-nav-item-dropdown 
         @click="alert1"
         right>
-        <b-nav-text>asda</b-nav-text>
+        <b-link class="dropdown-item" :to="'/vidacha'">vidacha</b-link>
         <b-link class="dropdown-item" :to="'/vidacha'">vidacha</b-link>
       </b-nav-item-dropdown>
     </b-navbar-nav>
