@@ -1,11 +1,11 @@
 <template>
     <div class="row flex-fill">
-        <div class="col-md-8">
-            <div class="row  h-50">
+        <div class="col-md-8 ">
+            <div class="row  pt-3 " style="height: 60% !important;">
                 <klient class=" col "></klient>                  
-                <calculator class=" col border-left "></calculator>
+                <calculator class=" col border-left text-center"></calculator>
             </div>
-            <div class="row  h-50">
+            <div class="row" style="height: 40% !important;">
                 <obespechenie></obespechenie>
             </div>
         </div>

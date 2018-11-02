@@ -1,42 +1,28 @@
 <template>
-    <div >
-        <div class=" row border-bottom" style="height: 81% !important;">
-            <form-instant
-                class="col"
-                :suggestion-attribute="suggestionAttribute"
-                v-model="value"
-                @input="changed"
-                @click-input="clickInput"
-                @click-button="clickButton"
-                @selected="selected"
-                @key-down="keyDown"
-                @key-up="keyUp"
-                @clear="clear"
-                @escape="escape"
-                :suggestions="suggestions"
-                name="customName"
-                placeholder="custom placeholder"
-                type="google"
-             ></form-instant>
-        </div>
-        <div class=" row " style="height: 19% !important;">
-          <control-panel class="col  pt-2"></control-panel> 
-        </div>
-    </div>
+    <vue-instant
+        :suggestion-attribute="suggestionAttribute"
+        v-model="value"
+        @input="changed"
+        @click-input="clickInput"
+        @click-button="clickButton"
+        @selected="selected"
+        @key-down="keyDown"
+        @key-up="keyUp"
+        @clear="clear"
+        @escape="escape"
+        :suggestions="suggestions"
+        name="customName"
+        placeholder="custom placeholder"
+        type="google"
+    ></vue-instant>
 </template>
 
 <script>
 import axios from 'axios'
-import {mapGetters, mapActions} from 'vuex'
-import ControlPanel from './ControlPanel.vue'
-import {FormInstant} from "@/components/Widgets"
+import 'vue-instant/dist/vue-instant.css'
+import {VueInstant} from 'vue-instant/dist/vue-instant.common'
 export default {
-    components: {ControlPanel, FormInstant},
-    computed: {
-        ...mapGetters({
-            title: 'calkulator/title'
-        })
-    },
+    components: {VueInstant},
      data(){
          return {
             value: '',
@@ -44,7 +30,7 @@ export default {
             suggestions: [],
             selectedEvent: ""           
          }
-     },  
+     },   
     methods: {
             clickInput: function() {
                 this.selectedEvent = 'click input'
@@ -91,4 +77,36 @@ export default {
 
 <style >
 
+form.searchbox.sbx-google {
+    width: 200px;
+    height: 35px;
+    
+}
+button.sbx-google__submit {
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+        width: 38px;
+}
+button.sbx-google__submit svg {
+    width: 16px;
+    height: 16px;
+    fill: #495057;
+}
+.sbx-google__reset svg {
+    margin: 0px;
+}
+.sbx-google__input:focus,
+.sbx-google__input:active {
+    color: #495057;
+    background-color: #fff;
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+button.sbx-google__reset {
+    right: 41px;
+}
+input.sbx-google__input {
+    padding-right: 65px;
+}
 </style>

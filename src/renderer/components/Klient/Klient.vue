@@ -1,5 +1,5 @@
 <template>
-<div class="mt-3">
+<div >
     <form>  
      <searcher class="form-group" id="family" placeholder="Family"></searcher> 
     <div class="form-row">
@@ -20,8 +20,6 @@
     </div> 
     <input class="form-control" id="idn" placeholder="ID">
     </form>
-            <button class="btn btn-primary">Cacsel</button>
-        <button  class="btn btn-primary">Submit</button>
 </div>
 
 
