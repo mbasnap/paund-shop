@@ -6,16 +6,9 @@
                 :suggestion-attribute="suggestionAttribute"
                 v-model="value"
                 @input="changed"
-                @click-input="clickInput"
-                @click-button="clickButton"
-                @selected="selected"
-                @key-down="keyDown"
-                @key-up="keyUp"
-                @clear="clear"
-                @escape="escape"
                 :suggestions="suggestions"
                 name="customName"
-                placeholder="custom placeholder"
+                placeholder="Bilet"
                 type="google"
              ></form-instant>
         </div>
@@ -41,41 +34,13 @@ export default {
          return {
             value: '',
             suggestionAttribute: 'original_title',
-            suggestions: [],
-            selectedEvent: ""           
+            suggestions: []      
          }
      },  
     methods: {
-            clickInput: function() {
-                this.selectedEvent = 'click input'
-            },
-            clickButton: function() {
-                this.selectedEvent = 'click button'
-            },
-            selected: function() {
-                this.selectedEvent = 'selection changed'
-            },
-            enter: function() {
-                this.selectedEvent = 'enter'
-            },
-            keyUp: function() {
-                this.showAutocomplete = !this.showAutocomplete
-            },
-            keyDown: function() {
-                this.selectedEvent = 'keyDown pressed'
-            },
-            keyRight: function() {
-                this.selectedEvent = 'keyRight pressed'
-            },
-            clear: function() {
-                this.value = ''
-            },
-            escape: function() {
-                // this.selectedEvent = 'escape'
-            },
+
              changed: function() {
                 var that = this
-                console.log(this.value)
                 if (!this.value) return
                 this.suggestions = []
                 axios.get('https://api.themoviedb.org/3/search/movie?api_key=342d3061b70d2747a1e159ae9a7e9a36&query=' + this.value)

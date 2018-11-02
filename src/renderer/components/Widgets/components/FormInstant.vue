@@ -3,12 +3,16 @@
     <div class="main">
       <form novalidate="novalidate" onsubmit="return false;" :class="getFormClass" style='width: 250px;'>
         <div role="search" :class="getClassWrapper">
-          <input type="search" name="search" :placeholder="getPlaceholder" autocomplete="off" required="required" :class="getClassInputPlaceholder" tabindex="-1">
-          <input :disabled="disabled" @click="emitClickInput" @keyup='changeText' v-model='textVal' type="search" :name="name" placeholder="" autocomplete="off" required="required" :class="getClassInput" :autofocus="autofocus">
-          <button @click="emitClickButton" type="submit" :class="getClassSubmit" tabindex="-1">
-            <svg role="img" aria-label="Search">
-              <use xmlns:xlink="http://www.w3.org/1999/xlink" :xlink:href="getSVGSearch"></use>
-            </svg>
+          <input type="search" name="search"  autocomplete="off" required="required" class="form-control" tabindex="-1">
+          <input class="form-control sbx-google__input" :disabled="disabled" @click="emitClickInput" @keyup='changeText' v-model='textVal' type="search" :name="name" :placeholder="getPlaceholder" autocomplete="off" required="required"  :autofocus="autofocus">
+          <button class="input-group-text sbx-google__submit" @click="emitClickButton" type="submit"  tabindex="-1">
+<svg xmlns="http://www.w3.org/2000/svg" 
+ viewBox="0 0 500 500"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <g id="Layer_x0020_1">
+  <polygon class="fil0" fill="#343a40"  points="105,169 204,268 388,84 466,162 211,416 34,239 "/>
+ </g>
+</svg>
           </button>
           <button @click="reset" type="reset" :class="getClassReset" tabindex="-1">
             <svg role="img" aria-label="Reset">
@@ -83,7 +87,7 @@
       },
       'suggestOnAllWords': {
         type: Boolean,
-	default: false
+        default: false 
       }
     },
     data () {
@@ -96,18 +100,7 @@
         highlightedIndexMax: 7,
         similiarData: [],
         placeholderVal: this.placeholder,
-        types: [{
-          name: 'facebook',
-          formClass: 'searchbox sbx-facebook',
-          classWrapper: 'sbx-facebook__wrapper',
-          classInput: 'sbx-facebook__input',
-          classInputPlaceholder: 'sbx-facebook__input-placeholder',
-          classSubmit: 'sbx-facebook__submit',
-          svgSearch: '#sbx-icon-search-8',
-          classReset: 'sbx-facebook__reset',
-          svgClear: '#sbx-icon-clear-4',
-          highlighClass: 'highlighted__facebook'
-        },
+        types: [
         {
           name: 'google',
           formClass: 'searchbox sbx-google',
@@ -119,54 +112,6 @@
           classReset: 'sbx-google__reset',
           svgClear: '#sbx-icon-clear-4',
           highlighClass: 'highlighted__google'
-        },
-        {
-          name: 'amazon',
-          formClass: 'searchbox sbx-amazon',
-          classWrapper: 'sbx-amazon__wrapper',
-          classInput: 'sbx-amazon__input',
-          classInputPlaceholder: 'sbx-amazon__input-placeholder',
-          classSubmit: 'sbx-amazon__submit',
-          svgSearch: '#sbx-icon-search-8',
-          classReset: 'sbx-amazon__reset',
-          svgClear: '#sbx-icon-clear-4',
-          highlighClass: 'highlighted__amazon'
-        },
-        {
-          name: 'twitter',
-          formClass: 'searchbox sbx-twitter',
-          classWrapper: 'sbx-twitter__wrapper',
-          classInput: 'sbx-twitter__input',
-          classInputPlaceholder: 'sbx-twitter__input-placeholder',
-          classSubmit: 'sbx-twitter__submit',
-          svgSearch: '#sbx-icon-search-8',
-          classReset: 'sbx-twitter__reset',
-          svgClear: '#sbx-icon-clear-4',
-          highlighClass: 'highlighted__twitter'
-        },
-        {
-          name: 'spotify',
-          formClass: 'searchbox sbx-spotify',
-          classWrapper: 'sbx-spotify__wrapper',
-          classInput: 'sbx-spotify__input',
-          classInputPlaceholder: 'sbx-spotify__input-placeholder',
-          classSubmit: 'sbx-spotify__submit',
-          svgSearch: '#sbx-icon-search-8',
-          classReset: 'sbx-spotify__reset',
-          svgClear: '#sbx-icon-clear-4',
-          highlighClass: 'highlighted__spotify'
-        },
-        {
-          name: 'custom',
-          formClass: 'searchbox sbx-custom',
-          classWrapper: 'sbx-custom__wrapper',
-          classInput: 'sbx-custom__input',
-          classInputPlaceholder: 'sbx-custom__input-placeholder',
-          classSubmit: 'sbx-custom__submit',
-          svgSearch: '#sbx-icon-search-8',
-          classReset: 'sbx-custom__reset',
-          svgClear: '#sbx-icon-clear-4',
-          highlighClass: 'highlighted__custom'
         }
         ]
       }
@@ -202,10 +147,7 @@
         var type = this.getType()
         return type.classWrapper
       },
-      getClassInput () {
-        var type = this.getType()
-        return type.classInput
-      },
+
       getClassInputPlaceholder () {
         var type = this.getType()
         return type.classInputPlaceholder
@@ -213,10 +155,6 @@
       getClassSubmit () {
         var type = this.getType()
         return type.classSubmit
-      },
-      getSVGSearch () {
-        var type = this.getType()
-        return type.svgSearch
       },
       getClassReset () {
         var type = this.getType()
