@@ -1,27 +1,54 @@
 <template>
 <div>
     <div class="main">
-      <form novalidate="novalidate" onsubmit="return false;" :class="getFormClass" style='width: 250px;'>
-        <div role="search" :class="getClassWrapper">
-          <input type="search" name="search"  autocomplete="off" required="required" class="form-control" tabindex="-1">
-          <input class="form-control sbx-google__input" :disabled="disabled" @click="emitClickInput" @keyup='changeText' v-model='textVal' type="search" :name="name" :placeholder="getPlaceholder" autocomplete="off" required="required"  :autofocus="autofocus">
-          <button class="input-group-text sbx-google__submit" @click="emitClickButton" type="submit"  tabindex="-1">
-<svg xmlns="http://www.w3.org/2000/svg" 
- viewBox="0 0 500 500"
- xmlns:xlink="http://www.w3.org/1999/xlink">
- <g id="Layer_x0020_1">
-  <polygon class="fil0" fill="#343a40"  points="105,169 204,268 388,84 466,162 211,416 34,239 "/>
- </g>
-</svg>
-          </button>
-          <button @click="reset" type="reset" :class="getClassReset" tabindex="-1">
+      <form novalidate="novalidate" 
+        onsubmit="return false;" 
+        class="searchbox sbx-google" 
+      >
+        <div role="search" class="sbx-google__wrapper">
+          <input
+           type="search"
+           name="search"
+           autocomplete="off"
+           required="required"
+           class="form-control"
+           tabindex="-1"
+           >
+          <input class="form-control sbx-google__input"
+          ref="input"
+          :disabled="disabled" 
+          @keyup='onChanget'
+          @keydown.up.prevent="arrowUpAction"
+          @keydown.down.prevent="arrowDownAction"
+          @keydown.esc.prevent="escapeAction"
+          @keydown.enter.prevent="enterAction"
+          v-model='textVal' 
+          type="search" 
+          :name="name" 
+          :placeholder="showPlaceholder" 
+          autocomplete="off" 
+          required="required" 
+          :autofocus="autofocus"
+          >
+          <button 
+            @click="reset" 
+            type="reset" 
+            class="sbx-google__reset" 
+            tabindex="-1"
+            v-show="showReset"
+            >
             <svg role="img" aria-label="Reset">
-              <use xmlns:xlink="http://www.w3.org/1999/xlink" :xlink:href="getSVGClear"></use>
+              <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#sbx-icon-clear-4"></use>
             </svg>
           </button>
-           <div v-if="modeIsFull" class='el-input-group__append'>
-             <ul v-on-clickaway="away" v-if="suggestionsIsVisible && showSuggestions" class="vue-instant__suggestions">
-                 <li @click="selectedAction(index)" v-for="(item, index) in similiarData" :class="getClassHighlighted(index)">{{item[suggestionAttribute]}}</li>
+           <div>
+             <ul
+                v-if="isShow" class="vue-instant__suggestions">
+                 <li @click="selectedAction(similiarData[index])" 
+                    v-for="(item, index) in similiarData" :key="index"
+                   :class="function(){
+                     console.log(this)
+                   }">{{item[propName]}}</li>
              </ul>
           </div>
         </div>
@@ -42,11 +69,14 @@
 </template>
 <script>
   import { mixin as clickaway } from 'vue-clickaway'
+import { log } from 'util';
   export default {
-    name: 'vueInstant',
-    mixins: [ clickaway ],
     props: {
       'value': {
+        type: String,
+        required: true
+      },
+      'name': {
         type: String,
         required: true
       },
@@ -54,115 +84,32 @@
         type: Array,
         required: true
       },
-      'suggestionAttribute': {
-        type: String,
-        required: true
-      },
-      'placeholder': {
-        type: String,
-        default: 'write something...'
-      },
-      'minMatch': {
-        type: Number,
-        default: 2
-      },
-      'name': {
-        type: String,
-        default: 'vueInstant'
-      },
-      'autofocus': {
-        type: Boolean,
-        default: true
-      },
-      'disabled': {
-        type: Boolean
-      },
-      'type': {
-        type: String,
-        default: 'facebook'
-      },
-      'showAutocomplete': {
-        type: Boolean,
-        default: true
-      },
-      'suggestOnAllWords': {
-        type: Boolean,
-        default: false 
-      }
+      'attr': String,
+      'placeholder': String,
+      'autofocus': Boolean,
+      'disabled': Boolean
     },
     data () {
       return {
-        selectedEvent: null,
-        selectedSuggest: null,
-        inputChanged: false,
-        suggestionsIsVisible: true,
-        highlightedIndex: 0,
-        highlightedIndexMax: 7,
-        similiarData: [],
-        placeholderVal: this.placeholder,
-        types: [
-        {
-          name: 'google',
-          formClass: 'searchbox sbx-google',
-          classWrapper: 'sbx-google__wrapper',
-          classInput: 'sbx-google__input',
-          classInputPlaceholder: 'sbx-google__input-placeholder',
-          classSubmit: 'sbx-google__submit',
-          svgSearch: '#sbx-icon-search-8',
-          classReset: 'sbx-google__reset',
-          svgClear: '#sbx-icon-clear-4',
-          highlighClass: 'highlighted__google'
-        }
-        ]
-      }
-    },
-    watch: {
-      placeholder: function (val) {
-        if (this.textValIsEmpty()) {
-          this.placeholderVal = val
-        }
+        suggestionsIsVisible: false,
+        highlightedIndex: -1,
+        similiarData: []
       }
     },
     computed: {
-      getPlaceholder () {
-        if (this.inputChanged || this.textValIsEmpty()) {
-          return this.placeholderVal
-        }
+      highlighted () {},
+      propName () {
+        return this.attr || this.name
       },
-      modeIsFull () {
-        return this.showAutocomplete
+      showPlaceholder () {
+        let string = this.placeholder || this.name
+        return string.charAt(0).toUpperCase() + string.slice(1)
       },
-      showSuggestions () {
-        return this.similiarData.length >= this.minMatch
+      showReset () {
+        return !!this._events.reset
       },
-      getPropertiesClass () {
-        var type = this.getType()
-        return type.properties
-      },
-      getFormClass () {
-        var type = this.getType()
-        return type.formClass
-      },
-      getClassWrapper () {
-        var type = this.getType()
-        return type.classWrapper
-      },
-
-      getClassInputPlaceholder () {
-        var type = this.getType()
-        return type.classInputPlaceholder
-      },
-      getClassSubmit () {
-        var type = this.getType()
-        return type.classSubmit
-      },
-      getClassReset () {
-        var type = this.getType()
-        return type.classReset
-      },
-      getSVGClear () {
-        var type = this.getType()
-        return type.svgClear
+      isShow () {
+        return this.suggestionsIsVisible && this.similiarData.length > 0
       },
       textVal: {
         get () {
@@ -174,794 +121,83 @@
       }
     },
     methods: {
-      decrementHighlightedIndex () {
-        this.highlightedIndex -= 1
-      },
-      incrementHighlightedIndex () {
-        this.highlightedIndex += 1
-      },
-      escapeAction () {
-        this.clearHighlightedIndex()
-        this.clearSimilarData()
-        this.clearSelected()
-        this.setBlur()
-        this.emitEscape()
-      },
-      arrowRightAction () {
-        this.setPlaceholderAndTextVal()
-        this.emitKeyRight()
+      showSuggestions (bool) {
+        this.suggestionsIsVisible = bool
+        if(!bool) this.highlightedIndex = -1
       },
       arrowDownAction () {
-        if (this.arrowDownValidation()) {
-          this.incrementHighlightedIndex()
-          this.setPlaceholderAndTextVal()
-          this.emitKeyDown()
-        } else {
-          this.clearHighlightedIndex()
-        }
-      },
+      this.highlightedIndex < (this.similiarData.length - 1) ?  this.highlightedIndex += 1 : this.highlightedIndex = 0       
+       this.$emit('arrowDown', this)
+     },
       arrowUpAction () {
-        if (this.highlightedIndex > 0) {
-          this.decrementHighlightedIndex()
-          this.setPlaceholderAndTextVal()
-          this.emitKeyUp()
-        } else {
-          this.clearHighlightedIndex()
-        }
+        this.highlightedIndex > 0 ? this.highlightedIndex -= 1 : this.highlightedIndex = 0
       },
       enterAction () {
-        this.setFinalTextValue()
-        this.clearHighlightedIndex()
-        this.clearSimilarData()
-        this.emitEnter()
+        let selected = this.similiarData[this.highlightedIndex]
+        this.selectedAction(selected)
       },
-      selectedAction (index) {
-        this.highlightedIndex = index
-        this.setFinalTextValue()
-        this.clearPlaceholder()
-        this.clearSimilarData()
-        this.emitSelected()
-      },
-      addRegister (o) {
-        if (this.isSimilar(o) && this.textValIsNotEmpty()) {
-          this.addSuggestion(o)
-        }
-      },
-      addSuggestion (o) {
-        if (!this.findSuggestionTextIsRepited(o)) {
-          this.addToSimilarData(o)
-        }
-      },
-      addToSimilarData (o) {
-        if (this.canAddToSimilarData()) {
-          this.placeholderVal = this.letterProcess(o)
-          this.selectedSuggest = o
-          this.emitSelected()
-          this.similiarData.unshift(o)
-        }
-      },
-      setTextValue (e) {
-        if (e.target.value.trim()) {
-          this.textVal = e.target.value
-          this.emitChange()
-        }
-      },
-      setSelectedAsTextValue () {
-        this.textVal = this.selected
-      },
-      setInitialTextValue () {
-        this.textVal = this.value
-      },
-      setFinalTextValue () {
-        if (this.finalTextValueValidation()) {
-          this.setPlaceholderAndTextVal()
-          this.emitChange()
-        } else {
-          this.clearAll()
-        }
-      },
-      setPlaceholderAndTextVal () {
-        if (typeof this.similiarData[this.highlightedIndex] !== 'undefined') {
-          var suggest = this.similiarData[this.highlightedIndex]
-          this.placeholderVal = suggest[this.suggestionAttribute]
-          this.textVal = suggest[this.suggestionAttribute]
-          this.selectedSuggest = suggest
-          this.emitSelected()
-        }
-      },
-      setInitialPlaceholder () {
-        this.placeholderVal = this.placeholder
-      },
-      setBlur () {
-        this.$el.blur()
-      },
-      getType () {
-        return this.types.find(this.isSameType)
+      selectedAction (selected) {         
+         this.textVal = selected[this.propName]
+         this.showSuggestions(false)
+         this.$emit('selected', selected)
       },
       getClassHighlighted (index) {
-        if (this.highlightedIndex === index) {
-          var type = this.getType()
-          return type.highlighClass
-        }
-      },
-      letterProcess (o) {
-        var remoteText = o[this.suggestionAttribute].split('')
-        var inputText = this.textVal.split('')
-        inputText.forEach(function (letter, key) {
-          if (letter !== remoteText[key]) {
-            remoteText[key] = letter
-          }
-        })
-        return remoteText.join('')
-      },
-      findSuggests () {
-        if (this.suggestionsPropIsDefined()) {
-          this.suggestions.forEach(this.addRegister)
-        }
-      },
-      arrowDownValidation () {
-        return this.highlightedIndex < this.highlightedIndexMax &&
-               this.highlightedIndex < (this.similiarData.length - 1)
-      },
-      lowerFirst (string) {
-        return string.charAt(0).toLowerCase() + string.slice(1)
-      },
-      controlEvents () {
-        var uncaptz = this.lowerFirst(this.selectedEvent + 'Action')
-        var fnName = (this[uncaptz])
-        if (this.fnExists(fnName)) {
-          fnName()
-        }
-      },
-      findRepited (similarItem, o) {
-        return (similarItem[this.suggestionAttribute] ===
-        o[this.suggestionAttribute])
-      },
-      findSuggestionTextIsRepited (o) {
-        return this.similiarData.find(this.findRepited.bind(this, o))
-      },
-      finalTextValueValidation () {
-        return typeof this.similiarData[this.highlightedIndex] !== 'undefined' ||
-            this.placeholderVal === '' && this.highlightedIndex !== 0
-      },
-      isSimilar (o) {
-          if (o) {
-	   if ( this.suggestOnAllWords ) {
-	      var isMatch = false;
-	      var words = o[this.suggestionAttribute].split(" ");
-	      var textValWords = this.textVal.split(" ");
-	      if ( words.length > 0) {
-		  words.forEach(function(word)  {
-		      if ( textValWords.length > 0) {
-			  textValWords.forEach(function(textValWord) {
-			      if (word.toLowerCase().startsWith(textValWord.toLowerCase())) {
-				  isMatch = true;
-			      }
-			  });
-		      }
-		      else if (word.toLowerCase().startsWith(this.textVal.toLowerCase())) {
-			  isMatch = true;
-		      }
-		  });
-		  return isMatch;
-	      } 
-	   }
-           return o[this.suggestionAttribute]
-        	  .toLowerCase()
-		  .startsWith(this.textVal.toLowerCase())		  
-        }
-      },
-      isSameType (o) {
-        return o.name === this.type
-      },
-      fnExists (fnName) {
-        return typeof fnName === 'function'
-      },
-      canAddToSimilarData () {
-        return this.similiarData.length < this.highlightedIndexMax
-      },
-      suggestionsPropIsDefined () {
-        return typeof this.suggestions !== 'undefined'
-      },
-      notArrowKeysEvent () {
-        return this.selectedEvent !== 'ArrowUp' &&
-                this.selectedEvent !== 'ArrowDown' && this.selectedEvent !== 'ArrowRight'
-      },
-      notEnterKeyEvent () {
-        return this.selectedEvent !== 'Enter'
-      },
-      textValIsEmpty () {
-        return this.textVal === ''
-      },
-      textValIsNotEmpty () {
-        return this.textVal !== ''
+        if (this.highlightedIndex === index) return 'highlighted__google'
       },
       reset () {
-        this.clearValue()
-        this.clearSelected()
-        this.clearPlaceholder()
-        this.clearSimilarData()
-        this.clearSelectedSuggest()
-        this.emitClear()
-        this.emitSelected()
+        this.$emit('reset', this)
       },
-      clearAll () {
-        this.clearSelected()
-        this.clearPlaceholder()
-        this.clearSimilarData()
-        this.clearSelectedSuggest()
+      setFocus () {
+        this.$refs.input.focus()
       },
-      clearValue () {
-        this.textVal = ''
+      onChanget (e) {
+        let data = this.similiarData = []
+        this.suggestions.forEach(o => {
+          if (startsWith(this.textVal, o[this.propName])) data.unshift(o)
+        })
       },
-      clearSelected () {
-        this.selected = null
-      },
-      clearSelectedSuggest () {
-        this.selectedSuggest = null
-      },
-      clearSimilarData () {
-        this.similiarData = []
-      },
-      clearPlaceholder () {
-        if (this.textValIsEmpty()) {
-          this.clearSimilarData()
-          this.setInitialPlaceholder()
-        } else {
-          this.placeholderVal = ''
-        }
-      },
-      clearHighlightedIndex () {
-        this.highlightedIndex = 0
-      },
-      changeText (e) {
-        this.selectedEvent = e.code
-        this.setTextValue(e)
-        this.processChangeText()
-        this.controlEvents(e)
-      },
-      processChangeText (e) {
-        if (this.notEnterKeyEvent()) {
-          this.inputChanged = true
-          this.suggestionsIsVisible = true
-          this.clearAllAndFindSuggest()
-        }
-      },
-      clearAllAndFindSuggest () {
-        if (this.notArrowKeysEvent()) {
-          this.clearAll()
-          this.findSuggests()
-        }
-      },
-      away () {
-        this.suggestionsIsVisible = false
-        this.emitSelected()
-      },
-      emitChange () {
-        // this.$emit('input', this.textVal)
-      },
-      emitClickInput (event) {
-        this.$emit('click-input', event)
-      },
-      emitClickButton (event) {
-        this.$emit('click-button', this.textVal)
-      },
-      emitEnter () {
-        this.$emit('enter')
-      },
-      emitKeyUp () {
-        this.$emit('key-up')
-      },
-      emitKeyDown () {
-        this.$emit('key-down', this.selectedSuggest)
-      },
-      emitKeyRight () {
-        this.$emit('key-right')
-      },
-      emitClear () {
-        this.$emit('clear')
-      },
-      emitEscape () {
-        this.$emit('escape')
-      },
-      emitSelected () {
-        this.$emit('selected', this.selectedSuggest)
+      escapeAction () {
+        this.showSuggestions(false)
       }
     }
 }
+  let startsWith = (val, prop) => prop.toLowerCase().startsWith(val.toLowerCase())
 </script>
 
 <style>
-  .sbx-facebook {
-  display: inline-block;
-  position: relative;
-  width: 450px;
-  height: 27px;
-  white-space: nowrap;
-  box-sizing: border-box;
-  font-size: 13px;
-}
-.sbx-facebook__wrapper {
-  width: 100%;
-  height: 100%;
-}
-.sbx-facebook__input {
-  position: absolute !important;
-  left:0 !important;
-  top: 0 !important;
-  -webkit-transition: box-shadow .4s ease, background .4s ease;
-  transition: box-shadow .4s ease, background .4s ease;
-  border: 0;
-  border-radius: 4px;
-  box-shadow: inset 0 0 0 0px #CCCCCC;
-  background: rgba(255, 255, 255, 0);
-  padding: 0;
-  padding-right: 62px;
-  padding-left: 11px;
-  width: 100%;
-  height: 100%;
-  vertical-align: middle;
-  white-space: normal;
-  font-size: inherit;
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
-}
-.sbx-facebook__input-placeholder {
-  -webkit-transition: box-shadow .4s ease, background .4s ease;
-  transition: box-shadow .4s ease, background .4s ease;
-  border: 0;
-  border-radius: 4px;
-  box-shadow: inset 0 0 0 0px #CCCCCC;
-  background: #FFFFFF;
-  padding: 0;
-  padding-right: 62px;
-  padding-left: 11px;
-  width: 100%;
-  height: 100%;
-  vertical-align: middle;
-  white-space: normal;
-  font-size: inherit;
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
-}
-.sbx-facebook__input::-webkit-search-decoration, .sbx-facebook__input::-webkit-search-cancel-button, .sbx-facebook__input::-webkit-search-results-button, .sbx-facebook__input::-webkit-search-results-decoration {
-  display: none;
-}
-.sbx-facebook__input:hover {
-  box-shadow: inset 0 0 0 0px #b3b3b3;
-}
-.sbx-facebook__input:focus, .sbx-facebook__input:active {
-  outline: 0;
-  box-shadow: inset 0 0 0 0px #3E82F7;
-  background: rgba(255, 255, 255, 0)
-}
-.sbx-facebook__input::-webkit-input-placeholder {
-  color: #AAAAAA;
-}
-.sbx-facebook__input::-moz-placeholder {
-  color: #AAAAAA;
-}
-.sbx-facebook__input:-ms-input-placeholder {
-  color: #AAAAAA;
-}
-.sbx-facebook__input::placeholder {
-  color: #AAAAAA;
-}
-.sbx-facebook__submit {
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: inherit;
-  margin: 0;
-  border: 0;
-  border-radius: 0 3px 3px 0;
-  background-color: #f6f7f8;
-  padding: 0;
-  width: 35px;
-  height: 100%;
-  vertical-align: middle;
-  text-align: center;
-  font-size: inherit;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
-}
-.sbx-facebook__submit::before {
-  display: inline-block;
-  margin-right: -4px;
-  height: 100%;
-  vertical-align: middle;
-  content: '';
-}
-.sbx-facebook__submit:hover, .sbx-facebook__submit:active {
-  cursor: pointer;
-}
-.sbx-facebook__submit:focus {
-  outline: 0;
-}
-.sbx-facebook__submit svg {
-  width: 15px;
-  height: 15px;
-  vertical-align: middle;
-  fill: #3C5BA2;
-}
-.sbx-facebook__reset {
-  display: none;
-  position: absolute;
-  top: 3px;
-  right: 41px;
-  margin: 0;
-  border: 0;
-  background: none;
-  cursor: pointer;
-  padding: 0;
-  font-size: inherit;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
-  fill: rgba(0, 0, 0, 0.5);
-}
-.sbx-facebook__reset:focus {
-  outline: 0;
-}
-.sbx-facebook__reset svg {
-  display: block;
-  margin: 4px;
-  width: 13px;
-  height: 13px;
-}
-.sbx-facebook__input:valid ~ .sbx-facebook__reset {
-  display: block;
-  -webkit-animation-name: sbx-reset-in;
-          animation-name: sbx-reset-in;
-  -webkit-animation-duration: .15s;
-          animation-duration: .15s;
-}
-@-webkit-keyframes sbx-reset-in {
-  0% {
-    -webkit-transform: translate3d(-20%, 0, 0);
-            transform: translate3d(-20%, 0, 0);
-    opacity: 0;
-  }
-  100% {
-    -webkit-transform: none;
-            transform: none;
-    opacity: 1;
-  }
-}
-@keyframes sbx-reset-in {
-  0% {
-    -webkit-transform: translate3d(-20%, 0, 0);
-            transform: translate3d(-20%, 0, 0);
-    opacity: 0;
-  }
-  100% {
-    -webkit-transform: none;
-            transform: none;
-    opacity: 1;
-  }
-}
-/* amazon*/
-.sbx-amazon {
-  display: inline-block;
-  position: relative;
-  width: 600px;
-  height: 39px;
-  white-space: nowrap;
-  box-sizing: border-box;
-  font-size: 14px;
-}
-.sbx-amazon__wrapper {
-  width: 100%;
-  height: 100%;
-}
-.sbx-amazon__input {
-  display: inline-block;
-  position: absolute !important;
-  left:0 !important;
-  top:0 !important;
-  -webkit-transition: box-shadow .4s ease, background .4s ease;
-  transition: box-shadow .4s ease, background .4s ease;
-  border: 0;
-  border-radius: 4px;
-  box-shadow: inset 0 0 0 1px #FFFFFF;
-  background: rgba(255, 255, 255, 0);
-  padding: 0;
-  padding-right: 75px;
-  padding-left: 11px;
-  width: 100%;
-  height: 100%;
-  vertical-align: middle;
-  white-space: normal;
-  font-size: inherit;
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
-}
-.sbx-amazon__input-placeholder {
-  display: inline-block;
-  -webkit-transition: box-shadow .4s ease, background .4s ease;
-  transition: box-shadow .4s ease, background .4s ease;
-  border: 0;
-  border-radius: 4px;
-  box-shadow: inset 0 0 0 1px #FFFFFF;
-  background: #FFFFFF;
-  padding: 0;
-  padding-right: 75px;
-  padding-left: 11px;
-  width: 100%;
-  height: 100%;
-  vertical-align: middle;
-  white-space: normal;
-  font-size: inherit;
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
-}
-.sbx-amazon__input::-webkit-search-decoration, .sbx-amazon__input::-webkit-search-cancel-button, .sbx-amazon__input::-webkit-search-results-button, .sbx-amazon__input::-webkit-search-results-decoration {
-  display: none;
-}
-.sbx-amazon__input:hover {
-  box-shadow: inset 0 0 0 1px #e6e6e6;
-}
-.sbx-amazon__input:focus, .sbx-amazon__input:active {
-  outline: 0;
-  box-shadow: inset 0 0 0 1px #FFBF58;
-  background: rgba(255, 255, 255, 0)
-}
-.sbx-amazon__input::-webkit-input-placeholder {
-  color: #AAAAAA;
-}
-.sbx-amazon__input::-moz-placeholder {
-  color: #AAAAAA;
-}
-.sbx-amazon__input:-ms-input-placeholder {
-  color: #AAAAAA;
-}
-.sbx-amazon__input::placeholder {
-  color: #AAAAAA;
-}
-.sbx-amazon__submit {
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: inherit;
-  margin: 0;
-  border: 0;
-  border-radius: 0 3px 3px 0;
-  background-color: #ffbf58;
-  padding: 0;
-  width: 47px;
-  height: 100%;
-  vertical-align: middle;
-  text-align: center;
-  font-size: inherit;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
-}
-.sbx-amazon__submit::before {
-  display: inline-block;
-  margin-right: -4px;
-  height: 100%;
-  vertical-align: middle;
-  content: '';
-}
-.sbx-amazon__submit:hover, .sbx-amazon__submit:active {
-  cursor: pointer;
-}
-.sbx-amazon__submit:focus {
-  outline: 0;
-}
-.sbx-amazon__submit svg {
-  width: 21px;
-  height: 21px;
-  vertical-align: middle;
-  fill: #202F40;
-}
-.sbx-amazon__reset {
-  display: none;
-  position: absolute;
-  top: 9px;
-  right: 54px;
-  margin: 0;
-  border: 0;
-  background: none;
-  cursor: pointer;
-  padding: 0;
-  font-size: inherit;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
-  fill: rgba(0, 0, 0, 0.5);
-}
-.sbx-amazon__reset:focus {
-  outline: 0;
-}
-.sbx-amazon__reset svg {
-  display: block;
-  margin: 4px;
-  width: 13px;
-  height: 13px;
-}
-.sbx-amazon__input:valid ~ .sbx-amazon__reset {
-  display: block;
-  -webkit-animation-name: sbx-reset-in;
-          animation-name: sbx-reset-in;
-  -webkit-animation-duration: .15s;
-          animation-duration: .15s;
-}
-@-webkit-keyframes sbx-reset-in {
-  0% {
-    -webkit-transform: translate3d(-20%, 0, 0);
-            transform: translate3d(-20%, 0, 0);
-    opacity: 0;
-  }
-  100% {
-    -webkit-transform: none;
-            transform: none;
-    opacity: 1;
-  }
-}
-@keyframes sbx-reset-in {
-  0% {
-    -webkit-transform: translate3d(-20%, 0, 0);
-            transform: translate3d(-20%, 0, 0);
-    opacity: 0;
-  }
-  100% {
-    -webkit-transform: none;
-            transform: none;
-    opacity: 1;
-  }
-}
-/*  google */
+
 .sbx-google {
   display: inline-block;
   position: relative;
+  width: 100%;
   height: 40px;
   white-space: nowrap;
   box-sizing: border-box;
   font-size: 14px;
 }
-.sbx-google__wrapper {
-  width: 100%;
-  height: 100%;
-}
+
 .sbx-google__input {
-  display: inline-block;
-  position: absolute !important;
-  left: 0 !important;
-  top:0 !important;
-  -webkit-transition: box-shadow .4s ease, background .4s ease;
-  transition: box-shadow .4s ease, background .4s ease;
-  border: 0;
-  border-radius: 4px;
-  box-shadow: inset 0 0 0 1px #CCCCCC;
-  background: rgba(255, 255, 255, 0);
-  padding: 0;
-  padding-right: 77px;
-  padding-left: 11px;
-  width: 100%;
-  height: 100%;
-  vertical-align: middle;
-  white-space: normal;
-  font-size: inherit;
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
+
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
 }
-.sbx-google__input-placeholder {
-  display: inline-block;
-  -webkit-transition: box-shadow .4s ease, background .4s ease;
-  transition: box-shadow .4s ease, background .4s ease;
-  border: 0;
-  border-radius: 4px;
-  box-shadow: inset 0 0 0 1px #CCCCCC;
-  background: #FFFFFF;
-  padding: 0;
-  padding-right: 77px;
-  padding-left: 11px;
-  width: 100%;
-  height: 100%;
-  vertical-align: middle;
-  white-space: normal;
-  font-size: inherit;
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
-}
-.sbx-google__input::-webkit-search-decoration, .sbx-google__input::-webkit-search-cancel-button, .sbx-google__input::-webkit-search-results-button, .sbx-google__input::-webkit-search-results-decoration {
-  display: none;
-}
-.sbx-google__input:hover {
-  box-shadow: inset 0 0 0 1px #b3b3b3;
-}
-.sbx-google__input:focus, .sbx-google__input:active {
-  outline: 0;
-  box-shadow: inset 0 0 0 1px #3E82F7;
-  background: rgba(255, 255, 255, 0)
-}
-.sbx-google__input::-webkit-input-placeholder {
-  color: #AAAAAA;
-}
-.sbx-google__input::-moz-placeholder {
-  color: #AAAAAA;
-}
-.sbx-google__input:-ms-input-placeholder {
-  color: #AAAAAA;
-}
-.sbx-google__input::placeholder {
-  color: #AAAAAA;
-}
-.sbx-google__submit {
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: inherit;
-  margin: 0;
-  border: 0;
-  border-radius: 0 3px 3px 0;
-  background-color: #3e82f7;
-  padding: 0;
-  width: 49px;
-  height: 100%;
-  vertical-align: middle;
-  text-align: center;
-  font-size: inherit;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
-}
-.sbx-google__submit::before {
-  display: inline-block;
-  margin-right: -4px;
-  height: 100%;
-  vertical-align: middle;
-  content: '';
-}
-.sbx-google__submit:hover, .sbx-google__submit:active {
-  cursor: pointer;
-}
-.sbx-google__submit:focus {
-  outline: 0;
-}
-.sbx-google__submit svg {
-  width: 21px;
-  height: 21px;
-  vertical-align: middle;
-  fill: #FFFFFF;
+.form-control.sbx-google__input {
+    padding-right: 25px;
 }
 .sbx-google__reset {
   display: none;
   position: absolute;
-  top: 10px;
-  right: 56px;
+  top: 13px;
+  right: 10px;
   margin: 0;
   border: 0;
   background: none;
   cursor: pointer;
-  padding: 0;
-  font-size: inherit;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
   fill: rgba(0, 0, 0, 0.5);
-}
-.sbx-google__reset:focus {
-  outline: 0;
 }
 .sbx-google__reset svg {
   display: block;
-  margin: 4px;
   width: 13px;
   height: 13px;
 }
@@ -972,386 +208,11 @@
   -webkit-animation-duration: .15s;
           animation-duration: .15s;
 }
-@-webkit-keyframes sbx-reset-in {
-  0% {
-    -webkit-transform: translate3d(-20%, 0, 0);
-            transform: translate3d(-20%, 0, 0);
-    opacity: 0;
-  }
-  100% {
-    -webkit-transform: none;
-            transform: none;
-    opacity: 1;
-  }
-}
-@keyframes sbx-reset-in {
-  0% {
-    -webkit-transform: translate3d(-20%, 0, 0);
-            transform: translate3d(-20%, 0, 0);
-    opacity: 0;
-  }
-  100% {
-    -webkit-transform: none;
-            transform: none;
-    opacity: 1;
-  }
-}
-/* twitter */
-.sbx-twitter {
-  display: inline-block;
-  position: relative;
-  width: 200px;
-  height: 33px;
-  white-space: nowrap;
-  box-sizing: border-box;
-  font-size: 12px;
-}
-.sbx-twitter__wrapper {
-  width: 100%;
-  height: 100%;
-}
-.sbx-twitter__input {
-  display: inline-block;
-  position: absolute;
-  left: 0 !important;
-  top: 0 !important;
-  -webkit-transition: box-shadow .4s ease, background .4s ease;
-  transition: box-shadow .4s ease, background .4s ease;
-  border: 0;
-  border-radius: 17px;
-  box-shadow: inset 0 0 0 1px #E1E8ED;
-  background: rgba(255, 255, 255, 0);
-  padding: 0;
-  padding-right: 52px;
-  padding-left: 16px;
-  width: 100%;
-  height: 100%;
-  vertical-align: middle;
-  white-space: normal;
-  font-size: inherit;
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
-}
-.sbx-twitter__input-placeholder {
-  display: inline-block;
-  -webkit-transition: box-shadow .4s ease, background .4s ease;
-  transition: box-shadow .4s ease, background .4s ease;
-  border: 0;
-  border-radius: 17px;
-  box-shadow: inset 0 0 0 1px #E1E8ED;
-  background: rgba(255, 255, 255, 0);
-  padding: 0;
-  padding-right: 52px;
-  padding-left: 16px;
-  width: 100%;
-  height: 100%;
-  vertical-align: middle;
-  white-space: normal;
-  font-size: inherit;
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
-}
-.sbx-twitter__input::-webkit-search-decoration, .sbx-twitter__input::-webkit-search-cancel-button, .sbx-twitter__input::-webkit-search-results-button, .sbx-twitter__input::-webkit-search-results-decoration {
-  display: none;
-}
-.sbx-twitter__input:hover {
-  box-shadow: inset 0 0 0 1px #c1d0da;
-}
-.sbx-twitter__input:focus, .sbx-twitter__input:active {
-  outline: 0;
-  box-shadow: inset 0 0 0 1px #D6DEE3;
-  background: rgba(255, 255, 255, 0)
-}
-.sbx-twitter__input::-webkit-input-placeholder {
-  color: #9AAEB5;
-}
-.sbx-twitter__input::-moz-placeholder {
-  color: #9AAEB5;
-}
-.sbx-twitter__input:-ms-input-placeholder {
-  color: #9AAEB5;
-}
-.sbx-twitter__input::placeholder {
-  color: #9AAEB5;
-}
-.sbx-twitter__submit {
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: inherit;
-  margin: 0;
-  border: 0;
-  border-radius: 0 16px 16px 0;
-  background-color: rgba(62, 130, 247, 0);
-  padding: 0;
-  width: 33px;
-  height: 100%;
-  vertical-align: middle;
-  text-align: center;
-  font-size: inherit;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
-}
-.sbx-twitter__submit::before {
-  display: inline-block;
-  margin-right: -4px;
-  height: 100%;
-  vertical-align: middle;
-  content: '';
-}
-.sbx-twitter__submit:hover, .sbx-twitter__submit:active {
-  cursor: pointer;
-}
-.sbx-twitter__submit:focus {
-  outline: 0;
-}
-.sbx-twitter__submit svg {
-  width: 13px;
-  height: 13px;
-  vertical-align: middle;
-  fill: #657580;
-}
-.sbx-twitter__reset {
-  display: none;
-  position: absolute;
-  top: 7px;
-  right: 33px;
-  margin: 0;
-  border: 0;
-  background: none;
-  cursor: pointer;
-  padding: 0;
-  font-size: inherit;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
-  fill: rgba(0, 0, 0, 0.5);
-}
-.sbx-twitter__reset:focus {
-  outline: 0;
-}
-.sbx-twitter__reset svg {
-  display: block;
-  margin: 4px;
-  width: 11px;
-  height: 11px;
-}
-.sbx-twitter__input:valid ~ .sbx-twitter__reset {
-  display: block;
-  -webkit-animation-name: sbx-reset-in;
-          animation-name: sbx-reset-in;
-  -webkit-animation-duration: .15s;
-          animation-duration: .15s;
-}
-@-webkit-keyframes sbx-reset-in {
-  0% {
-    -webkit-transform: translate3d(-20%, 0, 0);
-            transform: translate3d(-20%, 0, 0);
-    opacity: 0;
-  }
-  100% {
-    -webkit-transform: none;
-            transform: none;
-    opacity: 1;
-  }
-}
-@keyframes sbx-reset-in {
-  0% {
-    -webkit-transform: translate3d(-20%, 0, 0);
-            transform: translate3d(-20%, 0, 0);
-    opacity: 0;
-  }
-  100% {
-    -webkit-transform: none;
-            transform: none;
-    opacity: 1;
-  }
-}
-/* spotify */
-.sbx-spotify {
-  display: inline-block;
-  position: relative;
-  width: 200px;
-  height: 25px;
-  white-space: nowrap;
-  box-sizing: border-box;
-  font-size: 12px;
-}
-.sbx-spotify__wrapper {
-  width: 100%;
-  height: 100%;
-}
-.sbx-spotify__input {
-  display: inline-block;
-  position: absolute;
-  left: 0 !important;
-  top: 0 !important;
-  -webkit-transition: box-shadow .4s ease, background .4s ease;
-  transition: box-shadow .4s ease, background .4s ease;
-  border: 0;
-  border-radius: 13px;
-  box-shadow: inset 0 0 0 0px #FFFFFF;
-  background: rgba(255, 255, 255, 0);
-  padding: 0;
-  padding-right: 20px;
-  padding-left: 25px;
-  width: 100%;
-  height: 100%;
-  vertical-align: middle;
-  white-space: normal;
-  font-size: inherit;
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
-}
-.sbx-spotify__input-placeholder {
-  display: inline-block;
-  -webkit-transition: box-shadow .4s ease, background .4s ease;
-  transition: box-shadow .4s ease, background .4s ease;
-  border: 0;
-  border-radius: 13px;
-  box-shadow: inset 0 0 0 0px #FFFFFF;
-  background: #FFFFFF;
-  padding: 0;
-  padding-right: 20px;
-  padding-left: 25px;
-  width: 100%;
-  height: 100%;
-  vertical-align: middle;
-  white-space: normal;
-  font-size: inherit;
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
-}
-.sbx-spotify__input::-webkit-search-decoration, .sbx-spotify__input::-webkit-search-cancel-button, .sbx-spotify__input::-webkit-search-results-button, .sbx-spotify__input::-webkit-search-results-decoration {
-  display: none;
-}
-.sbx-spotify__input:hover {
-  box-shadow: inset 0 0 0 0px #e6e6e6;
-}
-.sbx-spotify__input:focus, .sbx-spotify__input:active {
-  outline: 0;
-  box-shadow: inset 0 0 0 0px #FFFFFF;
-  background: rgba(255, 255, 255, 0)
-}
-.sbx-spotify__input::-webkit-input-placeholder {
-  color: #AAAAAA;
-}
-.sbx-spotify__input::-moz-placeholder {
-  color: #AAAAAA;
-}
-.sbx-spotify__input:-ms-input-placeholder {
-  color: #AAAAAA;
-}
-.sbx-spotify__input::placeholder {
-  color: #AAAAAA;
-}
-.sbx-spotify__submit {
-  position: absolute;
-  top: 0;
-  right: inherit;
-  left: 0;
-  margin: 0;
-  border: 0;
-  border-radius: 12px 0 0 12px;
-  background-color: rgba(255, 255, 255, 0);
-  padding: 0;
-  width: 25px;
-  height: 100%;
-  vertical-align: middle;
-  text-align: center;
-  font-size: inherit;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
-}
-.sbx-spotify__submit::before {
-  display: inline-block;
-  margin-right: -4px;
-  height: 100%;
-  vertical-align: middle;
-  content: '';
-}
-.sbx-spotify__submit:hover, .sbx-spotify__submit:active {
-  cursor: pointer;
-}
-.sbx-spotify__submit:focus {
-  outline: 0;
-}
-.sbx-spotify__submit svg {
-  width: 17px;
-  height: 17px;
-  vertical-align: middle;
-  fill: #222222;
-}
-.sbx-spotify__reset {
-  display: none;
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  margin: 0;
-  border: 0;
-  background: none;
-  cursor: pointer;
-  padding: 0;
-  font-size: inherit;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
-  fill: rgba(0, 0, 0, 0.5);
-}
-.sbx-spotify__reset:focus {
-  outline: 0;
-}
-.sbx-spotify__reset svg {
-  display: block;
-  margin: 4px;
-  width: 13px;
-  height: 13px;
-}
-.sbx-spotify__input:valid ~ .sbx-spotify__reset {
-  display: block;
-  -webkit-animation-name: sbx-reset-in;
-          animation-name: sbx-reset-in;
-  -webkit-animation-duration: .15s;
-          animation-duration: .15s;
-}
-@-webkit-keyframes sbx-reset-in {
-  0% {
-    -webkit-transform: translate3d(-20%, 0, 0);
-            transform: translate3d(-20%, 0, 0);
-    opacity: 0;
-  }
-  100% {
-    -webkit-transform: none;
-            transform: none;
-    opacity: 1;
-  }
-}
-@keyframes sbx-reset-in {
-  0% {
-    -webkit-transform: translate3d(-20%, 0, 0);
-            transform: translate3d(-20%, 0, 0);
-    opacity: 0;
-  }
-  100% {
-    -webkit-transform: none;
-            transform: none;
-    opacity: 1;
-  }
-}
+
+
 .vue-instant__suggestions {
      position: absolute;
      left: 0;
-     top: 110%;
      margin: 0;
      background-color: #fff;
      border: 1px solid #D3DCE6;
@@ -1367,8 +228,7 @@
  }
  .vue-instant__suggestions li {
      list-style: none;
-     line-height: 36px;
-     padding: 0 10px;
+     line-height: 30px;
      margin: 0;
      cursor: pointer;
      color: #475669;
@@ -1377,32 +237,14 @@
      overflow: hidden;
      text-overflow: ellipsis;
  }
- .vue-instant__suggestions li.highlighted__spotify {
-     background-color: black;
-     color: #fff;
- }
- .vue-instant__suggestions li.highlighted__twitter {
-     background-color: #20a0ff;
-     color: #fff;
- }
+ 
  .vue-instant__suggestions li.highlighted__google {
      background-color: #EEEEEE;
      color: black;
  }
- .vue-instant__suggestions li.highlighted__facebook {
-     background-color: #3e5da0;
-     color: #fff;
- }
- .vue-instant__suggestions li.highlighted__amazon {
-     background-color: #232F3E;
-     color: #fff;
- }
+ 
  .el-input-group__append {
    border: 0px !important;
  }
-.sbx-custom__input {
-  position: absolute;
-  left: 0 !important;
-  background: rgba(255, 255, 255, 0) !important;
-}
+
 </style>

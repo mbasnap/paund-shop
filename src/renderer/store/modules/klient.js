@@ -2,9 +2,18 @@
 
 const state = {
     current: null,
-    editStatus: false
+    editStatus: false,
+    klients: [
+        {title: 'vasia', sername: 'vladimirivich', family: 'camoshkin'},
+        {title: 'vasia', sername: 'vladimirivich', family: 'camoshkin'},
+        {title: 'petia', sername: 'vladimirivich', family: 'camoshkin'},
+        {title: 'kolia', sername: 'vladimirivich', family: 'camoshkin'},
+    ]
 }
 const getters = {
+    getAll: state => {
+        return state.klients
+    },
     getCurrent: state => {
         let current = state.current
         return current ? current : {}
