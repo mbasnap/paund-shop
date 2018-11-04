@@ -1,13 +1,7 @@
 <template>
     <div >
         <div class=" row border-bottom" style="height: 81% !important;">
-            <form-instant class="col"
-                v-model="value"
-                @reset="onReset"
-                @arrowDown="arrowDown"
-                :suggestions="klients"
-                name="title"
-             ></form-instant>
+            <form-instant class="col" v-model="value" @action="controlEvents" ></form-instant>
         </div>
         <div class=" row " style="height: 19% !important;">
           <control-panel class="col  pt-2"></control-panel> 
@@ -23,23 +17,28 @@ import {FormInstant} from "@/components/Widgets"
 export default {
     components: {ControlPanel, FormInstant},
     computed: {
-        ...mapGetters('klient', {
-            'klients': 'getAll'
-        })
+        suggestions () {
+            return this.$store.getters['klient/getAll']
+        }
     },
      data(){
          return {
-            value: '',
-            suggestions: []      
+            value: ''     
          }
      },  
     methods: {
-        arrowDown (o) {
-            o.showSuggestions(true)
+      controlEvents (action, context) {
+        var fn = (this[action])
+        if (fn) fn(context)    
+      },
+        arrowDown (context) {
+            context.sugested(true)
         },
-        onReset (o) {
-            o.setValue('')
-            o.setFocus()
+        onChanget (context) {
+             context.showSuggestions(this.suggestions, 'title')
+        },
+        reset (context) {
+            context.setValue('')
         }
     }
 }

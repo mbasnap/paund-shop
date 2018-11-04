@@ -1,41 +1,26 @@
 <template>
 <div>
     <div class="main">
-      <form novalidate="novalidate" 
-        onsubmit="return false;" 
-        class="searchbox sbx-google" 
-      >
+      <form novalidate="novalidate"  class="searchbox sbx-google">
         <div role="search" class="sbx-google__wrapper">
-          <input
-           type="search"
-           name="search"
-           autocomplete="off"
-           required="required"
-           class="form-control"
-           tabindex="-1"
-           >
-          <input class="form-control sbx-google__input"
-          ref="input"
-          :disabled="disabled" 
+          <input  class="form-control" tabindex="-1" >
+          <input class="form-control sbx-google__input" ref="input"
+          v-model='textVal' 
           @keyup='onChanget'
           @keydown.up.prevent="arrowUpAction"
           @keydown.down.prevent="arrowDownAction"
           @keydown.esc.prevent="escapeAction"
           @keydown.enter.prevent="enterAction"
-          v-model='textVal' 
           type="search" 
           :name="name" 
-          :placeholder="showPlaceholder" 
-          autocomplete="off" 
-          required="required" 
-          :autofocus="autofocus"
+          :placeholder="placeholder"
+          :disabled="disabled" 
           >
           <button 
-            @click="reset" 
-            type="reset" 
+            @click="reset"
             class="sbx-google__reset" 
             tabindex="-1"
-            v-show="showReset"
+            v-show="isShowReset"
             >
             <svg role="img" aria-label="Reset">
               <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#sbx-icon-clear-4"></use>
@@ -46,9 +31,7 @@
                 v-if="isShow" class="vue-instant__suggestions">
                  <li @click="selectedAction(similiarData[index])" 
                     v-for="(item, index) in similiarData" :key="index"
-                   :class="function(){
-                     console.log(this)
-                   }">{{item[propName]}}</li>
+                   :class="highlighted(index)">{{item.title}}</li>
              </ul>
           </div>
         </div>
@@ -71,41 +54,37 @@
 
   export default {
     props: {
-      'value': {
+      value: {
         type: String,
         required: true
       },
-      'name': {
+      name: {
         type: String,
-        required: true
+        default: ''
       },
-      'suggestions': {
-        type: Array,
-        required: true
+      placeholder: {
+        type: String,
+        default: ''
       },
-      'attr': String,
-      'placeholder': String,
-      'autofocus': Boolean,
-      'disabled': Boolean
+      showReset: {
+        type: Boolean,
+        default: true
+      }
     },
     data () {
       return {
         suggestionsIsVisible: false,
         highlightedIndex: -1,
-        similiarData: []
+        similiarData: [],
+        disabled: false
       }
     },
     computed: {
-      highlighted () {},
-      propName () {
-        return this.attr || this.name
+      isShowReset () {
+        if (this.value.length > 0) return  this.showReset
       },
       showPlaceholder () {
-        let string = this.placeholder || this.name
-        return string.charAt(0).toUpperCase() + string.slice(1)
-      },
-      showReset () {
-        return !!this._events.reset
+        return this.placeholder.charAt(0).toUpperCase() + string.slice(1)
       },
       isShow () {
         return this.suggestionsIsVisible && this.similiarData.length > 0
@@ -120,43 +99,52 @@
       }
     },
     methods: {
-      showSuggestions (bool) {
-        this.suggestionsIsVisible = bool
-        if(!bool) this.highlightedIndex = -1
+      showSuggestions (suggestions, propName) {
+        let data = this.similiarData = []
+         suggestions.forEach(o => {
+           if (startsWith(this.textVal, o[propName])) data.unshift(o)
+         })
+        
+        this.similiarData = suggestions
       },
       arrowDownAction () {
       this.highlightedIndex < (this.similiarData.length - 1) ?  this.highlightedIndex += 1 : this.highlightedIndex = 0       
-       this.$emit('arrowDown', this)
+       this.$emit('action', 'arrowDown', this)
      },
       arrowUpAction () {
         this.highlightedIndex > 0 ? this.highlightedIndex -= 1 : this.highlightedIndex = 0
+        this.$emit('action', 'arrowUp', this)
       },
       enterAction () {
         let selected = this.similiarData[this.highlightedIndex]
         this.selectedAction(selected)
       },
       selectedAction (selected) {         
-         this.textVal = selected[this.propName]
-         this.showSuggestions(false)
-         this.$emit('selected', selected)
+        this.showSuggestions(false)
+         this.$emit('action','selected', {selected, context: this})
       },
-      getClassHighlighted (index) {
-        if (this.highlightedIndex === index) return 'highlighted__google'
-      },
-      reset () {
-        this.$emit('reset', this)
-      },
-      setFocus () {
+      setValue (value) {
+        this.textVal = value
         this.$refs.input.focus()
       },
+      highlighted (index) {
+        if (this.highlightedIndex === index) return 'highlighted__google'
+      },
+      sugested (bool) {
+        this.suggestionsIsVisible = bool
+      },
+      reset () {
+        this.$emit('action', 'reset', this)
+      },
       onChanget (e) {
-        let data = this.similiarData = []
-        this.suggestions.forEach(o => {
-          if (startsWith(this.textVal, o[this.propName])) data.unshift(o)
-        })
+        this.$emit('action', 'onChanget', this)
+        // let data = this.similiarData = []
+        // this.suggestions.forEach(o => {
+        //   if (startsWith(this.textVal, o[this.propName])) data.unshift(o)
+        // })
       },
       escapeAction () {
-        this.showSuggestions(false)
+        this.$emit('action', 'escapeAction', this)
       }
     }
 }
