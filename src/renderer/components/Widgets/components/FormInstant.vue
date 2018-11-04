@@ -68,8 +68,7 @@
 </div>
 </template>
 <script>
-  import { mixin as clickaway } from 'vue-clickaway'
-import { log } from 'util';
+
   export default {
     props: {
       'value': {
