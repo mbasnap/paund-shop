@@ -14,11 +14,13 @@ import axios from 'axios'
 import {mapGetters, mapActions} from 'vuex'
 import ControlPanel from './ControlPanel.vue'
 import {FormInstant} from "@/components/Widgets"
+import { log } from 'util';
 export default {
     components: {ControlPanel, FormInstant},
     computed: {
         suggestions () {
-            return this.$store.getters['klient/getAll']
+            let byTitle = ({title}) => title.startsWith(this.value)
+            return this.$store.getters['klient/getAll'].filter(byTitle)
         }
     },
      data(){
@@ -31,11 +33,18 @@ export default {
         var fn = (this[action])
         if (fn) fn(context)    
       },
+        escape (context) {
+            context.sugested(false)
+        },
         arrowDown (context) {
             context.sugested(true)
         },
         onChanget (context) {
              context.showSuggestions(this.suggestions, 'title')
+        },
+        selected ({selected, context}) {
+            context.setValue(selected.title)
+            context.sugested(false)
         },
         reset (context) {
             context.setValue('')

@@ -73,7 +73,7 @@
     },
     data () {
       return {
-        suggestionsIsVisible: false,
+        suggestionsIsVisible: true,
         highlightedIndex: -1,
         similiarData: [],
         disabled: false
@@ -87,7 +87,7 @@
         return this.placeholder.charAt(0).toUpperCase() + string.slice(1)
       },
       isShow () {
-        return this.suggestionsIsVisible && this.similiarData.length > 0
+        if(this.similiarData.length > 0) return this.suggestionsIsVisible 
       },
       textVal: {
         get () {
@@ -100,11 +100,6 @@
     },
     methods: {
       showSuggestions (suggestions, propName) {
-        let data = this.similiarData = []
-         suggestions.forEach(o => {
-           if (startsWith(this.textVal, o[propName])) data.unshift(o)
-         })
-        
         this.similiarData = suggestions
       },
       arrowDownAction () {
@@ -116,11 +111,9 @@
         this.$emit('action', 'arrowUp', this)
       },
       enterAction () {
-        let selected = this.similiarData[this.highlightedIndex]
-        this.selectedAction(selected)
+        this.selectedAction(this.similiarData[this.highlightedIndex])
       },
-      selectedAction (selected) {         
-        this.showSuggestions(false)
+      selectedAction (selected) { 
          this.$emit('action','selected', {selected, context: this})
       },
       setValue (value) {
@@ -138,17 +131,12 @@
       },
       onChanget (e) {
         this.$emit('action', 'onChanget', this)
-        // let data = this.similiarData = []
-        // this.suggestions.forEach(o => {
-        //   if (startsWith(this.textVal, o[this.propName])) data.unshift(o)
-        // })
       },
       escapeAction () {
-        this.$emit('action', 'escapeAction', this)
+        this.$emit('action', 'escape', this)
       }
     }
 }
-  let startsWith = (val, prop) => prop.toLowerCase().startsWith(val.toLowerCase())
 </script>
 
 <style>
