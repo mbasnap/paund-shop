@@ -16,16 +16,7 @@
           :placeholder="placeholder"
           :disabled="disabled" 
           >
-          <button 
-            @click="reset"
-            class="sbx-google__reset" 
-            tabindex="-1"
-            v-show="isShowReset"
-            >
-            <svg role="img" aria-label="Reset">
-              <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#sbx-icon-clear-4"></use>
-            </svg>
-          </button>
+            <slot name="reset" class="sbx-google__reset" ></slot>
            <div>
              <ul
                 v-if="isShow" class="vue-instant__suggestions">
@@ -118,6 +109,7 @@
       },
       setValue (value) {
         this.textVal = value
+        this.sugested(false)
         this.$refs.input.focus()
       },
       highlighted (index) {
