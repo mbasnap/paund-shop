@@ -1,20 +1,9 @@
 <template>
     <div >
         <div class=" row border-bottom" style="height: 81% !important;">
-            <form-instant class="col" v-model="value" @action="controlEvents" >
-
-                    <button slot="reset"
-                        @click.prevent="reset"
-                        class="sbx-google__reset1" 
-                        tabindex="-1"
-                        v-show="true"
-                        >
-                        <svg role="img" aria-label="Reset">
-                            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#sbx-icon-clear-4"></use>
-                        </svg>
-                    </button>                   
-
-            </form-instant>
+            <div class="col">
+                <form-instant v-model="value" @action="controlEvents" />
+            </div>
         </div>
         <div class=" row " style="height: 19% !important;">
           <control-panel class="col  pt-2"></control-panel> 
@@ -58,7 +47,7 @@ export default {
         selected ({selected, context}) {
             context.setValue(selected.title)
         },
-        reset (context) {
+        resetAction (context) {
             context.setValue('')
         }
     }
