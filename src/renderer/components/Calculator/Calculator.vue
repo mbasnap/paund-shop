@@ -20,9 +20,13 @@ import { log } from 'util';
 export default {
     components: {ControlPanel, FormInstant},
     computed: {
-        suggestions () {
-            let byTitle = ({title}) => title.startsWith(this.value)
-            return this.$store.getters['klient/getAll'].filter(byTitle)
+        suggestions (prop) {
+            return this.$store.getters['klient/getAll'].filter(function(item) {
+                console.log(item);
+                
+                return true
+                // return item[prop].startsWith(this.value)
+            })
         }
     },
      data(){
@@ -42,13 +46,13 @@ export default {
             context.sugested(true)
         },
         onChanget (context) {
-             context.showSuggestions(this.suggestions, 'title')
+             context.showSuggestions(this.suggestions('title'))
         },
         selected ({selected, context}) {
             context.setValue(selected.title)
         },
         resetAction (context) {
-            context.setValue('')
+           
         }
     }
 }

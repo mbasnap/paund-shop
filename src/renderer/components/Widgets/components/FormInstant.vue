@@ -88,7 +88,7 @@
       }
     },
     methods: {
-      showSuggestions (suggestions, propName) {
+      showSuggestions (suggestions) {
         this.similiarData = suggestions
       },
       arrowDownAction () {
@@ -117,6 +117,7 @@
         this.visible = bool
       },
       resetAction () {
+        context.setValue('')
         this.$emit('action', 'resetAction', this)
       },
       onChanget (e) {
