@@ -2,7 +2,7 @@
     <div >
         <div class=" row border-bottom" style="height: 81% !important;">
             <div class="col">
-                <form-instant v-model="value" @action="controlEvents" />
+                <form-instant v-model="value" @action="controlEvents"  />
             </div>
         </div>
         <div class=" row " style="height: 19% !important;">
@@ -20,12 +20,13 @@ import { log } from 'util';
 export default {
     components: {ControlPanel, FormInstant},
     computed: {
-        suggestions (prop) {
-            return this.$store.getters['klient/getAll'].filter(function(item) {
-                console.log(item);
+        klients () {
+            return this.$store.getters['klient/getAll']
+        },
+        familySuggestions () {
+            return this.klients.filter(klient => {
+                console.log(this);
                 
-                return true
-                // return item[prop].startsWith(this.value)
             })
         }
     },
@@ -46,7 +47,7 @@ export default {
             context.sugested(true)
         },
         onChanget (context) {
-             context.showSuggestions(this.suggestions('title'))
+             this.familySuggestions
         },
         selected ({selected, context}) {
             context.setValue(selected.title)
