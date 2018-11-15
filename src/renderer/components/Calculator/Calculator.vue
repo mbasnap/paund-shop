@@ -2,7 +2,10 @@
     <div >
         <div class=" row border-bottom" style="height: 81% !important;">
             <div class="col">
-                <form-instant v-model="value" @action="controlEvents"  />
+                <form-instant :selected="selected" name="family" :suggestions="klients"
+                    :string="item => item.family + ' ' + item.name"
+                    @select="selected => $store.dispatch('klient/select', selected)"
+                    @reset="$store.dispatch('klient/clear')"/>
             </div>
         </div>
         <div class=" row " style="height: 19% !important;">
@@ -23,11 +26,8 @@ export default {
         klients () {
             return this.$store.getters['klient/getAll']
         },
-        familySuggestions () {
-            return this.klients.filter(klient => {
-                console.log(this);
-                
-            })
+        selected () {
+            return this.$store.getters['klient/getSelected']
         }
     },
      data(){
@@ -36,25 +36,7 @@ export default {
          }
      },  
     methods: {
-      controlEvents (action, context) {
-        var fn = (this[action])
-        if (fn) fn(context)    
-      },
-        escape (context) {
-            context.sugested(false)
-        },
-        arrowDown (context) {
-            context.sugested(true)
-        },
-        onChanget (context) {
-             this.familySuggestions
-        },
-        selected ({selected, context}) {
-            context.setValue(selected.title)
-        },
-        resetAction (context) {
-           
-        }
+
     }
 }
 </script>

@@ -5,18 +5,13 @@
         <div role="search" class="sbx-google__wrapper">
 
           <input class='form-control' ref="input"
-            v-model='textVal' 
-            @keyup='onChanget'
-            @keydown.up.prevent="arrowUpAction"
-            @keydown.down.prevent="arrowDownAction"
-            @keydown.esc.prevent="escapeAction"
-            @keydown.enter.prevent="enterAction"
-            type="search" 
-            :name="name" 
-            :placeholder="placeholder"
-            :disabled="disabled" 
+            v-model='textVal'  :name="name" :placeholder="placeholder"
+            @keydown.up.prevent="arrowUp"
+            @keydown.down.prevent="arrowDown"
+            @keydown.esc.prevent="escape"
+            @keydown.enter.prevent="enter" 
           />
-           <div class="sbx-google__reset" @click="resetAction" v-show="isShowReset">
+           <div class="sbx-google__reset" @click="reset" v-show="isReset">
 
                 <svg role="img">
                   <use xlink:href="#sbx-icon-clear-4"/>
@@ -25,10 +20,10 @@
            </div>
 
              <ul
-                v-if="isShow" class="vue-instant__suggestions">
-                 <li @click="selectedAction(similiarData[index])" 
-                    v-for="(item, index) in similiarData" :key="index"
-                   :class="highlighted(index)">{{item.title}}</li>
+                v-if="isSuggest" class="vue-instant__suggestions">
+                 <li @click="select(getSuggestions[index])" 
+                    v-for="(item, index) in getSuggestions" :key="index"
+                   :class="highlighted(index)">{{getString(item)}}</li>
              </ul>
 
         </div>
@@ -46,85 +41,69 @@
 
   export default {
     props: {
-      value: {
-        type: String,
-        required: true
-      },
-      name: {
-        type: String,
-        default: ''
-      },
-      placeholder: {
-        type: String,
-        default: ''
-      },
-      showReset: {
-        type: Boolean,
-        default: true
-      }
+      string: Function,
+      selected: Object,
+      name: String,
+      placeholder: String,
+      suggestions: Array
     },
     data () {
       return {
-        visible: true,
-        highlightedIndex: -1,
-        similiarData: [],
-        disabled: false
+        value: '',
+        highlightedIndex: -1
       }
     },
     computed: {
-      isShowReset () {
-        if (this.value.length > 0) return  this.showReset
+      isReset () {
+        return  !!this.getSelected
       },
-      isShow () {
-        if(this.similiarData.length > 0) return this.visible 
+      getString () {
+        return item => this.string ? this.string(item) : item[this.name]
+      },
+      getSuggestions () {
+        return this.value ? this.suggestions.filter(item => {
+         return item[this.name].startsWith(this.value)
+        }) : []
+      },
+      getSelected () {
+        return this.selected[this.name]
+      },
+      isSuggest () {
+        return this.getSuggestions.length > 0 &&  !this.getSelected
       },
       textVal: {
-        get () {
-          return this.value
+        get () {       
+          return this.getSelected || this.value
         },
         set (v) {
-          this.$emit('input', v)
+          if(!this.getSelected) this.value = v
         }
       }
     },
     methods: {
-      showSuggestions (suggestions) {
-        this.similiarData = suggestions
-      },
-      arrowDownAction () {
-      this.highlightedIndex < (this.similiarData.length - 1) ?  this.highlightedIndex += 1 : this.highlightedIndex = 0       
-       this.$emit('action', 'arrowDown', this)
+
+      arrowDown () {
+      this.highlightedIndex < (this.suggestions.length - 1) ?  this.highlightedIndex += 1 : this.highlightedIndex = 0       
      },
-      arrowUpAction () {
+      arrowUp () {
         this.highlightedIndex > 0 ? this.highlightedIndex -= 1 : this.highlightedIndex = 0
-        this.$emit('action', 'arrowUp', this)
       },
-      enterAction () {
-        this.selectedAction(this.similiarData[this.highlightedIndex])
+      enter() {
+        this.select(this.getSuggestions[this.highlightedIndex])
       },
-      selectedAction (selected) { 
-         this.$emit('action','selected', {selected, context: this})
+      reset () {
+        this.value = ''
+        this.$emit('reset')
       },
-      setValue (value) {
-        this.textVal = value
-        this.sugested(false)
+      escape () {
+        this.$emit('escape')
+      },
+      select (selected) {
         this.$refs.input.focus()
+        this.$emit('select', selected)
       },
       highlighted (index) {
         if (this.highlightedIndex === index) return 'highlighted__google'
-      },
-      sugested (bool) {
-        this.visible = bool
-      },
-      resetAction () {
-        context.setValue('')
-        this.$emit('action', 'resetAction', this)
-      },
-      onChanget (e) {
-        this.$emit('action', 'onChanget', this)
-      },
-      escapeAction () {
-        this.$emit('action', 'escape', this)
       }
     }
 }

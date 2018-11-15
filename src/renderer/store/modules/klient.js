@@ -1,35 +1,27 @@
 
 
 const state = {
-    current: null,
-    editStatus: false,
+    selected: null,
     klients: [
-        {title: 'vasia', sername: 'vladimirivich', family: 'camoshkin'},
-        {title: 'vasia', sername: 'vladimirivich', family: 'camoshkin'},
-        {title: 'petia', sername: 'vladimirivich', family: 'camoshkin'},
-        {title: 'kolia', sername: 'vladimirivich', family: 'camoshkin'},
+        {name: 'vasia', sername: 'vladimirivich', family: 'camoshkin'},
+        {name: 'vasia', sername: 'vladimirivich', family: 'ionov'},
+        {name: 'petia', sername: 'vladimirivich', family: 'melichov'},
+        {name: 'kolia', sername: 'vladimirivich', family: 'igrunev'},
     ]
 }
 const getters = {
-    getAll: state => {
-        return state.klients
-    },
-    getCurrent: state => {
-        let current = state.current
-        return current ? current : {}
-    }
+    getAll: ({klients}) => klients || [],
+    getSelected: ({selected}) => selected || {}
 }
 const mutations = {
-    current: (state, payload) => state.current = payload,
-    editStatus: (state, payload) => state.editStatus = payload,
+    selected: (state, payload) => state.selected = payload
 }
 const actions = {
     clear: ({commit}) => {
-        commit('current', null)
-        commit('editStatus', false)
+        commit('selected', null)
     },
-    save: ({dispatch, commit}, payload) => {
-        commit('current', payload)
+    select: ({commit}, payload) => {
+        commit('selected', payload)
     },
 }
 
