@@ -69,14 +69,15 @@
         return this.selected[this.name]
       },
       isSuggest () {
-        return this.getSuggestions.length > 0 &&  !this.getSelected
+        return this.getSuggestions.length > 0 
       },
       textVal: {
-        get () {       
+        get () { 
           return this.getSelected || this.value
         },
         set (v) {
-          if(!this.getSelected) this.value = v
+           if (!this.getSelected) this.value =  v
+           this.change(v)
         }
       }
     },
@@ -92,14 +93,21 @@
         this.select(this.getSuggestions[this.highlightedIndex])
       },
       reset () {
-        this.value = ''
+        this.setValue('', true)
         this.$emit('reset')
+      },
+      setValue (v, focus) {
+        this.value = v
+        if (focus) this.$refs.input.focus()
+      },
+      change (newV) {
+        let oldV = this.getSelected, changed = oldV !== newV, name = this.name
+        if (changed) this.$emit('change', {newV, oldV, name}, this )
       },
       escape () {
         this.$emit('escape')
       },
       select (selected) {
-        this.$refs.input.focus()
         this.$emit('select', selected)
       },
       highlighted (index) {

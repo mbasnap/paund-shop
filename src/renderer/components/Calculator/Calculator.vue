@@ -5,11 +5,13 @@
                 <form-instant :selected="selected" name="family" :suggestions="klients"
                     :string="item => item.family + ' ' + item.name"
                     @select="selected => $store.dispatch('klient/select', selected)"
+                    @change="onChange"
                     @reset="$store.dispatch('klient/clear')"/>
             </div>
         </div>
         <div class=" row " style="height: 19% !important;">
-          <control-panel class="col  pt-2"></control-panel> 
+          <control-panel class="col  pt-2"
+            :saveButton="isSaved"/>
         </div>
     </div>
 </template>
@@ -28,7 +30,12 @@ export default {
         },
         selected () {
             return this.$store.getters['klient/getSelected']
-        }
+        },
+        isSaved () {
+            let res = this.$store.getters['klient/isSaved']
+            console.log(res)
+            return res
+        },
     },
      data(){
          return {
@@ -36,7 +43,9 @@ export default {
          }
      },  
     methods: {
-
+        onChange ({name, newV, oldV}, context) {
+            this.$store.dispatch('klient/edit', {name, newV})
+        }
     }
 }
 </script>
