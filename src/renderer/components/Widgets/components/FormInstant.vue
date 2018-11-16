@@ -100,9 +100,9 @@
         this.value = v
         if (focus) this.$refs.input.focus()
       },
-      change (newV) {
-        let oldV = this.getSelected, changed = oldV !== newV, name = this.name
-        if (changed) this.$emit('change', {newV, oldV, name}, this )
+      change (value) {
+        let oldV = this.getSelected
+        if (value !== oldV) this.$emit('change', {name: this.name, value})
       },
       escape () {
         this.$emit('escape')

@@ -43,8 +43,8 @@ export default {
          }
      },  
     methods: {
-        onChange ({name, newV, oldV}, context) {
-            this.$store.dispatch('klient/edit', {name, newV})
+        onChange (payload) {
+            this.$store.dispatch('klient/editAdd', payload)
         }
     }
 }

@@ -1,6 +1,4 @@
-let  getSame = name => edit.findIndex(x => {
-    return x === name
-})
+
 
 const state = {
     edit: [],
@@ -18,28 +16,27 @@ const getters = {
     isSaved: ({edit}) => !edit.length > 0
 }
 const mutations = {
-    selected: (state, payload) => state.selected = payload,
-    editAdd: ({edit}, name) => {
-
-        if (!getSame(name))  edit.push(name)
+    selected: (state, payload) => {
+        state.selected = payload
+        state.edit = []
     },
-    editDelete: ({edit}, name) => {
-        let index = getSame(name)
+    editAdd: ({edit}, {name, value}) => {
+        let  index = edit.findIndex(item => item.name === name), setValue = v => edit[index].value = v
+        !(index == -1) ? setValue(value): edit.push({name, value})
     },
-    editClear: (state) => state.edit = [],
+    editRemove: ({edit}, name) => {
+        if(edit[name]) delete edit[name]
+    }
 }
 const actions = {
-    clear: ({commit}) => {
-        commit('editClear')
-        commit('selected', null)
+    clear: ({commit}) => commit('selected', null),
+    editAdd: ({commit}, payload) => {
+        let {name, value} = payload
+        if (value) commit('editAdd', payload)
+        
     },
-    edit: ({commit}, {name, newV}) => {
-        newV ? commit('editAdd', name ) : commit('editDelete', name )
-    },
-    select: ({commit}, payload) => {
-        commit('editClear')
-        commit('selected', payload)
-    },
+    editRemove: ({commit}, payload) => commit('editRemove', payload),
+    select: ({commit}, payload) => commit('selected', payload),
 }
 
 export default {
