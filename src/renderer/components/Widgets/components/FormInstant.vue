@@ -103,6 +103,7 @@
       change (value) {
         let oldV = this.getSelected
         if (value !== oldV) this.$emit('change', {name: this.name, value})
+        else this.$emit('change', {name: this.name, value: false})
       },
       escape () {
         this.$emit('escape')
