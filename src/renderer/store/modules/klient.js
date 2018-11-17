@@ -13,29 +13,29 @@ const state = {
 const getters = {
     getAll: ({klients}) => klients || [],
     getSelected: ({selected}) => selected || {},
-    isSaved: ({edit}) => !edit.length > 0
+    saved: ({edit}) => !edit.length > 0,
+    editIndex: ({edit}) => name => edit.findIndex(item => item.name === name),
+    editToObj: ({edit}) => edit.reduce((obj, {name, value}) => {
+        obj[name] = value
+        return obj
+    }, {})
 }
 const mutations = {
     selected: (state, payload) => {
         state.selected = payload
         state.edit = []
     },
-    editAdd: ({edit}, {name, value}) => {
-        let  index = edit.findIndex(item => item.name === name), setValue = v => edit[index].value = v
-        !(index == -1) ? setValue(value): edit.push({name, value})
-    },
-    editRemove: ({edit}, name) => {
-        if(edit[name]) delete edit[name]
-    }
+    addEdit: ({edit}, payload) => edit.push(payload),
+    setEdit: ({edit}, {index, value}) => edit[index].value = value,
+    removeEdit: ({edit}, index) => edit.splice(index, 1)
 }
 const actions = {
     clear: ({commit}) => commit('selected', null),
-    editAdd: ({commit}, payload) => {
-        let {name, value} = payload
-        if (value) commit('editAdd', payload)
-        
+    edit: ({commit, getters, dispatch}, {name, value}) => {
+         let index = getters.editIndex(name)
+         index === -1 ? commit('addEdit', {name, value}) : dispatch('setEdit', {index, value})
     },
-    editRemove: ({commit}, payload) => commit('editRemove', payload),
+    setEdit: ({commit}, {index, value}) => value ? commit('setEdit', {index, value}) : commit('removeEdit', index),
     select: ({commit}, payload) => commit('selected', payload),
 }
 

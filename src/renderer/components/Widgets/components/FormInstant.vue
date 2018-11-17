@@ -11,7 +11,7 @@
             @keydown.esc.prevent="escape"
             @keydown.enter.prevent="enter" 
           />
-           <div class="sbx-google__reset" @click="reset" v-show="isReset">
+           <div class="sbx-google__reset" @click="reset" v-show="isSelected">
 
                 <svg role="img">
                   <use xlink:href="#sbx-icon-clear-4"/>
@@ -20,7 +20,7 @@
            </div>
 
              <ul
-                v-if="isSuggest" class="vue-instant__suggestions">
+                v-if="showSuggestings" class="vue-instant__suggestions">
                  <li @click="select(getSuggestions[index])" 
                     v-for="(item, index) in getSuggestions" :key="index"
                    :class="highlighted(index)">{{getString(item)}}</li>
@@ -54,7 +54,10 @@
       }
     },
     computed: {
-      isReset () {
+      showSuggestings() {
+        return this.isSuggestings && !this.isSelected
+      },
+      isSelected() {
         return  !!this.getSelected
       },
       getString () {
@@ -68,7 +71,7 @@
       getSelected () {
         return this.selected[this.name]
       },
-      isSuggest () {
+      isSuggestings () {
         return this.getSuggestions.length > 0 
       },
       textVal: {
@@ -101,9 +104,11 @@
         if (focus) this.$refs.input.focus()
       },
       change (value) {
-        let oldV = this.getSelected
-        if (value !== oldV) this.$emit('change', {name: this.name, value})
-        else this.$emit('change', {name: this.name, value: false})
+        this.setEdit(value !== this.getSelected)
+      },
+      setEdit (edit) {
+        let value = edit ? this.value : false
+        this.$emit('change', {name: this.name, value})
       },
       escape () {
         this.$emit('escape')
