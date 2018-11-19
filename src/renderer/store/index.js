@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import Vuex, { mapActions} from 'vuex'
+import Vuex from 'vuex'
 import modules from './modules'
 
 
