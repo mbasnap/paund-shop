@@ -1,17 +1,17 @@
 <template>
 <div class="sbx-google">
     <input class='form-control' ref="input" v-model="textVal"
-        :placeholder="getPlaceholder" 
-        @blur="showSuggest = false"
+        :placeholder="getPlaceholder"
+        @blur="showSuggests(false)"
         @keydown.up.prevent="arrowUp"
         @keydown.down.prevent="arrowDown"
         @keydown.enter.prevent="enter" 
-        @keydown.esc.prevent="showSuggest = false"
+        @keydown.esc.prevent="showSuggests(false)"
     />
     <ul
         v-if="isSuggest" class="vue-instant__suggestions">
-        <li @mousedown="select(index)" 
-            v-for="(item, index) in suggestions" :key="index"
+        <li @mousedown="select(getSelected(index))" 
+            v-for="(item, index) in suggests" :key="index"
             :class="highlighted(index)">{{toString(item)}}
         </li>
     </ul>
@@ -24,28 +24,13 @@
     props: {
         name: String,
         value: Object,
-        suggest: Array,
         placeholder: String,
-        groupe: {
-            type: Boolean,
-            default: true
-        },
-        filter: {
-            type: Function,
-            default(item) {            
-                return item ? item.startsWith(this.textVal) : false
-            }
-        },
-        string: {
-            type: Function,
-            default(obj) {
-                return obj[this.name]
-            } 
-        }
+        groupe: Boolean,
+        string: Function
     },
     data () {
       return {
-          showSuggest: false,
+          suggests: [],
           highlightedIndex: -1
       }
     },
@@ -55,31 +40,35 @@
                 return this.value[this.name]
             },
             set (value) {
-                this.showSuggest = !!value.length
-                this.$emit("input", {name: this.name, value, context: this})
+                let payload = {[this.name]: value},
+                    showSuggests = (arr, filter) =>
+                        this.showSuggests(arr, (item) =>
+                            filter(this.toString(item), value))
+                
+                this.onInput({payload, showSuggests})
             }
-        },
-        suggestions() {
-            let filter =  item => this.filter.call(this, this.toString(item)),
-                suggest =  this.suggest.filter(filter)    
-            return suggest
         },
   
         isSuggest() {
-            return   this.suggestions.length > 0 && this.showSuggest
+            return   this.suggests.length > 0
         },
         getPlaceholder() {
             return this.$toTitleCase(this.placeholder || this.name)
         }
     },
     methods: {
-        show() {},
-        toString(obj)  {
-            return   this.string.call(this, obj)  
+        onInput(payload) {
+            this.$emit("input", payload)
+        },
+        showSuggests(suggests, filter) {
+            this.suggests = filter ? suggests.filter(filter) : suggests || []
+        },
+        toString(item)  {
+            return   item[this.name]
         },
         arrowDown () {
-            this.highlightedIndex < (this.suggestions.length - 1) ?  this.highlightedIndex += 1 : this.highlightedIndex = 0       
-            this.showSuggest = true
+            this.highlightedIndex < (this.suggests.length - 1) ?  this.highlightedIndex += 1 : this.highlightedIndex = 0       
+            this.showSuggests(this.suggests)
         },
         arrowUp () {
             this.highlightedIndex > 0 ? this.highlightedIndex -= 1 : this.highlightedIndex = 0
@@ -87,19 +76,16 @@
         highlighted (index) {
             if (this.highlightedIndex === index) return 'highlighted__google'
         },
-        set(v) {
-             this.textVal = v
-             this.showSuggest = false
-        },
-        select (index) {
-            let selected = this.suggestions[index]
-            if(!selected) return
-            this.set(selected[this.name])
-            this.$emit('select', selected)
+        select (payload) {
+            this.onInput({payload})
+            this.$emit('select', payload)
         },
         enter() {
-            this.select(this.highlightedIndex)
+            this.select(this.getSelected())
         },
+        getSelected(index) {
+            return this.suggests[index || this.highlightedIndex]
+        }
     }
 }
 </script>

@@ -3,6 +3,7 @@ import Header from "./components/Header.vue"
 import HeaderList from "./components/HeaderList.vue"
 import Searcher from "./components/Searcher.vue"
 import DropdownIcon from "./components/DropdownIcon.vue"
+import MbaInstant from "./components/MBAInstant.vue"
 import Instant from "./components/Instant.vue"
 import Reset from "./components/Reset.vue"
 
@@ -16,5 +17,6 @@ export {
             Searcher,
             DropdownIcon,
             Reset,
-            Instant
+            Instant,
+            MbaInstant,
         }
