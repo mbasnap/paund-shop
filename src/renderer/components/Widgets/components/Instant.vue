@@ -26,10 +26,6 @@
         value: Object,
         suggest: Array,
         placeholder: String,
-        groupe: {
-            type: Boolean,
-            default: true
-        },
         filter: {
             type: Function,
             default(item) {            
@@ -62,7 +58,7 @@
         suggestions() {
             let filter =  item => this.filter.call(this, this.toString(item)),
                 suggest =  this.suggest.filter(filter)    
-            return this.groupe ? th
+            return suggest
         },
   
         isSuggest() {
@@ -73,7 +69,6 @@
         }
     },
     methods: {
-
         toString(obj)  {
             return   this.string.call(this, obj)  
         },

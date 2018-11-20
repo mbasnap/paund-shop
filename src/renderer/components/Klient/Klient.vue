@@ -2,7 +2,6 @@
 <div >
         <instant v-model="selected" name="family" :suggest="klients"
                  @select="onSelect"
-                 :groupe="false"
                 :string="({family, name, sername}) => family + ' ' + name + ' ' + sername">
             <reset slot="rightButton" @reset="onReset"/>
         </instant>
