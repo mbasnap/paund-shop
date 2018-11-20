@@ -1,13 +1,17 @@
 <template>
 <div >
+<<<<<<< HEAD
         <instant v-model="selected" name="family" :suggest="klients"
                  @select="onSelect"
+=======
+        <instant v-model="selected" name="family" :suggest="klients" @select="onSelect"
+>>>>>>> 1a5f1e1ae15fddbee9d7fc2322f14d5763d91045
                 :string="({family, name, sername}) => family + ' ' + name + ' ' + sername">
             <reset slot="rightButton" @reset="onReset"/>
         </instant>
     <div class="form-row">
         <div class="form-group col-md-5">
-            <instant v-model="selected" name="name" :suggest="klients" ></instant>
+            <mba-instant v-model="value" name="name"></mba-instant>
         </div>
         <div class="form-group col-md-7">
             <instant v-model="selected" name="sername" :suggest="klients"></instant>
@@ -30,13 +34,12 @@
 </template>
 
 <script>
-import {Searcher, DropdownIcon, Instant, Reset} from "@/components/Widgets"
+import {MbaInstant, Instant, Reset} from "@/components/Widgets"
 export default {
-    components: {Searcher, DropdownIcon, Instant, Reset},
+    components: { MbaInstant, Instant, Reset},
     data () {
         return {}
     },
-    watch: {},
     computed: {
         klients () {
             return this.$store.getters['klient/getAll']
@@ -45,13 +48,23 @@ export default {
             get () {
                 return this.$store.getters['klient/getSelected']
             },
-            set(payload) {
-                this.$store.dispatch('klient/changeSelected', payload)
+            set({name, value}) {
+                this.$store.dispatch('klient/changeSelected', {[name]: value})
+            }
+        },
+        value:{
+            get () {
+                return this.$store.getters['klient/getSelected']
+            },
+            set({payload, showSuggests}) {
+                this.$store.dispatch('klient/select', payload)
+                if(showSuggests) showSuggests(this.klients, function(item, value){
+                    return item.startsWith(value)
+                })
             }
         }
     },
     methods: {
-        // log() {console.log(this)},
         onSelect (selected) {
             this.$store.dispatch('klient/select', selected)
         },

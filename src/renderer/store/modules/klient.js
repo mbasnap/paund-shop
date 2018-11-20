@@ -38,8 +38,8 @@ const actions = {
     },
     setEdit: ({commit}, {index, value}) => value ? commit('setEdit', {index, value}) : commit('removeEdit', index),
     select: ({commit}, payload) => commit('selected', payload),
-    changeSelected: ({state, commit}, {name, value}) => {
-        commit('selected', Object.assign({}, state.selected, {[name]: value}))
+    changeSelected: ({state, commit}, payload) => {
+        commit('selected', Object.assign({}, state.selected, payload))
     },
 }
 
