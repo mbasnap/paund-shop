@@ -1,36 +1,27 @@
 <template>
-<div >
-<<<<<<< HEAD
-        <instant v-model="selected" name="family" :suggest="klients"
-                 @select="onSelect"
-=======
+    <div >
         <instant v-model="selected" name="family" :suggest="klients" @select="onSelect"
->>>>>>> 1a5f1e1ae15fddbee9d7fc2322f14d5763d91045
                 :string="({family, name, sername}) => family + ' ' + name + ' ' + sername">
             <reset slot="rightButton" @reset="onReset"/>
         </instant>
-    <div class="form-row">
-        <div class="form-group col-md-5">
-            <mba-instant v-model="value" name="name"></mba-instant>
+        <div class="form-row">
+            <div class="form-group col-md-5">
+                <mba-instant v-model="value" name="name"></mba-instant>
+            </div>
+            <div class="form-group col-md-7">
+                <instant v-model="selected" name="sername" :suggest="klients"></instant>
+            </div>
         </div>
-        <div class="form-group col-md-7">
-            <instant v-model="selected" name="sername" :suggest="klients"></instant>
-        </div>
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <instant v-model="selected" name="seria" :suggest="klients"></instant>
+            </div>
+            <div class="form-group col-md-9">
+                <instant v-model="selected" name="nomer" :suggest="klients"></instant>
+            </div>
+        </div> 
+        <instant v-model="selected" name="idn" :suggest="klients"></instant>
     </div>
-    <div class="form-row">
-        <div class="form-group col-md-3">
-            <instant v-model="selected" name="seria" :suggest="klients"></instant>
-        </div>
-        <div class="form-group col-md-9">
-            <instant v-model="selected" name="nomer" :suggest="klients"></instant>
-        </div>
-    </div> 
-    <instant v-model="selected" name="idn" :suggest="klients"></instant>
-
-</div>
-
-
-
 </template>
 
 <script>
@@ -57,14 +48,16 @@ export default {
                 return this.$store.getters['klient/getSelected']
             },
             set({payload, showSuggests}) {
-                this.$store.dispatch('klient/select', payload)
-                if(showSuggests) showSuggests(this.klients, function(item, value){
-                    return item.startsWith(value)
-                })
+                // console.log(payload)
+                this.$store.dispatch('klient/set', payload)
+                if(showSuggests) showSuggests(this.klients, this.filter)
             }
         }
     },
     methods: {
+        filter(item, value) {
+            return item.startsWith(value)
+        },
         onSelect (selected) {
             this.$store.dispatch('klient/select', selected)
         },
@@ -75,6 +68,4 @@ export default {
 }
 </script>
 
-<style>
-
-</style>
+<style> </style>

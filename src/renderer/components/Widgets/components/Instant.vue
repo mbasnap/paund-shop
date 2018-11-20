@@ -69,10 +69,6 @@
         }
     },
     methods: {
-<<<<<<< HEAD
-=======
-        show() {},
->>>>>>> 1a5f1e1ae15fddbee9d7fc2322f14d5763d91045
         toString(obj)  {
             return   this.string.call(this, obj)  
         },

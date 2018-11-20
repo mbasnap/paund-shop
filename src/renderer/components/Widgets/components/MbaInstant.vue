@@ -10,7 +10,7 @@
     />
     <ul
         v-if="isSuggest" class="vue-instant__suggestions">
-        <li @mousedown="select(getSelected(index))" 
+        <li @mousedown="mousedown(index)" 
             v-for="(item, index) in suggests" :key="index"
             :class="highlighted(index)">{{toString(item)}}
         </li>
@@ -40,12 +40,11 @@
                 return this.value[this.name]
             },
             set (value) {
-                let payload = {[this.name]: value},
-                    showSuggests = (arr, filter) =>
-                        this.showSuggests(arr, (item) =>
-                            filter(this.toString(item), value))
-                
-                this.onInput({payload, showSuggests})
+                let payload = {[this.name]: value}
+
+                this.onInput(payload, (arr, filter) => 
+                    this.showSuggests(arr, (item) =>
+                        filter(this.toString(item), value)))
             }
         },
   
@@ -57,8 +56,8 @@
         }
     },
     methods: {
-        onInput(payload) {
-            this.$emit("input", payload)
+        onInput(payload, showSuggests) {
+            this.$emit("input", {payload, showSuggests})
         },
         showSuggests(suggests, filter) {
             this.suggests = filter ? suggests.filter(filter) : suggests || []
@@ -76,15 +75,19 @@
         highlighted (index) {
             if (this.highlightedIndex === index) return 'highlighted__google'
         },
-        select (payload) {
-            this.onInput({payload})
-            this.$emit('select', payload)
+        select (selected) {
+            if(!selected) return
+            this.onInput({[this.name]: this.toString(selected)})
+            this.$emit('select', selected)
+        },
+        mousedown(index) {
+            this.select(this.getSelected(index))
         },
         enter() {
-            this.select(this.getSelected())
+            this.select(this.getSelected(this.highlightedIndex))
         },
         getSelected(index) {
-            return this.suggests[index || this.highlightedIndex]
+            return this.suggests[index]
         }
     }
 }

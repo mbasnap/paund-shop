@@ -4,10 +4,10 @@ const state = {
     edit: [],
     selected: {},
     klients: [
-        {name: 'vasia', sername: 'vladimirivich', family: 'camoshkin'},
-        {name: 'vasia', sername: 'vladimirivich', family: 'ionov'},
-        {name: 'petia', sername: 'vladimirivich', family: 'melichov'},
-        {name: 'kolia', sername: 'vladimirivich', family: 'igrunev'},
+        {id: 1, name: 'vasia', sername: 'vladimirivich', family: 'camoshkin'},
+        {id: 2, name: 'vasia', sername: 'vladimirivich', family: 'ionov'},
+        {id: 3, name: 'petia', sername: 'vladimirivich', family: 'melichov'},
+        {id: 4, name: 'kolia', sername: 'vladimirivich', family: 'igrunev'},
     ]
 }
 const getters = {
@@ -38,8 +38,8 @@ const actions = {
     },
     setEdit: ({commit}, {index, value}) => value ? commit('setEdit', {index, value}) : commit('removeEdit', index),
     select: ({commit}, payload) => commit('selected', payload),
-    changeSelected: ({state, commit}, payload) => {
-        commit('selected', Object.assign({}, state.selected, payload))
+    set: ({state, commit}, payload) => {
+        payload.id ? commit('selected', payload) : commit('selected', {...(state.selected), ...payload})
     },
 }
 
