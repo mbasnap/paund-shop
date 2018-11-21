@@ -1,12 +1,13 @@
 <template>
 <div class="sbx-google">
     <input class='form-control' ref="input" v-model="textVal"
-        :placeholder="getPlaceholder"
+
         @blur="showSuggests(false)"
         @keydown.up.prevent="arrowUp"
         @keydown.down.prevent="arrowDown"
         @keydown.enter.prevent="enter" 
         @keydown.esc.prevent="showSuggests(false)"
+        :placeholder="placeholder"
     />
     <ul
         v-if="isSuggest" class="vue-instant__suggestions">
@@ -22,11 +23,9 @@
 
   export default {
     props: {
-        name: String,
-        value: Object,
+        value: String,
         placeholder: String,
-        groupe: Boolean,
-        string: Function
+        toString: Function
     },
     data () {
       return {
@@ -37,37 +36,28 @@
     computed: {
         textVal: {
             get () {
-                return this.value[this.name]
+                return this.value
             },
             set (value) {
-                let payload = {[this.name]: value}
-
-                this.onInput(payload, (arr, filter) => 
-                    this.showSuggests(arr, (item) =>
-                        filter(this.toString(item), value)))
+                this.setValue(value, (this.showSuggests))
             }
         },
   
         isSuggest() {
             return   this.suggests.length > 0
-        },
-        getPlaceholder() {
-            return this.$toTitleCase(this.placeholder || this.name)
         }
     },
     methods: {
-        onInput(payload, showSuggests) {
-            this.$emit("input", {payload, showSuggests})
+
+        setValue(value, showSuggests) {
+            this.$emit("input", {value, showSuggests})
+            if(!showSuggests) this.showSuggests(false)
         },
-        showSuggests(suggests, filter) {
-            this.suggests = filter ? suggests.filter(filter) : suggests || []
-        },
-        toString(item)  {
-            return   item[this.name]
+        showSuggests(suggests) {
+            this.suggests = suggests || []
         },
         arrowDown () {
             this.highlightedIndex < (this.suggests.length - 1) ?  this.highlightedIndex += 1 : this.highlightedIndex = 0       
-            this.showSuggests(this.suggests)
         },
         arrowUp () {
             this.highlightedIndex > 0 ? this.highlightedIndex -= 1 : this.highlightedIndex = 0
@@ -77,17 +67,14 @@
         },
         select (selected) {
             if(!selected) return
-            this.onInput({[this.name]: this.toString(selected)})
+            this.setValue(this.toString(selected))
             this.$emit('select', selected)
         },
         mousedown(index) {
-            this.select(this.getSelected(index))
+            this.select(this.suggests[index])
         },
         enter() {
-            this.select(this.getSelected(this.highlightedIndex))
-        },
-        getSelected(index) {
-            return this.suggests[index]
+            this.select(this.suggests[this.highlightedIndex])
         }
     }
 }

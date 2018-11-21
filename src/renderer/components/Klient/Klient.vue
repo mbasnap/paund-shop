@@ -6,7 +6,10 @@
         </instant>
         <div class="form-row">
             <div class="form-group col-md-5">
-                <mba-instant v-model="value" name="name"></mba-instant>
+                <mba-instant :value="selected['name']"
+                         @input="value => onChange('name', value)"
+                         :toString="(item) => item['name']"
+                     ></mba-instant>
             </div>
             <div class="form-group col-md-7">
                 <instant v-model="selected" name="sername" :suggest="klients"></instant>
@@ -35,28 +38,16 @@ export default {
         klients () {
             return this.$store.getters['klient/getAll']
         },
-        selected:{
-            get () {
-                return this.$store.getters['klient/getSelected']
-            },
-            set({name, value}) {
-                this.$store.dispatch('klient/changeSelected', {[name]: value})
-            }
-        },
-        value:{
-            get () {
-                return this.$store.getters['klient/getSelected']
-            },
-            set({payload, showSuggests}) {
-                // console.log(payload)
-                this.$store.dispatch('klient/set', payload)
-                if(showSuggests) showSuggests(this.klients, this.filter)
-            }
+        selected() {
+            return  this.$store.getters['klient/getSelected']
         }
     },
     methods: {
-        filter(item, value) {
-            return item.startsWith(value)
+
+        onChange(name, {value, showSuggests})  {
+            let startsWith = (item) => item[name].startsWith(value)
+            this.$store.dispatch('klient/change', {[name]: value})
+            if(showSuggests) showSuggests(this.klients.filter(startsWith))
         },
         onSelect (selected) {
             this.$store.dispatch('klient/select', selected)

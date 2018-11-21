@@ -38,9 +38,7 @@ const actions = {
     },
     setEdit: ({commit}, {index, value}) => value ? commit('setEdit', {index, value}) : commit('removeEdit', index),
     select: ({commit}, payload) => commit('selected', payload),
-    set: ({state, commit}, payload) => {
-        payload.id ? commit('selected', payload) : commit('selected', {...(state.selected), ...payload})
-    },
+    change: ({state, commit}, payload) => commit('selected', {...(state.selected), ...payload}),
 }
 
 export default {
