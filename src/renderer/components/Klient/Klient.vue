@@ -12,7 +12,7 @@
                      ></mba-instant>
             </div>
             <div class="form-group col-md-7">
-                <instant v-model="selected" name="sername" :suggest="klients"></instant>
+                <Named-Instant></Named-Instant>
             </div>
         </div>
         <div class="form-row">
@@ -29,8 +29,9 @@
 
 <script>
 import {MbaInstant, Instant, Reset} from "@/components/Widgets"
+import {NamedInstant} from "@/widgets"
 export default {
-    components: { MbaInstant, Instant, Reset},
+    components: { MbaInstant, Instant, Reset, NamedInstant},
     data () {
         return {}
     },
