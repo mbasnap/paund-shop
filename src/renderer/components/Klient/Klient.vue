@@ -1,19 +1,12 @@
 <template>
     <div >
-        <instant v-model="selected" name="family" :suggest="klients" @select="onSelect"
+        <instant v-model="selected" name="family"  @select="onSelect"
                 :string="({family, name, sername}) => family + ' ' + name + ' ' + sername">
             <reset slot="rightButton" @reset="onReset"/>
         </instant>
         <div class="form-row">
-            <div class="form-group col-md-5">
-                <mba-instant :value="selected['name']"
-                         @input="value => onChange('name', value)"
-                         :toString="(item) => item['name']"
-                     ></mba-instant>
-            </div>
-            <div class="form-group col-md-7">
-                <Named-Instant></Named-Instant>
-            </div>
+            <named-instant v-model="selected" name="name" class="col-md-5"/>
+            <named-instant v-model="selected" name="sername" class="col-md-7"/>
         </div>
         <div class="form-row">
             <div class="form-group col-md-3">
@@ -39,8 +32,15 @@ export default {
         klients () {
             return this.$store.getters['klient/getAll']
         },
-        selected() {
-            return  this.$store.getters['klient/getSelected']
+        selected: {
+            get() {
+                return  this.$store.getters['klient/getSelected']
+            },
+            set({name, value, showSuggests}) {
+                let klients = this.$store.getters['klient/startsWith', value]
+                this.$store.dispatch('klient/change', {[name]: value})
+                if(showSuggests) showSuggests(klients)
+            }
         }
     },
     methods: {

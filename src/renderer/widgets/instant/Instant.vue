@@ -1,21 +1,19 @@
 <template>
 <div class="sbx-google">
-    <input class='form-control' ref="input" v-model="textVal"
-
-        @blur="showSuggests(false)"
+    <input class='form-control' v-model="textValue" :placeholder="placeholder"
+        @blur="$emit('blur')"
         @keydown.up.prevent="arrowUp"
         @keydown.down.prevent="arrowDown"
-        @keydown.enter.prevent="enter" 
-        @keydown.esc.prevent="showSuggests(false)"
-        :placeholder="placeholder"
+        @keydown.enter.prevent="$emit('select', highlightedIndex)" 
+        @keydown.esc.prevent="$emit('escape')"
     />
     <ul
-        v-if="isSuggest" class="vue-instant__suggestions">
-        <li @mousedown="mousedown(index)" 
+        v-if="showSuggest" class="vue-instant__suggestions">
+        <li @mousedown="$emit('select', index)" 
             v-for="(item, index) in suggests" :key="index"
             :class="highlighted(index)">{{toString(item)}}
         </li>
-    </ul>
+    </ul>  
     <slot name="rightButton"></slot>
 </div>
 </template>
@@ -24,38 +22,29 @@
   export default {
     props: {
         value: String,
+        suggests: Array,
         placeholder: String,
         toString: Function
     },
     data () {
       return {
-          suggests: [],
           highlightedIndex: -1
       }
     },
     computed: {
-        textVal: {
-            get () {
+        textValue: {
+            get() {
                 return this.value
             },
-            set (value) {
-                this.setValue(value, (this.showSuggests))
+            set(v) {
+                this.$emit('input', v)
             }
         },
-  
-        isSuggest() {
+        showSuggest() {
             return   this.suggests.length > 0
         }
     },
     methods: {
-
-        setValue(value, showSuggests) {
-            this.$emit("input", {value, showSuggests})
-            if(!showSuggests) this.showSuggests(false)
-        },
-        showSuggests(suggests) {
-            this.suggests = suggests || []
-        },
         arrowDown () {
             this.highlightedIndex < (this.suggests.length - 1) ?  this.highlightedIndex += 1 : this.highlightedIndex = 0       
         },
@@ -64,17 +53,6 @@
         },
         highlighted (index) {
             if (this.highlightedIndex === index) return 'highlighted__google'
-        },
-        select (selected) {
-            if(!selected) return
-            this.setValue(this.toString(selected))
-            this.$emit('select', selected)
-        },
-        mousedown(index) {
-            this.select(this.suggests[index])
-        },
-        enter() {
-            this.select(this.suggests[this.highlightedIndex])
         }
     }
 }
