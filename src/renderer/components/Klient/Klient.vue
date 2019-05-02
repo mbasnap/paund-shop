@@ -4,10 +4,10 @@
                 :string="({family, name, sername}) => family + ' ' + name + ' ' + sername">
             <reset slot="rightButton" @reset="onReset"/>
         </instant>
-        <!-- <div class="form-row">
+        <div class="form-row">
             <named-instant v-model="selected" name="name" class="col-md-5"/>
             <named-instant v-model="selected" name="sername" class="col-md-7"/>
-        </div> -->
+        </div>
         <div class="form-row">
             <div class="form-group col-md-3">
                 <instant v-model="selected" name="seria" :suggest="klients"></instant>
