@@ -1,5 +1,5 @@
 <template>
-  <b-card class="h-100"
+  <b-card 
           header="OK start"
           header-bg-variant="secondary"
           header-tag="header"

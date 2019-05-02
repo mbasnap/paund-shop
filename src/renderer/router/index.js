@@ -13,7 +13,7 @@ export default new Router({
     },
     {
       path: '/kassa',
-      name: 'sklad',
+      name: 'kassa',
       component: require('@/components/Kassa').default
     },
     {

@@ -1,5 +1,5 @@
 <template>
-    <div class="row flex-fill">
+    <div class="row flex-fill" style="height: 100% !important;">
         <div class="col-md-8 ">
             <div class="row  pt-3 " style="height: 60% !important;">
                 <klient class=" col "></klient>                  
@@ -9,9 +9,9 @@
                 <obespechenie></obespechenie>
             </div>
         </div>
-        <div class="col">
-            <kassa class="row"></kassa>       
-        </div>
+        <!-- <div class="col" style="height: 100% !important;"> -->
+            <kassa class="col"></kassa>       
+        <!-- </div> -->
     </div>
 </template>
 
