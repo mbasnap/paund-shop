@@ -28,8 +28,9 @@
         placeholder: String,
         filter: {
             type: Function,
-            default(item) {            
-                return item ? item.startsWith(this.textVal) : false
+            default(item) {  
+
+                 return item ? item.toLowerCase().startsWith(this.textVal.toLowerCase()) : false
             }
         },
         string: {
@@ -48,7 +49,7 @@
     computed: {
         textVal: {
             get () {
-                return this.value[this.name]
+                return this.value[this.name] || ''
             },
             set (value) {
                 this.showSuggest = !!value.length
