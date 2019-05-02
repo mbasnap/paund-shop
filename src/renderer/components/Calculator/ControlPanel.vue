@@ -2,14 +2,18 @@
 <div >
 <button class="btn btn-primary">Cacsel</button>
 <button  class="btn btn-primary"
-         :disabled="$store.getters['klient/saved']"
+         @click="init"
          >Save</button>
 </div>
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 export default {
-    props: {}
+    props: {},
+    methods: {
+        ...mapActions('klient', ['init']),
+    }
 }
 </script>
 

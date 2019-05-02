@@ -1,13 +1,15 @@
-
+import DataBase from '@/db'
+import decode from 'jwt-decode'
+const { get, setAuthToken } = new DataBase('klients')
 
 const state = {
     edit: [],
     selected: {},
     klients: [
-        {id: 1, name: 'vasia', sername: 'vladimirivich', family: 'camoshkin'},
-        {id: 2, name: 'vasia', sername: 'vladimirivich', family: 'ionov'},
-        {id: 3, name: 'petia', sername: 'vladimirivich', family: 'melichov'},
-        {id: 4, name: 'kolia', sername: 'vladimirivich', family: 'igrunev'},
+        // {id: 1, name: 'vasia', sername: 'vladimirivich', family: 'camoshkin'},
+        // {id: 2, name: 'vasia', sername: 'vladimirivich', family: 'ionov'},
+        // {id: 3, name: 'petia', sername: 'vladimirivich', family: 'melichov'},
+        // {id: 4, name: 'kolia', sername: 'vladimirivich', family: 'igrunev'},
     ]
 }
 const getters = {
@@ -21,6 +23,9 @@ const getters = {
     }, {})
 }
 const mutations = {
+    klients(state, klients) {
+       state.klients = klients 
+    },
     selected: (state, payload) => {
         state.selected = payload
         state.edit = []
@@ -31,6 +36,12 @@ const mutations = {
     changeSelected: ({selected}, {name, value}) => selected[name] = value
 }
 const actions = {
+    init({commit}) {
+        get().then(res => {
+            console.log(res)
+            commit('klients', res)
+        })
+    },
     clear: ({commit}) => commit('selected', {}),
     edit: ({commit, getters, dispatch}, {name, value}) => {
          let index = getters.editIndex(name)
