@@ -53,7 +53,7 @@
             },
             set (value) {
                 this.showSuggest = !!value.length
-                this.$emit("input", {name: this.name, value, context: this})
+                this.$emit("input", {name: this.name, value})
             }
         },
         suggestions() {

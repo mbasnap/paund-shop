@@ -9,11 +9,18 @@
 </template>
 
 <script>
+  import { mapActions, mapGetters } from 'vuex'
   import AppHeader from './components/Header'
   import AppFooter from './components/Footer'
   export default {
     name: 'paund-shop',
     components: { AppHeader, AppFooter },
+    created() {
+        this.initKlients()
+    } ,
+     methods: {
+        ...mapActions(['initKlients']),
+     }   
   }
 </script>
 

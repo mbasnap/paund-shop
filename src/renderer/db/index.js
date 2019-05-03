@@ -2,7 +2,8 @@ import axios from 'axios'
 
 export default class {
   constructor (name, params) {
-    this.baseUrl = 'https://mba-ps-server.herokuapp.com/api/' + name
+    // this.baseUrl = 'https://mba-ps-server.herokuapp.com/api/' + name
+    this.baseUrl = 'http://localhost:5000/api/' + name
     this.params = params
   }
   setAuthToken = token => {
@@ -19,7 +20,6 @@ export default class {
       throw err.response.data
     })
   get = name => {
-      console.log(this.baseUrl + name)
     return this.query('get', name || '')
   }
   post = (name, params) => {

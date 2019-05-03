@@ -1,59 +1,62 @@
 import DataBase from '@/db'
-import decode from 'jwt-decode'
-const { get, setAuthToken } = new DataBase('klients')
+// import decode from 'jwt-decode'
+const { get, post } = new DataBase('klients')
 
 const state = {
-    edit: [],
-    selected: {},
-    klients: [
-        // {id: 1, name: 'vasia', sername: 'vladimirivich', family: 'camoshkin'},
-        // {id: 2, name: 'vasia', sername: 'vladimirivich', family: 'ionov'},
-        // {id: 3, name: 'petia', sername: 'vladimirivich', family: 'melichov'},
-        // {id: 4, name: 'kolia', sername: 'vladimirivich', family: 'igrunev'},
-    ]
+    // edit: [],
+    klient: {},
+    klients: []
 }
 const getters = {
-    getAll: ({klients}) => klients,
-    getSelected: ({selected}) => selected,
-    saved: ({edit}) => !edit.length > 0,
-    editIndex: ({edit}) => name => edit.findIndex(item => item.name === name),
-    editToObj: ({edit}) => edit.reduce((obj, {name, value}) => {
-        obj[name] = value
-        return obj
-    }, {})
+    klients: ({klients}) => klients,
+    klient: ({klient}) => klient,
+    // saved: ({edit}) => !edit.length > 0,
+    // editIndex: ({edit}) => name => edit.findIndex(item => item.name === name),
+    // editToObj: ({edit}) => edit.reduce((obj, {name, value}) => {
+    //     obj[name] = value
+    //     return obj
+    // }, {})
 }
 const mutations = {
-    klients(state, klients) {
-       state.klients = klients 
+    klients(state, payload) {
+       state.klients = payload 
     },
-    selected: (state, payload) => {
-        state.selected = payload
-        state.edit = []
+    klient: (state, payload) => {
+        state.klient = payload
+        // state.edit = []
     },
-    addEdit: ({edit}, payload) => edit.push(payload),
-    setEdit: ({edit}, {index, value}) => edit[index].value = value,
-    removeEdit: ({edit}, index) => edit.splice(index, 1),
-    changeSelected: ({selected}, {name, value}) => selected[name] = value
+    // addEdit: ({edit}, payload) => edit.push(payload),
+    // setEdit: ({edit}, {index, value}) => edit[index].value = value,
+    // removeEdit: ({edit}, index) => edit.splice(index, 1),
+    // changeSelected: ({selected}, {name, value}) => selected[name] = value
 }
 const actions = {
-    init({commit}) {
+    initKlients({commit}) {
         get().then(res => {
-            console.log(res)
             commit('klients', res)
         })
     },
-    clear: ({commit}) => commit('selected', {}),
-    edit: ({commit, getters, dispatch}, {name, value}) => {
-         let index = getters.editIndex(name)
-         index === -1 ? commit('addEdit', {name, value}) : dispatch('setEdit', {index, value})
+    saveKlient({commit, getters}) {
+        // const klient = getters.klient
+        post('/', getters.klient).then(res => {
+
+           commit('klients', [...getters.klients, res])
+        })
     },
-    setEdit: ({commit}, {index, value}) => value ? commit('setEdit', {index, value}) : commit('removeEdit', index),
-    select: ({commit}, payload) => commit('selected', payload),
-    change: ({state, commit}, payload) => commit('selected', {...(state.selected), ...payload}),
+    setKlient: ({commit}, payload) => {
+        commit('klient', payload)
+    },   
+    // edit: ({commit, getters, dispatch}, {name, value}) => {
+    //      let index = getters.editIndex(name)
+    //      index === -1 ? commit('addEdit', {name, value}) : dispatch('setEdit', {index, value})
+    // },
+    // setEdit: ({commit}, {index, value}) => value ? commit('setEdit', {index, value}) : commit('removeEdit', index),
+
+    // change: ({state, commit}, payload) => commit('selected', {...(state.selected), ...payload}),
 }
 
 export default {
-    namespaced: true,
+    // namespaced: true,
     state,
     getters,
     mutations,

@@ -2,7 +2,7 @@
 <div >
 <button class="btn btn-primary">Cacsel</button>
 <button  class="btn btn-primary"
-         @click="init"
+         @click="saveKlient"
          >Save</button>
 </div>
 </template>
@@ -12,7 +12,7 @@ import { mapActions } from 'vuex'
 export default {
     props: {},
     methods: {
-        ...mapActions('klient', ['init']),
+        ...mapActions(['saveKlient']),
     }
 }
 </script>
