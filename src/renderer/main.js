@@ -8,7 +8,7 @@ import mixin from './mixins'
 import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
-
+import {i18n} from './setup/i18n-setup'
 Vue.use(BootstrapVue);
 Vue.use(mixin);
 
@@ -18,6 +18,7 @@ Vue.config.productionTip = false
 /* eslint-disable no-new */
 new Vue({
   components: { App },
+  i18n,
   router,
   store,
   template: '<App/>'

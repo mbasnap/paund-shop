@@ -19,8 +19,8 @@
       <b-nav-item-dropdown 
         @click="alert1"
         right>
-        <b-link class="dropdown-item" :to="'/vidacha'">vidacha</b-link>
-        <b-link class="dropdown-item" :to="'/vidacha'">vidacha</b-link>
+        <b-link class="dropdown-item" :to="'/login'">login</b-link>
+        <b-link class="dropdown-item" :to="'/logout'">logout</b-link>
       </b-nav-item-dropdown>
     </b-navbar-nav>
   </b-collapse>
