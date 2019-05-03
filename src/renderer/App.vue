@@ -16,10 +16,10 @@
     name: 'paund-shop',
     components: { AppHeader, AppFooter },
     created() {
-        this.initKlients()
+        this.init()
     } ,
      methods: {
-        ...mapActions(['initKlients']),
+        ...mapActions(['init']),
      }   
   }
 </script>

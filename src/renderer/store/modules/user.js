@@ -5,7 +5,7 @@ const state = {
   user: {}
 }
 const getters = {
-  get: ({ user }) => user,
+  user: ({ user }) => user,
   loginStatus: ({ user }) => !!user.name
 }
 const mutations = {
@@ -15,17 +15,22 @@ const mutations = {
 }
 const actions = {
 
+setUser({ commit }, token) {
+  if(token) return commit('user', decode(token))
+},
+
   register: (state, userData) => {
     return post('/register', userData)
   },
-  login: ({ commit }, payload) => {
+
+  login: ({ dispatch }, payload) => {
+    
     return post('/login', payload).then(res => {
-      console.log(res)
       // Set token to
       localStorage.setItem('jwtToken', res.token)
       // Set token to Auth header
       setAuthToken(res.token)
-      return commit('user', decode(res.token))
+      return dispatch('setUser', res.token)
     })
   },
   logout: ({ commit }) => {
@@ -42,7 +47,7 @@ const actions = {
 }
 
 export default {
-  namespaced: true,
+  // namespaced: true,
   state,
   getters,
   mutations,

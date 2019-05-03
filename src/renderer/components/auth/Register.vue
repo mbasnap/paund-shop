@@ -20,7 +20,7 @@
 
 <button class="btn btn-primary mb-3" type="button"
     :disabled="formInputs.some(({value, error}) => !value || error)"
-    @click="onRegister"
+    @click="register(userData).then(res => $router.push('login'))"
     > {{$t('auth.register')}}
 </button>
 
@@ -82,14 +82,14 @@ export default {
         }
     },
     methods: {
-        ...mapActions('user', ['register']), getValues, setErrors,
+        ...mapActions(['register']), getValues, setErrors,
 
-        onRegister(info) {
-            this.register(this.userData).then(res => {
-                console.log(res)
-            })
-            // this.router.push({ path: 'info', params: info })
-        }
+        // onRegister(info) {
+        //     this.register(this.userData).then(res => {
+        //         console.log(res)
+        //     })
+        //     // this.router.push({ path: 'info', params: info })
+        // }
     }
 }
 </script>

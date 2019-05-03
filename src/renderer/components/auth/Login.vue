@@ -19,8 +19,8 @@
 
 <button class="btn btn-primary mb-3" type="button" 
     :disabled="formInputs.some(({value, error}) => !value || error)"
-     @click="token ? onActivate : onLogin"
-    > {{token ? $t('Activate') : $t('auth.login')}}
+     @click="login(userData).then(res => $router.push('/'))"
+    > {{$t('auth.login')}}
 </button>
 
 <div>
@@ -78,17 +78,18 @@ export default {
         }
     },
     methods: {
-        ...mapActions('user', ['login', 'activate', 'recover']), setErrors,
-        onLogin() {
-            return this.login(this.userData)
-                .then(info => console.log(info))
-                    .catch(err => console.log(err))
-        },
-        onActivate() {
-            return this.activate(this.userData)
-                .then(info => console.log(info))
-                    .catch(err => console.log(err))
-        }
+        ...mapActions(['login', 'activate', 'recover']), setErrors,
+        // onLogin() {
+        //     console.log('login')
+        //     return this.login(this.userData)
+        //         .then(info => console.log(info))
+        //             .catch(err => console.log(err))
+        // },
+        // onActivate() {
+        //     return this.activate(this.userData)
+        //         .then(info => console.log(info))
+        //             .catch(err => console.log(err))
+        // }
     }
 
 }

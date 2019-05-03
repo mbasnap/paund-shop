@@ -9,9 +9,7 @@
 import {mapGetters, mapActions} from 'vuex'
 export default {
   computed: {
-     ...mapGetters('settings', {
-       settings: 'getSettings'
-     })
+     ...mapGetters(['settings'])
   }
 }
 </script>

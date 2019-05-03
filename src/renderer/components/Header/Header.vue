@@ -16,11 +16,10 @@
        >{{link.name}}</b-link>     
     </b-navbar-nav>
     <b-navbar-nav class="ml-auto">
-      <b-nav-item-dropdown 
-        @click="alert1"
-        right>
+      <span>{{user.name}}</span>
+      <b-nav-item-dropdown  right>
         <b-link class="dropdown-item" :to="'/login'">login</b-link>
-        <b-link class="dropdown-item" :to="'/logout'">logout</b-link>
+        <b-link class="dropdown-item" @click="logout">logout</b-link>
       </b-nav-item-dropdown>
     </b-navbar-nav>
   </b-collapse>
@@ -28,12 +27,10 @@
   </div>
 </template>
 <script>
-  import {mapGetters, mapState} from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
 export default {
   computed: {
-     ...mapGetters('settings', {
-       settings: 'getSettings'
-     })
+     ...mapGetters(['settings', 'user'])
   },
   data() {
     return {
@@ -59,9 +56,7 @@ export default {
     }
   },
   methods: {
-    alert1(){
-      alert("dasdsa")
-    }
+    ...mapActions(['logout'])
   }
 }
 </script>
