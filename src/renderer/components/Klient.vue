@@ -10,12 +10,8 @@
             <named-instant v-model="model" name="sername" class="col-md-7"/>
         </div>
         <div class="form-row">
-            <div class="form-group col-md-3">
-                <instant v-model="model" name="seria" :suggest="klients"></instant>
-            </div>
-            <div class="form-group col-md-9">
-                <instant v-model="model" name="nomer" :suggest="klients"></instant>
-            </div>
+            <named-instant class="col-md-3" v-model="model" name="seria" :suggest="klients"/>
+            <named-instant class="col-md-9" v-model="model" name="nomer" :suggest="klients"/>
         </div> 
         <instant v-model="model" name="idn" :suggest="klients"></instant>
     </div>
