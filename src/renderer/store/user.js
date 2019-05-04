@@ -2,10 +2,33 @@ import DataBase from '@/db'
 import decode from 'jwt-decode'
 const { post, setAuthToken } = new DataBase('users')
 const state = {
-  user: {}
+  user: {},
+  userMenu: [ 
+    {
+      name: "vidacha",
+      value: "/vidacha"
+    },
+    {
+      name: "vozvrat",
+      value: "/vozvrat"
+    },
+    {
+      name: "prixod-rasxod",
+      value: "/prixod-rasxod"
+    },
+    {
+      name: "sklad",
+      value: "/sklad"
+    },
+    {
+      name: "report",
+      value: "/report"
+    }
+  ]
 }
 const getters = {
   user: ({ user }) => user,
+  userMenu: ({ userMenu }) => userMenu,
   loginStatus: ({ user }) => !!user.name
 }
 const mutations = {

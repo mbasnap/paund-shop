@@ -6,8 +6,8 @@
     </div>
 </template>
 <script>
-import Prixod from "./components/Prixod.vue"
-import Rasxod from "./components/Rasxod.vue"
+import Prixod from "@/components/Prixod.vue"
+import Rasxod from "@/components/Rasxod.vue"
   export default {
       components: {Prixod, Rasxod}
   }

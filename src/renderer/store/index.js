@@ -1,11 +1,10 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import modules from './modules'
-
-
-Vue.use(Vuex)
-
-export default new Vuex.Store({
-
-    modules
-  })
+import klient from './klient'
+import user from './user'
+import calkulator from './calkulator'
+import settings from './settings'
+export default {
+    klient,
+    user,
+    calkulator,
+    settings
+}

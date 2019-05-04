@@ -3,8 +3,12 @@
         <div class="col-md-8 ">
             <div class="row  pt-3 " style="height: 60% !important;">
                 <klient class=" col "></klient>                  
-                <calculator class=" col border-left text-center"></calculator>
+                <div class="col border-left">
+                    <calculator ></calculator>
+                    <control-panel class=""/>                    
+                </div>
             </div>
+        
             <div class="row" style="height: 40% !important;">
                 <obespechenie></obespechenie>
             </div>
@@ -17,11 +21,12 @@
 
 <script>
 import Kassa from '@/components/Kassa'
-import Klient from '@/components/Klient'
-import Calculator from '@/components/Calculator'
-import Obespechenie from '@/components/Obespechenie'
+import Klient from '@/components/Klient.vue'
+import Calculator from '@/components/Calculator.vue'
+import ControlPanel from '@/components/ControlPanel.vue'
+import Obespechenie from '@/components/Obespechenie.vue'
 export default {
-    components: {Kassa, Klient, Calculator, Obespechenie}
+    components: {Kassa, Klient, Calculator, Obespechenie, ControlPanel}
     }
 </script>
 

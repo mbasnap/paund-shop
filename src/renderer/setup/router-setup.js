@@ -1,23 +1,17 @@
 
 import Vue from 'vue'
 import Router from 'vue-router'
-import { home } from '@/routes/home'
-import { contacts } from '@/routes/contacts'
-import { login } from '@/routes/login'
-import { register } from '@/routes/register'
-import { postContent } from '@/routes/post-content'
-// import { info } from '@/routes/info'
+import {login, register} from '@/routes/auth'
+import home from '@/routes/home'
+import vidacha from '@/routes/vidacha'
+import vozvrat from '@/routes/vozvrat'
+import prixod_rasxod from '@/routes/prixod-rasxod'
+import report from '@/routes/report'
+import sklad from '@/routes/sklad'
 
 Vue.use(Router)
 
 export const router = new Router({
-  mode: 'history',
-  routes: [
-    // info,
-    home,
-    contacts,
-    login,
-    register,
-    postContent,
-  ]
+  // mode: 'history',
+  routes: [home, vidacha, vozvrat, prixod_rasxod, report, sklad, login, register]
 })

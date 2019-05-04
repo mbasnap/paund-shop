@@ -1,13 +1,13 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import ui from '@/store/ui'
-import post from '@/store/post'
-import menu from '@/store/menu'
 import user from '@/store/user'
-import modal from '@/store/modal'
+import klient from '@/store/klient'
+import settings from '@/store/settings'
+import calkulator from '@/store/calkulator'
+
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
-  modules: { ui, post, menu, user, modal }
+  modules: { user, klient, settings, calkulator }
 })

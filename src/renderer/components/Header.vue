@@ -5,12 +5,12 @@
 
   <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
-  <b-navbar-brand href="#">{{settings.logo}}</b-navbar-brand>
+  <b-navbar-brand href="/#/">{{settings.logo}}</b-navbar-brand>
 
   <b-collapse is-nav id="nav_collapse">
 
     <b-navbar-nav >
-      <b-link  class="nav-link" v-for="link in links"
+      <b-link  class="nav-link" v-for="link in userMenu"
         :key="link.name" 
         :to="link.value "
        >{{link.name}}</b-link>     
@@ -30,31 +30,12 @@
   import {mapGetters, mapActions} from 'vuex'
 export default {
   computed: {
-     ...mapGetters(['settings', 'user'])
+     ...mapGetters(['settings', 'user', 'userMenu'])
   },
   data() {
-    return {
-
-      links: [ 
-          {
-            name: "lombard",
-            value: "/lombard"
-          },
-          {
-            name: "kassa",
-            value: "/kassa"
-          },
-          {
-            name: "sklad",
-            value: "/sklad"
-          },
-          {
-            name: "zvit",
-            value: "/zvit"
-          }
-        ]
-    }
+    return {}
   },
+
   methods: {
     ...mapActions(['logout'])
   }

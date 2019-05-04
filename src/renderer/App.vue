@@ -10,8 +10,8 @@
 
 <script>
   import { mapActions, mapGetters } from 'vuex'
-  import AppHeader from './components/Header'
-  import AppFooter from './components/Footer'
+  import AppHeader from './components/Header.vue'
+  import AppFooter from './components/Footer.vue'
   export default {
     name: 'paund-shop',
     components: { AppHeader, AppFooter },
