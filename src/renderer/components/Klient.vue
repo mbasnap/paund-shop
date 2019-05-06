@@ -12,71 +12,34 @@
         </div>
         <div class="form-row">
             <named-instant class="col-md-3" v-model="model" name="seria" :suggest="klients"/>
-            <named-instant nt class="col-md-9" v-model="model" name="nomer" :suggest="klients"/>
+            <named-instant  class="col-md-9" v-model="model" name="nomer" :suggest="klients"/>
         </div> 
-        <instant v-model="model" name="vidan" :suggest="klients"></instant>
         <instant v-model="model" name="idn" :suggest="klients"></instant>
       </div>  
       <div class="control row ">
-        <div class="col-10">
-<button @click="showModal = true">Click</button>
-        </div>
+        <div class="col-10"></div>
         <div class="col-2">
-          <div class="row justify-content-center"><img :src="imgList" alt="">  </div>
+          <div class="row justify-content-center"><img :src="imgList" @click="modalShow = true">  </div>
         </div>
       </div>  
-
-
-<div v-if="showModal">
-    <transition name="modal">
-      <div class="modal-mask">
-        <div class="modal-wrapper">
-
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Modal title</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true" @click="showModal = false">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>Modal body text goes here.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @click="showModal = false">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
-            </div>
-        </div>
-
-        </div>
-      </div>
-    </transition>
-  </div>
-
-
-<alert :show.sync="showRight" placement="top-right" duration="3000" type="success" width="400px" dismissable>
-  <span class="icon-ok-circled alert-icon-float-left"></span>
-  <strong>Well Done!</strong>
-  <p>You successfully read this important alert message.</p>
-</alert>
-
+      <b-modal v-model="modalShow"  title="Klient list">
+        <klient-list class="klient-list p-3"/>
+      </b-modal>
     </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import {NamedInstant, Instant, Reset} from "@/widgets"
-import { alert } from 'vue-strap'
+// import { alert } from 'vue-strap'
 import imgList from '@/assets/img/list.png'
-// import KlientBody from './KlientBody.vue'
+import KlientList from '@/components/KlientList.vue'
 export default {
-    components: {  Instant, Reset, NamedInstant, alert},
+    components: {  Instant, Reset, NamedInstant, KlientList},
     data() {
       return {
         imgList,
-        showModal: false
+        modalShow: false
       }
     },
      computed: {
