@@ -1,5 +1,5 @@
 <template>
-<div class="sbx-google">
+<div class="instant">
     <input class='form-control' ref="input" v-model="textVal"
         :placeholder="getPlaceholder" 
         @blur="showSuggest = false"
@@ -24,7 +24,12 @@
     props: {
         name: String,
         value: Object,
-        suggest: Array,
+        suggest: {
+            type: Array,
+            default: function(){
+                return []
+            }
+        },
         placeholder: String,
         filter: {
             type: Function,
@@ -101,7 +106,7 @@
 </script>
 
 <style>
-.sbx-google {
+.instant {
   display: inline-block;
   position: relative;
   width: 100%;
@@ -111,13 +116,13 @@
   font-size: 14px;
 }
 
-.sbx-google input {
+.instant input {
 
     position: absolute !important;
     left: 0 !important;
     top: 0 !important;
 }
-.form-control.sbx-google input {
+.form-control.instant input {
     padding-right: 25px;
 }
 

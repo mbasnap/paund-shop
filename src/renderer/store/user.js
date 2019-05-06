@@ -12,18 +12,12 @@ const state = {
       name: "vozvrat",
       value: "/vozvrat"
     },
-    {
-      name: "prixod-rasxod",
-      value: "/prixod-rasxod"
-    },
+
     {
       name: "sklad",
       value: "/sklad"
     },
-    {
-      name: "report",
-      value: "/report"
-    }
+
   ]
 }
 const getters = {

@@ -1,26 +1,43 @@
 <template>
-    <div >
-        <div class=" row border-bottom" style="height: 200px !important;">
-            <h1>Calculator</h1>
+    <div >   
+        <div class="body  ">
+            
+            <instant  v-model="model" name="Ssuda" ></instant>
+            <instant v-model="model" name="Procent" ></instant>           
+            <instant v-model="model" name="Summ" ></instant>           
         </div>
-        <!-- <div class=" row " style="height: 19% !important;">
-          <control-panel class="col  pt-2"/>
-        </div> -->
+        <div class="control row "> 
+            <div class="col-6 ">
+                <div class="row justify-content-center"><button class="btn btn-primary">Cacsel</button></div>
+            </div>
+            <div class="col-6">
+                <div class="row justify-content-center"><button  class="btn btn-primary">Save</button></div>
+            </div>                       
+        </div>     
     </div>
 </template>
 
 <script>
-// import ControlPanel from './ControlPanel.vue'
+import {Instant} from "@/widgets"
+
 export default {
-    // components: {ControlPanel},
+    components: {  Instant},    
     computed: {},
      data(){
-         return {}
+         return {
+             model: {}
+         }
      },  
     methods: {}
 }
 </script>
 
 <style >
-
+.calculator .body{
+    height: 80%;
+    /* border-bottom: 1px solid rgba(0, 0, 0, 0.24) */
+}
+  .calculator .control {
+    padding: 10px;
+  }
 </style>

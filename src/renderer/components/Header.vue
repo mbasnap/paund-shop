@@ -15,7 +15,17 @@
         :to="link.value "
        >{{link.name}}</b-link>     
     </b-navbar-nav>
+
     <b-navbar-nav class="ml-auto">
+      <datepicker 
+        v-model="state.date"
+        :language="ru" 
+        :bootstrap-styling="true"
+        
+      /> 
+    </b-navbar-nav>
+    <b-navbar-nav class="ml-auto">
+      
       <span>{{user.name}}</span>
       <b-nav-item-dropdown  right>
         <b-link class="dropdown-item" :to="'/login'">login</b-link>
@@ -28,12 +38,20 @@
 </template>
 <script>
   import {mapGetters, mapActions} from 'vuex'
+  import Datepicker from 'vuejs-datepicker';
+  import {ru} from 'vuejs-datepicker/dist/locale'
 export default {
+    components: { Datepicker},
   computed: {
      ...mapGetters(['settings', 'user', 'userMenu'])
   },
   data() {
-    return {}
+    return {
+      state: {
+        date: new Date()
+      },
+      ru,
+    }
   },
 
   methods: {

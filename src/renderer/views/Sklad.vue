@@ -7,7 +7,7 @@
 </template>
 <script>
 
-import {HeaderList} from "@/components/Widgets"
+import {HeaderList} from "@/widgets"
 export default {
     components: {HeaderList}
 }
