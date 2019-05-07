@@ -4,11 +4,11 @@ import user from '@/store/user'
 import klient from '@/store/klient'
 import settings from '@/store/settings'
 import kassa from '@/store/kassa'
-import calkulator from '@/store/calkulator'
+import bilet from '@/store/bilet'
 
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
-  modules: { user, klient, settings, kassa, calkulator }
+  modules: { user, klient, settings, kassa, bilet }
 })

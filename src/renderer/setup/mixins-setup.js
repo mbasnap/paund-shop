@@ -1,6 +1,7 @@
 
 import $toTitleCase from '@/mixins/toTitleCase'
 import $numberFormat from '@/mixins/numberFormat'
+import $isNumber from '@/mixins/isNumber'
 
 
 
@@ -10,7 +11,8 @@ export default {
       Vue.mixin({
           methods: {
             $toTitleCase,
-            $numberFormat
+            $numberFormat,
+            $isNumber
           }
       })
     }
