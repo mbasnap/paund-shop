@@ -9,7 +9,7 @@
         <div class="control row  "> 
             <div class="col-6 ">
                 <div class="row justify-content-center">
-                    <button class="btn btn-primary" @click="clearBilet">clear</button>
+                    <button class="btn btn-primary" @click="clearAll">clear</button>
                 </div>
             </div>
             <div class="col-6">
@@ -23,7 +23,7 @@
             </div>
         
             <div class="row " style="height: 40% !important;">
-                <obespechenie class="obespechenie col "></obespechenie>
+                <obespechenie class="col"></obespechenie>
             </div>
         </div>
         <!-- <div class="col" style="height: 100% !important;"> -->
@@ -45,7 +45,7 @@ export default {
         ...mapGetters([])
     },
     methods: {
-        ...mapActions(['clearBilet'])
+        ...mapActions(['clearAll'])
     }
 }
 </script>

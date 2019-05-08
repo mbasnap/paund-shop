@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="obespechenie">
         <table class="table table-sm ">
         <thead >
             <tr>
@@ -8,18 +8,18 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for="(item, index) in obespechenie" :key="index">
+            <tr v-for="(item, index) in items" :key="index" @dblclick="showRow(item, index)">
                 <td class="index">{{index + 1}}</td>
                 <td v-for="({name, format}, f_index) in fields" :key="f_index" :class="name">{{format ? $numberFormat(item[name], 2, ',', ' ') : item[name]}}</td>
             </tr>
             <tr class="add">
-                <td><img :src="imgAdd" @click="showMomal = true"> </td>
+                <td><img :src="imgAdd" @click="showRow()"> </td>
                 <td v-for="({name}, f_index) in fields" :key="f_index" class="summ">{{getSumm(name)}}</td>
             </tr>
         </tbody>
         </table> 
       
-        <obespechenie-list v-model="showMomal" @save="addObespechenie" class="obespechenie-list p-3"/>
+        <obespechenie-list :row="row" @ok="save"/>
           
     </div>
 </template>
@@ -34,7 +34,7 @@ export default {
     data () {
         return {
             imgAdd,
-            showMomal: false,
+            row: {},
             fields: [
                 {name: 'title'},
                 {name: 'proba'},
@@ -42,20 +42,19 @@ export default {
                 {name: 'derty', format: true},
                 {name: 'ocenca', format: true}
             ],
-            summ: {ves: true, derty: true, ocenca: true} 
         }
     },
     computed: {
-        ...mapGetters(['obespechenie']),
+        ...mapGetters( 'obespechenie', ['items', 'summ']),
     },
     methods: {
-         ...mapActions(['addObespechenie']),
+        ...mapActions( 'obespechenie', ['save']),
         getSumm (name) {
-            const summ = this.summ[name] ?
-                this.obespechenie.reduce((total, item) => {
-                    return total += item[name] || 0
-                }, 0) : false
+            const summ = this.fields[name] && this.fields[name].format ? this.summ(name) : false
             return summ !== false ? this.$numberFormat(summ, 2, ',', ' ') : ''
+        },
+        showRow(item, index) {
+            this.row = {...item, index}
         }
     }
 }

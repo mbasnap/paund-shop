@@ -16,7 +16,7 @@
 
 
     <div class="row ">
-      <obespechenie class="col"></obespechenie>
+      <!-- <obespechenie class="col"></obespechenie> -->
     </div>
 
 </div>
