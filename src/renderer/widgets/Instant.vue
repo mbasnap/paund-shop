@@ -119,8 +119,8 @@
 .instant input {
 
     position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
+    /* left: 0 !important;
+    top: 0 !important; */
 }
 .form-control.instant input {
     padding-right: 25px;

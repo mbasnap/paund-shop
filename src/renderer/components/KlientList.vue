@@ -3,10 +3,6 @@
         <div class="form-group row">
             <label class="col-sm-3 col-form-label">Family</label>
             <instant  class="col-sm-9" v-model="model" name="family" ></instant>
-            <!-- <div class="col-sm-9">
-                <instant  v-model="model" name="family" ></instant>
-                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>               
-            </div> -->
         </div>
         <div class="form-group row">
             <label class="col-sm-3 col-form-label">Name</label>
@@ -49,10 +45,10 @@
                 </div>                         
             </div>
         </div> 
-     <p class="my-4" v-for="i in 20" :key="i">
+     <!-- <p class="my-4" v-for="i in 20" :key="i">
       Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
       in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-    </p>                    
+    </p>                     -->
     </div>
 </template>
 
@@ -61,9 +57,6 @@ import {Instant} from "@/widgets"
 import { mapActions, mapGetters } from 'vuex'
 export default {
     components: {  Instant},    
-    props: {
-        value: Object
-    },
     computed: {
         ...mapGetters(['klients', 'klient']),
         model: {
