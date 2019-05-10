@@ -14,7 +14,7 @@
             </div>
             <div class="col-6">
                 <div class="row justify-content-center">
-                    <button  class="btn btn-primary">save</button>
+                    <button  class="btn btn-primary" @click="saveBilet">save</button>
                 </div>
             </div>                       
         </div>  
@@ -45,7 +45,7 @@ export default {
         ...mapGetters([])
     },
     methods: {
-        ...mapActions(['clearAll'])
+        ...mapActions(['clearAll', 'saveBilet'])
     }
 }
 </script>

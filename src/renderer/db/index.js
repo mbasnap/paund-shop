@@ -1,28 +1,31 @@
 import axios from 'axios'
+import setToken from './setToken'
+const baseUrl = 'http://localhost:5000/api/' + name
+const  query = (action, url, params) => {
+  return axios[action](url, params)
+    .then(res => res.data)
+      .catch(err => {
+        throw err.response.data
+  })
+}
+
 
 export default class {
-  constructor (name, params) {
+  constructor (table) {
     // this.baseUrl = 'https://mba-ps-server.herokuapp.com/api/' + name
-    this.baseUrl = 'http://localhost:5000/api/' + name
-    this.params = params
+    
+    this.table = table
+  }
+
+  getUrl = action => baseUrl + this.table + action
+
+  get = action => {
+    return query('get', this.getUrl(action))
+  }
+  post = (action, params) => {
+    return query('post', this.getUrl(action), params)
   }
   setAuthToken = token => {
-    if (token) {
-      // Apply to every request
-      axios.defaults.headers.common['Authorization'] = token
-    } else {
-      // Delete auth header
-      delete axios.defaults.headers.common['Authorization']
-    }
-  }
-  query = (action, name, params) => axios[action](this.baseUrl + name, params)
-    .then(res => res.data).catch(err => {
-      throw err.response.data
-    })
-  get = name => {
-    return this.query('get', name || '')
-  }
-  post = (name, params) => {
-    return this.query('post', name || '', params)
+    setToken('Authorization', token)
   }
 }

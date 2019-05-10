@@ -58,7 +58,7 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
     components: {  Instant},    
     computed: {
-        ...mapGetters(['klients', 'klient']),
+        ...mapGetters('klient', ['klients', 'klient']),
         model: {
             get() {
                 return  this.klient

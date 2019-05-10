@@ -43,7 +43,7 @@ export default {
       }
     },
      computed: {
-        ...mapGetters(['klients', 'klient']),
+        ...mapGetters('klient', ['klients', 'klient']),
         model: {
             get() {
                 return  this.klient
@@ -54,7 +54,7 @@ export default {
         }
     },
     methods: {
-        ...mapActions(['setKlient']),
+        ...mapActions('klient', ['setKlient']),
     }  
 }
 </script>

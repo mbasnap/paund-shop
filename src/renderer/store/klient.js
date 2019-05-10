@@ -1,6 +1,6 @@
 import DataBase from '@/db'
 // import decode from 'jwt-decode'
-const { get, post } = new DataBase('klients')
+const { get, post } = new DataBase('klient')
 
 const state = {
     // edit: [],
@@ -32,15 +32,16 @@ const mutations = {
 }
 const actions = {
     initKlients({commit}) {
-        get().then(res => {
-            commit('klients', res)
-        })
+        // get().then(res => {
+        //     commit('klients', res)
+        // })
     },
-    saveKlient({commit, getters}) {
-        // const klient = getters.klient
-        post('/', getters.klient).then(res => {
-
-           commit('klients', [...getters.klients, res])
+    save({commit, getters}) {
+        const klient = getters.klient
+        return post('/', klient).then(id => {
+            klient.id = id
+           commit('klients', [...getters.klients, klient])
+           return klient
         })
     },
     setKlient: ({commit}, payload) => {
@@ -56,7 +57,7 @@ const actions = {
 }
 
 export default {
-    // namespaced: true,
+    namespaced: true,
     state,
     getters,
     mutations,

@@ -1,3 +1,6 @@
+import DataBase from '@/db'
+const { post, setAuthToken } = new DataBase('klient')
+
 const state = {
     bilets: [],
     bilet: {},
@@ -18,7 +21,11 @@ const mutations = {
     }
 }
 const actions = {
-
+    saveBilet ({commit, dispatch}) {
+        dispatch('klient/save').then(id => {
+            console.log(id)
+        })
+    },
     clearAll ({commit, dispatch}, v) {
         commit('bilet', {})
         dispatch('obespechenie/clear')

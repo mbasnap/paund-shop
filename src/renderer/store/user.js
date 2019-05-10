@@ -1,6 +1,11 @@
 import DataBase from '@/db'
 import decode from 'jwt-decode'
-const { post, setAuthToken } = new DataBase('users')
+import {router} from '@/setup'
+const { post, setAuthToken } = new DataBase('user')
+
+
+
+
 const state = {
   user: {},
   userMenu: [ 
@@ -42,19 +47,17 @@ setUser({ commit }, token) {
 
   login: ({ dispatch }, payload) => {
     
-    return post('/login', payload).then(res => {
-      // Set token to
-      localStorage.setItem('jwtToken', res.token)
-      // Set token to Auth header
-      setAuthToken(res.token)
-      return dispatch('setUser', res.token)
+    return post('/login', payload).then(token => {
+        setAuthToken(token)
+      return dispatch('setUser', token)
     })
   },
   logout: ({ commit }) => {
     // Remove token from localStorage
-    localStorage.removeItem('jwtToken')
+    
     // Remove auth header for future requests
     setAuthToken(false)
+    router.push('/login')
     // Set current user to {} which will set isAuthenticated to false
     commit('user', {})
   },
@@ -68,5 +71,5 @@ export default {
   state,
   getters,
   mutations,
-  actions
+  actions,
 }
