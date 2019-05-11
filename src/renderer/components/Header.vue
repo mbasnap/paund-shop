@@ -43,7 +43,8 @@
 export default {
     components: { Datepicker},
   computed: {
-     ...mapGetters(['settings', 'user', 'userMenu'])
+     ...mapGetters(['settings']),
+     ...mapGetters('user', ['user', 'userMenu'])
   },
   data() {
     return {
@@ -55,7 +56,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['logout'])
+    ...mapActions('user', ['logout'])
   }
 }
 </script>

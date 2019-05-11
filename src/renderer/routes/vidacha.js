@@ -1,9 +1,5 @@
-import isAuthenticated from '@/db/isAuthenticated'
-
-
-
-
 import Vidacha from '@/views/Vidacha.vue'
+import {isAuthenticated} from './functions'
 
 export default {
   path: '/vidacha',

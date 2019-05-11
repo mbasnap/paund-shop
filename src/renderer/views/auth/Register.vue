@@ -82,7 +82,7 @@ export default {
         }
     },
     methods: {
-        ...mapActions(['register']), getValues, setErrors,
+        ...mapActions('user', ['register']), getValues, setErrors,
 
         // onRegister(info) {
         //     this.register(this.userData).then(res => {

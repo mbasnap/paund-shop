@@ -6,10 +6,11 @@ import settings from '@/store/settings'
 import kassa from '@/store/kassa'
 import bilet from '@/store/bilet'
 import obespechenie from '@/store/obespechenie'
+import company from '@/store/company'
 
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
-  modules: { user, klient, settings, kassa, bilet, obespechenie }
+  modules: { user, klient, settings, kassa, bilet, obespechenie, company }
 })

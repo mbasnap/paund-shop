@@ -78,7 +78,7 @@ export default {
         }
     },
     methods: {
-        ...mapActions(['login', 'activate', 'recover']), setErrors,
+        ...mapActions('user', ['login', 'activate', 'recover']), setErrors,
         // onLogin() {
         //     console.log('login')
         //     return this.login(this.userData)

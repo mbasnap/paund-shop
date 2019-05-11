@@ -1,8 +1,10 @@
 
 import Vozvrat from '@/views/Vozvrat.vue'
+import {isAuthenticated} from './functions'
 
-export default{
+export default {
   path: '/vozvrat',
   name: 'vozvrat',
-  component: Vozvrat
+  component: Vozvrat,
+  beforeEnter: isAuthenticated
 }

@@ -17,9 +17,9 @@ const mutations = {
 }
 const actions = {
     saveSettings: ({commit}, payload) => commit('changeSettings', payload),
-    init ({dispatch}) {
-        dispatch('setUser', localStorage.getItem('jwtToken'))
-    }
+    // init ({dispatch}) {
+    //     dispatch('setUser', localStorage.getItem('jwtToken'))
+    // }
 }
 
 export default {
