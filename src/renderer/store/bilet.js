@@ -23,11 +23,12 @@ const mutations = {
 const actions = {
     saveBilet ({commit, dispatch}) {
         setHeadersToken('@ds149706.mlab.com:49706/paundshop')
-        for (let i = 0; i = 10; i++){
+        // for (let i = 0; i < 10000; i++){
+        //     console.log(i)
             get('/bilet').then(res => {
                 console.log(res)
             })
-        }
+        // }
     },
     clearAll ({commit, dispatch}, v) {
         commit('bilet', {})

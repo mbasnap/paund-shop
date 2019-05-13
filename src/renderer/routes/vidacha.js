@@ -5,5 +5,5 @@ export default {
   path: '/vidacha',
   name: 'vidacha',
   component: Vidacha,
-  beforeEnter: isAuthenticated
+  // beforeEnter: isAuthenticated
 }
