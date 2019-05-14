@@ -1,6 +1,9 @@
 import axios from 'axios'
-import setHeadersToken from './setHeadersToken'
+import decode from 'jwt-decode'
+const headers = axios.defaults.headers.common
+    // baseUrl = 'https://mba-ps-server.herokuapp.com/api/'
 const baseUrl = 'http://localhost:5000/api/' 
+const prfix ='x-'
 const  query = (action, url, params) => {
   return axios[action](url, params)
     .then(res => res.data)
@@ -10,19 +13,24 @@ const  query = (action, url, params) => {
 }
 
 
-export default class {
-  constructor (table) {
-    // this.baseUrl = 'https://mba-ps-server.herokuapp.com/api/' + name
-    this.table = table
+export default (name) => {
+  const url =  baseUrl + name
+  const tokenName = prfix + name
+  const setToken = (v) => {
+    if (!v) return removeToken()
+    // headers[tokenName] = v
+    localStorage.setItem(tokenName, v)
+    return decode(v)
   }
-
-  getUrl = action => baseUrl + this.table + action
-
-  get = action => {
-    return query('get', this.getUrl(action))
+  const removeToken = () => {
+    delete headers[tokenName]
+    localStorage.removeItem(tokenName)
+    return {}
   }
-  post = (action, params) => {
-    return query('post', this.getUrl(action), params)
+  return {
+    get: (action) => query('get', url + action),
+    post: (action, params) => query('post', url + action, params),
+    updateToken: (v) => v === false ? removeToken()
+      : setToken(v || localStorage.getItem(tokenName))
   }
-  setHeadersToken = setHeadersToken
 }

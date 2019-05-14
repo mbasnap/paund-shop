@@ -9,12 +9,12 @@
         <div class="control row  "> 
             <div class="col-6 ">
                 <div class="row justify-content-center">
-                    <button class="btn btn-primary" @click="clearAll">clear</button>
+                    <button class="btn btn-primary" @click="clear">clear</button>
                 </div>
             </div>
             <div class="col-6">
                 <div class="row justify-content-center">
-                    <button  class="btn btn-primary" @click="saveBilet">save</button>
+                    <button  class="btn btn-primary" @click="save">save</button>
                 </div>
             </div>                       
         </div>  
@@ -45,7 +45,7 @@ export default {
         ...mapGetters([])
     },
     methods: {
-        ...mapActions(['clearAll', 'saveBilet'])
+        ...mapActions(['clear', 'save'])
     }
 }
 </script>

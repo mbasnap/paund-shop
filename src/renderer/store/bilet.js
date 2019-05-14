@@ -1,5 +1,5 @@
 import DataBase from '@/db'
-const { get, post, setHeadersToken } = new DataBase('lombard')
+const { get, post} = new DataBase('company')
 
 const state = {
     bilets: [],
@@ -21,23 +21,17 @@ const mutations = {
     }
 }
 const actions = {
-    saveBilet ({commit, dispatch}) {
-        setHeadersToken('@ds149706.mlab.com:49706/paundshop')
-        // for (let i = 0; i < 10000; i++){
-        //     console.log(i)
-            get('/bilet').then(res => {
-                console.log(res)
-            })
-        // }
+    save({commit, dispatch}) {
+        post('/').then(res => console.log(res))
+            .catch(err => console.log(err))
     },
-    clearAll ({commit, dispatch}, v) {
+    clear ({commit}) {
         commit('bilet', {})
-        dispatch('obespechenie/clear')
     },
 }
 
 export default {
-    // namespaced: true,
+    namespaced: true,
     state,
     getters,
     mutations,

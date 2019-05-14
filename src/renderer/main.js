@@ -14,7 +14,7 @@ Vue.use(mixins);
 new Vue({
   components: { App },
   created: function () {
-          this.$store.dispatch('user/updateFromToken')
+          this.$store.dispatch('init')
     // axios.interceptors.response.use(undefined, function (err) {
     //   return new Promise(function (resolve, reject) {
     //     if (err.status === 401 && err.config && !err.config.__isRetryRequest) {

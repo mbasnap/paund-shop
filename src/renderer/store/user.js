@@ -1,68 +1,55 @@
-import DataBase from '@/db'
-import decode from 'jwt-decode'
-const name = 'user'
-const { post, setHeadersToken } = new DataBase(name)
-
-
+import db from '@/db'
+const { post, get, updateToken } = db('user')
 
 
 const state = {
   user: {},
-  userMenu: [ 
-    {
-      name: "vidacha",
-      value: "/vidacha"
-    },
-    {
-      name: "vozvrat",
-      value: "/vozvrat"
-    },
 
-    {
-      name: "sklad",
-      value: "/sklad"
-    },
-  ],
-  token: ''
+  err: ''
 }
 const getters = {
-  user: ({ user }) => user,
-  userMenu: ({ userMenu }) => userMenu,
-  isAuthenticated: ({user}) => !!user.name
+  user ({ user }) {
+    return user
+  },
+  err ({ err }) {
+    return err
+  },
+  isAuthenticated ({user}) {
+    return !!user.name
+  }
 }
 const mutations = {
   user (state, v) {
     state.user = v
+  },
+  err (state, v) {
+    state.err = v
   }
 }
 const actions = {
 
-  setUser ({ commit }, token) {
-    console.log(token)
-    setHeadersToken(token)
-    return commit('user', token ? decode(token) : {})
+  set ({ commit }, v) {
+    return commit('user', v)
   },
 
-  updateFromToken: ({ dispatch}) => 
-    dispatch('setUser', localStorage.getItem('user_token')),
-
-  register (state, userData)  {
-    return post('/register', userData)
+  init ({ dispatch, commit}) {
+    return dispatch('set', updateToken())
+      .catch(err => commit('err', err))
   },
 
-  login: ({ dispatch }, v) =>
-   post('/login', v).then(token => {
-     localStorage.setItem('user_token', token)
-    return dispatch('setUser', token)
-   }),
+  register ({commit}, v)  {
+    return post('/register', v)
+      .catch(err => commit('err', err))
+  },
+
+  login ({ dispatch, commit }, v) {
+    return post('/login', v)
+      .then(res => dispatch('set', updateToken(res)))
+        .catch(err => commit('err', err))
+  },
 
   logout ({ dispatch }) {
-    localStorage.removeItem('user_token')
-    return dispatch('setUser', false)
-  },
-
-  remind ({ dispatch }, payload)  {
-    return post('/remind', payload)
+    return dispatch('set', updateToken(false))
   }
 }
 
