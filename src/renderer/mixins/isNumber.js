@@ -1,3 +1,5 @@
 
 
-export default function (n) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
+export default function (n) {
+     return !isNaN(parseFloat(n)) && !isNaN(n - 0) 
+    }

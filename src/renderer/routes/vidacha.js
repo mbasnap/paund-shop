@@ -1,5 +1,5 @@
 import Vidacha from '@/views/Vidacha.vue'
-import {isAuthenticated} from './functions'
+import {store} from '@/setup'
 
 export default {
   path: '/vidacha',

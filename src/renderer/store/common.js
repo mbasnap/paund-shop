@@ -19,13 +19,13 @@ const state = {
           value: "/sklad"
         }
     ],
-    isActive: false,
+    company: {},
     err: '',
 }
 const getters = {
 
-    isActive ({isActive}) {
-        return isActive
+    isActive ({company}) {
+        return !!company.active
     },
     date ({date}) {
         return date
@@ -45,8 +45,8 @@ const mutations = {
     date (state, v) {
         state.date = v
     },
-    isActive (state, v) {
-        state.isActive = v
+    company (state, v) {
+        state.company = v
     },
     err (state, v) {
         state.err = v
@@ -66,9 +66,9 @@ const actions = {
             .then(res => updateToken(res))
                 .catch(err => commit('err', err))
     },
-    init ({ commit }) {
-        const {active} = updateToken()
-        commit('isActive', !!active)
+    init ({ commit, dispatch }) {
+        commit('company', updateToken())
+        dispatch('user/init')
     }
 }
 
