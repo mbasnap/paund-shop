@@ -18,7 +18,7 @@
 
 <script>
 import {Instant} from "@/widgets"
-import { mapActions, mapGetters } from 'vuex'
+// import { mapActions, mapGetters } from 'vuex'
 export default {
     components: {  Instant},
     props: {

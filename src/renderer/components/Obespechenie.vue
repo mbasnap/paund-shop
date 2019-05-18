@@ -19,7 +19,7 @@
         </tbody>
         </table> 
       
-        <obespechenie-list :row="row" @ok="save"/>
+        <modal-row :row="row" @ok="save"></modal-row> 
           
     </div>
 </template>
