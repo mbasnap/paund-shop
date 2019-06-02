@@ -1,11 +1,13 @@
 import axios from 'axios'
-import decode from 'jwt-decode'
+import decodeToken from 'jwt-decode'
+import {store} from '@/setup'
 const headers = axios.defaults.headers.common
+
 // headers['x-token'] = '@ds153906.mlab.com:53906/virus'
 // const  baseUrl = 'https://mba-ps-server.herokuapp.com/api/'
-const baseUrl = 'http://localhost:5000/api/' 
-const prfix ='x-'
+// const baseUrl = 'http://localhost:5000/api/' 
 const  query = (action, url, params) => {
+  // console.log(url)
   return axios[action](url, params)
     .then(res => res.data)
       .catch(err => {
@@ -13,25 +15,16 @@ const  query = (action, url, params) => {
   })
 }
 
+export const setHeaders = (name, v) => {
+  v ? headers[name] = v : delete headers[name]
+}
 
-export default (name) => {
-  const url =  baseUrl + name
-  const tokenName = prfix + name
-  const setToken = (v) => {
-    if (!v) return removeToken()
-    headers[tokenName] = v
-    localStorage.setItem(tokenName, v)
-    return decode(v)
-  }
-  const removeToken = () => {
-    delete headers[tokenName]
-    localStorage.removeItem(tokenName)
-    return {}
-  }
+export const decode = (v) => v ? decodeToken(v) : {}
+
+export const db = (name) => {
+ const getUrl = () => store.getters.url + '/api/' + name
   return {
-    get: (action) => query('get', url + action),
-    post: (action, params) => query('post', url + action, params),
-    updateToken: (v) => v === false ? removeToken()
-      : setToken(v || localStorage.getItem(tokenName))
+    get: (action) => query('get', getUrl() + action),
+    post: (action, params) => query('post', getUrl() + action, params),
   }
 }

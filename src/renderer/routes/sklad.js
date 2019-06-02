@@ -5,5 +5,10 @@ export default {
   path: '/sklad',
   name: 'sklad',
   component: Sklad,
-  // beforeEnter: isAuthenticated
+  beforeEnter: (to, from, next) => {
+    store.dispatch('user/fetchToken').then(res => {
+      const { id } = res
+      !id ? next('/login') : next()
+    })
+  }
 }

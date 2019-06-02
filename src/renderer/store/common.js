@@ -1,31 +1,18 @@
-import DataBase from '@/db'
-const { get, post, updateToken} = new DataBase('company')
+import {router} from '@/setup'
+import { setHeaders, decode }from '@/db'
+const tokenName = 'x-lombard'
 
 const state = {
     date: new Date(),
     logo: 'PS',
-    menu: [ 
-        {
-          name: "vidacha",
-          value: "/vidacha"
-        },
-        {
-          name: "vozvrat",
-          value: "/vozvrat"
-        },
-    
-        {
-          name: "sklad",
-          value: "/sklad"
-        }
-    ],
+    menu: [ "vidacha", "vozvrat", "sklad"],
     company: {},
     err: '',
 }
 const getters = {
 
-    isActive ({company}) {
-        return !!company.active
+    isAuth ({company}, getters) {
+        return !! getters['user/isAuth']
     },
     date ({date}) {
         return date
@@ -33,11 +20,17 @@ const getters = {
     menu ({menu}) {
         return menu
     },
-    logo ({logo}) {
-        return logo
+    logo ({company, logo}) {
+        return company.name || logo
+    },
+    user (state, getters) {
+        return getters['user/user']
     },
     err ({err}) {
         return err
+    },
+    url ({company}) {
+        return company.url
     }
 
 }
@@ -47,28 +40,27 @@ const mutations = {
     },
     company (state, v) {
         state.company = v
-    },
-    err (state, v) {
-        state.err = v
     }
 }
 const actions = {
-    clear ({ dispatch }) {
-        dispatch('user/clear')           
-        dispatch('bilet/clear')           
-        dispatch('obespechenie/clear')           
-    },
+    clear ({ dispatch }) {},
     setDate ({ commit }, v) {
         commit('date', v)          
     },
-    activate({ commit }, v) {
-        return post('/activate', v)
-            .then(res => updateToken(res))
-                .catch(err => commit('err', err))
+    
+    activate({ dispatch }, token) {
+        localStorage.setItem(tokenName, token)
+        dispatch('update', '/login')   
     },
-    init ({ commit, dispatch }) {
-        commit('company', updateToken())
-        dispatch('user/init')
+
+    update ({ commit }, path) {
+        const token = localStorage.getItem(tokenName)
+        setHeaders(tokenName, token)
+        commit('company', decode(token))
+        if (path) router.push(path)
+    },   
+    fetchToken () {
+        return decode(localStorage.getItem(tokenName))
     }
 }
 

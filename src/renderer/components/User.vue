@@ -1,11 +1,7 @@
 <template>
-    <div>
-      <span>{{user.name}}</span>
-      <b-nav-item-dropdown  right>
-        <b-link class="dropdown-item" :to="'/login'">login</b-link>
-        <b-link class="dropdown-item" @click="logout">logout</b-link>
-      </b-nav-item-dropdown>
-    </div>
+    <b-nav-item-dropdown :text="user.name" right >
+     <b-link class="dropdown-item" @click="logout">logout</b-link>
+    </b-nav-item-dropdown>
 </template>
 
 <script>

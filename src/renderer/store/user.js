@@ -1,6 +1,7 @@
-import db from '@/db'
-const { post, get, updateToken } = db('user')
-
+import { db, setHeaders, decode } from '@/db'
+import {router} from '@/setup'
+const { post } = db('lombard')
+const tokenName = 'x-user'
 
 const state = {
   user: {},
@@ -14,8 +15,8 @@ const getters = {
   err ({ err }) {
     return err
   },
-  isAuthenticated ({user}) {
-    return !!user.name
+  isAuth ({user}) {
+    return !!user.id
   }
 }
 const mutations = {
@@ -28,28 +29,29 @@ const mutations = {
 }
 const actions = {
 
-  set ({ commit }, v) {
-    return commit('user', v)
-  },
-
-  init ({ dispatch, commit}) {
-    return dispatch('set', updateToken())
-      .catch(err => commit('err', err))
-  },
-
-  register ({commit}, v)  {
-    return post('/register', v)
-      .catch(err => commit('err', err))
-  },
-
-  login ({ dispatch, commit }, v) {
-    return post('/login', v)
-      .then(res => dispatch('set', updateToken(res)))
-        .catch(err => commit('err', err))
+  login ({ dispatch}, v) {
+    post('/login', v).then(token => {
+      localStorage.setItem(tokenName, token)
+      dispatch('update', '/vidacha')
+    })
   },
 
   logout ({ dispatch }) {
-    return dispatch('set', updateToken(false))
+    // post('/logout').then( () => {
+      localStorage.removeItem(tokenName)
+      dispatch('update', '/login')
+    // })
+  },
+
+  fetchToken () {
+      return decode(localStorage.getItem(tokenName))
+  },
+
+  update ({ commit }, path) {
+    const token = localStorage.getItem(tokenName)
+    setHeaders(tokenName, token)
+    commit('user', decode(token))
+    if (path) router.push(path)
   }
 }
 

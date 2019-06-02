@@ -16,7 +16,9 @@
     name: 'paund-shop',
     components: { AppHeader, AppFooter },
     created() {
-        // this.init()
+        const dispatch = this.$store.dispatch
+        dispatch('update')
+        dispatch('user/update')
     } ,
      methods: {
         // ...mapActions(['init']),

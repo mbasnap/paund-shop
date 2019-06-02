@@ -1,5 +1,5 @@
-import DataBase from '@/db'
-const { get, post } = new DataBase('kassa')
+import { db } from '@/db'
+const { get, post } = db('kassa')
 
 const state = {
     ok: 2235.20,

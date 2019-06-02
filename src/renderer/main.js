@@ -13,9 +13,6 @@ Vue.config.productionTip = false
 /* eslint-disable no-new */
 new Vue({
   components: { App },
-  created: function () {
-          store.dispatch('init')
-  },
   i18n,
   router,
   store,

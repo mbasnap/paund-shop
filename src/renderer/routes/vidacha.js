@@ -5,5 +5,10 @@ export default {
   path: '/vidacha',
   name: 'vidacha',
   component: Vidacha,
-  // beforeEnter: isAuthenticated
+  beforeEnter: (to, from, next) => {
+    store.dispatch('user/fetchToken').then(res => {
+      const { id } = res
+      !id ? next('/login') : next()
+    })
+  }
 }

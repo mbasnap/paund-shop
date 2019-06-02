@@ -1,22 +1,24 @@
 
+import { store } from '@/setup'
 import Login from '@/views/auth/Login.vue'
-import Register from '@/views/auth/Register.vue'
 import Activate from '@/views/auth/Activate.vue'
 
 export const login = {
   path: '/login',
   name: 'login',
-  component: Login
-}
-
-export const register = {
-  path: '/register',
-  name: 'register',
-  component: Register
+  component: Login,
+  beforeEnter: (to, from, next) => {
+    store.dispatch('fetchToken').then( ({ id } ) =>
+      !id ? next('/activate') : next())
+  }
 }
 
 export const activate = {
   path: '/activate',
   name: 'activate',
-  component: Activate
+  component: Activate,
+  beforeEnter: (to, from, next) => {
+    store.dispatch('fetchToken').then( ({id}) =>
+      id ? next('/login') : next())
+  }
 }

@@ -1,5 +1,5 @@
-import DataBase from '@/db'
-const { get, post} = new DataBase('company')
+import { db } from '@/db'
+const { get, post} = db('company')
 
 const state = {
     bilets: [],

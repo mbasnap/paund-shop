@@ -7,7 +7,7 @@
 </form>
 
 <button class="btn btn-primary mb-3" type="button" 
-     @click="activate({token})"
+     @click="activate(token)"
     > activate
 </button>
 

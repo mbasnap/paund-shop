@@ -19,7 +19,7 @@
         </tbody>
         </table> 
       
-        <modal-row :row="row" @ok="save"></modal-row> 
+        <!-- <modal-row :row="row" @ok="save"></modal-row>  -->
           
     </div>
 </template>
