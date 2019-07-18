@@ -8,8 +8,9 @@ export const login = {
   name: 'login',
   component: Login,
   beforeEnter: (to, from, next) => {
-    store.dispatch('fetchToken').then( ({ id } ) =>
-      !id ? next('/activate') : next())
+    if(store.getters['isAuth']) next('/profile')
+    if(!store.getters['isActive']) next('/activate')
+    next()
   }
 }
 
@@ -18,7 +19,7 @@ export const activate = {
   name: 'activate',
   component: Activate,
   beforeEnter: (to, from, next) => {
-    store.dispatch('fetchToken').then( ({id}) =>
-      id ? next('/login') : next())
+    if(store.getters['isActive']) next('/login')
+    next()
   }
 }

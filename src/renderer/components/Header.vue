@@ -12,8 +12,10 @@
           <b-link  class="nav-link mr-2" :to="'/' + item">{{item}}</b-link>     
         </b-navbar-nav>
       <b-navbar-nav class="ml-auto nav-right">
-        <b-nav-form  class="datepicker">
-          <datepicker calendar-class="right" v-model="dateModel" :language="lang" :bootstrap-styling="true"/> 
+        <b-nav-form >
+          <datepicker v-model="date" input_class="form-control"
+          @change="v => $store.dispatch('setDate', v)"
+          /> 
         </b-nav-form>
         <user class="ml-auto right"></user>
       </b-navbar-nav>
@@ -24,25 +26,17 @@
 </template>
 <script>
   import {mapGetters, mapActions} from 'vuex'
-  import Datepicker from 'vuejs-datepicker';
+  import {Datepicker} from '@/widgets';
   import User from './User';
-  import {ru} from 'vuejs-datepicker/dist/locale'
+  // import {ru} from 'vuejs-datepicker/dist/locale'
 export default {
   components: { Datepicker, User},
   computed: {
-     ...mapGetters(['menu', 'logo', 'isAuth', 'date']),
-     dateModel: {
-       get () {
-         return this.date
-       },
-       set (v) {this.$store.dispatch('setDate', v)},
-     },
-     lang () {
-       return ru
-     }
+     ...mapGetters(['menu', 'logo', 'date', 'isAuth']),
+
   },
   methods: {
-    ...mapActions['logout']
+    // ...mapActions['logout']
   }
 }
 </script>
@@ -51,10 +45,10 @@ export default {
 .main-menu .nav-right {
   width: 35%;
 }
-.datepicker .right {
+/* .datepicker .right {
     right: 0;
     left: auto;
-}
+} */
 </style>
 
 

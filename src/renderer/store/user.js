@@ -1,64 +1,48 @@
-import { db, setHeaders, decode } from '@/db'
+import { db, getToken } from '@/db'
 import {router} from '@/setup'
-const { post } = db('lombard')
-const tokenName = 'x-user'
-
+const {get, post} = db('/user')
 const state = {
-  user: {},
-
-  err: ''
+    user: {}
 }
 const getters = {
-  user ({ user }) {
-    return user
-  },
-  err ({ err }) {
-    return err
-  },
-  isAuth ({user}) {
-    return !!user.id
-  }
+    user ({user}) {
+        return user || {}
+    },
+    isAuth ({user}) {
+        return !!user.id
+    }
+
+
 }
 const mutations = {
-  user (state, v) {
-    state.user = v
-  },
-  err (state, v) {
-    state.err = v
-  }
+
+    user (state, v) {
+        state.user = v || {}
+    }
 }
 const actions = {
 
-  login ({ dispatch}, v) {
-    post('/login', v).then(token => {
-      localStorage.setItem(tokenName, token)
-      dispatch('update', '/vidacha')
-    })
-  },
-
-  logout ({ dispatch }) {
-    // post('/logout').then( () => {
-      localStorage.removeItem(tokenName)
-      dispatch('update', '/login')
-    // })
-  },
-
-  fetchToken () {
-      return decode(localStorage.getItem(tokenName))
-  },
-
-  update ({ commit }, path) {
-    const token = localStorage.getItem(tokenName)
-    setHeaders(tokenName, token)
-    commit('user', decode(token))
-    if (path) router.push(path)
-  }
+    async login ({dispatch}, v) {
+        const token = await post('/login', v)
+        localStorage.setItem('x-user', token)
+        await dispatch('update')
+        router.push('/profile')
+    },
+    async logout ({dispatch}) {
+        localStorage.removeItem('x-user')
+        await dispatch('update')
+        router.push('/login')
+    },
+    async update  ({commit}) {
+        getToken('x-user')
+        commit('user', await get('/'))
+    }
 }
 
 export default {
-  namespaced: true,
-  state,
-  getters,
-  mutations,
-  actions,
+    namespaced: true,
+    state,
+    getters,
+    mutations,
+    actions
 }

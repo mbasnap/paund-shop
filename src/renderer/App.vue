@@ -9,20 +9,13 @@
 </template>
 
 <script>
-  import { mapActions, mapGetters } from 'vuex'
   import AppHeader from './components/Header.vue'
   import AppFooter from './components/Footer.vue'
+
   export default {
     name: 'paund-shop',
-    components: { AppHeader, AppFooter },
-    created() {
-        const dispatch = this.$store.dispatch
-        dispatch('update')
-        dispatch('user/update')
-    } ,
-     methods: {
-        // ...mapActions(['init']),
-     }   
+    components: { AppHeader, AppFooter } ,
+    async created () {}
   }
 </script>
 

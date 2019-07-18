@@ -11,7 +11,7 @@ computed: {
     ...mapGetters('user', ['user'])
 },
 methods: {
-    ...mapActions('user', ['login', 'logout'])
+    ...mapActions('user', ['logout'])
 }
 }
 </script>

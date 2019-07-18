@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import App from './App'
 import {store, router, i18n, mixins, bootstrapVue} from '@/setup'
-
+// import VueSlider from 'vue-slider-component'
+// import 'vue-slider-component/theme/default.css'
 Vue.use(bootstrapVue)
 Vue.use(mixins)
 
@@ -18,3 +19,5 @@ new Vue({
   store,
   template: '<App/>'
 }).$mount('#app')
+
+// Vue.component('VueSlider', VueSlider)

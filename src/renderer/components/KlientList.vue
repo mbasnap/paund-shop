@@ -56,15 +56,16 @@
 import {Instant} from "@/widgets"
 import { mapActions, mapGetters } from 'vuex'
 export default {
-    components: {  Instant},    
+    components: {  Instant},
+    props: ['value'],
     computed: {
-        ...mapGetters('klient', ['klients', 'klient']),
+        ...mapGetters('klient', ['klients']),
         model: {
             get() {
-                return  this.klient
+                return  this.value
             },
             set({name, value}) {
-                this.setKlient({...this.klient, [name]: value})
+                this.$emit('input', {...this.value, [name]: value})
             }
         }
     },

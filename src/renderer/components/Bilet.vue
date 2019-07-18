@@ -1,16 +1,24 @@
 <template>
-    <instant  v-model="model" name="Bilet" ></instant>
+    <instant  v-model="model" name="number" ></instant>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import {Instant} from "@/widgets"
 export default {
-      data(){
-         return {
-             model: {}
-         }
-     },     
-    components: {  Instant},    
+    props: ['value'],
+    components: {  Instant},
+    computed: {
+      // ...mapGetters('bilet', ['nextNumber']),
+      model: {
+          get() {
+            return  {}
+          },
+          set(v) {
+            this.$emit('input', v)
+          }
+      }
+    } 
 
 }
 </script>

@@ -1,33 +1,81 @@
 import { db } from '@/db'
-const { get, post} = db('company')
+const { get, post} = db('/bilet')
 
 const state = {
-    bilets: [],
     bilet: {},
+    bilets: [],
 }
 const getters = {
-    bilet ({bilet}) {
-        return bilet
+    
+    bilets ({bilets}) {
+        return [...bilets]
+    },
+    discounts ({bilets}) {
+        return [10, 15, 20]
+    },
+    minDays ({}) {
+        return '1'
     },
 
-    bilets ({bilets}) {
-        return bilets
-    }
+    maxDays ({}) {
+        return '31'
+    },
+
+    discounts ({}) {
+        return ['10', '15', '20']
+    },
+
+    empty ({}, {bilets}) {
+        return bilets.filter(o => !!o.date)
+    },
+    emptyNumbers ({}, {bilets}) {
+        return ['1', '2', '3']
+    },
+    date ({}, {date}) {
+        return date
+    },
+
+    bilet ({bilet}) {
+        return {...bilet}
+    },
+
+    // emptyNumbers ({}, {bilets}) {
+    //     const {seria} = settings
+    //     return bilets.reduce(({number: prev}, {number}) =>
+    //         prev < number ? prev : number, 1)
+    // }
 }
 const mutations = {
 
+    bilets (state, v) {
+        state.bilets = v || []
+    },
+
     bilet (state, v) {
-        state.bilet = v
+        state.bilet = v || {}
     }
 }
 const actions = {
-    save({commit, dispatch}) {
-        post('/').then(res => console.log(res))
-            .catch(err => console.log(err))
+
+    async save ({getters, dispatch}) {
+        const {bilet} = getters
+        const id = await post('/', bilet)
+        return dispatch('update', {...bilet, id})
     },
-    clear ({commit}) {
-        commit('bilet', {})
+
+    async select ({commit}, v) {
+        commit('bilet', v)
+        return v
     },
+
+    async clear({ dispatch }) {
+        dispatch('select', false)
+    },
+
+    async update({ commit, dispatch }, v) {
+        commit('bilets', await get('/'))
+        return dispatch('select', v)
+    }
 }
 
 export default {
