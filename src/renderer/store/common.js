@@ -16,6 +16,9 @@ const getters = {
     bilet ({bilet}) {
         return {...bilet}
     },
+    klient ({}, getters) {
+        return getters['klient/klient']
+    },
     ocenka ({ocenka}) {
         return toDouble(ocenka)
     },
@@ -65,7 +68,34 @@ const mutations = {
     }
 }
 const actions = {
-    
+    // saveTransaction({dispatch}, transaction) {
+    //     const t_id = '1'
+    //     transaction.forEach(element => {
+    //         dispatch('reestr/save', {...element, t_id})
+    //     });
+    // },
+    async vidanaSsuda({dispatch}, {bilet, ssuda, procent}) {
+        const {id: klient_id} = await dispatch('klient/save')
+        return dispatch('reestr/save', [
+            {dt: '001', ...bilet, klient_id},
+            {dt: '377', ct: '301', ...ssuda},
+            {dt: '301', ct: '703', ...procent}    
+        ])
+    },
+    async vozvrashenaSsuda({dispatch}, {bilet, ssuda, procent, penalty}) {
+        const {id: klient_id} = await dispatch('klient/save')
+        return dispatch('reestr/save', [
+            {ct: '001', ...bilet, klient_id},
+            {dt: '301', ct: '377', ...ssuda},
+            {dt: '301', ct: '703', ...procent},      
+            {dt: '301', ct: '704', ...penalty}
+        ])
+    },
+    reset({dispatch}) {
+        dispatch('klient/clear')
+        dispatch('bilet/clear')
+        dispatch('obespechenie/clear')
+    },
     async activate({dispatch}, token) {
         localStorage.setItem('x-token', token)
         await dispatch('update')
@@ -78,6 +108,7 @@ const actions = {
         dispatch('user/update')
         dispatch('klient/update')
         dispatch('bilet/update')
+        dispatch('reestr/update')
     }
 }
 

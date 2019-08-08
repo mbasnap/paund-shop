@@ -26,14 +26,14 @@ const getters = {
     },
 
     empty ({}, {bilets}) {
-        return bilets.filter(o => !!o.date)
+        // return bilets.filter(o => !!o.date)
     },
     emptyNumbers ({}, {bilets}) {
         return ['1', '2', '3']
     },
-    date ({}, {date}) {
-        return date
-    },
+    // date ({}, {date}) {
+    //     return date
+    // },
 
     bilet ({bilet}) {
         return {...bilet}
@@ -57,8 +57,7 @@ const mutations = {
 }
 const actions = {
 
-    async save ({getters, dispatch}) {
-        const {bilet} = getters
+    async save ({dispatch}, bilet) {
         const id = await post('/', bilet)
         return dispatch('update', {...bilet, id})
     },

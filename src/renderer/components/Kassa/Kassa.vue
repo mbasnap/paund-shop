@@ -8,8 +8,8 @@
 
   >
 <div class="row ">
-    <kassa-list class="col" :data="debet" :rows="rowsLength"/>
-    <kassa-list class="col" :data="kredit" :rows="rowsLength"/>
+    <kassa-list class="col" :data="kassa.dt" :rows="rowsLength"/>
+    <kassa-list class="col" :data="kassa.ct" :rows="rowsLength"/>
 
 </div>
 
@@ -21,11 +21,15 @@ import { mapActions, mapGetters } from 'vuex'
 import KassaList from './KassaList.vue'
 export default {
     components: {KassaList},
+    created() {
+        console.log(this.data)
+    },
     data () {
         return{}
     },
     computed: {
-        ...mapGetters(['rowsLength', 'ok', 'debet', 'kredit', 'ok_end']),
+        ...mapGetters('kassa', ['rowsLength', 'ok', 'debet', 'kredit', 'ok_end']),
+        ...mapGetters('reestr', ['kassa']),
         
     },
     methods: {

@@ -5,10 +5,7 @@
             calendar_class="day-slider-left"
           /> 
          <vertical-slider :height="130" :offset="-22"
-         v-model="daysModel"
-         :min="min"
-         :max="max"
-         />       
+         v-model="daysModel"  :min="min" :max="max" />       
     </div>
 </template>
 
@@ -24,14 +21,10 @@ props: {
     max: String
 },
 watch: {
-    value(v) {
-        this.days = v
-    }
+    value(v) {}
 },
 data() {
-    return {
-        days: 31
-    }
+    return {}
 },
 computed: {
      ...mapGetters(['date']),

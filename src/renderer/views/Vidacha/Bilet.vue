@@ -4,7 +4,7 @@
             <b-form-select  class='form-control mb-2'  v-model="number" :options="emptyNumbers"/>
             <input  :value="toDouble(ssuda)" class='form-control mb-2' placeholder="0,00" readonly/>
             <procent :procent="toDouble(procent)" v-model="discount" />
-            <ocenka v-model="ocenka"/>  
+            <ocenka v-model="ocenka" />  
         </div>
         <day-slider class="col-3" :min="minDays" :max="maxDays" v-model="days" />
     </div>
@@ -59,13 +59,16 @@ computed: {
     days: {
         get() {return this.bilet.days || this.maxDays},
         set(value) {this.update({name: 'days', value})}
+    },
+    valid() {
+        return this.ocenka > 0
     }
 },
 methods: {
     update({name, value}) {
         this.bilet= {...this.bilet, [name]: value}
-        const {number, days, discount, procent, ssuda} = this
-        this.$emit('input', {...this.bilet, number, days, discount, procent, ssuda})
+        const {number, days, discount, ocenka, procent, ssuda, valid} = this
+        this.$emit('input', {number, days, discount, ocenka, procent, ssuda, valid})
     }
 }
 }

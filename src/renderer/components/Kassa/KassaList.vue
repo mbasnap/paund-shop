@@ -1,6 +1,6 @@
 <template>  
 <ul class="kassa-list small list-group">
-  <li class="list-group-item" v-for="(index) in rows" :key="index" >{{format(data[index-1])}}</li>
+  <li class="list-group-item" v-for="index in rows" :key="index" >{{getSumm(index-1)}}</li>
 </ul>
 </template>
 
@@ -14,9 +14,14 @@ export default {
 
   },
   methods: {
-    format(value) {
-      return value ? this.$numberFormat(value, 2, ',', ' ') : ''
-    }   
+    getSumm(index) {
+      const item = this.data[index]
+      // console.log(item)
+      return item ? this.$numberFormat(item.summ, 2, ',', ' ') : ''
+    },
+    // format(value) {
+    //   return value ? this.$numberFormat(value, 2, ',', ' ') : ''
+    // }   
   }
 }
 </script>

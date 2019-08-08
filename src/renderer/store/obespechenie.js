@@ -17,7 +17,8 @@ const mutations = {
 }
 const actions = {
     save ({dispatch}, v) {
-        return v.index !== void 0 ? dispatch('update', v) : dispatch('add', v)
+        return {...v, id: '3'}
+        // return v.index !== void 0 ? dispatch('update', v) : dispatch('add', v)
     },
     update ({state, commit}, v) {
         state.obespechenie[v.index] = v
