@@ -47,10 +47,10 @@ const mutations = {
 }
 const actions = {
     
-    async save ({dispatch, getters}) {
-        const {klient} = getters
+    async save ({ dispatch, getters }) {
+        const { klient } = getters
         const id = await post('/', klient)
-        return dispatch('update', {...klient, id})
+        return dispatch('update', { ...klient, id })
     },
     
     async select ({commit}, v) {

@@ -15,7 +15,9 @@
   export default {
     name: 'paund-shop',
     components: { AppHeader, AppFooter } ,
-    async created () {}
+    async created () {
+      this.$store.dispatch('update')
+    }
   }
 </script>
 

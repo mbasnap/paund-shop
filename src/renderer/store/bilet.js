@@ -35,8 +35,8 @@ const getters = {
     //     return date
     // },
 
-    bilet ({bilet}) {
-        return {...bilet}
+    bilet ({ bilet }) {
+        return { ...bilet }
     },
 
     // emptyNumbers ({}, {bilets}) {
@@ -57,9 +57,9 @@ const mutations = {
 }
 const actions = {
 
-    async save ({dispatch}, bilet) {
-        const id = await post('/', bilet)
-        return dispatch('update', {...bilet, id})
+    async save ({ dispatch }, v) {
+        const id = await post('/', v)
+        return dispatch('update', { ...v, id })
     },
 
     async select ({commit}, v) {
@@ -68,7 +68,7 @@ const actions = {
     },
 
     async clear({ dispatch }) {
-        dispatch('select', false)
+        dispatch('select', {})
     },
 
     async update({ commit, dispatch }, v) {

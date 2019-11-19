@@ -25,11 +25,11 @@ const router = new Router({
     }
   ]
 })
-router.beforeEach( async (to, {name}, next) => {
-  if (!name) {
-    await store.dispatch('update')
-    // await store.dispatch('user/update')
-  }
-  next()
-})
+// router.beforeEach( async (to, {name}, next) => {
+//   if (!name) {
+//     await store.dispatch('update')
+//     // await store.dispatch('user/update')
+//   }
+//   next()
+// })
 export default router

@@ -8,8 +8,11 @@ import {Instant} from "@/widgets"
 export default {
     props: ['value'],
     components: {  Instant},
+    created() {
+        this.update()
+    },
     computed: {
-      // ...mapGetters('bilet', ['nextNumber']),
+      ...mapGetters('bilet', ['nextNumber', 'update']),
       model: {
           get() {
             return  {}

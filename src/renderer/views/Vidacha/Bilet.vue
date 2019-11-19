@@ -16,7 +16,7 @@ import {mapGetters, mapActions} from 'vuex'
 import DaySlider from './DaySlider'
 import Ocenka from './Ocenka'
 import Procent from './Procent'
-import {toDouble} from '@/functions'
+import { toDouble } from '@/functions'
 export default {
 components: {Ocenka, Procent, DaySlider},
 props: {
@@ -65,9 +65,9 @@ computed: {
     }
 },
 methods: {
-    update({name, value}) {
-        this.bilet= {...this.bilet, [name]: value}
-        const {number, days, discount, ocenka, procent, ssuda, valid} = this
+    update({ name, value }) {
+        this.bilet= { ...this.bilet, [name]: value }
+        const { number, days, discount, ocenka, procent, ssuda, valid } = this
         this.$emit('input', {number, days, discount, ocenka, procent, ssuda, valid})
     }
 }

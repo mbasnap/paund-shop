@@ -1,5 +1,5 @@
 import Vidacha from '@/views/Vidacha'
-import {store} from '@/setup'
+// import {store} from '@/setup'
 
 export default {
   path: '/vidacha',

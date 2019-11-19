@@ -40,13 +40,16 @@ import imgList from '@/assets/img/list.png'
 import KlientList from '@/components/KlientList.vue'
 export default {
     components: {  Instant, Reset, NamedInstant, KlientList},
-    // props: ['value'],
+    created() {
+        this.update()
+    },
     data() {
       return {
         imgList,
         showMomal: false
       }
     },
+ 
     computed: {
       ...mapGetters('klient', ['klients', 'klient', 'edit', 'isSelected']),
       model: {
@@ -60,7 +63,7 @@ export default {
 
     },
     methods: {
-      ...mapActions('klient', ['set', 'select', 'clear']),
+      ...mapActions('klient', ['set', 'select', 'clear', 'update']),
       className(name) {
         return this.isSelected && this.edit[name] ? 'edit' : ''
       }

@@ -7,11 +7,14 @@
 <script>
 import {mapGetters, mapActions} from 'vuex'
 export default {
+created() {
+    this.update()
+},
 computed: {
     ...mapGetters('user', ['user'])
 },
 methods: {
-    ...mapActions('user', ['logout'])
+    ...mapActions('user', ['logout', 'update'])
 }
 }
 </script>

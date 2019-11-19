@@ -1,7 +1,7 @@
 import { db, getToken } from '@/db'
 import {router} from '@/setup'
 import {toDouble, procent, summ} from '@/functions'
-const {get, post} = db()
+const { get, post } = db()
 const state = {
     date: new Date(),
     logo: 'PS',
@@ -68,30 +68,20 @@ const mutations = {
     }
 }
 const actions = {
-    // saveTransaction({dispatch}, transaction) {
-    //     const t_id = '1'
-    //     transaction.forEach(element => {
-    //         dispatch('reestr/save', {...element, t_id})
-    //     });
-    // },
-    async vidanaSsuda({dispatch}, {bilet, ssuda, procent}) {
-        const {id: klient_id} = await dispatch('klient/save')
-        return dispatch('reestr/save', [
-            {dt: '001', ...bilet, klient_id},
-            {dt: '377', ct: '301', ...ssuda},
-            {dt: '301', ct: '703', ...procent}    
-        ])
+
+    async addSsuda({ dispatch }, { bilet, obespechenie, ssuda, procent }) {
+        const { id: klient_id } = await dispatch('klient/save')
+        const { id } = await dispatch('bilet/save', { ...bilet, obespechenie, klient_id })
+        return dispatch('reestr/ssuda', { id, ssuda, procent })
     },
-    async vozvrashenaSsuda({dispatch}, {bilet, ssuda, procent, penalty}) {
-        const {id: klient_id} = await dispatch('klient/save')
-        return dispatch('reestr/save', [
-            {ct: '001', ...bilet, klient_id},
-            {dt: '301', ct: '377', ...ssuda},
-            {dt: '301', ct: '703', ...procent},      
-            {dt: '301', ct: '704', ...penalty}
-        ])
+
+    async vozvrat({ dispatch }, { bilet, obespechenie, ssuda, procent, penalty }) {
+        const { id: klient_id } = await dispatch('klient/save')
+        const { id } = await dispatch('bilet/save', { ...bilet, obespechenie, klient_id })
+        return dispatch('reestr/vozvrat', { id, ssuda, procent, penalty })
     },
-    reset({dispatch}) {
+
+    reset({ dispatch }) {
         dispatch('klient/clear')
         dispatch('bilet/clear')
         dispatch('obespechenie/clear')
@@ -102,12 +92,9 @@ const actions = {
         router.push('/login')
     },
 
-    async update  ({commit, dispatch}) {
+    async update  ({ commit, dispatch }) {
         getToken('x-token')
         commit('company', await get('/'))
-        dispatch('user/update')
-        dispatch('klient/update')
-        dispatch('bilet/update')
         dispatch('reestr/update')
     }
 }

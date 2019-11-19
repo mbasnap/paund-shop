@@ -1,13 +1,12 @@
 import axios from 'axios'
 import decode from 'jwt-decode'
-// import {store} from '@/setup'
-// axios.interceptors.response.use(undefined, function (err) {
-//   const {status, statusText} = err.response
-//   return new Promise(function () {
-//     console.log(status)
-//     // if(status === 401) store.dispatch('logout')
-//   });
-// });  
+import {store} from '@/setup'
+axios.interceptors.response.use(undefined, function (err) {
+  const {status, statusText} = err.response
+  return new Promise(function () {
+    if (status === 401) store.dispatch('user/logout')
+  })
+})
 
 const  query = (action, url, params) => {
   return axios[action](url, params)
@@ -28,7 +27,6 @@ export const getToken = (name) => {
   setHeaders(name, token)
 }
 
-
 export const db = (name = '') => {
  const getUrl = () => 'http://localhost:8080/lombard'  + name
   return {
@@ -36,3 +34,4 @@ export const db = (name = '') => {
     post: (action, params) => query('post', getUrl() + action, params),
   }
 }
+

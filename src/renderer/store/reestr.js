@@ -1,37 +1,47 @@
 import { db } from '@/db'
 const { get, post} = db('/reestr')
-const debet = acc => ({dt}) => !!dt && dt === acc
-const credit = acc => ({ct}) => !!ct && ct === acc
 const state = {
     reestr: [],
 }
 const getters = {
-    
-    data ({reestr}) {
-        return reestr.reduce((cur, val) => {
-            const {id, data} = val
-            return [...cur, ...data.map(item => {
-                return {...item, id}
-            })]
-        }, [])
-    },
-
-    kassa ({}, {data}) {
-        return {
-            dt: data.filter(debet('301')),
-            ct: data.filter(credit('301'))
-        }
+    kassa ({ reestr }) {
+        console.log(reestr);
+        
+        const kassa = acc => v => v[acc] === '301'
+        const dt = reestr.filter(kassa('dt'))
+        const ct = reestr.filter(kassa('ct'))
+        return { dt, ct }
     }
 }
 const mutations = {
-
     reestr (state, v) {
-        state.reestr = [...v]
+        state.reestr = v
     }
 }
 const actions = {
-    async save ({dispatch}, data) {
-        await post('/', {data})
+
+
+    async ssuda ({ dispatch }, { id, ssuda, procent }) {
+        const value = [
+            { dt: '001', ref: 'bilet', ref_id: id },
+            { dt: '377', ct: '301', ...ssuda },
+            { dt: '301', ct: '703', ...procent }    
+        ]
+        return dispatch('save', { name: 'vidana ssuda', value })
+    },
+
+    async vozvrat ({ dispatch }, v) {
+        const { id, ssuda, procent, penalty } = v
+        return dispatch('save', [
+            { ct: '001', ref: 'bilet', id  },
+            { dt: '301', ct: '377', ...ssuda },
+            { dt: '301', ct: '703', ...procent },      
+            { dt: '301', ct: '704', ...penalty }   
+        ])
+    },
+
+    async save ({ dispatch }, v) {
+        await post('/', v)
         return dispatch('update')
     },
 

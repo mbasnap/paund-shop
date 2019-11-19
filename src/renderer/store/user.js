@@ -1,6 +1,6 @@
 import { db, getToken } from '@/db'
-import {router} from '@/setup'
-const {get, post} = db('/user')
+import { router } from '@/setup'
+const { get, post } = db()
 const state = {
     user: {}
 }
@@ -30,12 +30,10 @@ const actions = {
     },
     async logout ({dispatch}) {
         localStorage.removeItem('x-user')
-        await dispatch('update')
-        router.push('/login')
     },
     async update  ({commit}) {
         getToken('x-user')
-        commit('user', await get('/'))
+        commit('user', await get('/user/'))
     }
 }
 

@@ -1,6 +1,6 @@
 
 import Vozvrat from '@/views/Vozvrat.vue'
-import {store} from '@/setup'
+// import {store} from '@/setup'
 
 export default {
   path: '/vozvrat',

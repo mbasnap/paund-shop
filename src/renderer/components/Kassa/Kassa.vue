@@ -22,7 +22,7 @@ import KassaList from './KassaList.vue'
 export default {
     components: {KassaList},
     created() {
-        console.log(this.data)
+        // console.log(this.data)
     },
     data () {
         return{}
