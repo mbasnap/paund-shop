@@ -5,8 +5,6 @@ const state = {
 }
 const getters = {
     kassa ({ reestr }) {
-        console.log(reestr);
-        
         const kassa = acc => v => v[acc] === '301'
         const dt = reestr.filter(kassa('dt'))
         const ct = reestr.filter(kassa('ct'))
@@ -42,6 +40,11 @@ const actions = {
 
     async save ({ dispatch }, v) {
         await post('/', v)
+        return dispatch('update')
+    },
+
+    async remove ({ dispatch }, v) {
+        await post('/remove', v)
         return dispatch('update')
     },
 

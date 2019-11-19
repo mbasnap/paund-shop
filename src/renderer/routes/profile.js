@@ -6,8 +6,8 @@ import { store } from '@/setup'
 export default {
   path: '/profile',
   name: 'profile',
-  beforeEnter: (to, from, next) => {
-    if(!store.getters['isAuth']) next('/login')
-    next()
-  }
+  // beforeEnter: (to, from, next) => {
+  //   if(!store.getters['isAuth']) next('/login')
+  //   next()
+  // }
 }

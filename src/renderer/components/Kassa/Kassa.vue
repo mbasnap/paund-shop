@@ -1,41 +1,45 @@
 <template>
-  <b-card class="kassa"
-          :header="formated(ok)"
-          header-tag="header"
-          :footer="formated(ok_end)"
-          footer-tag="footer"
-          body-class="scroll-auto"
-
-  >
-<div class="row ">
-    <kassa-list class="col" :data="kassa.dt" :rows="rowsLength"/>
-    <kassa-list class="col" :data="kassa.ct" :rows="rowsLength"/>
-
-</div>
-
-    
+    <b-card class="kassa" header-tag="header" footer-tag="footer" body-class="scroll-auto"
+    :header="formated(settings['ok'])" :footer="formated(total)">
+    <context class="row " :actions="{ add, edit, remove }">
+        <kassa-list class="col-6" :data="kassa.dt" :rows="rowsLength"/>
+        <kassa-list class="col-6" :data="kassa.ct" :rows="rowsLength"/>
+    </context>
   </b-card>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import KassaList from './KassaList.vue'
+import Context from '@/components/Context'
 export default {
-    components: {KassaList},
+    components: { KassaList, Context },
     created() {
-        // console.log(this.data)
-    },
-    data () {
-        return{}
+        this.update()
     },
     computed: {
-        ...mapGetters('kassa', ['rowsLength', 'ok', 'debet', 'kredit', 'ok_end']),
-        ...mapGetters('reestr', ['kassa']),
-        
+        ...mapGetters({ kassa: 'reestr/kassa', settings: 'settings'}),
+        rowsLength() {
+            const { kassa, settings } = this
+            return Math.max( settings['minRows'], kassa['dt'].length, kassa['kt'].length )
+        },
+        summ() {
+            const summ = name => this.kassa[name].map(v => v.summ)
+            return { dt: summ('dt'), ct: summ('ct') }
+        },
+        total() {
+            const { summ, settings } = this
+            console.log(summ['dt']);
+            
+            return settings['ok'] + Math.sum( ...summ['dt'] ) - Math.sum( ...summ['ct'] )
+        }
     },
     methods: {
+        ...mapActions('reestr', ['remove', 'update']),
         formated(number) {
             return this.$numberFormat(number, 2, ',', ' ')
-        }
+        },
+        add() {},
+        edit() {}
     }
 }
 </script>

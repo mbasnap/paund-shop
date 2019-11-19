@@ -8,28 +8,28 @@ const state = {
     minRows: [],
 }
 const getters = {
-    ok: ({ok}) =>  ok,
-    debet: ({debet}) => debet,
-    kredit: ({kredit}) => kredit,
-    rowsLength: ({debet, kredit}) => {
-        const minLength = 50
-        const rowsLength = debet.length > kredit.length ? debet.length : kredit.length
-         return minLength > rowsLength ? minLength : rowsLength
-    },
-    debetSumm({debet}) {
-        return debet.reduce((summ, item) => {
-            return summ + item
-        }, 0)
-    },
-    kreditSumm({kredit}) {
-        return kredit.reduce((summ, item) => {
-            return summ + item
-        }, 0)
-    },
-    ok_end: ({}, getters) => {
+    // ok: ({ok}) =>  ok,
+    // debet: ({debet}) => debet,
+    // kredit: ({kredit}) => kredit,
+    // rowsLength: ({debet, kredit}) => {
+    //     const minLength = 50
+    //     const rowsLength = debet.length > kredit.length ? debet.length : kredit.length
+    //      return minLength > rowsLength ? minLength : rowsLength
+    // },
+    // debetSumm({debet}) {
+    //     return debet.reduce((summ, item) => {
+    //         return summ + item
+    //     }, 0)
+    // },
+    // kreditSumm({kredit}) {
+    //     return kredit.reduce((summ, item) => {
+    //         return summ + item
+    //     }, 0)
+    // },
+    // ok_end: ({}, getters) => {
 
-        return  getters.ok + getters.debetSumm - getters.kreditSumm
-    },
+    //     return  getters.ok + getters.debetSumm - getters.kreditSumm
+    // },
 }
 const mutations = {
     klients(state, payload) {

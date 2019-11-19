@@ -3,6 +3,10 @@ import {router} from '@/setup'
 import {toDouble, procent, summ} from '@/functions'
 const { get, post } = db()
 const state = {
+    settings: {
+        ok: 0,
+        minRows: 5
+    },
     date: new Date(),
     logo: 'PS',
     menu: [ "vidacha", "vozvrat", "sklad"],
@@ -13,6 +17,9 @@ const state = {
 }
 
 const getters = {
+    settings ({ settings }) {
+        return settings
+    },
     bilet ({bilet}) {
         return {...bilet}
     },
@@ -92,10 +99,9 @@ const actions = {
         router.push('/login')
     },
 
-    async update  ({ commit, dispatch }) {
+    async update  ({ commit }) {
         getToken('x-token')
         commit('company', await get('/'))
-        dispatch('reestr/update')
     }
 }
 

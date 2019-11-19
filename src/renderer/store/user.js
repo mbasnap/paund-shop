@@ -26,10 +26,11 @@ const actions = {
         const token = await post('/login', v)
         localStorage.setItem('x-user', token)
         await dispatch('update')
-        router.push('/profile')
+        router.push('/vidacha')
     },
-    async logout ({dispatch}) {
+    async logout () {
         localStorage.removeItem('x-user')
+        router.push('/login')
     },
     async update  ({commit}) {
         getToken('x-user')
