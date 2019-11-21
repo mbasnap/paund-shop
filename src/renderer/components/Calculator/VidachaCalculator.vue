@@ -15,12 +15,12 @@
         <input  v-model="value.ocenka" class='form-control' placeholder="0,00"/></div>
     </div>
 </template>
-``
+
 <script>
-import {Instant, DaySlider} from "@/widgets"
+// import { Instant, DaySlider } from "@/widgets"
 
 export default {
-    components: {Instant, DaySlider},
+    // components: { Instant, DaySlider },
     props: {
         value: Object,
         props: Object

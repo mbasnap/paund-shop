@@ -33,7 +33,7 @@
     "moment": "^2.24.0",
     "validator": "^10.11.0",
     "vue": "^2.5.16",
-    "vue-context": "^5.0.0",
+    "vue-context": "^4.1.1",
     "vue-electron": "^1.0.6",
     "vue-i18n": "^8.11.2",
     "vue-router": "^3.0.1",

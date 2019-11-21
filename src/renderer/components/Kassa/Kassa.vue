@@ -10,27 +10,32 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import KassaList from './KassaList.vue'
-import Context from '@/components/Context'
+import Context from '@/components/Context.vue'
 export default {
     components: { KassaList, Context },
     created() {
         this.update()
     },
     computed: {
-        ...mapGetters({ kassa: 'reestr/kassa', settings: 'settings'}),
+        ...mapGetters({ reestr: 'reestr/byDate', settings: 'settings'}),
+        values() {
+            const values = (curr, { values }) => [...curr, ...values]
+            return this.reestr.reduce(values, [])
+        },
+        kassa () {
+            const kassa = acc => v => v[acc] === '301'
+            const dt = this.values.filter(kassa('dt'))
+            const ct = this.values.filter(kassa('ct'))
+            return { dt, ct }
+        },
         rowsLength() {
             const { kassa, settings } = this
-            return Math.max( settings['minRows'], kassa['dt'].length, kassa['kt'].length )
-        },
-        summ() {
-            const summ = name => this.kassa[name].map(v => v.summ)
-            return { dt: summ('dt'), ct: summ('ct') }
+            return Math.max( settings['minRows'], kassa['dt'].length, kassa['ct'].length )
         },
         total() {
-            const { summ, settings } = this
-            console.log(summ['dt']);
-            
-            return settings['ok'] + Math.sum( ...summ['dt'] ) - Math.sum( ...summ['ct'] )
+            const { kassa, settings } = this
+            const summ = acc => kassa[acc].reduce((cur, { summ }) => cur + summ, 0)
+            return settings['ok'] + summ('dt') - summ('ct') 
         }
     },
     methods: {
@@ -61,8 +66,6 @@ export default {
 .card-header, .card-footer {
     background-color: #eef1f3;
     text-align: right;
-    /* height: 50px;
-     padding: 0; */
 }
 </style>
 

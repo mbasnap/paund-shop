@@ -58,8 +58,9 @@ const mutations = {
 const actions = {
 
     async save ({ dispatch }, v) {
-        const id = await post('/', v)
-        return dispatch('update', { ...v, id })
+        const _id = await post('/', v)
+        return  { ...v, _id }
+        // return dispatch('update', { ...v, id })
     },
 
     async select ({commit}, v) {

@@ -1,6 +1,6 @@
 import { db, getToken } from '@/db'
-import {router} from '@/setup'
-import {toDouble, procent, summ} from '@/functions'
+import { router } from '@/setup'
+import { toDouble }  from '@/functions'
 const { get, post } = db()
 const state = {
     settings: {
@@ -26,9 +26,9 @@ const getters = {
     klient ({}, getters) {
         return getters['klient/klient']
     },
-    ocenka ({ocenka}) {
-        return toDouble(ocenka)
-    },
+    // ocenka ({ocenka}) {
+    //     return toDouble(ocenka)
+    // },
     isAuth (state, getters) {
         return getters['user/isAuth']
     },
@@ -37,7 +37,7 @@ const getters = {
         return !! company.id
     },
 
-    date ({date}) {
+    date ({ date }) {
         return date
     },
 
@@ -76,27 +76,24 @@ const mutations = {
 }
 const actions = {
 
-    async addSsuda({ dispatch }, { bilet, obespechenie, ssuda, procent }) {
+    async addSsuda({ dispatch }, bilet) {
         const { id: klient_id } = await dispatch('klient/save')
-        const { id } = await dispatch('bilet/save', { ...bilet, obespechenie, klient_id })
-        return dispatch('reestr/ssuda', { id, ssuda, procent })
-    },
-
-    async vozvrat({ dispatch }, { bilet, obespechenie, ssuda, procent, penalty }) {
-        const { id: klient_id } = await dispatch('klient/save')
-        const { id } = await dispatch('bilet/save', { ...bilet, obespechenie, klient_id })
-        return dispatch('reestr/vozvrat', { id, ssuda, procent, penalty })
+        const { _id } = await dispatch('bilet/save', { ...bilet, klient_id })
+        return dispatch('reestr/ssuda', { ...bilet, _id })
     },
 
     reset({ dispatch }) {
         dispatch('klient/clear')
         dispatch('bilet/clear')
-        dispatch('obespechenie/clear')
     },
     async activate({dispatch}, token) {
         localStorage.setItem('x-token', token)
         await dispatch('update')
         router.push('/login')
+    },
+
+    setDate  ({ commit }, v) {
+        commit('date', v)
     },
 
     async update  ({ commit }) {

@@ -10,9 +10,9 @@
 </template>
 
 <script>
-import {VerticalSlider, Datepicker} from "@/widgets"
-import {mapGetters, mapActions} from 'vuex'
 import moment from 'moment'
+import { VerticalSlider, Datepicker } from "@/widgets"
+import { mapGetters, mapActions } from 'vuex'
 export default {
 components: {VerticalSlider, Datepicker},
 props: {

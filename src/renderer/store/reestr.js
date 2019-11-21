@@ -1,14 +1,14 @@
+import moment from 'moment'
 import { db } from '@/db'
-const { get, post} = db('/reestr')
+const f = date => moment.utc(date).format('DD/MM/YYYY')
+const { get, post } = db('/reestr')
 const state = {
-    reestr: [],
+    reestr: []
 }
 const getters = {
-    kassa ({ reestr }) {
-        const kassa = acc => v => v[acc] === '301'
-        const dt = reestr.filter(kassa('dt'))
-        const ct = reestr.filter(kassa('ct'))
-        return { dt, ct }
+    byDate ({ reestr }, {}, { common }) {
+        return reestr.filter(({ date }) =>
+            f(date) === f(common.date))
     }
 }
 const mutations = {
@@ -18,23 +18,22 @@ const mutations = {
 }
 const actions = {
 
-
-    async ssuda ({ dispatch }, { id, ssuda, procent }) {
-        const value = [
-            { dt: '001', ref: 'bilet', ref_id: id },
-            { dt: '377', ct: '301', ...ssuda },
-            { dt: '301', ct: '703', ...procent }    
+    async ssuda ({ dispatch }, { _id, number, ocenca, ssuda, procent }) {
+        const values = [
+            { dt: '001',  ...ocenca, number },
+            { dt: '377', ct: '301', summ: ssuda },
+            { dt: '301', ct: '703', summ: procent }  
         ]
-        return dispatch('save', { name: 'vidana ssuda', value })
+        return dispatch('save', { ref: 'bilet', ref_id: _id, values })
     },
 
-    async vozvrat ({ dispatch }, v) {
-        const { id, ssuda, procent, penalty } = v
-        return dispatch('save', [
-            { ct: '001', ref: 'bilet', id  },
-            { dt: '301', ct: '377', ...ssuda },
-            { dt: '301', ct: '703', ...procent },      
-            { dt: '301', ct: '704', ...penalty }   
+    async vozvrat ({ dispatch }, bilet) {
+        const { number, ocenca, ssuda, procent, penalty } = bilet
+        return dispatch('save', [ bilet,
+            { ct: '001', ...ocenca, number },
+            { dt: '301', ct: '377', summ: ssuda },
+            { dt: '301', ct: '703', summ: procent },      
+            { dt: '301', ct: '704', summ: penalty }   
         ])
     },
 

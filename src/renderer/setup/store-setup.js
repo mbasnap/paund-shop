@@ -1,17 +1,14 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-// import klient from '@/store/klient'
-import kassa from '@/store/kassa'
-import klient from '@/store/klient'
-import bilet from '@/store/bilet'
-import obespechenie from '@/store/obespechenie'
-import common from '@/store/common'
 import user from '@/store/user'
+import common from '@/store/common'
 import reestr from '@/store/reestr'
+import bilet from '@/store/bilet'
+import klient from '@/store/klient'
 
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
-  modules: { common, user, reestr, kassa, klient, bilet, obespechenie }
+  modules: { common, user, reestr, klient, bilet }
 })

@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import {toDouble} from '@/functions'
+import { toDouble } from '@/functions'
 export default {
 props: {
     value: String

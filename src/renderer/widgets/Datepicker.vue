@@ -11,7 +11,7 @@
 
 <script>
 import Datepicker from 'vuejs-datepicker';
-import {ru} from 'vuejs-datepicker/dist/locale'
+import { ru } from 'vuejs-datepicker/dist/locale'
 export default {
     components: { Datepicker},
     props: {

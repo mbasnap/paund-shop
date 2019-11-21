@@ -13,8 +13,8 @@
         </b-navbar-nav>
       <b-navbar-nav class="ml-auto nav-right">
         <b-nav-form >
-          <datepicker v-model="date" input_class="form-control"
-          @change="v => $store.dispatch('setDate', v)"
+          <datepicker :value="date" input_class="form-control"
+          @input="v => $store.dispatch('setDate', v)"
           /> 
         </b-nav-form>
         <user class="ml-auto right"></user>

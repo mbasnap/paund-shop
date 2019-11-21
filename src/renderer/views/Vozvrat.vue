@@ -24,9 +24,9 @@
 </template>
 
 <script>
-import Obespechenie from "@/components/Obespechenie.vue"
+// import Obespechenie from "@/components/Obespechenie.vue"
 export default {
-  components: {Obespechenie}
+  // components: {Obespechenie}
 }
 </script>
 

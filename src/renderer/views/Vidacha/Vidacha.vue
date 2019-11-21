@@ -19,7 +19,7 @@
             </div>        
             <obespechenie v-model="obespechenie"/>
         </div>
-        <kassa class="col-4"></kassa>       
+        <kassa class="col-4"></kassa> 
     </div>
 </template>
 
@@ -27,7 +27,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import Kassa from '@/components/Kassa'
 import Klient from '@/components/Klient.vue'
-import Obespechenie from '@/components/Obespechenie.vue'
+import Obespechenie from '@/components/obespechenie'
 import Number from './Number.vue'
 import Bilet from './Bilet.vue'
 export default {
@@ -35,7 +35,7 @@ components: { Kassa, Klient, Number, Bilet, Obespechenie },
 data () {
     return {
         bilet: {},
-        obespechenie: [],
+        obespechenie: [{}],
     }
 },
 computed: {
@@ -45,35 +45,26 @@ computed: {
         const bilet = Object.keys(this.bilet).length
         return !klient || !bilet
     },
-    fullName() {
-        const { name, family, sername } = this.klient
-        return name + ' ' + family + ' ' + sername
-    }, 
-    number() {
-        return 'po_zalogovomu_biletu ' + this.bilet.number
-    },
-    ssuda() {
-        return {
-            summ: this.bilet.ocenka,
-            text: 'vidana_ssuda ' + this.fullName + this.number
-        }
-    },
-    procent() {
-        return {
-            summ: this.bilet.procent,
-            text: 'uplachen_procent ' + this.fullName + this.number
-        }
+    ocenca() {
+        const type = 1
+        const summ = this.bilet.ocenca
+        const count = this.obespechenie.length
+        return { summ, type, count }
     }
 },
 methods: {
     ...mapActions(['addSsuda', 'reset']),
     save() {
-        const { bilet, obespechenie, ssuda, procent } = this
-        return this.addSsuda({ bilet, obespechenie, ssuda, procent })
+        const { bilet, ocenca, obespechenie } = this
+        return this.addSsuda({ ...bilet, ocenca, obespechenie})
     },
-    clear() {
-        this.obespechenie = {}
+    async clear() {
         this.bilet = {}
+        console.log(this.obespechenie);
+        
+        this.obespechenie = []
+        await this.$nextTick()
+        this.obespechenie = [{}]
         this.reset()
     }
 }

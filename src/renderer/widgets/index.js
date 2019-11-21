@@ -7,4 +7,4 @@ import HeaderList from './HeaderList.vue'
 import Datepicker from './Datepicker.vue'
 import VerticalSlider from './VerticalSlider.vue'
 
-export  {HeaderList, NamedInstant, Instant, Reset, Datepicker, VerticalSlider}
+export  { HeaderList, NamedInstant, Instant, Reset, Datepicker, VerticalSlider }
