@@ -18,9 +18,9 @@ const mutations = {
 }
 const actions = {
 
-    async ssuda ({ dispatch }, { _id, number, ocenca, ssuda, procent }) {
+    async ssuda ({ dispatch }, { _id, number,  ssuda, procent }) {
         const values = [
-            { dt: '001',  ...ocenca, number },
+            { dt: '001',  number },
             { dt: '377', ct: '301', summ: ssuda },
             { dt: '301', ct: '703', summ: procent }  
         ]

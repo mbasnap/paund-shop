@@ -1,87 +1,57 @@
 <template>
-    <div class="klient">
-        <!-- <klient-body/> -->
-      <div class="body ">
-        <instant v-model="model" name='family' :suggest="klients"
-          :class="className('family')"
-          @select="select"
-          :string="({family, name, sername}) => family + ' ' + name + ' ' + sername">
-            <reset slot="rightButton" @reset="clear"/>
-        </instant>           
-        <div class="form-row">
-            <instant :class="className('name')" v-model="model" name="name" class="col-md-5"/>
-            <named-instant v-model="model" name="sername" class="col-md-7"/>
+  <div class="klient">
+      <div class="body col ">
+        <suggest class="form-control mb-2" name="family" placeholder="Family"
+        :value="value" :options="klients.filter(byFamily)"
+        :suggest="({ family, name, sername }) => family + ' ' + name + ' ' + sername"
+        @select="v => $emit('select', v)" >
+          <span class="reset" @click="$emit('reset')">x</span>
+        </suggest>       
+        <div class="form-row m-0 mb-2">
+          <named-input class="form-control col-5 mr-1" name="name" placeholder="Name"
+          :value="value" />
+          <named-input class="form-control col" name="sername" placeholder="Sername"
+          :value="value" />
         </div>
-        <div class="form-row">
-            <named-instant class="col-md-3" v-model="model" name="seria" :suggest="klients"/>
-            <named-instant  class="col-md-9" v-model="model" name="nomer" :suggest="klients"/>
+        <div class="form-row m-0 mb-2">
+          <named-input class="form-control col-3 mr-1" name="seria" placeholder="BA"
+          :value="value" :readonly="readonly"/>
+          <named-input class="form-control col" name="nomer" placeholder="01010101"
+          :value="value"/>
         </div> 
-        <instant v-model="model" name="idn" :suggest="klients"></instant>
-      </div>  
-      <div class="control">
-        <div class="col-2 ">
-          <div class="row  justify-content-center">
-            <img :src="imgList" @click="showMomal = true">
-          </div>
-        </div>
-        <div class="col-10"></div>
-      </div>  
-      <!-- <b-modal v-model="showMomal"  title="Klient list">
-        <klient-list v-model="model" class="klient-list p-3"/>
-      </b-modal> -->
-    </div>
+        <named-input class="form-control" name="idn" placeholder="ID"
+        :value="value" />
+      </div>
+  </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import {NamedInstant, Instant, Reset} from "@/widgets"
-// import { alert } from 'vue-strap'
-import imgList from '@/assets/img/list.png'
-import KlientList from '@/components/KlientList.vue'
+import { NamedInput, Suggest, mix } from '@/widgets/named-input/index.js'
 export default {
-    components: {  Instant, Reset, NamedInstant, KlientList},
+    components: {  NamedInput, Suggest },
+    mixins: [ { provide: mix.provide, methods: mix.methods } ],
+    props: { value: Object },
+
     created() {
         this.update()
     },
-    data() {
-      return {
-        imgList,
-        showMomal: false
+    computed: {
+      ...mapGetters('klient', [ 'klients' ]),
+      byFamily() {
+        return ({ family }) => family.includes(this.value.family || '')
       }
     },
- 
-    computed: {
-      ...mapGetters('klient', ['klients', 'klient', 'edit', 'isSelected']),
-      model: {
-          get() {
-            return  this.klient
-          },
-          set({name, value}) {
-            this.set({[name]: value})
-          }
-      },
-
-    },
     methods: {
-      ...mapActions('klient', ['set', 'select', 'clear', 'update']),
-      className(name) {
-        return this.isSelected && this.edit[name] ? 'edit' : ''
+      ...mapActions('klient', [ 'update', 'save' ]),
+      input({ name, value }) {
+        this.$emit('input', { ...this.value, [name]: value })
+      },
+      readonly() {
+        return  !!this.value.id
       }
     }
 }
 </script>
 
-<style> 
-
-  .klient .body {
-    height: 80%;
-  }
-
-  .klient .control img {
-    width: 30px;
-    height: 30px;
-  }
-  .instant.edit {
-    border: 1px solid #f10d0d;
-}
-</style>
+<style> </style>

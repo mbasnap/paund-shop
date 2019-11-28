@@ -8,8 +8,8 @@ const state = {
 }
 const getters = {
 
-    klients ({klients}) {
-        return klients || []
+    klients ({ klients }) {
+        return [ ...klients]
     },
 
     klient ({selected, fields}) {

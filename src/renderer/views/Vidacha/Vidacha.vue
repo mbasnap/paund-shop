@@ -2,7 +2,9 @@
     <div class="row flex-fill vidacha">
         <div class="col-8">
             <div class="row">
-                <klient class="col-6 p-2"/>
+                <klient v-model="klient" class="col p-2"
+                @select="v => klient = v"
+                @reset="klient = {}"/>
                 <div class="col border-left pt-2">
                     <bilet v-model="bilet"/> 
                     <div class="row p-2">
@@ -25,6 +27,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+// import { toDouble, summ } from '@/functions'
 import Kassa from '@/components/Kassa'
 import Klient from '@/components/Klient.vue'
 import Obespechenie from '@/components/obespechenie'
@@ -34,38 +37,28 @@ export default {
 components: { Kassa, Klient, Number, Bilet, Obespechenie },
 data () {
     return {
+        klient: {},
         bilet: {},
-        obespechenie: [{}],
+        obespechenie: [ {} ],
     }
 },
 computed: {
-    ...mapGetters(['klient']),
+    ...mapGetters(['klients']),
     disabled() {
-        const klient = Object.keys(this.klient).length
-        const bilet = Object.keys(this.bilet).length
-        return !klient || !bilet
-    },
-    ocenca() {
-        const type = 1
-        const summ = this.bilet.ocenca
-        const count = this.obespechenie.length
-        return { summ, type, count }
+        return [ this.klient, this.bilet, this.obespechenie ]
+            .some(({ valid })=> !valid)
     }
 },
 methods: {
-    ...mapActions(['addSsuda', 'reset']),
+    ...mapActions([ 'addSsuda' ]),
     save() {
-        const { bilet, ocenca, obespechenie } = this
-        return this.addSsuda({ ...bilet, ocenca, obespechenie})
+        const { bilet, obespechenie } = this
+        return this.addSsuda({ ...bilet, obespechenie })
     },
-    async clear() {
+    clear() {
+        this.klient = {}
         this.bilet = {}
-        console.log(this.obespechenie);
-        
-        this.obespechenie = []
-        await this.$nextTick()
         this.obespechenie = [{}]
-        this.reset()
     }
 }
 }

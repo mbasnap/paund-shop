@@ -4,79 +4,66 @@
         <thead >
             <tr>
                 <th class="index">#</th>
-                <th v-for="(name, index) in fields" :key="index" v-bind:class="name">{{name}}</th>
+                <th v-for="(name, index) in [ 'title', 'proba', 'ves', 'derty', 'ocenca' ]" 
+                :key="index" v-bind:class="name">{{name}}</th>
             </tr>
         </thead>
         <tbody>
-            <row v-for="(value, index) in value" :key="index" :value="value" class="items"
-            @input="input">
-                <td class="index">{{index + 1}}</td>
-                <td> <named-input name="title" /> </td>
-                <td> <named-input teg="b-form-select" :options="probs" name="proba" /> </td>
-                <td> <named-input name="ves" /> </td>
-                <td> <named-input name="derty" /> </td>
-                <td> <named-input name="ocenca" /> </td>
-            </row>
+            <row  v-for="(item, index) in value" :key="index" class="items"
+            :value="item" @input="value => input(index, value)"/>
             <tr class="add">
-                <td><img :src="imgAdd" @click="add"> </td>
-                <td v-for="({name}, f_index) in fields" :key="f_index" class="summ">{{getSumm(name)}}</td>
-            </tr>
+                <td @click="add" >Add </td>
+                <td></td>
+                <td></td>
+                <td>{{ toDouble(total['ves']) }}</td>
+                <td>{{ toDouble(total['derty']) }}</td>
+                <td>{{ toDouble(total['ocenca']) }}</td>
+            </tr>       
         </tbody>
         </table> 
-      
-        <!-- <modal-row :row="row" @ok="save"></modal-row>  -->
-          
     </div>
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
-import imgAdd from '@/assets/img/add.jpg'
-import NamedInput from '@/widgets/named-input'
+import { summ, diff, toDouble } from '@/functions'
 import Row from './Rows'
-// import ObespechenieList from '@/components/ObespechenieList.vue'
 
 export default {
-    components: { NamedInput, Row },
+    components: { Row },
     props: { value: Array },
-    data () {
-        return {
-            imgAdd,
-            row: {},
-            fields: [ 'title', 'proba', 'ves', 'derty', 'ocenca' ],
-        }
-    },
     computed: {
-        probs() {
-            return ['375', '583', '585']
+        total() {
+            return this.value.reduce((cur, v) => {
+                // if (v.err) return
+                const ves = summ(cur.ves, v.ves)
+                const derty = summ(cur.derty, v.derty)
+                const ocenca = summ(cur.ocenca, v.ocenca)
+                return { ...cur, ves, derty, ocenca }
+            }, { ves: 0, derty: 0, ocenca: 0 })
         }
     },
-    methods: {
-        // ...mapActions( 'obespechenie', ['save']),
-        input(v) {
-            this.$emit('input', [...this.value] )
-        },
-        getSumm (name) {
-            const summ = this.fields[name] && this.fields[name].format ? this.summ(name) : false
-            return summ !== false ? this.$numberFormat(summ, 2, ',', ' ') : ''
+    methods: { toDouble,
+        input(index, value) {
+            this.value[index] = value
+            this.$emit('input', [ ...this.value ] )
         },
         add() {
-            this.$emit('input', [...this.value, {}])
+            this.$emit('input', [...this.value, {}] )
         }
     }
 }
 </script>
 
 <style>
-  .obespechenie  img {
-    width: 15px;
-    height: 15px;
-  }
+
     .obespechenie table{
         border: 1px solid rgba(0, 0, 0, 0.22);
     }
     .obespechenie table tr.items td {
         border-right: 1px solid rgba(0, 0, 0, 0.22);
+    }
+    .obespechenie .items.err{
+        background-color: rgba(249, 124, 124, 0.44);
     }
     .obespechenie .index {
         text-align: center;

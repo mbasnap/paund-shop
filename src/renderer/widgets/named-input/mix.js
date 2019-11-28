@@ -1,0 +1,19 @@
+export default {
+
+    props: {
+        name: String,
+        value: Object,
+        placeholder: String,
+        format: { type: Function, default:(v) => v }
+    },
+    provide () {
+        const { input, change, readonly } = this
+        return { input, change, readonly }
+    },
+    inject: [ "input", "change", "readonly" ],
+    methods: {
+        input() {},
+        change() {},
+        readonly() { return false },
+    }
+    }

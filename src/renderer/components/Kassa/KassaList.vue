@@ -8,25 +8,27 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 export default {
   props: { rows: Number, data: Array },
   inject: ['open', 'close'],
-  computed: { },
+  computed: {
+    ...mapGetters(['settings'])
+  },
   methods: {
     getSumm(index) {
       const item = this.data[index]
-      return item ? this.$numberFormat(item.summ, 2, ',', ' ') : ''
+      return item ? this.format(item.summ) : ''
     },
-    // format(value) {
-    //   return value ? this.$numberFormat(value, 2, ',', ' ') : ''
-    // }   
+    format(v) {
+      const format = this.settings.numberFormat
+      return this.$numberFormat(v, ...format)
+    }
   }
 }
 </script>
 <style>
-.kassa-list {
-  /* padding: 0; */
-}
+
 .kassa-list li {
   display: block;
   padding: 0;

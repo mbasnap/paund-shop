@@ -1,0 +1,20 @@
+<template>
+  <select :name="name" class="named-select"
+    :value="value[name]"
+    @change="change($event.target)">
+      <option v-for="(item, index) in options" :key="index"
+       >{{ item }}</option>
+  </select>
+</template>
+
+<script>
+import mix from "./mix"
+export default {
+    mixins: [ { props: mix.props, inject: mix.inject } ],
+    props: { options: Array }
+}
+</script>
+
+<style>
+
+</style>

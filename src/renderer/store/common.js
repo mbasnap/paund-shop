@@ -5,7 +5,9 @@ const { get, post } = db()
 const state = {
     settings: {
         ok: 0,
-        minRows: 5
+        minRows: 5,
+        price: { '375': '10.2', '583': '20.5', '585': 25 },
+        numberFormat: [2, ',', ' ']
     },
     date: new Date(),
     logo: 'PS',
@@ -26,7 +28,7 @@ const getters = {
     klient ({}, getters) {
         return getters['klient/klient']
     },
-    // ocenka ({ocenka}) {
+    // price ({ settings }) {
     //     return toDouble(ocenka)
     // },
     isAuth (state, getters) {
@@ -82,10 +84,10 @@ const actions = {
         return dispatch('reestr/ssuda', { ...bilet, _id })
     },
 
-    reset({ dispatch }) {
-        dispatch('klient/clear')
-        dispatch('bilet/clear')
-    },
+    // reset({ dispatch }) {
+    //     dispatch('klient/clear')
+    //     dispatch('bilet/clear')
+    // },
     async activate({dispatch}, token) {
         localStorage.setItem('x-token', token)
         await dispatch('update')
