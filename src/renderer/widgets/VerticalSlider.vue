@@ -1,13 +1,10 @@
 <template>
     <div class="vertical-slider">
-        <input type="range" vertical 
-        :min="min"
-        :max="max"
-        :style="{height: height + 'px'}"
-        @change="({target}) => $emit('change', target)"
+        <input type="range" vertical :min="min" :max="max"
+        :disabled="!editable"
+        :style="{ height: height + 'px' }"
         v-model="model"/>
-        <p class="vertical-slider-output"
-            :style="{bottom: bottom + 'px', 'margin-bottom': bottomOffset + '%'}">
+        <p class="vertical-slider-output" :style="{ bottom: bottom + 'px', 'margin-bottom': bottomOffset + '%' }">
             {{model}}
         </p>
     </div>
@@ -15,18 +12,16 @@
 
 <script>
 export default {
-    data() {
-        return {}
-    },
+
     props: {
         value: Number,
         height: Number,
         min: String,
         max: String,
-        offset: Number
+        offset: Number,
+        editable: Boolean
     },
     computed: {
-
         bottomOffset() {
             return this.model/this.max * this.offset
         },
@@ -42,12 +37,10 @@ export default {
                 return this.value || this.max
             },
             set(v) {
-
                 this.$emit('input', v)
             }
         }
-    },
-    methods: {}
+    }
 }
 </script>
 
@@ -63,6 +56,7 @@ input[type=range][vertical] {
 }
 .vertical-slider {
     position: relative;
+    margin-left: 10px;
 }
 .vertical-slider-output { 
     position: absolute;

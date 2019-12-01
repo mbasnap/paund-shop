@@ -1,13 +1,17 @@
 import { db, getToken } from '@/db'
 import { router } from '@/setup'
-import { toDouble }  from '@/functions'
+// import { toDouble }  from '@/functions'
 const { get, post } = db()
 const state = {
     settings: {
         ok: 0,
         minRows: 5,
         price: { '375': '10.2', '583': '20.5', '585': 25 },
-        numberFormat: [2, ',', ' ']
+        numberFormat: [2, ',', ' '],
+        discounts: ['10', '15', '20'],
+        maxDays: '31',
+        minDays: '1',
+        procent: '0.7'
     },
     date: new Date(),
     logo: 'PS',
@@ -78,11 +82,11 @@ const mutations = {
 }
 const actions = {
 
-    async addSsuda({ dispatch }, bilet) {
-        const { id: klient_id } = await dispatch('klient/save')
-        const { _id } = await dispatch('bilet/save', { ...bilet, klient_id })
-        return dispatch('reestr/ssuda', { ...bilet, _id })
-    },
+    // async addSsuda({ dispatch }, bilet) {
+    //     const { id: klient_id } = await dispatch('klient/save')
+    //     const { _id } = await dispatch('bilet/save', { ...bilet, klient_id })
+    //     return dispatch('reestr/ssuda', { ...bilet, _id })
+    // },
 
     // reset({ dispatch }) {
     //     dispatch('klient/clear')

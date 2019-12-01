@@ -7,8 +7,7 @@ const state = {
 }
 const getters = {
     byDate ({ reestr }, {}, { common }) {
-        return reestr.filter(({ date }) =>
-            f(date) === f(common.date))
+        return reestr.filter(({ date }) => f(date) === f(common.date))
     }
 }
 const mutations = {
@@ -18,26 +17,28 @@ const mutations = {
 }
 const actions = {
 
-    async ssuda ({ dispatch }, { _id, number,  ssuda, procent }) {
-        const values = [
-            { dt: '001',  number },
-            { dt: '377', ct: '301', summ: ssuda },
-            { dt: '301', ct: '703', summ: procent }  
-        ]
-        return dispatch('save', { ref: 'bilet', ref_id: _id, values })
-    },
+    // async ssuda ({ dispatch }, { _id, number,  ssuda, procent }) {
+    //     const values = [
+    //         { dt: '001',  number },
+    //         { dt: '377', ct: '301', summ: ssuda },
+    //         { dt: '301', ct: '703', summ: procent }  
+    //     ]
+    //     return dispatch('save', { ref: 'bilet', ref_id: _id, values })
+    // },
 
-    async vozvrat ({ dispatch }, bilet) {
-        const { number, ocenca, ssuda, procent, penalty } = bilet
-        return dispatch('save', [ bilet,
-            { ct: '001', ...ocenca, number },
-            { dt: '301', ct: '377', summ: ssuda },
-            { dt: '301', ct: '703', summ: procent },      
-            { dt: '301', ct: '704', summ: penalty }   
-        ])
-    },
+    // async vozvrat ({ dispatch }, bilet) {
+    //     const { number, ocenca, ssuda, procent, penalty } = bilet
+    //     return dispatch('save', [ bilet,
+    //         { ct: '001', ...ocenca, number },
+    //         { dt: '301', ct: '377', summ: ssuda },
+    //         { dt: '301', ct: '703', summ: procent },      
+    //         { dt: '301', ct: '704', summ: penalty }   
+    //     ])
+    // },
 
     async save ({ dispatch }, v) {
+        console.log(v);
+        
         await post('/', v)
         return dispatch('update')
     },

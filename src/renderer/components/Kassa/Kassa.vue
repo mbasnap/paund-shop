@@ -9,6 +9,7 @@
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import { summ, diff } from '@/functions'
 import KassaList from './KassaList.vue'
 import Context from '@/components/Context.vue'
 export default {
@@ -34,8 +35,9 @@ export default {
         },
         total() {
             const { kassa, settings } = this
-            const summ = acc => kassa[acc].reduce((cur, { summ }) => cur + summ, 0)
-            return settings['ok'] + summ('dt') - summ('ct') 
+            const dt = kassa.dt.reduce((cur, v) => summ(cur, v.summ), 0)
+            const ct = kassa.ct.reduce((cur, v) => summ(cur, v.summ), 0)
+            return summ(settings['ok'], diff(dt, ct))
         }
     },
     methods: {

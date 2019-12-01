@@ -7,18 +7,18 @@
         </td>
         <td> <named-input name="ves" :value="value" :format="toDouble"/> </td>
         <td> <named-input name="derty" :value="value" :format="toDouble"/> </td>
-        <td> {{ toDouble(value['ocenca']) }} </td>
+        <td class="ocenca"> {{ toDouble(value['ocenca']) }} </td>
     </tr>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { diff, toDouble } from '@/functions'
+import { diff, pDiff, toDouble, mult } from '@/functions'
 import { NamedInput, NamedSelect, mix } from '@/widgets/named-input/index.js'
 export default {
 components: { NamedInput, NamedSelect },
 mixins: [ { provide: mix.provide, methods: mix.methods } ],
-props: { value: Object },
+props: { value: Object, editable: Boolean },
 computed: {
     ...mapGetters(['settings']),
     price() {
@@ -26,29 +26,35 @@ computed: {
     }
 },
 methods: { toDouble,
-    validate() {
-        const { ves, derty } = this.value
-        return diff(ves, derty) >= 0
-    },
-    getTotal() {
-        const { ves, derty } = this.value
-        return toDouble(diff(ves, derty))
-    },
-    getOcenca() {
-        const { total, proba } = this.value
-        return toDouble(total * this.price[proba])
+    readonly() {
+        return !this.editable
     },
     change({ name, value }) {
-        this.value[name] = value
-        this.value['total'] = this.getTotal()
-        this.value['ocenca'] = this.getOcenca()
-        this.value['err'] = !this.validate()
-        this.$emit('input', { ...this.value })
+        this.update({ ...this.value, [name]: value })
+    },
+    update(value) {
+        const total = pDiff(value.ves, value.derty)
+        const ocenca = mult(total, this.price[value.proba])
+        const err = diff(value.derty, value.ves) > 0
+        this.$emit('input', { ...value, total, ocenca, err })
     }
 }
 }
 </script>
 
 <style>
-
+    .obespechenie .items.err{
+        background-color: rgba(249, 124, 124, 0.44);
+    }
+    .obespechenie .index {
+        text-align: center;
+        width: 10px;
+    }
+    .obespechenie .title {
+        width: 250px;
+    }
+    .obespechenie .ocenca {
+        width: 100px;
+        text-align: right;
+    }
 </style>

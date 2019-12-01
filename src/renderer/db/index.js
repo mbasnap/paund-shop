@@ -1,6 +1,6 @@
 import axios from 'axios'
-import decode from 'jwt-decode'
-import {store} from '@/setup'
+// import decode from 'jwt-decode'
+import { store } from '@/setup'
 axios.interceptors.response.use(undefined, function (err) {
   const {status, statusText} = err.response
   return new Promise(function () {
@@ -9,7 +9,8 @@ axios.interceptors.response.use(undefined, function (err) {
 })
 
 const  query = (action, url, params) => {
-  return axios[action](url, params)
+  const { date } = store.getters
+  return axios[action](url, { ...params, date })
     .then(res => res.data)
       .catch(err => {
         throw err.response.data

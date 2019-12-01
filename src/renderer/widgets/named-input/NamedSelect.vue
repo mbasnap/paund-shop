@@ -1,6 +1,7 @@
 <template>
-  <select :name="name" class="named-select"
+  <select :name="name" class="named-input"
     :value="value[name]"
+    :disabled="readonly()"
     @change="change($event.target)">
       <option v-for="(item, index) in options" :key="index"
        >{{ item }}</option>

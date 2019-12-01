@@ -3,7 +3,7 @@
     :name="name"
     :value="format(value[name])"
     :placeholder="placeholder"
-    :readonly="readonly(name)"
+    :readonly="readonly()"
     @input="input($event.target)"
     @change="change($event.target)"
     />
@@ -21,6 +21,13 @@ export default {
 .named-input {
     width: 100%;
     border: none;
+    background-color: transparent;
+}
+.named-input {
+    width: 100%;
+    border: none;
+    background-color: transparent;
+    color: #495057;
 }
 /* .named-input.err {
     border: 1px solid red !important;

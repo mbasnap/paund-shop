@@ -20,6 +20,7 @@ export default {
         format: String,
         input_class: String,
         calendar_class: String,
+        editable: Boolean
     },
   computed: {
       model: {

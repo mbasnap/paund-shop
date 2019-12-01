@@ -1,11 +1,11 @@
 <template>
-    <div class="suggest dropdown">
+    <div class="suggest dropdown" :readonly="readonly()">
         <slot></slot>
-        <textarea class="editor" ref="editor"
+        <textarea class="named-input editor" ref="editor"
         :name="name"
         :value="value[name]"
         :placeholder="placeholder"
-        :readonly="readonly(name)"
+        :readonly="readonly()"
         @input="input($event.target)"
         @change="change($event.target)"
         @keydown.up.prevent="highlight(index > 0 ? index - 1 : 0)"
@@ -62,9 +62,10 @@ export default {
     color: black
 }
 .suggest .editor {
-    outline-style: none;
-    width: 100%;
-    height: 25px;
+    /* outline-style: none; */
+    /* width: 100%; */
+    padding: 0;
+    max-height: 100%;
     resize: none;
     border: none;
     white-space: nowrap;

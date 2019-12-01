@@ -1,4 +1,4 @@
-import Vidacha from '@/views/Vidacha'
+import Vidacha from '@/views/Vidacha.vue'
 // import {store} from '@/setup'
 
 export default {

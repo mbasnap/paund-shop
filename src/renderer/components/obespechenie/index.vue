@@ -1,6 +1,6 @@
 <template>
-    <div class="obespechenie">
-        <table  class="table  table-sm ">
+    <div class="obespechenie" >
+        <table  :class="[ 'table', 'table-sm', { readonly: !editable } ]">
         <thead >
             <tr>
                 <th class="index">#</th>
@@ -10,14 +10,14 @@
         </thead>
         <tbody>
             <row  v-for="(item, index) in value" :key="index" class="items"
-            :value="item" @input="value => input(index, value)"/>
+            :value="item" @input="value => input(index, value)" :editable="editable"/>
             <tr class="add">
                 <td @click="add" >Add </td>
                 <td></td>
                 <td></td>
                 <td>{{ toDouble(total['ves']) }}</td>
                 <td>{{ toDouble(total['derty']) }}</td>
-                <td>{{ toDouble(total['ocenca']) }}</td>
+                <td class="total ocenca">{{ toDouble(total['ocenca']) }}</td>
             </tr>       
         </tbody>
         </table> 
@@ -25,23 +25,12 @@
 </template>
 
 <script>
-import { summ, diff, toDouble } from '@/functions'
+import { toDouble } from '@/functions'
 import Row from './Rows'
 
 export default {
     components: { Row },
-    props: { value: Array },
-    computed: {
-        total() {
-            return this.value.reduce((cur, v) => {
-                // if (v.err) return
-                const ves = summ(cur.ves, v.ves)
-                const derty = summ(cur.derty, v.derty)
-                const ocenca = summ(cur.ocenca, v.ocenca)
-                return { ...cur, ves, derty, ocenca }
-            }, { ves: 0, derty: 0, ocenca: 0 })
-        }
-    },
+    props: { value: Array, total: Object, editable: Boolean },
     methods: { toDouble,
         input(index, value) {
             this.value[index] = value
@@ -61,16 +50,6 @@ export default {
     }
     .obespechenie table tr.items td {
         border-right: 1px solid rgba(0, 0, 0, 0.22);
-    }
-    .obespechenie .items.err{
-        background-color: rgba(249, 124, 124, 0.44);
-    }
-    .obespechenie .index {
-        text-align: center;
-        width: 10px;
-    }
-    .obespechenie .title {
-        width: 250px;
     }
 
 </style>

@@ -1,0 +1,67 @@
+<template>
+    <div :class="[ 'day-slider', 'p-0', { readonly: !editable } ]">
+        <datepicker class="mb-2" v-model="dateModel" :editable="editable"
+        format="dd.MM.yyyy" input_class="named-input day-slider-date"
+        calendar_class="day-slider-left"/> 
+        <vertical-slider :height="130" :offset="-15" v-model="model" :editable="editable"
+        :min="settings.minDays" :max="settings.maxDays"/>       
+    </div>
+</template>
+
+<script>
+import moment from 'moment'
+import { VerticalSlider, Datepicker } from "@/widgets"
+import { mapGetters, mapActions } from 'vuex'
+export default {
+components: {VerticalSlider, Datepicker},
+props: { value: Object, name: String, editable: Boolean },
+inject: [ "change" ],
+computed: {
+     ...mapGetters([ "date", "settings" ]),
+    dateModel: {
+        get() {
+            const { date, name, value } = this
+            return new Date(moment(date).add(value[name], 'd'))
+        },
+        set(value) {
+            const date = moment(this.date)
+            this.update(moment(value).diff(date, 'd') + 1)
+        }
+    },
+    model: {
+        get() {
+            const { value, name } = this
+            return Number(value[name])
+        },
+        set(value) {
+            this.update(value)
+        }
+    }
+},
+methods: {
+    update(value) {
+        const { name } = this
+        this.change({ name, value })
+        // this.$emit('input', { name, value })
+    }
+}
+}
+</script>
+
+<style>
+
+    .day-slider {
+        margin-left: -5px;
+    }
+    .day-slider-date {
+        width: 75px;
+        border: none;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+        font-size: 15px;
+    }
+    .day-slider-left {
+        margin-left: -200px;
+        width: 250px;
+        font-size: 12px;
+    }
+</style>

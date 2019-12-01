@@ -29,7 +29,13 @@
   margin: 0;
   padding: 0;
 }
-body { font-family: 'Source Sans Pro', sans-serif; }
+body { 
+  font-family: 'Source Sans Pro', sans-serif;
+}
+.readonly {
+    background-color: #e9ecef !important;
+    opacity: 1;
+}
 
 
 

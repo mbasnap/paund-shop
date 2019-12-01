@@ -4,6 +4,7 @@ export default {
         name: String,
         value: Object,
         placeholder: String,
+        // readonly: Boolean,
         format: { type: Function, default:(v) => v }
     },
     provide () {
@@ -14,6 +15,6 @@ export default {
     methods: {
         input() {},
         change() {},
-        readonly() { return false },
+        readonly() {},
     }
     }
