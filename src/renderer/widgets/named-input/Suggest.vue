@@ -21,13 +21,21 @@
 </template>
 
 <script>
-import mix from "./mix"
+// import mix from "./mix.js"
 export default {
-    mixins: [ { props: mix.props, inject: mix.inject } ],
     props: {
+        name: String,
+        value: Object,
+        placeholder: String,
         options: Array,
         suggest: { type: Function, default: (item, name) => item[name] },
     },
+    inject: [ "input", "change", "readonly" ],
+    // mixins: [ { props: mix.props, inject: mix.inject } ],
+    // props: {
+    //     options: Array,
+    //     suggest: { type: Function, default: (item, name) => item[name] },
+    // },
     data() {
         return {
             index: -1

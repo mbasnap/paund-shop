@@ -1,0 +1,52 @@
+<template>
+<div class="modal-content">
+    <div class="modal-header">
+    <h5 class="modal-title"> {{ title }} </h5>
+    <button type="button" class="close" @click="close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    </div>
+    <div class="modal-body">
+
+    <slot></slot>
+
+    </div>
+    <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" @click="close">Close</button>
+    <button type="button" class="btn btn-primary" @click="save" :disabled="disabled">Save</button>
+    </div>
+</div>
+</template>
+
+<script>
+export default {
+props: { title: String, disabled: Boolean },
+
+created() {
+    this.$on('close', () => {
+    this.$parent.$emit('close')
+    })
+},
+computed: {},
+
+methods: {
+    save () {
+        this.$emit('save', this)
+    },
+    close () {
+        this.$emit('close')
+    }
+}
+
+}
+</script>
+
+<style>
+.modal-content {
+    height: -webkit-fill-available;
+}
+.modal-body {
+    max-height: 400px;
+    overflow: auto;
+}
+</style>

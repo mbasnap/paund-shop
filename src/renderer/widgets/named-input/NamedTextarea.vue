@@ -1,7 +1,7 @@
 <template>
-    <input  class="named-input" 
+    <textarea class="named-textarea"
     :name="name"
-    :value="format(value[name])"
+    :value="value[name]"
     :placeholder="placeholder"
     :readonly="readonly()"
     @input="input($event.target)"
@@ -15,14 +15,13 @@ export default {
         name: String,
         value: Object,
         placeholder: String,
-        format: { type: Function, default:(v) => v }
     },
     inject: [ "input", "change", "readonly" ],
 }
 </script>
 
 <style>
-.named-input {
+/* .named-input {
     width: 100%;
     border: none;
     background-color: transparent;
@@ -33,10 +32,7 @@ export default {
     background-color: transparent;
     color: #495057;
 }
-/* .named-input.err {
-    border: 1px solid red !important;
-} */
 .named-input:focus {
     outline: none;
-}
+} */
 </style>

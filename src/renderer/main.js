@@ -1,10 +1,12 @@
 import Vue from 'vue'
 import App from './App'
+import VModal from 'vue-js-modal'
 import { store, router, i18n, mixins, bootstrapVue } from '@/setup'
 // import VueSlider from 'vue-slider-component'
 // import 'vue-slider-component/theme/default.css'
 Vue.use(bootstrapVue)
 Vue.use(mixins)
+Vue.use(VModal, { dynamic: true, injectModalsContainer: true })
 
 
 // if (!process.env.IS_WEB) Vue.use(require('vue-electron'))

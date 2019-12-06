@@ -25,12 +25,21 @@
 </template>
 
 <script>
-import { toDouble } from '@/functions'
+import { toDouble, summ } from '@/functions'
 import Row from './Rows'
-
 export default {
     components: { Row },
-    props: { value: Array, total: Object, editable: Boolean },
+    props: { value: Array, editable: Boolean },
+    computed: {
+        total({ value }) {
+            return value.reduce((cur, v) => {
+                const ves = summ(cur.ves, v.ves)
+                const derty = summ(cur.derty, v.derty)
+                const ocenca = summ(cur.ocenca, v.ocenca)
+                return { ...cur, ves, derty, ocenca }
+            }, { ves: 0, derty: 0, ocenca: 0 })
+        }
+    },
     methods: { toDouble,
         input(index, value) {
             this.value[index] = value

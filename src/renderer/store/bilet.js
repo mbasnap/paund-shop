@@ -2,12 +2,12 @@ import { db } from '@/db'
 const { get, post} = db('/bilet')
 
 const state = {
-    bilets: [],
+    bilets: {},
 }
 const getters = {
     
-    bilets ({bilets}) {
-        return [...bilets]
+    bilets ({ bilets }) {
+        return bilets
     },
     emptyNumbers() {
         return ['1', '2', '3']
@@ -16,7 +16,7 @@ const getters = {
 const mutations = {
 
     bilets (state, v) {
-        state.bilets = v || []
+        state.bilets = v
     }
 }
 const actions = {

@@ -1,20 +1,16 @@
+import NamedInput from './NamedInput'
+import NamedTextarea from './NamedTextarea'
+import Suggest from './Suggest'
+import NamedSelect from './NamedSelect.vue'
 export default {
-
-    props: {
-        name: String,
-        value: Object,
-        placeholder: String,
-        // readonly: Boolean,
-        format: { type: Function, default:(v) => v }
-    },
+    components: { NamedInput, Suggest, NamedTextarea, NamedSelect },
     provide () {
         const { input, change, readonly } = this
         return { input, change, readonly }
     },
-    inject: [ "input", "change", "readonly" ],
     methods: {
         input() {},
         change() {},
-        readonly() {},
+        readonly() {}
     }
     }

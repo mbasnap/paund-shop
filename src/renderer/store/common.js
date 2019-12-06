@@ -92,7 +92,7 @@ const actions = {
     //     dispatch('klient/clear')
     //     dispatch('bilet/clear')
     // },
-    async activate({dispatch}, token) {
+    async activate({ dispatch }, token) {
         localStorage.setItem('x-token', token)
         await dispatch('update')
         router.push('/login')
@@ -102,9 +102,11 @@ const actions = {
         commit('date', v)
     },
 
-    async update  ({ commit }) {
+    async update  ({ commit, dispatch }) {
         getToken('x-token')
         commit('company', await get('/'))
+        dispatch('klient/update')
+        dispatch('bilet/update')
     }
 }
 

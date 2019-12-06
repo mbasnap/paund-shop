@@ -9,10 +9,15 @@
 </template>
 
 <script>
-import mix from "./mix"
+// import mix from "./mix"
 export default {
-    mixins: [ { props: mix.props, inject: mix.inject } ],
-    props: { options: Array }
+      props: {
+        name: String,
+        value: Object,
+        options: Array
+    },
+    inject: [ "change", "readonly" ],
+    // mixins: [ { props: mix.props, inject: mix.inject } ],
 }
 </script>
 
