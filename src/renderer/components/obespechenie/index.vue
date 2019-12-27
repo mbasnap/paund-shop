@@ -1,6 +1,6 @@
 <template>
     <div class="obespechenie" >
-        <table  :class="[ 'table', 'table-sm', { readonly: !editable } ]">
+        <table  :class="[ 'table', 'table-sm', { readonly: disabled } ]">
         <thead >
             <tr>
                 <th class="index">#</th>
@@ -10,7 +10,7 @@
         </thead>
         <tbody>
             <row  v-for="(item, index) in value" :key="index" class="items"
-            :value="item" @input="value => input(index, value)" :editable="editable"/>
+            :value="item" @input="value => input(index, value)" :editable="!disabled"/>
             <tr class="add">
                 <td @click="add" >Add </td>
                 <td></td>
@@ -29,7 +29,7 @@ import { toDouble, summ } from '@/functions'
 import Row from './Rows'
 export default {
     components: { Row },
-    props: { value: Array, editable: Boolean },
+    props: { value: Array, disabled: Boolean },
     computed: {
         total({ value }) {
             return value.reduce((cur, v) => {

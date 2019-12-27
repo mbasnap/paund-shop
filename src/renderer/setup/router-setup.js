@@ -1,9 +1,9 @@
 
 import Vue from 'vue'
 import Router from 'vue-router'
-import { store } from '@/setup'
-import {login, activate} from '@/routes/auth'
-import profile from '@/routes/profile'
+// import { store } from '@/setup'
+import { login, activate } from '@/routes/auth'
+// import profile from '@/routes/profile'
 import vidacha from '@/routes/vidacha'
 import vozvrat from '@/routes/vozvrat'
 import sklad from '@/routes/sklad'
@@ -13,7 +13,7 @@ Vue.use(Router)
 const router = new Router({
   // mode: 'history',
   routes: [
-    profile,
+    // profile,
     vidacha,
     vozvrat,
     sklad,

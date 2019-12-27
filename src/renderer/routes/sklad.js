@@ -1,5 +1,5 @@
-import Sklad from '@/views/Sklad.vue'
-import {store} from '@/setup'
+import Sklad from '@/components/sklad'
+// import {store} from '@/setup'
 
 export default {
   path: '/sklad',

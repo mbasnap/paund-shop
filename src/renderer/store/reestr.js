@@ -1,13 +1,25 @@
-import moment from 'moment'
 import { db } from '@/db'
-const f = date => moment.utc(date).format('DD/MM/YYYY')
 const { get, post } = db('/reestr')
 const state = {
     reestr: []
 }
 const getters = {
-    byDate ({ reestr }, {}, { common }) {
-        return reestr.filter(({ date }) => f(date) === f(common.date))
+
+    values({ reestr }) {        
+        return reestr
+    },
+    dt001({ reestr }) {
+        return reestr.filter(v => v.dt === '001')
+    },
+    ct001({ reestr }) {      
+        return reestr.filter(v => v.ct === '001')
+    },
+    used({}, { ct001 }) {        
+        return ct001.reduce((cur, { bilet }) => { return { ...cur, [bilet._id]: bilet }}, {})
+    },
+    empty({}, { dt001, used }) {
+        return dt001.filter(({ _id }) => !used[_id])
+            .reduce((cur, v) => { return { ...cur, [v._id]: v } }, {})
     }
 }
 const mutations = {
@@ -17,39 +29,19 @@ const mutations = {
 }
 const actions = {
 
-    // async ssuda ({ dispatch }, { _id, number,  ssuda, procent }) {
-    //     const values = [
-    //         { dt: '001',  number },
-    //         { dt: '377', ct: '301', summ: ssuda },
-    //         { dt: '301', ct: '703', summ: procent }  
-    //     ]
-    //     return dispatch('save', { ref: 'bilet', ref_id: _id, values })
-    // },
+    async save ({ dispatch }, values) {     
+       const _id =  await post('/', { values })
+        return dispatch('update', _id)
+    },
 
-    // async vozvrat ({ dispatch }, bilet) {
-    //     const { number, ocenca, ssuda, procent, penalty } = bilet
-    //     return dispatch('save', [ bilet,
-    //         { ct: '001', ...ocenca, number },
-    //         { dt: '301', ct: '377', summ: ssuda },
-    //         { dt: '301', ct: '703', summ: procent },      
-    //         { dt: '301', ct: '704', summ: penalty }   
-    //     ])
-    // },
-
-    async save ({ dispatch }, v) {
-        console.log(v);
-        
-        await post('/', v)
+    async remove ({ dispatch }, _id) {
+        await post('/remove', { _id })
         return dispatch('update')
     },
 
-    async remove ({ dispatch }, v) {
-        await post('/remove', v)
-        return dispatch('update')
-    },
-
-    async update({ commit }) {
-        return commit('reestr', await get('/'))
+    async update({ commit }, v) {
+        commit('reestr', await get('/'))
+        return v
     }
 }
 

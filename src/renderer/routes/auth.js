@@ -1,7 +1,6 @@
 
-import { store } from '@/setup'
-import Login from '@/views/auth/Login.vue'
-import Activate from '@/views/auth/Activate.vue'
+// import { store } from '@/setup'
+import { Login, Activate } from '@/components/auth'
 
 export const login = {
   path: '/login',

@@ -14,7 +14,7 @@
 import mix from '@/widgets/named-input/mix.js'
 export default {
     mixins: [ mix ],
-    props: { value: Object, editable: Boolean, full: Boolean },
+    props: { value: Object, disabled: Boolean, full: Boolean },
     inject: [ 'update' ],
     computed: {
         passport() {
@@ -26,7 +26,7 @@ export default {
     },
     methods: {
         readonly() {
-            return !this.editable
+            return this.disabled
         },
         input({ name, value }) {
             this.value['passport'] = [ { ...this.model, [name]: value} ]

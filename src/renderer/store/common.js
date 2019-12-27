@@ -11,7 +11,8 @@ const state = {
         discounts: ['10', '15', '20'],
         maxDays: '31',
         minDays: '1',
-        procent: '0.7'
+        procent: '0.7',
+        penalty: '1'
     },
     date: new Date(),
     logo: 'PS',
@@ -26,15 +27,9 @@ const getters = {
     settings ({ settings }) {
         return settings
     },
-    bilet ({bilet}) {
-        return {...bilet}
-    },
     klient ({}, getters) {
         return getters['klient/klient']
     },
-    // price ({ settings }) {
-    //     return toDouble(ocenka)
-    // },
     isAuth (state, getters) {
         return getters['user/isAuth']
     },
@@ -82,16 +77,6 @@ const mutations = {
 }
 const actions = {
 
-    // async addSsuda({ dispatch }, bilet) {
-    //     const { id: klient_id } = await dispatch('klient/save')
-    //     const { _id } = await dispatch('bilet/save', { ...bilet, klient_id })
-    //     return dispatch('reestr/ssuda', { ...bilet, _id })
-    // },
-
-    // reset({ dispatch }) {
-    //     dispatch('klient/clear')
-    //     dispatch('bilet/clear')
-    // },
     async activate({ dispatch }, token) {
         localStorage.setItem('x-token', token)
         await dispatch('update')
@@ -105,8 +90,8 @@ const actions = {
     async update  ({ commit, dispatch }) {
         getToken('x-token')
         commit('company', await get('/'))
+        dispatch('reestr/update')
         dispatch('klient/update')
-        dispatch('bilet/update')
     }
 }
 

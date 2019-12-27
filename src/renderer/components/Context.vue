@@ -1,5 +1,5 @@
 <template>
-  <div class="context">
+  <component :is="teg || 'div'" class="context">
     <slot ></slot>
     <vue-context ref="context"  class="vue-context" >
         <div class="pl-4" slot-scope="{data}" @mouseleave="close()">
@@ -9,7 +9,7 @@
             </li>
         </div>
     </vue-context>   
-  </div>
+  </component>
 </template>
 
 <script>
@@ -17,7 +17,7 @@
 import { VueContext } from 'vue-context'
 export default {
 components: { VueContext },
-props: { actions: Object },
+props: { actions: Object, teg: String },
 provide () {
     return { open: this.open, close: this.close }
 },

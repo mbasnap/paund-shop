@@ -28,7 +28,7 @@ export default {
         value: Object,
         placeholder: String,
         options: Array,
-        suggest: { type: Function, default: (item, name) => item[name] },
+        suggest: { type: Function, default: (item, name) => item ? item[name] : '' },
     },
     inject: [ "input", "change", "readonly" ],
     // mixins: [ { props: mix.props, inject: mix.inject } ],

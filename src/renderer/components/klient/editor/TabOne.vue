@@ -12,7 +12,7 @@
             <named-input class="form-control col-5 mr-1" name="name" placeholder="Name" :value="value"/>
             <named-input class="form-control col" name="sername" placeholder="Sername" :value="value"/>
         </div>
-        <passport class="mb-2" :value="value" :editable="editable" :full="full"/>
+        <passport class="mb-2" :value="value" :disabled="disabled" :full="full"/>
         <div class="form-row mb-2">
             <named-input class="form-control col" name="idn" placeholder="ID" :value="value"/>
         </div>
@@ -24,7 +24,7 @@ import { mapGetters } from 'vuex'
 import { Passport, mix} from './components'
 export default {
     mixins: [ mix ],
-    props: { value: Object, editable: { type: Boolean, default: true }, full: Boolean },
+    props: { value: Object, disabled: Boolean, full: Boolean },
     components: { Passport },
     inject: [ 'update' ],
     computed: {
@@ -36,7 +36,7 @@ export default {
     },
     methods: {
       readonly() {
-          return !this.editable
+          return this.disabled
       },
       input({ name, value }) {
         this.update({ ...this.value, [name]: value })

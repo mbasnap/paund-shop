@@ -1,6 +1,6 @@
 <template>
   <div class="klient">
-    <tab-one class="col" :value="value" :editable="editable">
+    <tab-one class="col" :value="value" :disabled="disabled">
         <slot></slot>
     </tab-one>
     <div class="col">
@@ -14,7 +14,7 @@
 import { TabOne, Editor } from './editor/index.js'
 export default {
     components: {  TabOne },
-    props: { value: Object, editable: Boolean },
+    props: { value: Object, disabled: Boolean },
     provide() {
       return { update: this.update }
     },

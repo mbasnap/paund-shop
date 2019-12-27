@@ -3,12 +3,11 @@ import Vuex from 'vuex'
 import user from '@/store/user'
 import common from '@/store/common'
 import reestr from '@/store/reestr'
-import bilet from '@/store/bilet'
 import klient from '@/store/klient'
 
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
-  modules: { common, user, reestr, klient, bilet }
+  modules: { common, user, reestr, klient }
 })
