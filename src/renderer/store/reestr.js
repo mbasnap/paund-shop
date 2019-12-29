@@ -10,16 +10,19 @@ const getters = {
     },
     dt001({ reestr }) {
         return reestr.filter(v => v.dt === '001')
+            .reduce((cur, v) => ({ ...cur, [v._id]: v }), {})
     },
-    ct001({ reestr }) {      
-        return reestr.filter(v => v.ct === '001')
+    ct001({ reestr }, { dt001 }) {   
+        const used = (cur, { _id, ref }) => ({ ...cur, [_id]: dt001[ref]})     
+        return reestr.filter(v => v.ct === '001').reduce(used, {})
     },
-    used({}, { ct001 }) {        
-        return ct001.reduce((cur, { bilet }) => { return { ...cur, [bilet._id]: bilet }}, {})
+    used({}, { ct001 }) {
+        return Object.values(ct001)
+            .reduce((cur, v) => ({ ...cur, [v._id]: v }), {})
     },
     empty({}, { dt001, used }) {
-        return dt001.filter(({ _id }) => !used[_id])
-            .reduce((cur, v) => { return { ...cur, [v._id]: v } }, {})
+        return Object.values(dt001).filter(({ _id }) => !used[_id])
+            .reduce((cur, v) => ({ ...cur, [v._id]: v }), {})
     }
 }
 const mutations = {
@@ -28,13 +31,17 @@ const mutations = {
     }
 }
 const actions = {
-
+    err({}, err) {
+        console.log(err);
+    },
     async save ({ dispatch }, values) {     
        const _id =  await post('/', { values })
         return dispatch('update', _id)
     },
 
-    async remove ({ dispatch }, _id) {
+    async remove ({ dispatch, getters }, { _id }) {
+        const used = getters.used[_id]
+        if(used) return dispatch('err', used)
         await post('/remove', { _id })
         return dispatch('update')
     },

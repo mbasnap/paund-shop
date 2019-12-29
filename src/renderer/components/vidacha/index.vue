@@ -1,19 +1,23 @@
 <template>
     <div class="row flex-fill vidacha">
-        <div class="col-8 pt-3">
+        <div  class="col-8 pt-3">
             <div class="row" style="height: 250px;">
-                <klient class="col p-0" v-model="klient" :disabled="disabled">
+                <klient id="printMe" class="col p-0 " v-model="klient" :disabled="disabled">
                     <span class="reset" @click="klient = {}">x</span>
                 </klient>
                 <div class="col pl-2 border-left">
                     <bilet class="row" style="height: 75%;" v-model="model" :disabled="disabled"/> 
                     <div class="row">
-                        <div class="col-6 ">
-                            <button class="'btn btn-primary'" @click="update()">reset</button>
+                        <div class="col-3 ">
+                            <button class="btn " @click="update()">reset</button>
                         </div>
-                        <div class="col-6">
-                            <button class="'btn btn-primary'"
+                        <div class="col-3">
+                            <button class="btn "
                             @click="save(values).then(id => update(dt001[id]))"> save</button>
+                        </div>   
+                        <div class="col-3">
+                            <button class="btn btn-primary no-print"
+                            @click="print"> print </button>
                         </div>   
                     </div>
                 </div>                                 
@@ -25,11 +29,17 @@
 </template>
 
 <script>
+const ipcRenderer = require("electron").ipcRenderer
+ipcRenderer.on('wrote-pdf', (evt, path) => {
+    console.log(path);
+    
+})
 import { toDouble, diff, pDiff, mult, proc } from '@/functions'
 import { mapGetters, mapActions } from 'vuex'
 import { Kassa, Klient, Bilet, Obespechenie } from './components'
 export default {
 components: { Kassa, Klient, Bilet, Obespechenie },
+
 data () {
     return {
         klient: {},
@@ -98,10 +108,24 @@ methods: {
         const { klient: id, obespechenie } = this.bilet = v
         this.klient = { ...this.klients[id] }
         this.obespechenie = obespechenie || [ {} ]
+    },
+    print() {
+    window.print()
+// modal.document.write(document.getElementById('printMe'))
+// this.d.print( this.$el)
+        // this.$htmlToPaper('printMe');
+        // const content = "<h1> hello </h1>"
+        // ipcRenderer.send("print-to-pdf", content)
     }
 }
 }
 </script>
 
-<style> </style>
+<style> 
+@media print {
+  .no-print {
+    visibility: hidden;
+  }
+}
+</style>
 

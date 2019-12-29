@@ -2,12 +2,6 @@
 
 <div class="sklad row">
     <list-from class="col-6"/>
-    <!-- <div class="control col-2">
-        <div class="row">
-            <span class="col-1">l</span>
-            <span class="col-1">r</span>
-        </div>
-    </div> -->
     <list-to class="col-6"/>
 </div>
 </template>
@@ -23,5 +17,10 @@ export default {
     width: 100%;
     padding: 10px;
 }
+  .sklad .list .header {
+        text-align: center;
+        background-color: rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+    }
 
 </style>

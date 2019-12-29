@@ -3,13 +3,13 @@
         <li v-for="(item, key) in items" :key="key"
         @contextmenu.prevent="open($event, item)"
         @mouseleave="({ toElement }) => close(toElement)"  
-        >{{ getString(item) }}</li>
+        >{{ tostring(item) }}</li>
     </component>
 </template>
 
 <script>
 export default {
-props: { teg: String, items: Array, getString: Function },
+props: { teg: String, items: Array, tostring: Function },
 inject: ['open', 'close'],
 
 }

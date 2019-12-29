@@ -36,6 +36,7 @@
     "vue": "^2.5.16",
     "vue-context": "^4.1.1",
     "vue-electron": "^1.0.6",
+    "vue-html-to-paper": "^1.1.1",
     "vue-i18n": "^8.11.2",
     "vue-js-modal": "^1.3.31",
     "vue-router": "^3.0.1",

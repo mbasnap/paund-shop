@@ -5,7 +5,7 @@
                 <div class="header">
                     <p>Filter</p>
                 </div>
-                <items teg="ul" :items="model" :getString="getString"/>
+                <items teg="ul" :items="model" :tostring="tostring"/>
             </div>
         </context>
     <!-- </draggable> -->
@@ -13,7 +13,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import moment from 'moment'
+import { moment } from '@/functions'
 import Context from '@/components/Context.vue'
 import draggable from 'vuedraggable'
 import Items from './Items'
@@ -22,34 +22,31 @@ export default {
   computed: {
     ...mapGetters({
         empty: 'reestr/empty',
+        date: 'date',
         klients: 'klient/klients'
     }),
-    model: {
-        get({ empty }) {
-            return Object.values(empty)
-        },
-        set(v) {
-            // console.log(v);
-        }
+    model({ empty }) {
+        return Object.values(empty)
     }
   },
-  methods: {
-      getString(v) {
-          
-          const { number, date } = v
-          return number + ' ' + date
-      },
-      toSklad(v) {
-          console.log(v);
-      }
-  }
+    methods: {
+        ...mapActions({ save: 'reestr/save' }),
+        toSklad({ _id: ref, ssuda, date }) {
+            const days = moment(date, 'L').diff(this.date, 'd')
+            const values = [
+                { ct: '001', ref },
+                { dt: '200', ct: '377', ...ssuda, days }
+            ]
+            return this.save(values)
+        },
+        tostring({ number, date, klient, ocenca }) {
+            const { family } = this.klients[klient]
+            return number + ' ' + date + ' ' + family + ' ' + ocenca
+        }
+    }
 }
 </script>
 
 <style>
-    .list .header {
-        text-align: center;
-        background-color: rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(0, 0, 0, 0.1);
-    }
+
 </style>

@@ -14,6 +14,10 @@ const state = {
         procent: '0.7',
         penalty: '1'
     },
+    accounts: {
+        ct: { '400': 'ustavniy fond' },
+        dt: { '777': 'zarplata' }
+    },
     date: new Date(),
     logo: 'PS',
     menu: [ "vidacha", "vozvrat", "sklad"],
@@ -26,6 +30,9 @@ const state = {
 const getters = {
     settings ({ settings }) {
         return settings
+    },
+    accounts ({ accounts }) {
+        return accounts
     },
     klient ({}, getters) {
         return getters['klient/klient']

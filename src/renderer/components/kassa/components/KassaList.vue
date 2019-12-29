@@ -1,8 +1,8 @@
 <template>  
   <ul class="kassa-list small p-0 m-0">
-    <li v-for="index in rows" :key="index"
-    @contextmenu.prevent="open($event, model[index -1][0])"
-    @mouseleave="({ toElement }) => close(toElement)">{{getSumm(index-1)}}</li>
+    <li v-for="index in rows" :key="index-1"
+    @contextmenu.prevent="context($event, model[index-1] || [])"
+    @mouseleave="({ toElement }) => close(toElement)">{{summ(model[index-1])}}</li>
   </ul>
 </template>
 
@@ -10,20 +10,19 @@
 import { summ } from '@/functions'
 import { mapGetters, mapActions } from 'vuex'
 export default {
-  props: { rows: Number, value: Array },
+  props: { rows: Number, value: Array, type: String },
   inject: ['open', 'close'],
   computed: {
-    // ...mapGetters(['settings']),
-    model({ value }) {
-      // const arr = value.reduce((cur, v) =>
-      //   cur.set(v._id, [ ...cur.get(v._id) || [], v]), new Map())          
+    model({ value }) {      
       return value
     }
   },
   methods: {
-    getSumm(index) {
-      const item = this.model[index]
-      return item ? summ( ...item[1].map(v => v.summ)) : ''
+    summ(v) {
+      return v ? summ( ...v[1].map(v => v.summ)) : ''
+    },
+    context(e, [_id, values]) {
+      this.open(e, { _id, values, type: this.type } )
     }
   }
 }

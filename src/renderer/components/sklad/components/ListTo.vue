@@ -1,11 +1,11 @@
 <template>
     <!-- <draggable teg="ul" class="kassa-list small p-0 m-0" :value="model" group="sklad"> -->
-        <context  :actions="{ toSklad }">
+        <context  :actions="{ fromSklad: remove }">
             <div class="list">
                 <div class="header">
                     <p>Filter</p>
                 </div>
-                <items teg="ul" :items="model" :getString="getString"/>
+                <items teg="ul" :items="model" :tostring="tostring"/>
             </div>
         </context>
     <!-- </draggable> -->
@@ -21,35 +21,27 @@ export default {
     components: { Context, draggable, Items },
   computed: {
     ...mapGetters({
-        empty: 'reestr/empty',
+        values: 'reestr/values',
+        ct001: 'reestr/ct001',
         klients: 'klient/klients'
     }),
-    model: {
-        get({ empty }) {
-            return Object.values(empty)
-        },
-        set(v) {
-            // console.log(v);
-        }
+    model({ values }) {
+        return values.filter(v => v.dt === '200')
     }
   },
   methods: {
-      getString(v) {
-          
-          const { number, date } = v
-          return number + ' ' + date
-      },
-      toSklad(v) {
-          console.log(v);
-      }
+    ...mapActions({
+        remove: 'reestr/remove'
+    }),
+    tostring({ _id, date }) {
+        const { number, klient, ocenca } = this.ct001[_id]
+        const { family } = this.klients[klient]
+        return number + ' ' + date + ' ' + family + ' ' + ocenca
+    }
   }
 }
 </script>
 
 <style>
-    .list .header {
-        text-align: center;
-        background-color: rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(0, 0, 0, 0.1);
-    }
+
 </style>

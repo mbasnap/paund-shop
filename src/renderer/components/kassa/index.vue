@@ -1,49 +1,55 @@
 <template>
     <b-card class="kassa" header-tag="header" footer-tag="footer" body-class="scroll-auto"
-    :header="formated(settings['ok'])" :footer="formated(total)">
+    :header="ok" :footer="total">
     <context class="row " :actions="{ add, edit, remove }">
-        <kassa-list class="col-6" :value="grope(dt)" :rows="rowsLength"/>
-        <kassa-list class="col-6" :value="grope(ct)" :rows="rowsLength"/>
+        <kassa-list class="col-6" :value="grope(dt.filter(byDate))" :rows="rowsLength" type="dt"/>
+        <kassa-list class="col-6" :value="grope(ct.filter(byDate))" :rows="rowsLength" type="ct"/>
     </context>
   </b-card>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import { summ, diff, moment } from '@/functions'
-import { KassaList, Context } from './components'
+import { KassaList, Context, Modal } from './components'
 export default {
     components: { KassaList, Context },
     computed: {
         ...mapGetters({ values: 'reestr/values', settings: 'settings', date: 'date' }),
-
-        dt ({ values, byDate }) {
-            return values.filter(v => v.dt === '301').filter(byDate)
+        dt({ values }) {            
+            return values.filter(v => v.dt === '301')
         },
-        ct ({ values, byDate }) {
-            return values.filter(v => v.ct === '301').filter(byDate)
+        ct({ values }) {
+            return values.filter(v => v.ct === '301')
         },
-        rowsLength({ grope, dt, ct, settings }) {
-            return Math.max( settings['minRows'], grope(dt).length, grope(ct).length )
+        ok({ settings, dt, ct, date }) {
+            const byDate = v => moment(v.date, 'L').diff(date, 'd') < 0
+            const ok = settings['ok']
+            const debet = summ(...dt.filter(byDate).map(v => v.summ))
+            const credit = summ(...ct.filter(byDate).map(v => v.summ))
+            return summ(ok, diff(debet, credit))
         },
-        total({ dt, ct, settings }) {
-            const totalDt = dt.reduce((cur, v) => summ(cur, v.summ), 0)
-            const totalCt = ct.reduce((cur, v) => summ(cur, v.summ), 0)
-            return summ(settings['ok'], diff(totalDt, totalCt))
+        rowsLength({ grope, dt, ct, settings, byDate }) {
+            const length = v => grope(v.filter(byDate)).length
+            return Math.max( settings['minRows'], length(dt), length(ct) )
+        },
+        total({ ok, dt, ct, byDate }) {
+            const debet = summ(...dt.filter(byDate).map(v => v.summ))
+            const credit = summ(...ct.filter(byDate).map(v => v.summ))
+            return summ(ok, diff(debet, credit))
         }
     },
     methods: {
-        ...mapActions('reestr', ['remove']),
+        ...mapActions('reestr', ['remove', 'save']),
+        add ({ type }) {        
+            this.$modal.show(Modal, { type, save: this.save }, { height: '300px' })
+        },
         grope(v) {
-            return [...v.reduce((cur, v) =>
-                cur.set(v._id, [ ...cur.get(v._id) || [], v]), new Map())]          
+            return [ ...v.reduce((cur, v) =>
+                cur.set(v._id, [ ...cur.get(v._id) || [], v]), new Map())]       
         },
         byDate ({ date }) {
             return date === moment(this.date).format('L')
         },
-        formated(number) {
-            return this.$numberFormat(number, 2, ',', ' ')
-        },
-        add() {},
         edit() {}
     }
 }

@@ -41,12 +41,11 @@ data () {
 computed: {
     ...mapGetters({ 
         klients: 'klient/klients',
-        date: 'date' ,
+        date: 'date',
         empty: 'reestr/empty'
     }),
-    days({ bilet }) {
-        const date = moment(bilet.date, 'DD.MM.YYYY')
-        return moment(this.date).diff(date, 'd') || 1
+    days({ bilet, date }) {
+        return moment(bilet.date, 'L').diff(date, 'd') || 1
     },
     ssuda({ bilet, days }) {
         return { ...bilet.ssuda, days }
@@ -66,12 +65,12 @@ computed: {
     model({ ssuda, procent, penalty }) {
         return { ssuda, procent, penalty }
     },
-    values({ model, bilet, klient }) {
+    values({ ssuda, procent, penalty }) {
         return [
-            { ct: '001', ...model, bilet, klient: klient._id },
-            { dt: '301', ct: '377', title: 'vozvrashena ssuda', ...model.ssuda },
-            { dt: '301', ct: '703', title: 'procent', ...model.procent },
-            { dt: '301', ct: '704', title: 'penalty', ...model.penalty }           
+            { ct: '001', ref: this.bilet._id },
+            { dt: '301', ct: '377', title: 'vozvrashena ssuda', ...ssuda },
+            { dt: '301', ct: '703', title: 'procent', ...procent },
+            { dt: '301', ct: '704', title: 'penalty', ...penalty }           
         ]
     },
     disabled({ bilet, empty }) {
