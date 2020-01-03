@@ -44,8 +44,9 @@ computed: {
         date: 'date',
         empty: 'reestr/empty'
     }),
-    days({ bilet, date }) {
-        return moment(bilet.date, 'L').diff(date, 'd') || 1
+    days({ bilet }) {
+        const date = moment(bilet.date, 'L')
+        return moment(this.date).diff(date, 'd') || 1
     },
     ssuda({ bilet, days }) {
         return { ...bilet.ssuda, days }

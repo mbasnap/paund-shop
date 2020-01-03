@@ -2,7 +2,7 @@
   <select :name="name" class="named-input" :placeholder="placeholder"
     :value="value[name]"
     :disabled="readonly()"
-    @change="onchange($event)">
+    @change="change($event.target)">
     <option v-if="placeholder" value="" disabled selected hidden>{{ placeholder }}</option>
       <option v-for="(item, index) in options" :key="index" :value="options[index]"
        >{{ tostring(item) }}</option>
@@ -10,7 +10,6 @@
 </template>
 
 <script>
-// import mix from "./mix"
 export default {
       props: {
         name: String,
@@ -22,15 +21,7 @@ export default {
         }
     },
     inject: [ "change", "readonly"],
-    methods: {
-      onchange({ target }) {
-        // const { name, options } = this
-        // const value = options[selectedIndex -1]
-        // console.log(value);
-        
-        this.change(target)
-      }
-    }
+    methods: {}
 }
 </script>
 

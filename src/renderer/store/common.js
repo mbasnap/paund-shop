@@ -1,10 +1,11 @@
 import { db, getToken } from '@/db'
 import { router } from '@/setup'
 // import { toDouble }  from '@/functions'
+
 const { get, post } = db()
 const state = {
     settings: {
-        ok: 0,
+        ok: 2500.25,
         minRows: 5,
         price: { '375': '10.2', '583': '20.5', '585': 25 },
         numberFormat: [2, ',', ' '],

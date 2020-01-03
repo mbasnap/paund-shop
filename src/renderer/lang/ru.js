@@ -2,6 +2,36 @@
 // Ready translated locale messages
 export default {
   ru: {
+    zvit: {
+      date: 'Date',
+      prixod: 'Prixod',
+      rasxod: 'Rasxod',
+      ssuda: 'Ssuda',
+      procent: 'Procent',
+      penalty: 'Penalty',
+      totalDt: 'Dt',
+      totalCt: 'Ct'
+    },
+    print: {
+      bilet: 'Билет №',
+      fio: 'FIO',
+      passport: 'Passport',
+      idn: 'IDN',
+      date: 'Date',
+      ssuda: 'Ssuda',
+      title: 'Title',
+      proba: 'Proba',
+      price: 'Prise',
+      ves: 'Ves',
+      derty: 'Derty',
+      ocenca: 'Ocenca',
+      procent: 'Procent',
+      pererachet: 'Pererachet',
+      kassir_sign: 'kassir sign',
+      prinal_kassir: 'Prinal na otvetstvennoe xranenie',
+      text_aggre: 'S usloviem ocenki i summoi zaloga soglasen usloviem ocenki i summoi zaloga soglasen',
+      klient_sign: 'klient sign'
+    },
     auth: {
       false: '',
       name: 'Name',

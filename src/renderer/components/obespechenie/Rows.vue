@@ -1,13 +1,13 @@
 <template>
     <tr :class="{'err': value.err}">
         <td class="index">{{ $vnode.key + 1 }}</td>
-        <td> <named-input name="title" :value="value"/> </td>
+        <td> <named-input name="title" :value="model"/> </td>
         <td>
-            <named-select  name="proba" :value="value" :options="Object.keys(price)" />
+            <named-select  name="proba" :value="model" :options="Object.keys(price)" />
         </td>
-        <td> <named-input name="ves" :value="value" :format="toDouble"/> </td>
-        <td> <named-input name="derty" :value="value" :format="toDouble"/> </td>
-        <td class="ocenca"> {{ toDouble(value['ocenca']) }} </td>
+        <td> <named-input name="ves" :value="model"/> </td>
+        <td> <named-input name="derty" :value="model"/> </td>
+        <td class="ocenca"> {{ ocenca }} </td>
     </tr>
 </template>
 
@@ -21,22 +21,37 @@ mixins: [ { provide: mix.provide, methods: mix.methods } ],
 props: { value: Object, editable: Boolean },
 computed: {
     ...mapGetters(['settings']),
-    price() {
-        return this.settings.price
+    price({ settings }) {
+        return settings.price
+    },
+    ves({ value }) {
+        return toDouble(value.ves)
+    },
+    derty({ value }) {
+        return toDouble(value.derty)
+    },
+    total({ value }) {
+        return toDouble(value.total)
+    },
+    ocenca({ value }) {
+        return toDouble(value.ocenca)
+    },
+    model({ value, ves, derty }) {
+        return { ...value, ves, derty }
     }
 },
-methods: { toDouble,
+methods: {
     readonly() {
         return !this.editable
     },
     change({ name, value }) {
-        this.update({ ...this.value, [name]: value })
+        this.update({ ...this.model, [name]: value })
     },
     update(value) {
         const total = pDiff(value.ves, value.derty)
         const ocenca = mult(total, this.price[value.proba])
-        const err = diff(value.derty, value.ves) > 0
-        this.$emit('input', { ...value, total, ocenca, err })
+        // const err = diff(value.derty, value.ves) > 0
+        this.$emit('input', { ...value, total: toDouble(total), ocenca: toDouble(ocenca) })
     }
 }
 }

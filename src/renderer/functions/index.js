@@ -1,5 +1,8 @@
-import moment from 'moment'
+// import moment from 'moment'
+import Moment from 'moment'
+import { extendMoment } from 'moment-range'
 import numberFormat from './numberFormat'
+const moment = extendMoment(Moment)
 const toDouble = v => numberFormat(v, 2, '.', ' ')
 const toNumber = v => Number(numberFormat(v || 0, 2, '.', '')) 
 const summ = (...values) => toDouble(values.reduce((a, b) => a + toNumber(b), 0))

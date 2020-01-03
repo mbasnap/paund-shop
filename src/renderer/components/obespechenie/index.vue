@@ -5,7 +5,7 @@
             <tr>
                 <th class="index">#</th>
                 <th v-for="(name, index) in [ 'title', 'proba', 'ves', 'derty', 'ocenca' ]" 
-                :key="index" v-bind:class="name">{{name}}</th>
+                :key="index" :class="name">{{name}}</th>
             </tr>
         </thead>
         <tbody>
@@ -15,9 +15,9 @@
                 <td @click="add" >Add </td>
                 <td></td>
                 <td></td>
-                <td>{{ toDouble(total['ves']) }}</td>
-                <td>{{ toDouble(total['derty']) }}</td>
-                <td class="total ocenca">{{ toDouble(total['ocenca']) }}</td>
+                <td>{{ ves }}</td>
+                <td>{{ derty }}</td>
+                <td class="total ocenca">{{ ocenca }}</td>
             </tr>       
         </tbody>
         </table> 
@@ -31,19 +31,28 @@ export default {
     components: { Row },
     props: { value: Array, disabled: Boolean },
     computed: {
-        total({ value }) {
-            return value.reduce((cur, v) => {
-                const ves = summ(cur.ves, v.ves)
-                const derty = summ(cur.derty, v.derty)
-                const ocenca = summ(cur.ocenca, v.ocenca)
-                return { ...cur, ves, derty, ocenca }
-            }, { ves: 0, derty: 0, ocenca: 0 })
+        ves({ value }) {
+            return summ( ...value.map(v => v.ves))
+        },
+        derty({ value }) {
+            return summ( ...value.map(v => v.derty))
+        },
+        ocenca({ value }) {
+            return summ( ...value.map(v => v.ocenca))
         }
+        // total({ value }) {
+        //     return value.reduce((cur, v) => {
+        //         const ves = summ(cur.ves, v.ves)
+        //         const derty = summ(cur.derty, v.derty)
+        //         const ocenca = summ(cur.ocenca, v.ocenca)
+        //         return { ...cur, ves, derty, ocenca }
+        //     }, { ves: 0, derty: 0, ocenca: 0 })
+        // }
     },
-    methods: { toDouble,
+    methods: {
         input(index, value) {
             this.value[index] = value
-            this.$emit('input', [ ...this.value ] )
+            this.$emit('input', [ ...this.value] )
         },
         add() {
             this.$emit('input', [...this.value, {}] )

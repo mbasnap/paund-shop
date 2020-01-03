@@ -1,9 +1,9 @@
 import Context from '@/components/Context.vue'
 import KassaList from "./KassaList"
-import Modal from "./Modal"
+import PrixoRasxod from "./PrixoRasxod"
 export { 
     KassaList,
     Context,
-    Modal
+    PrixoRasxod,
 }
 
