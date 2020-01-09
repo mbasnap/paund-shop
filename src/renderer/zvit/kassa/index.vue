@@ -1,20 +1,21 @@
 <template> 
-    <modal-editor title="Kassa" :disabled="disabled"  >
-        <div class="row p-3" style="zoom: 75%;">
+    <modal-editor title="Kassa" :zoom="zoom" @zoom="onZoom" @print="print" >
+        <div class="row p-3" :style="{ zoom: zoom + '%' }">
             <div class="col-2">
-                <select class="custom-select mb-3">
+                <select class="custom-select mb-3" 
+                :value="year.format('YYYY')"
+                @change="v => selectYear(v.target)">
                     <option v-for="item in years" :key="item"
-                    :selected="Number(item) === currentYear"
-                    @click="selectYear(item)"> {{ item }}
+                    > {{ item }}
                     </option>
                 </select>
-                <ul class="list-group" v-for="(item, index) in months" :key="index">
-                    <li :class="['list-group-item', { active: currentMonth === index }]"
-                    @click="selectMonth(index)"
+                <ul class="list-group" v-for="item in months" :key="item">
+                    <li :class="['list-group-item', { active: month.format('MMMM') === item }]"
+                    @click="selectMonth(item)"
                     >{{ item }}</li>
                 </ul>
             </div>
-            <table-kassa class="kassa col border-left" :value="days"/>
+            <table-kassa ref="printer-content" class="col border-left" :value="days"/>
         </div>
     </modal-editor>
 </template>
@@ -29,36 +30,35 @@ export default {
     data() {
         return {
             selectedYear: '',
-            selectedMonth: -1
+            selectedMonth: '',
+            zoom: '65'
         }
     },
     computed: {
-        ...mapGetters({
-            date: 'date',
-        }),
-        years({ date }) {
+        ...mapGetters({ current: 'date' }),
+        years() {
             return ['2017', '2018', '2019', '2020']
         },
-        currentYear({ selectedYear, date }) {
-            const year = moment(date).year()
-            return selectedYear || year
+        date({ current }) {
+            return moment(current)
         },
-        currentMonth({ selectedMonth, date }) {
-            const month = moment(date).month()
-            return selectedMonth >= 0  ?  selectedMonth : month
+        year({ selectedYear, date }) {
+            const year = date.year()
+            return moment(selectedYear || year, 'YYYY')
         },
-        year({ currentYear }) {
-            return moment(currentYear, 'YYYY');
-        },
-        month({ currentMonth }) {
-            return moment().month(currentMonth);
-        },
-        days({ month }) {
-            return month.range('month')
+        month({ year, selectedMonth, date }) {
+            const month = date.month()
+            return year.month(selectedMonth || month)
         },
         months({ year }) {
             const range = year.range('year')
             return [ ...range.by('months')].map(v => v.format('MMMM'))
+        },
+        days({ month }) {
+            return month.range('month')
+        },
+        printContent({ $refs }) {
+            return $refs['printer-content'].$el
         },
         disabled({ }) {}
     },
@@ -66,12 +66,20 @@ export default {
         t(v) {
             return this.$t('print.' + v)
         },
-        selectYear(v) {
-            this.selectedYear = v
+        selectYear({ value }) {
+            this.selectedYear = value
         },
         selectMonth(v) {
+            
             this.selectedMonth = v
         },
+        onZoom({ value }) {
+            this.zoom = value + ''    
+        },
+        print({ send }) {
+            const { outerHTML: content } = this.printContent
+            send("print", { content, size: 'landscape' })
+        }
     }
 }
 </script>

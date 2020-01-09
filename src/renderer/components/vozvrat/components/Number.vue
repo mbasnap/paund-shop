@@ -1,29 +1,31 @@
 <template>
     <suggest class="form-control mb-4" name="number" placeholder="Number"
-        :value="model" :options="options" @select="update">
+        :value="value" :options="options" @select="update">
         <slot></slot>
     </suggest>        
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import { moment } from '@/functions'
 import mix from '@/widgets/named-input/mix.js'
 export default {
     mixins: [ mix ],
     props: { value: Object },
 
     computed: {
-        ...mapGetters({ dt001: 'reestr/dt001', empty: 'reestr/empty' }),
-        model({ value }) {
-            return { ...value }
+        ...mapGetters({
+            empty: 'reestr/empty',
+            date: 'date'
+            }),
+        numbers({ empty, date }) {
+            const isSameOrBefore = v => moment(v.date, 'L')
+                .isSameOrBefore(date, 'date')
+            return Object.values(empty).filter(isSameOrBefore)
         },
-        number({ value }) {
-            return value.number
-        },
-        options({ empty, number }) {
-            return Object.values(empty)
-                .filter(v => (v.number + '').includes(number || ''))
-                    .sort((a, b) => a.number > b.number )
+        options({ value, numbers }) {
+            const includes = v => (v.number + '').includes(value.number || '')
+            return numbers.filter(includes).sort((a, b) => a.number - b.number )
         }
     },
     methods: {

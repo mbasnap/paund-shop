@@ -27,8 +27,8 @@ computed: {
     }
 },
 methods: {
-    open(evt, item) {
-        if (item) this.context.open(evt, item)
+    open(e, v) {
+        this.context.open(e, v)
     },
     close(toElement) {
         return toElement && toElement.className.includes('vue-context')

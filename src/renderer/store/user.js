@@ -5,19 +5,16 @@ const state = {
     user: {}
 }
 const getters = {
-    user ({user}) {
-        return user || {}
+    user ({ user }) {
+        return { ...user }
     },
-    isAuth ({user}) {
+    isAuth ({ user }) {
         return !!user.id
     }
-
-
 }
 const mutations = {
-
     user (state, v) {
-        state.user = v || {}
+        state.user = { ...v}
     }
 }
 const actions = {

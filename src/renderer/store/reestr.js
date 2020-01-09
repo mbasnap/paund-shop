@@ -12,6 +12,14 @@ const getters = {
         return reestr.filter(v => v.dt === '001')
             .reduce((cur, v) => ({ ...cur, [v._id]: v }), {})
     },
+    dt002({ reestr }) {
+        return reestr.filter(v => v.dt === '002')
+            .reduce((cur, v) => ({ ...cur, [v._id]: v }), {})
+    },
+    ct002({ reestr }) {
+        return reestr.filter(v => v.ct === '002')
+            .reduce((cur, v) => ({ ...cur, [v._id]: v }), {})
+    },
     ct001({ reestr }, { dt001 }) {   
         const used = (cur, { _id, ref }) => ({ ...cur, [_id]: dt001[ref]})     
         return reestr.filter(v => v.ct === '001').reduce(used, {})
@@ -34,12 +42,12 @@ const actions = {
     err({}, err) {
         console.log(err);
     },
-    async save ({ dispatch }, values) {     
+    async save ({ dispatch }, values) {
        const _id =  await post('/', { values })
-        return dispatch('update', _id)
+        return dispatch('update', { _id, values })
     },
 
-    async remove ({ dispatch, getters }, { _id }) {
+    async remove ({ dispatch, getters }, { _id }) {      
         const used = getters.used[_id]
         if(used) return dispatch('err', used)
         await post('/remove', { _id })

@@ -1,5 +1,7 @@
 <template> 
-    <modal-editor :title="title" :disabled="disabled" style="width: 718px;">
+    <modal-editor :title="title" :disabled="disabled" style="width: 718px;"
+    :zoom="zoom" @zoom="onZoom" @print="print">
+    <div ref="print-content" :style="{ zoom: zoom + '%' }">
         <div>
             <spec :value="bilet"/>
             <obespechenie  :value="bilet.obespechenie"/>
@@ -23,6 +25,7 @@
                 </div>
             </div>
         </div>
+    </div>
     </modal-editor>
 </template>
 <script>
@@ -35,6 +38,11 @@ import Sign from './Sign'
 export default {
     components: { ModalEditor, Spec, Obespechenie, ControlTiket, Sign },
     props: { value: Object },
+    data() {
+        return {
+            zoom: '90'
+        }
+    },
     computed: {
         ...mapGetters({
             klients: 'klient/klients',
@@ -51,12 +59,23 @@ export default {
             const { klient: id } = bilet
             return klients[id]
         },
+        printContent({ $refs }) {
+            return $refs['print-content']
+        },
         disabled({ }) {}
     },
     methods: {
         t(v) {
             return this.$t('print.' + v)
-        }
+        },
+        print({ send }) {
+            const { outerHTML: content } = this.printContent
+            return send("print", { content, zoom: '149%', silent: true })
+            
+        },
+        onZoom({ value }) {
+            this.zoom = value + ''    
+        },
     }
 }
 </script>

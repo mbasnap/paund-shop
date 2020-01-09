@@ -1,5 +1,5 @@
 <template> 
-    <modal-editor :title="type" :disabled="disabled" @save="onSave" >
+    <modal-editor :title="type" :disabled="disabled" @save="editor => onSave(editor, model)" >
         <div class="form-row mb-2">
             <named-input class="form-control col-6 mr-1" name="summ" placeholder="Summ" :value="model" />
             <named-select class="form-control col" :name="account" placeholder="Account"
@@ -7,7 +7,8 @@
             :tostring="v => v + ' ' + accounts[account][v]"/>
         </div> 
         <div class="form-row mb-2">
-            <named-textarea class="form-control col" name="discription" placeholder="Discription" :value="model"/>
+            <named-textarea class="form-control col" name="title"
+            placeholder="Discription" :value="model"/>
         </div>        
     </modal-editor>
 </template>
@@ -19,7 +20,7 @@ import mix from '@/widgets/named-input/mix.js'
 export default {
     mixins: [ mix ],
     components: { ModalEditor },
-    props: { type: String },
+    props: { type: String, save: Function },
     data() {
         return {
             value: {}
@@ -40,16 +41,18 @@ export default {
         }
     },
     methods: {
-        ...mapActions({ save: 'reestr/save' }),
+        // ...mapActions({ save: 'reestr/save' }),
         readonly() {
             return this.disabled
         },
         change({ name, value }) {
             this.value = { ...this.value, [name]: value }
         },
-        async onSave(editor) {
+        async onSave(modal) {
             await this.save([this.model])
-            editor.close()
+            modal.close()
+            // const value = await this.save([this.model])
+            // return close(this.afterSave(value))
         }
     }
 }

@@ -2,6 +2,7 @@
 import Moment from 'moment'
 import { extendMoment } from 'moment-range'
 import numberFormat from './numberFormat'
+// import'./numberToString'
 const moment = extendMoment(Moment)
 const toDouble = v => numberFormat(v, 2, '.', ' ')
 const toNumber = v => Number(numberFormat(v || 0, 2, '.', '')) 
@@ -16,6 +17,10 @@ const pDiff = (a, b) => {
     return res > 0 ? res : 0.00
 }
 moment.locale('ru')
+const months = {
+    format: 'января_февраля_марта_апреля_мая_июня_июля_августа_сентября_октября_ноября_декабря'.split('_'),
+    standalone: 'январь_февраль_март_апрель_май_июнь_июль_август_сентябрь_октябрь_ноябрь_декабрь'.split('_')
+}
 export  {
     numberFormat,
     toDouble,
@@ -25,5 +30,6 @@ export  {
     pDiff,
     mult,
     proc,
-    moment
+    moment,
+    months
 }

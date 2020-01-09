@@ -1,20 +1,26 @@
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script> -->
-<style>
+<style type="text/css">
+
+/* @media print {  @page {size: 'A4'}  }
+
 @media print {
-    html, body {
-        zoom: 149%;
-    }
-}
+    html, body { zoom: 149%; }
+} */
 </style>
 </head>
 <body>
     <script>
         const ipcRenderer = require("electron").ipcRenderer;
-        ipcRenderer.on("print", (event, content) => {
-            document.body.innerHTML = content;
-            ipcRenderer.send("readyToPrint");
+        ipcRenderer.on("print", (event, v) => {
+            document.body.innerHTML = v.content
+            document.body.children[0].style.zoom = v.zoom
+            ipcRenderer.send("readyToPrint", v)
+            // setTimeout(function () {
+            //     ipcRenderer.send("readyToPrint", v);
+            // }, 0);
+            
         })
     </script>
 </body>

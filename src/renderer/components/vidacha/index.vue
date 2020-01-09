@@ -9,18 +9,18 @@
                     <bilet class="row" style="height: 75%;" v-model="model" :disabled="disabled"/> 
                     <div class="row">
                         <div class="col-3 ">
-                            <button class="btn " @click="update()">reset</button>
+                            <button class="btn btn-primary" @click="update({})">reset</button>
                         </div>
                         <div class="col-3">
-                            <button class="btn "
-                            @click="save(values).then(id => update(dt001[id]))"> save</button>
+                            <button class="btn btn-primary"
+                            @click="onSave(values)"> save</button>
                         </div>
                     </div>
                 </div>                                 
             </div>        
             <obespechenie v-model="obespechenie" :disabled="disabled"/>
         </div>
-        <kassa class="col-4"></kassa> 
+        <kassa ref="kassa" class="col-4"/>
     </div>
 </template>
 
@@ -30,7 +30,6 @@ import { mapGetters, mapActions } from 'vuex'
 import { Kassa, Klient, Bilet, Obespechenie } from './components'
 export default {
 components: { Kassa, Klient, Bilet, Obespechenie },
-
 data () {
     return {
         klient: {},
@@ -38,14 +37,26 @@ data () {
         obespechenie: [ {} ],
     }
 },
+watch: {
+    date() {
+        this.update({})
+    }
+},
 computed: {
     ...mapGetters({
         klients: 'klient/klients',
         dt001: 'reestr/dt001',
-        spec: 'settings'
+        dt002: 'reestr/dt002',
+        spec: 'settings',
+        discounts: 'discounts',
+        date: 'date'
         }),
     nextNumber({ dt001 }) {
         const numbers = Object.values(dt001).map(v => v.number)
+        return (Math.max(...numbers, 0) + 1)
+    },
+    nextOrder({ dt002 }) {
+        const numbers = Object.values(dt002).map(v => v.number)
         return (Math.max(...numbers, 0) + 1)
     },
     number({ bilet, nextNumber }) {
@@ -57,8 +68,8 @@ computed: {
     ocenca({ bilet }) {
         return toDouble(bilet.ocenca)
     },
-    discount({ bilet, spec }) {
-        return bilet.discount || spec.discounts[0]
+    discount({ bilet, discounts }) {
+        return bilet.discount || discounts[0]
     },
     procent({ ocenca, discount, days, spec }) {
         let procent = proc(ocenca, spec.procent)
@@ -70,9 +81,18 @@ computed: {
         let penalty = toDouble(proc(ocenca, spec.penalty))
         return { penalty, days }
     },
-    ssuda({ ocenca, days, procent }) {
+    title({ bilet }) {
+        return `vidana ssuda po zalogovomu biletu ${bilet.number}`
+    },
+    ssuda({ ocenca, days, procent, title }) {
         const summ = diff(ocenca, procent.summ)
-        return { days, summ }
+        return { days, summ, title }
+    },
+    kassa({ $refs }) {
+        return $refs['kassa']
+    },
+    order({ title, nextOrder: number }) {
+        return { title, number }
     },
     model: {
         get({ number, days, ocenca, discount, procent, penalty, ssuda }) {
@@ -82,11 +102,12 @@ computed: {
             this.bilet = v
         }
     },
-    values({ model, klient, obespechenie }) {
+    values({ order, model, ssuda, obespechenie }) {
+        const { _id: klient } = this.klient
         return [
-            { dt: '001', ...model, klient: klient._id, obespechenie },
-            { dt: '377', ct: '301', title: 'vidana ssuda', ...model.ssuda },
-            // { dt: '301', ct: '703', title: 'uplachen procent', ...procent }        
+            { dt: '001', ...model, klient, obespechenie },
+            { dt: '002', ...order, to: klient },
+            { dt: '377', ct: '301', ...ssuda },
         ]
     },
     disabled({ bilet }) {
@@ -94,8 +115,11 @@ computed: {
     }
 },
 methods: {
-    ...mapActions({ save: "reestr/save" }),
-    update(v = {}) {
+    onSave(v) {
+        return this.kassa.save(v)
+            .then(([id]) => this.update(this.dt001[id]))
+    },
+    update(v) {
         const { klient: id, obespechenie } = this.bilet = v
         this.klient = { ...this.klients[id] }
         this.obespechenie = obespechenie || [ {} ]

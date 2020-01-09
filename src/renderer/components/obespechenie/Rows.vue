@@ -22,7 +22,7 @@ props: { value: Object, editable: Boolean },
 computed: {
     ...mapGetters(['settings']),
     price({ settings }) {
-        return settings.price
+        return { ...settings.price }
     },
     ves({ value }) {
         return toDouble(value.ves)

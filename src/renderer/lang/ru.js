@@ -2,6 +2,7 @@
 // Ready translated locale messages
 export default {
   ru: {
+    'print-btn': 'Print',
     zvit: {
       date: 'Date',
       prixod: 'Prixod',
@@ -11,6 +12,10 @@ export default {
       penalty: 'Penalty',
       totalDt: 'Dt',
       totalCt: 'Ct'
+    },
+    order: {
+      dt: 'Prixodniy kassoviy order',
+      ct: 'Rasxodniy kassoviy order',
     },
     print: {
       bilet: 'Билет №',

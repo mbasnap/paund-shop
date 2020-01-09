@@ -45,6 +45,7 @@ function createWindow () {
   //     event.newGuest = new BrowserWindow(options)
   //   }
   // })
+
   workerWindow = new BrowserWindow({ 
     // show: false,
     webPreferences: { webSecurity: false },
@@ -71,11 +72,14 @@ app.on('window-all-closed', () => {
   }
 })
 
+
 app.on('activate', () => {
   if (mainWindow === null) {
     createWindow()
   }
 })
+
+
 
 // ipcMain.on("print-to-pdf", (event, content) => {
 //   const pdf = path.join(os.tmpdir(), 'print.pdf')
@@ -114,11 +118,13 @@ ipcMain.on("show-zvit", (v) => {
 //   })
 // })
 
-ipcMain.on('print', (e, content) => {
-  workerWindow.webContents.send('print', content)
-  // workerWindow.webContents.insertCSS('@media print {html, body {zoom: 130%;}');
+ipcMain.on('print', (e, v) => {
+  workerWindow.webContents.send('print', v)
 })
-ipcMain.on('readyToPrint', ({ sender }) => {
-  workerWindow.webContents.print({})
-  sender.send('wrote-pdf', 'pdfPath')
+
+ipcMain.on('readyToPrint', ({ sender }, v) => {
+  const { size, zoom, silent } = v  
+  workerWindow.webContents.insertCSS(`@media print { @page {size: ${ size }} }`)
+  workerWindow.webContents.print({ silent, landscape: size === 'landscape' })
+  // sender.send('wrote-pdf', 'pdfPath')
 })

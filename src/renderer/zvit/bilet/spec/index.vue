@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="row pl-3" style="height: 200px;">
+        <div class="row pl-4" style="height: 200px;">
             <klient class="col" :value="value"/>
             <bilet class="col border-left" :value="value"/>
         </div>

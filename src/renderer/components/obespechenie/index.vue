@@ -40,14 +40,6 @@ export default {
         ocenca({ value }) {
             return summ( ...value.map(v => v.ocenca))
         }
-        // total({ value }) {
-        //     return value.reduce((cur, v) => {
-        //         const ves = summ(cur.ves, v.ves)
-        //         const derty = summ(cur.derty, v.derty)
-        //         const ocenca = summ(cur.ocenca, v.ocenca)
-        //         return { ...cur, ves, derty, ocenca }
-        //     }, { ves: 0, derty: 0, ocenca: 0 })
-        // }
     },
     methods: {
         input(index, value) {

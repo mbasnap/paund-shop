@@ -2,76 +2,43 @@ import { db, getToken } from '@/db'
 import { router } from '@/setup'
 // import { toDouble }  from '@/functions'
 
-const { get, post } = db()
+const { get } = db()
 const state = {
-    settings: {
-        ok: 2500.25,
-        minRows: 5,
-        price: { '375': '10.2', '583': '20.5', '585': 25 },
-        numberFormat: [2, ',', ' '],
-        discounts: ['10', '15', '20'],
-        maxDays: '31',
-        minDays: '1',
-        procent: '0.7',
-        penalty: '1'
-    },
-    accounts: {
-        ct: { '400': 'ustavniy fond' },
-        dt: { '777': 'zarplata' }
-    },
     date: new Date(),
-    logo: 'PS',
     menu: [ "vidacha", "vozvrat", "sklad"],
-    company: {},
-    bilet: {},
-    props: {},
-    ocenka: null
+    company: {}
 }
 
 const getters = {
-    settings ({ settings }) {
-        return settings
+    company ({ company }) {        
+        return { ...company }
     },
-    accounts ({ accounts }) {
-        return accounts
+    settings ({ }, { company }) {
+        return { ...company.settings }
     },
-    klient ({}, getters) {
-        return getters['klient/klient']
+    accounts ({ }, { settings }) {
+        return { ...settings.accounts }
     },
-    isAuth (state, getters) {
+    discounts ({ }, { settings }) {
+        return settings.discounts || []
+    },
+    user({}, getters) {
+        return getters['user/user']
+    },
+    isAuth ({}, getters) {
         return getters['user/isAuth']
     },
-
-    isActive ({company}) {
+    isActive ({ company }) {
         return !! company.id
     },
-
     date ({ date }) {
         return date
     },
-
-    emptyNumbers () {
-        return [1, 2, 3]
-    },
-
-    minDays ({props}) {
-        return props.minDays || '1'
-    },
-
-    maxDays ({props}) {
-        return props.maxDays || '31'
-    },
-
-    discounts ({props}) {
-        return props.discounts || [10, 15, 20]
-    },
-
-    menu ({menu}) {
+    menu ({ menu }) {
         return menu
     },
-
-    logo ({company, logo}) {
-        return company.name || logo
+    logo ({ company }) {
+        return company.name
     }
 
 }
@@ -80,7 +47,7 @@ const mutations = {
         state.date = v
     },
     company (state, v) {
-        state.company = v || {}
+        state.company = { ...v }
     }
 }
 const actions = {

@@ -1,5 +1,5 @@
 <template>
-    <table class="table table-striped table-sm">
+    <table class="kassa table table-striped table-sm">
     <thead>
         <tr>
         <th scope="col">{{ t('date') }}</th>
@@ -51,7 +51,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { summ, moment } from '@/functions'
+import { summ, mult, moment } from '@/functions'
 export default {
     props: { value: Object },
     computed: {
@@ -66,8 +66,7 @@ export default {
             return [ ...value.by('days')].map(v => v.format('L'))
         },
         ok({ value, isSameOrBefore }) {
-            const day = value.start.subtract(1, 'day')
-            return this.getOk(isSameOrBefore(day))
+            return this.getOk(v => moment(v.date, 'L').isBefore(value.start))
         },
         dt301({ values }) {
             return values.filter(({ dt }) => dt === '301')
@@ -86,7 +85,7 @@ export default {
         },
         monthFilter({ date }) {
             const { start, end } = this.value
-            return moment(date, 'L').isSameOrAfter(start) && moment(date, 'L').isSameOrBefore(end)
+            return moment(date, 'L').isBetween(start, end, 'day', '[]')
         },
         prixod(filter) {
             const values = this.dt301.filter(filter)
@@ -117,7 +116,7 @@ export default {
         getOk(filter) {
             const ok = this.settings['ok']
             const dt = this.totalDt(filter)
-            const ct = this.totalCt(filter) * -1
+            const ct = mult(this.totalCt(filter), -1)
             return summ(ok, dt, ct)
         },
         t(v) {
@@ -130,7 +129,8 @@ export default {
 
 <style>
 .kassa.table {
-    overflow-x: scroll;
+    width: 1000px;
+    overflow: hidden;
 }
 /* .table td.fit, 
 .table th.fit {

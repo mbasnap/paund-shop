@@ -33,6 +33,7 @@
     "lodash.groupby": "^4.6.0",
     "moment": "^2.24.0",
     "moment-range": "^4.0.2",
+    "number-to-words-ru": "^2.0.1",
     "validator": "^10.11.0",
     "vue": "^2.5.16",
     "vue-context": "^4.1.1",

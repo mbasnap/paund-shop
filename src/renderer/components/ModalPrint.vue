@@ -2,13 +2,17 @@
 <div class="modal-content">
     <div class="row modal-header">
     <h5 class="col modal-title"> {{ title }} </h5>
-    <div class="col-8">
-    <div class="row form-group">
-        <label class="col" for="formControlRange">Example Range input</label>
-        <input type="range" class="col form-control-range">
+    <div v-if="zoom" class="col-8">
+        <div class="row form-group">
+            <label class="col" for="formControlRange">
+                <span>Zoom</span> {{ zoom }}
+            </label>
+            <input type="range" class="col form-control-range"
+            @input="v => $emit('zoom', v.target)"
+            min="50" max="100" :value="zoom" >
+        </div>
     </div>
-    </div>
-    <button type="button" class=" col close" @click="close">
+    <button type="button" class="col-2 close" @click="close">
         <span aria-hidden="true">&times;</span>
     </button>
     </div>
@@ -19,7 +23,8 @@
     </div>
     <div class="modal-footer">
     <button type="button" class="btn btn-secondary" @click="close">Close</button>
-    <button type="button" class="btn btn-primary" @click="print">print</button>
+    <button type="button" class="btn btn-primary"
+    @click="onPrint">print</button>
     </div>
 </div>
 </template>
@@ -27,7 +32,7 @@
 <script>
 const ipcRenderer = require("electron").ipcRenderer
 export default {
-props: { title: String, disabled: Boolean },
+props: { title: String, zoom: String },
 
 created() {
     this.$on('close', () => {
@@ -35,19 +40,17 @@ created() {
     })
 },
 computed: {
-    content({ $refs }) {
-        return $refs['printer-content']
-    }
+
 },
 
 methods: {
     close () {
         this.$emit('close')
     },
-    print() {
-        const { outerHTML } = this.content
-        ipcRenderer.send("print", outerHTML)
+    onPrint() {
+        return this.$emit('print', ipcRenderer)
     }
+
 }
 
 }
