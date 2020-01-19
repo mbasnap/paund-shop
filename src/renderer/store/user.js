@@ -1,4 +1,4 @@
-import { db, getToken } from '@/db'
+import { db, getToken, user } from '@/db'
 import { router } from '@/setup'
 const { get, post } = db()
 const state = {
@@ -20,6 +20,9 @@ const mutations = {
 const actions = {
 
     async login ({dispatch}, v) {
+        user.signUp(v.email, v.password)
+            .catch(err => console.log(err))
+
         const token = await post('/login', v)
         localStorage.setItem('x-user', token)
         await dispatch('update')

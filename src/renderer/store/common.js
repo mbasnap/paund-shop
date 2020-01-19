@@ -1,43 +1,42 @@
-import { db, getToken } from '@/db'
+import { getToken, company } from '@/db'
 import { router } from '@/setup'
-// import { toDouble }  from '@/functions'
 
-const { get } = db()
 const state = {
     date: new Date(),
-    menu: [ "vidacha", "vozvrat", "sklad"],
     company: {}
 }
 
 const getters = {
-    company ({ company }) {        
-        return { ...company }
+    company ({ company }) {    
+        const rows = company.rows || []
+        return rows.reduce((obj, { doc }) => ({ ...obj, ...doc }), {})
     },
-    settings ({ }, { company }) {
+    settings ({}, { company }) {
         return { ...company.settings }
     },
-    accounts ({ }, { settings }) {
+    accounts ({}, { settings }) {
         return { ...settings.accounts }
     },
-    discounts ({ }, { settings }) {
+    discounts ({}, { settings }) {
         return settings.discounts || []
     },
     user({}, getters) {
         return getters['user/user']
     },
     isAuth ({}, getters) {
-        return getters['user/isAuth']
+        return true
+        // return getters['user/isAuth']
     },
-    isActive ({ company }) {
+    isActive ({}, { company }) {
         return !! company.id
     },
     date ({ date }) {
         return date
     },
-    menu ({ menu }) {
-        return menu
+    menu ({}, { company }) {
+        return company.menu || []
     },
-    logo ({ company }) {
+    logo ({}, { company }) {
         return company.name
     }
 
@@ -47,7 +46,7 @@ const mutations = {
         state.date = v
     },
     company (state, v) {
-        state.company = { ...v }
+        state.company = v
     }
 }
 const actions = {
@@ -64,7 +63,7 @@ const actions = {
 
     async update  ({ commit, dispatch }) {
         getToken('x-token')
-        commit('company', await get('/'))
+        commit('company', await company.allDocs({include_docs: true}))
         dispatch('reestr/update')
         dispatch('klient/update')
     }

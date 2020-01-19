@@ -39,20 +39,20 @@ export default {
     props: { value: Array },
     computed: {
         ...mapGetters({
-            dt001: 'reestr/dt001',
-            ct001: 'reestr/ct001',
-            klients: 'klient/klients',
+            map: 'reestr/map',
+            klients: 'klient/map',
             accounts: 'accounts',
         }),
-        model({ value, dt001, ct001 }) {
+        model({ value }) {
             const [ id, values = [] ] = value
             return { id, values: values.filter(({ dt, ct }) => [dt, ct].includes('301')) }
         },
-        bilet({ model, dt001, ct001 }) {
-            return { ...dt001, ...ct001}[model.id]
+        bilet({ value, map }) {
+            const [ id ] = value
+            return map[id]
         },
         klient({ bilet, klients }) {
-            return klients[bilet.klient]
+            return { ...klients[bilet.klient]}
         }
     },
     methods: {

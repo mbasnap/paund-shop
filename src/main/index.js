@@ -1,8 +1,15 @@
-import {app, BrowserWindow, Menu, ipcMain, shell} from "electron"
+import { app, BrowserWindow, Menu, ipcMain, shell} from "electron"
+// import PouchDB from 'pouchdb-browser'
+// const db = new PouchDB('http://localhost:5984/ps')
+// db.info().then(console.log).catch(console.error)
+
+
+    
+
 const menuTemplate = require('./menuTemplate');
-const os = require("os")
-const fs = require("fs")
-const path = require("path")
+// const os = require("os")
+// const fs = require("fs")
+// const path = require("path")
 
 process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
 
@@ -16,7 +23,7 @@ const winURL = process.env.NODE_ENV === 'development' ? `http://localhost:9080`
 const workURL = process.env.NODE_ENV === 'development' ? `http://localhost:9080/static/assets/worker.html`
   : `file://${__dirname}/worker.html`
 
-function createWindow () {
+function createWindow ( ddd ) {
   mainWindow = new BrowserWindow({
     webPreferences: {
       webSecurity: false,
@@ -31,37 +38,24 @@ function createWindow () {
   mainWindow.on('closed', () => {
     mainWindow = null
   })
-  
-  // mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-  //   if (frameName === 'modal') {
-  //     // открыть окно как модальное
-  //     event.preventDefault()
-  //     Object.assign(options, {
-  //       modal: true,
-  //       parent: mainWindow,
-  //       width: 100,
-  //       height: 100
-  //     })
-  //     event.newGuest = new BrowserWindow(options)
-  //   }
-  // })
-
+  // mainWindow.custom = { db: ddd }
   workerWindow = new BrowserWindow({ 
     // show: false,
     webPreferences: { webSecurity: false },
     protocol: 'file',
-    // height: 1000,
-    // width: 1000,
-
     parent:mainWindow
   })
   workerWindow.webContents.openDevTools()
   workerWindow.loadURL(workURL)
-  workerWindow.on("closed", () => {
-    workerWindow = undefined;
-})
+  // workerWindow.on("closed", () => {
+  //   workerWindow = undefined;
+  // })
 }
-app.on('ready', () => {
+app.on('ready', async () => {
+
+    
+
+
   createWindow()
   Menu.setApplicationMenu( Menu.buildFromTemplate( menuTemplate() ))
 })
@@ -73,50 +67,16 @@ app.on('window-all-closed', () => {
 })
 
 
+
 app.on('activate', () => {
   if (mainWindow === null) {
-    createWindow()
+    createWindow('sddsds')
   }
 })
-
-
-
-// ipcMain.on("print-to-pdf", (event, content) => {
-//   const pdf = path.join(os.tmpdir(), 'print.pdf')
-//   const win = BrowserWindow.fromWebContents(event.sender)
-//   win.webContents.printToPDF({}, (err, data) => {
-//     if(err) return console.log(err.message);
-//     fs.writeFile(pdf, data, (err) => {
-//       if(err) return console.log(err.message);
-//       shell.openExternal('file://' + pdf)
-//       event.sender.send('wrote-pdf', pdf)
-//     })
-//   })
-// })
-
-// ipcMain.on("printPDF", (event, content) => {
-//   workerWindow.webContents.send("printPDF", content);
-// })
 
 ipcMain.on("show-zvit", (v) => {
   mainWindow.webContents.send('show-zvit', v)
 })
-
-
-// ipcMain.on("readyToPrintPDF", (event) => {
-//   const pdfPath = path.join(os.tmpdir(), 'print.pdf');
-//   // Use default printing options
-//   workerWindow.webContents.printToPDF({}, function (error, data) {
-//       if (error) throw error
-//       fs.writeFile(pdfPath, data, function (error) {
-//           if (error) {
-//               throw error
-//           }
-//           shell.openItem(pdfPath)
-//           event.sender.send('wrote-pdf', pdfPath)
-//       })
-//   })
-// })
 
 ipcMain.on('print', (e, v) => {
   workerWindow.webContents.send('print', v)

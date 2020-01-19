@@ -33,9 +33,7 @@ export default {
 components: { Klient, Number, Bilet, Obespechenie, Kassa },
 data () {
     return {
-        // klient: {},
         bilet: {}
-        // obespechenie: []
     }
 },
 watch: {
@@ -45,11 +43,10 @@ watch: {
 },
 computed: {
     ...mapGetters({ 
-        klients: 'klient/klients',
+        klients: 'klient/map',
         date: 'date',
         empty: 'reestr/empty',
-        // dt001: 'reestr/dt001',
-        ct002: 'reestr/ct002',
+        lastOrder: 'reestr/lastOrder'
     }),
     klient({ bilet,  klients }) {
         const { klient } = bilet
@@ -59,16 +56,9 @@ computed: {
         const { obespechenie } = bilet
         return obespechenie || []
     },
-    nextOrder({ ct002 }) {
-        const numbers = Object.values(ct002).map(v => v.number)
-        return (Math.max(...numbers, 0) + 1)
-    },
+
     days({ bilet }) {
-        const date = moment(bilet.date, 'L')
-        return moment(this.date).diff(date, 'd') || 1
-    },
-    title({ bilet }) {
-        return `vozvrashena ssuda po zalogovomu biletu ${bilet.number}`
+        return moment(this.date).diff(bilet.date, 'd') || 1
     },
     ssuda({ bilet, days }) {
         return { ...bilet.ssuda, days }
@@ -85,21 +75,23 @@ computed: {
         summ = toDouble(mult(days, penalty))
         return { ...bilet.penalty, days, summ }
     },
-    order({ title, nextOrder: number }) {
-        return { title, number }
+    order({ bilet, klient, lastOrder }) {
+        const number = lastOrder.dt + 1
+        const title = `vozvrashena ssuda po zalogovomu biletu ${bilet.number}`
+        const from = `${klient.family} ${klient.name} ${klient.sername}`
+        return { title, number, from }
     },
     model({ ssuda, procent, penalty }) {
         return { ssuda, procent, penalty }
     },
-    values({ order, bilet, ssuda, procent, penalty }) {
-        const { _id: klient } = this.klient
-        return [
-            { ct: '001', klient, ref: this.bilet._id },
-            { ct: '002', ...order, from: klient },
+    values({ order, ssuda, procent, penalty }) {
+        const { _id: klient, passport } = this.klient
+        const { _id: ref, number } = this.bilet
+        return { ref, number, klient, passport, order, values: [
             { dt: '301', ct: '377', ...ssuda },
             { dt: '301', ct: '703', ...procent },
-            { dt: '301', ct: '704', ...penalty }           
-        ]
+            { dt: '301', ct: '704', ...penalty }              
+        ]}
     },
     disabled({ bilet, empty }) {
         return !empty[bilet._id]

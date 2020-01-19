@@ -34,6 +34,9 @@ export default {
         t(v) {
             return this.$t('print.' + v)
         }
+    },
+    computed: {
+        
     }
 }
 </script>

@@ -38,7 +38,7 @@
             <div class="col">
                <div class="row">
                     {{ t('idn') }}
-                    <div class="col">{{ klient.idn }}</div>
+                    <div class="col">{{ idn }}</div>
                 </div>    
             </div>
         </div>
@@ -46,7 +46,7 @@
             <div class="col">
                <div class="row">
                     {{ t('idn') }}
-                    <div class="col">{{ klient.idn }}</div>
+                    <div class="col">{{ idn }}</div>
                 </div>    
             </div>
         </div>
@@ -54,7 +54,7 @@
             <div class="col">
                <div class="row">
                     {{ t('idn') }}
-                    <div class="col">{{ klient.idn }}</div>
+                    <div class="col">{{ idn }}</div>
                 </div>    
             </div>
         </div>
@@ -65,31 +65,30 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 export default {
 props: { value: Object },
 computed: {
-    ...mapGetters({
-        klients: 'klient/klients',
-    }),
     bilet({ value }) {
         return value
     },
     ssuda({ bilet }) {
         return bilet.ssuda
     },
-    klient({ bilet, klients }) {
-        const { klient: id } = bilet
-        return klients[id]
+    klient({ bilet }) {
+        return { ...bilet.klient }
     },
     fio({ klient }) {
         const { family, name, sername } = klient
-        return family + ' ' + name + ' ' + sername
+        return `${family} ${name} ${sername}`
     },
-    passport({ bilet, klient }) {
-        const { seria, number } = klient.passport[bilet.passport || 0] || {}
-        return seria + ' ' + number
+    passport({ klient }) {
+        const [passport] = klient.passport || []
+        const { seria, number } = { ...passport}
+        return `${seria || ''} ${number || ''}`
     },
+    idn({ klient }) {
+        return klient.idn
+    }
 },
 
 methods: {

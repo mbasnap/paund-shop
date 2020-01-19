@@ -34,20 +34,15 @@ export default {
     },
     computed: {
         ...mapGetters({
-            values: 'reestr/values',
+            dt: 'reestr/dt301',
+            ct: 'reestr/ct301',
             settings: 'settings',
             date: 'date',
             accounts: 'accounts'
-
         }),
-        dt({ values, isSame }) {      
-            return values.filter(v => v.dt === '301')
-        },
-        ct({ values, isSame }) {
-            return values.filter(v => v.ct === '301')
-        },
+
         ok({ settings, dt, ct, date }) {
-            const isBefore = v => moment(v.date, 'L').isBefore(date, 'date')
+            const isBefore = v => moment(v.date).isBefore(date, 'date')
             const debet = summ(...dt.filter(isBefore).map(v => v.summ))
             const credit = summ(...ct.filter(isBefore).map(v => v.summ))
             return summ(settings['ok'], debet, mult(credit, -1))
@@ -67,27 +62,28 @@ export default {
     methods: {
         ...mapActions({
             remove: 'reestr/remove',
-            saveReestr: 'reestr/save'
+            saveReestr: 'reestr/save',
         }),
+
         save(v) {
             return this.saveReestr(v)
                 .then(({ _id, values }) => this.select(_id, values))
         },
         add({ type }) {  
 
-            this.$modal.show(PrixoRasxod, { type, save })
+            this.$modal.show(PrixoRasxod, { type, save: this.save })
         },
         grope(v) {
             return [ ...v.reduce((cur, v) =>
                 cur.set(v._id, [ ...cur.get(v._id) || [], v]), new Map())]       
         },
         isSame ({ date }) {
-            return moment(date, 'L').isSame(this.date, 'date')
+            return moment(date).isSame(this.date, 'date')
         },
         print(props) {
             this.$modal.show(Order, props, { width: '850', height: '500'})
         },
-        select(id, values) {
+        select(id, values) {            
             return this.selected = [id, values]
         }
     }

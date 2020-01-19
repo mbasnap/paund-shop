@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import moment from 'moment'
+import { moment } from '@/functions'
 import { VerticalSlider, Datepicker } from "@/widgets"
 import { mapGetters } from 'vuex'
 const name = 'days'
@@ -24,8 +24,7 @@ computed: {
             return new Date(moment(date).add(value.days, 'd'))
         },
         set(v) {
-            const date = moment(this.date)
-            const value = moment(v).diff(date, 'd') + 1
+            const value = moment(v).diff(this.date, 'd') + 1
             this.change({ name, value })
         }
     },

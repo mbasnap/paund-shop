@@ -16,12 +16,13 @@ export default {
     computed: {
         ...mapGetters({
             empty: 'reestr/empty',
+            map: 'reestr/map',
             date: 'date'
             }),
-        numbers({ empty, date }) {
-            const isSameOrBefore = v => moment(v.date, 'L')
-                .isSameOrBefore(date, 'date')
-            return Object.values(empty).filter(isSameOrBefore)
+        numbers({ empty, date, map }) {            
+            return Object.values(empty)
+                .filter(v => moment(v.date).isSameOrBefore(date, 'date'))
+                    .map(v => map[v._id])
         },
         options({ value, numbers }) {
             const includes = v => (v.number + '').includes(value.number || '')

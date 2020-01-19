@@ -1,5 +1,6 @@
 <template>
-    <div class="suggest dropdown" :readonly="readonly()">
+    <div class="suggest dropdown" :readonly="readonly()"
+    @mouseleave="highlight(-1)">
         <slot></slot>
         <textarea class="named-input editor" ref="editor"
         :name="name"
@@ -15,7 +16,7 @@
         
         <ul :class="[ 'options dropdown-menu', { 'show': show }]">
             <li v-for="(item, key) in options" :key="key" :class="{ 'highlight': key === index}"
-            @click="select(item)"> {{ suggest(item, name) }} </li>
+            @click="select(item)"> {{ suggest(item) }} </li>
         </ul>         
     </div>
 </template>
@@ -29,7 +30,9 @@ export default {
         placeholder: String,
         options: Array,
         suggest: { type: Function,
-            default: (item, name) => item ? item[name] : ''
+            default(item) {
+                return item[this.name] || ''
+            }
         },
     },
     inject: [ "input", "change", "readonly" ],

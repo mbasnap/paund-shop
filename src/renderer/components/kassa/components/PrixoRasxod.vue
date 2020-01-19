@@ -27,7 +27,10 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['accounts']),
+        ...mapGetters({
+            accounts: 'accounts',
+            lastOrder: 'reestr/lastOrder'
+        }),
         disabled({ value }) {
             // return !Object.entries(value)
             // .some(([ key, value ]) => this.value[key] !== value ? value : undefined)
@@ -35,13 +38,20 @@ export default {
         account({ type }) {
             return type === 'dt' ? 'ct' : 'dt'
         },
+        title({ value }) {
+            return value.title
+        },
+        order({ value, title, type, lastOrder }) {
+            const number = lastOrder[type] + 1
+            const from = value.from || ''
+            return { title, number, from }
+        },
         model({ value, type }) {
             const summ = toDouble(value.summ)
             return { ...value, [type]: '301', summ }
         }
     },
     methods: {
-        // ...mapActions({ save: 'reestr/save' }),
         readonly() {
             return this.disabled
         },
@@ -49,10 +59,9 @@ export default {
             this.value = { ...this.value, [name]: value }
         },
         async onSave(modal) {
-            await this.save([this.model])
+            const { order, model } = this
+            await this.save({ order, values: [model] })
             modal.close()
-            // const value = await this.save([this.model])
-            // return close(this.afterSave(value))
         }
     }
 }

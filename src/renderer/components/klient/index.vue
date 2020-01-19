@@ -1,7 +1,7 @@
 <template>
   <div class="klient">
     <tab-one class="col" :value="value" :disabled="disabled">
-        <slot></slot>
+        <!-- <slot></slot> -->
     </tab-one>
     <div class="col">
       <span class="btn edit" @click="showModal('edit')">edit</span>

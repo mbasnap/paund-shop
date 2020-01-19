@@ -45,20 +45,13 @@ watch: {
 computed: {
     ...mapGetters({
         klients: 'klient/klients',
-        dt001: 'reestr/dt001',
-        dt002: 'reestr/dt002',
+        lastOrder: 'reestr/lastOrder',
+        nextNumber: 'reestr/nextNumber',
+        map: 'reestr/map',
         spec: 'settings',
         discounts: 'discounts',
         date: 'date'
-        }),
-    nextNumber({ dt001 }) {
-        const numbers = Object.values(dt001).map(v => v.number)
-        return (Math.max(...numbers, 0) + 1)
-    },
-    nextOrder({ dt002 }) {
-        const numbers = Object.values(dt002).map(v => v.number)
-        return (Math.max(...numbers, 0) + 1)
-    },
+    }),
     number({ bilet, nextNumber }) {
         return bilet.number || nextNumber
     },   
@@ -81,9 +74,6 @@ computed: {
         let penalty = toDouble(proc(ocenca, spec.penalty))
         return { penalty, days }
     },
-    title({ bilet }) {
-        return `vidana ssuda po zalogovomu biletu ${bilet.number}`
-    },
     ssuda({ ocenca, days, procent, title }) {
         const summ = diff(ocenca, procent.summ)
         return { days, summ, title }
@@ -91,8 +81,11 @@ computed: {
     kassa({ $refs }) {
         return $refs['kassa']
     },
-    order({ title, nextOrder: number }) {
-        return { title, number }
+    order({ bilet, klient, lastOrder }) {
+        const number = lastOrder.ct + 1
+        const title = `vidana ssuda po zalogovomu biletu ${bilet.number}`
+        const to = `${klient.family} ${klient.name} ${klient.sername}`
+        return { title, number, to }
     },
     model: {
         get({ number, days, ocenca, discount, procent, penalty, ssuda }) {
@@ -103,21 +96,19 @@ computed: {
         }
     },
     values({ order, model, ssuda, obespechenie }) {
-        const { _id: klient } = this.klient
-        return [
-            { dt: '001', ...model, klient, obespechenie },
-            { dt: '002', ...order, to: klient },
-            { dt: '377', ct: '301', ...ssuda },
-        ]
+        const { _id: klient, passport } = this.klient
+        return { ...model, klient, passport, order, obespechenie, values: [
+            { dt: '377', ct: '301', ...ssuda }
+        ]}
     },
     disabled({ bilet }) {
         return !!bilet._id
     }
 },
 methods: {
-    onSave(v) {
-        return this.kassa.save(v)
-            .then(([id]) => this.update(this.dt001[id]))
+    async onSave(v) {
+        const [id] = await this.kassa.save(v)
+        return this.update(this.map[id])
     },
     update(v) {
         const { klient: id, obespechenie } = this.bilet = v

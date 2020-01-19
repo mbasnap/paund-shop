@@ -2,17 +2,17 @@
     <modal-editor :title="t(type)" @print="print" >
         <div :style="{ zoom }">
             <div ref="printer-content">
-                <dt-order v-if="type === 'dt'" :date="date" :values="values"
-                :bilet="bilet" :klient="klient" :order="order"/>
-                <ct-order v-if="type === 'ct'" :date="date" :values="values"
-                :bilet="bilet" :klient="klient" :order="order"/>
+                <dt-order v-if="type === 'dt'" :date="date" :values="items"
+                :bilet="bilet" :fullName="fullName" :order="order"/>
+                <ct-order v-if="type === 'ct'" :date="date" :values="items"
+                :bilet="bilet" :fullName="fullName" :order="order"/>
             </div>
         </div>
     </modal-editor>
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import { moment, months } from '@/functions'
+import { moment, months, toNumber } from '@/functions'
 import ModalEditor from '@/components/ModalPrint'
 import DtOrder from './DtOrder'
 import CtOrder from './CtOrder'
@@ -26,29 +26,29 @@ export default {
     },
     computed: {
         ...mapGetters({
-            klients: 'klient/klients',
-            dt001: 'reestr/dt001',
-            dt002: 'reestr/dt002',
-            ct002: 'reestr/ct002',
+            klients: 'klient/map',
+            map: 'reestr/map',
             company: 'company'
         }),
-        bilet({ dt001, _id  }) {
-            return { ...dt001[_id] }
+        bilet({ map, _id  }) {
+            return { ...map[_id] }
         },
-        order({ dt002, ct002, _id }) {
-            const order = { ...dt002, ...ct002 }
-            return { ...order[_id] }
+        order({ bilet, values }) {            
+            return { ...bilet.order }
         },
         date({ order }) {
-            const date = moment(order.date, 'L')
+            const date = moment(order.date)
             const day = date.format('DD')
             const month = months.format[date.month()]
             const year = date.format('YYYY')
             return `«${day}» ${month} ${year} г.`
         },
-        klient({ order, klients }){
+        items({ values }) {
+            return values.filter(v => toNumber(v.summ))
+        },
+        fullName({ order }){
             const { to, from } = order
-            return { ...klients[to || from] }
+            return to || from || ''
         },
         printContent({ $refs }) {
             return $refs['printer-content']

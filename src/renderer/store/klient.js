@@ -1,12 +1,17 @@
-import { db } from '@/db'
-const { get, post} = db('/klient')
+import { klient } from '@/db'
+
+
 
 const state = {
     klients: {},
 }
 const getters = {
     klients ({ klients }) {
-        return klients
+        const rows = klients.rows || []
+        return  rows.map(v => v.doc)
+    },
+    map ({}, { klients }) {
+        return  klients.reduce((obj, v) => ({ ...obj, [v._id]: v}), {})
     }
 }
 const mutations = {
@@ -15,12 +20,12 @@ const mutations = {
     }
 }
 const actions = {
-    async save ({ dispatch }, v) {        
-        const _id = await post('/', v)
+    async save ({ dispatch }, v) {    
+        const { id: _id } = await klient.post(v)
         return dispatch('update', { ...v, _id })
     },
-    async update ({ commit }, v) {        
-        commit('klients', await get('/'))
+    async update ({ commit }, v) {       
+        commit('klients', await klient.allDocs({ include_docs: true }))
         return v
     }
 }

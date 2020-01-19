@@ -18,7 +18,7 @@
     </thead>
     <tbody>
         <tr v-for="(date, index) in days" :key="index">
-            <th scope="row">{{ date }}</th>
+            <th scope="row">{{ format(date) }}</th>
             <td>{{ prixod(same(date)) }}</td>
             <td>{{ ct('377', same(date)) }}</td>
             <td>{{ ct('703', same(date)) }}</td>
@@ -63,10 +63,10 @@ export default {
             return ['377', '703', '704']
         },
         days({ value }) {
-            return [ ...value.by('days')].map(v => v.format('L'))
+            return [ ...value.by('days')]
         },
-        ok({ value, isSameOrBefore }) {
-            return this.getOk(v => moment(v.date, 'L').isBefore(value.start))
+        ok({ value, isBefore }) {
+            return this.getOk(isBefore(value.start))
         },
         dt301({ values }) {
             return values.filter(({ dt }) => dt === '301')
@@ -76,16 +76,21 @@ export default {
         }
     },
     methods: {
-        same(date) {
-            return v => v.date === date
+        format(date) {
+            return moment(date).format('L')
         },
-        isSameOrBefore(v) {
-            const date = moment(v, 'L')
-            return v => moment(v.date, 'L').isSameOrBefore(date)
+        same(date) {
+            return v => moment(v.date).isSame(date, 'day')
+        },
+        isBefore(date) {
+            return v => moment(v.date).isBefore(date, 'day')
+        },
+        isSameOrBefore(date) {
+            return v => moment(v.date).isSameOrBefore(date, 'day')
         },
         monthFilter({ date }) {
             const { start, end } = this.value
-            return moment(date, 'L').isBetween(start, end, 'day', '[]')
+            return moment(date).isBetween(start, end, 'day', '[]')
         },
         prixod(filter) {
             const values = this.dt301.filter(filter)

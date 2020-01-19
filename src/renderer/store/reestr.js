@@ -1,35 +1,55 @@
-import { db } from '@/db'
+import { db, reestr } from '@/db'
 const { get, post } = db('/reestr')
 const state = {
-    reestr: []
+    reestr: {}
 }
 const getters = {
 
-    values({ reestr }) {        
-        return reestr
+    date({}, {}, { common }) {        
+        return  common.date
     },
-    dt001({ reestr }) {
-        return reestr.filter(v => v.dt === '001')
-            .reduce((cur, v) => ({ ...cur, [v._id]: v }), {})
+    docs({ reestr }) {        
+        const rows = reestr.rows || []
+        return  rows.map(v => v.doc)
     },
-    dt002({ reestr }) {
-        return reestr.filter(v => v.dt === '002')
-            .reduce((cur, v) => ({ ...cur, [v._id]: v }), {})
+    map({}, { docs }) {
+        return docs.reduce((obj, v) => ({ ...obj, [v._id]: v }), {})
     },
-    ct002({ reestr }) {
-        return reestr.filter(v => v.ct === '002')
-            .reduce((cur, v) => ({ ...cur, [v._id]: v }), {})
+    values({}, { docs }) { 
+        return  docs.filter(({ values }) => values && values.map)
+            .reduce((arr, { values, _id, date }) => {
+                const items = (values || []).map(v => ({ ...v, _id, date }))
+                return [ ...arr, ...items ]
+            }, [])
     },
-    ct001({ reestr }, { dt001 }) {   
-        const used = (cur, { _id, ref }) => ({ ...cur, [_id]: dt001[ref]})     
-        return reestr.filter(v => v.ct === '001').reduce(used, {})
+    dt301({}, { values }){
+        return values.filter(v => v.dt === '301')
     },
-    used({}, { ct001 }) {
-        return Object.values(ct001)
-            .reduce((cur, v) => ({ ...cur, [v._id]: v }), {})
+    ct301({}, { values }){
+        return values.filter(v => v.ct === '301')
     },
-    empty({}, { dt001, used }) {
-        return Object.values(dt001).filter(({ _id }) => !used[_id])
+    lastOrder({}, { dt301, ct301, map }) {
+        const orderNumber = ({ order }) => ({ ...order }.number || 0)
+        const dt = dt301.map(v => orderNumber({ ...map[v._id] }))
+        const ct = ct301.map(v => orderNumber({ ...map[v._id] }))
+        return { dt: Math.max( ...dt, 0) , ct: Math.max( ...ct, 0) }
+    },
+    nextNumber({}, { dt377, map }) {
+        const numbers = dt377.map(v =>({...map[v._id]}.number || 0))
+        return (Math.max( ...numbers, 0) + 1)
+    },
+    dt377({}, { values } ) {
+        return values.filter(v => v.dt === '377')
+    },
+    ct377({}, { values } ) {
+        return values.filter(v => v.ct === '377')
+    },
+    used({}, { ct377, map }) {
+        const used = ({ ref }) => ({ [ref]: map[ref] })
+            return ct377.reduce((obj, v) => ({...obj, ...used(map[v._id])}), {})
+    },
+    empty({}, { dt377, used }) {
+        return dt377.filter(({ _id }) => !used[_id])
             .reduce((cur, v) => ({ ...cur, [v._id]: v }), {})
     }
 }
@@ -40,22 +60,24 @@ const mutations = {
 }
 const actions = {
     err({}, err) {
-        console.log(err);
+        console.log({ used: err });
     },
-    async save ({ dispatch }, values) {
-       const _id =  await post('/', { values })
-        return dispatch('update', { _id, values })
+    async save ({ dispatch, getters }, v) {
+        const date = getters['date']
+       const { id: _id } =  await reestr.post({ ...v, date })
+       return dispatch('update', { ...v, _id })
     },
 
-    async remove ({ dispatch, getters }, { _id }) {      
+    async remove ({ dispatch, getters }, { _id }) {     
         const used = getters.used[_id]
-        if(used) return dispatch('err', used)
-        await post('/remove', { _id })
+        if(used) throw { used }
+        const doc = await reestr.get(_id)
+        await reestr.remove(doc)
         return dispatch('update')
     },
 
     async update({ commit }, v) {
-        commit('reestr', await get('/'))
+        commit('reestr', await reestr.allDocs({ include_docs: true }))
         return v
     }
 }

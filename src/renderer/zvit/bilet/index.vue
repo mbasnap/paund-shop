@@ -45,19 +45,20 @@ export default {
     },
     computed: {
         ...mapGetters({
-            klients: 'klient/klients',
-            dt001: 'reestr/dt001',
-            ct001: 'reestr/ct001'
+            klients: 'klient/map',
+            map: 'reestr/map',
         }),
         title({ value }) {
             return value.type
         },
-        bilet({ value, dt001, ct001 }) {
-            return { ...dt001, ...ct001 }[value._id]
+        bilet({ value, map, klients }) {
+            const bilet = { ...map[value._id] }
+            const klient = { ...klients[bilet.klient]}
+            const ref = { ...map[bilet.ref] }
+            return { ...bilet, ...ref, klient }
         },
-        klient({ bilet, klients }) {
-            const { klient: id } = bilet
-            return klients[id]
+        klient({ bilet }) {
+            return { ...bilet.klient }
         },
         printContent({ $refs }) {
             return $refs['print-content']
