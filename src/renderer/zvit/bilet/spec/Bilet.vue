@@ -31,17 +31,14 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
 props: { value: Object },
 computed: {
-    ...mapGetters({
-        klients: 'klient/klients',
-    }),
     bilet({ value }) {
-        return value
+        return { ...value }
     },
     ssuda({ bilet }) {
-        return bilet.ssuda
+        return { ...bilet.ssuda }
     },
     procent({ bilet }) {
-        return bilet.procent
+        return { ...bilet.procent }
     }
 },
 

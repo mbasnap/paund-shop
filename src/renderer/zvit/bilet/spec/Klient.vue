@@ -37,8 +37,8 @@
         <div class="row border-bottom">
             <div class="col">
                <div class="row">
-                    {{ t('idn') }}
-                    <div class="col">{{ idn }}</div>
+                    {{ t('issued') }}
+                    <div class="col">{{ issued }}</div>
                 </div>    
             </div>
         </div>
@@ -46,7 +46,7 @@
             <div class="col">
                <div class="row">
                     {{ t('idn') }}
-                    <div class="col">{{ idn }}</div>
+                    <!-- <div class="col">{{ idn }}</div> -->
                 </div>    
             </div>
         </div>
@@ -54,7 +54,7 @@
             <div class="col">
                <div class="row">
                     {{ t('idn') }}
-                    <div class="col">{{ idn }}</div>
+                    <!-- <div class="col">{{ idn }}</div> -->
                 </div>    
             </div>
         </div>
@@ -69,25 +69,21 @@ export default {
 props: { value: Object },
 computed: {
     bilet({ value }) {
-        return value
+        return { ...value }
     },
     ssuda({ bilet }) {
-        return bilet.ssuda
+        return { ...bilet.ssuda }
     },
-    klient({ bilet }) {
-        return { ...bilet.klient }
+    fio({ bilet }) {
+        console.log(bilet)
+        return bilet.from
     },
-    fio({ klient }) {
-        const { family, name, sername } = klient
-        return `${family} ${name} ${sername}`
-    },
-    passport({ klient }) {
-        const [passport] = klient.passport || []
-        const { seria, number } = { ...passport}
+    passport({ bilet }) {
+        const { seria, number } = bilet.doc
         return `${seria || ''} ${number || ''}`
     },
-    idn({ klient }) {
-        return klient.idn
+    issued({ bilet }) {
+        return { ...bilet.doc}.issued
     }
 },
 

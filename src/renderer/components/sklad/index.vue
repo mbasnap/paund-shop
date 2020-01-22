@@ -7,7 +7,7 @@
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import {moment} from '@/functions'
+import { moment } from '@/functions'
 import ListTo from "./components/ListTo"
 export default {
     components: { ListTo },
@@ -16,12 +16,13 @@ export default {
         return { tostring }
     },
     computed: {
-    ...mapGetters({
-        values: 'reestr/values',
-        map: 'reestr/map',
-        empty: 'reestr/empty',
-        klients: 'klient/map'
-    }),
+        ...mapGetters({
+            values: 'reestr/values',
+            map: 'reestr/map',
+            bilets: 'reestr/bilets',
+            empty: 'reestr/empty',
+            klients: 'klient/map'
+        })
     },
     methods: {
         ...mapActions({
@@ -30,15 +31,15 @@ export default {
         }),
         toSklad({ _id: ref, ssuda, date }) {
             const days = moment(date).diff(this.date, 'd')
-            return this.save({ ref, values: [
-                { dt: '200', ct: '377', ...ssuda, days }
-            ]})
+            const values = [
+                { dt: '200', ct: '377', ...ssuda, ref, days }
+            ]
+            return this.save({ values })
         },
         tostring({ _id, date }) {
-            const bilet = { ...this.map[_id]}
-            const { number, ocenca, klient } = { ...bilet, ...this.map[bilet.ref]}
+            const { number, ocenca, klient } = { ...this.bilets[_id]}
             const { family } = { ...this.klients[klient]}
-            return `${number} ${moment(date).format('L')} ${family} ${ocenca}`            
+            return `${number} ${moment(date).format('L')} ${family} ${ocenca}`     
         }
     }
 }

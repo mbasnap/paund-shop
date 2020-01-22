@@ -44,7 +44,7 @@ export default {
             return `«${day}» ${month} ${year} г.`
         },
         items({ values }) {
-            return values.filter(v => toNumber(v.summ))
+            return (values || []).filter(v => toNumber(v.summ))
         },
         fullName({ order }){
             const { to, from } = order

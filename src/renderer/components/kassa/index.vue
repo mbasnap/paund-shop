@@ -2,21 +2,23 @@
     <div class="kassa">
         <b-card class="m-2" header-tag="header" footer-tag="footer" body-class="scroll-auto"
         :header="ok" :footer="total">
-        <context class="row " :actions="{ add, print, remove }">
+        <context class="row " :actions="{ add, print: printOrder, remove }">
             <kassa-list :selected="selected" class="col-6" :rows="rows"
             :value="grope(dt.filter(isSame))" type="dt"/>
             <kassa-list :selected="selected" class="col-6" :rows="rows"
             :value="grope(ct.filter(isSame))" type='ct'/>
         </context>
         </b-card>
-        <history class="col" :value="selected"/>
+        <history class="col" :value="selected" 
+        @printBilet="printBilet" @printOrder="printOrder"
+        />
     </div>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import { summ, mult, diff, moment } from '@/functions'
 import { KassaList, Context, PrixoRasxod, History } from './components'
-import { Order } from '@/zvit'
+import { Bilet, Order } from '@/zvit'
 export default {
     components: { KassaList, Context, History },
     provide() {
@@ -24,18 +26,20 @@ export default {
     },
     data() {
         return {
-            selected: []
+            selected: ''
         }
     },
     watch: {
         date() {
-            this.selected = []
+            this.selected = ''
         }
     },
     computed: {
         ...mapGetters({
+            nextOrder: 'reestr/nextOrder',
             dt: 'reestr/dt301',
             ct: 'reestr/ct301',
+            map: 'reestr/map',
             settings: 'settings',
             date: 'date',
             accounts: 'accounts'
@@ -61,30 +65,37 @@ export default {
     },
     methods: {
         ...mapActions({
-            remove: 'reestr/remove',
+            removeReestr: 'reestr/remove',
             saveReestr: 'reestr/save',
         }),
-
-        save(v) {
-            return this.saveReestr(v)
-                .then(({ _id, values }) => this.select(_id, values))
+        async save(values) {
+            const { _id } = await this.saveReestr({ values })
+            return this.select( _id)         
+        },
+        async remove(v) {
+            await this.removeReestr(v)
+            return this.select()
         },
         add({ type }) {  
-
             this.$modal.show(PrixoRasxod, { type, save: this.save })
         },
         grope(v) {
             return [ ...v.reduce((cur, v) =>
                 cur.set(v._id, [ ...cur.get(v._id) || [], v]), new Map())]       
         },
-        isSame ({ date }) {
+        isSame({ date }) {
             return moment(date).isSame(this.date, 'date')
         },
-        print(props) {
+        printOrder(props) {
             this.$modal.show(Order, props, { width: '850', height: '500'})
         },
-        select(id, values) {            
-            return this.selected = [id, values]
+        printBilet(props) {
+            console.log(props);
+            
+            this.$modal.show(Bilet, props, { width: '800', height: '550'})
+        },
+        select(id) {       
+            return this.selected = id
         }
     }
 }

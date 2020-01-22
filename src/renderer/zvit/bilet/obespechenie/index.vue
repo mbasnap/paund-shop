@@ -12,7 +12,7 @@
             </tr>
         </thead>
         <tbody>
-            <table-row v-for="index in rows" :key="index-1" :value="value[index-1]" :index="index"/>
+            <table-row v-for="index in rows" :key="index-1" :value="model[index-1]" :index="index"/>
         </tbody>
         </table>
         <div class="row">
@@ -31,12 +31,15 @@ import { mapGetters } from 'vuex'
 import TableRow from './TableRow'
 export default {
     components: { TableRow },
-    props: { value: Array },
+    props: { value: Object },
     computed: {
         ...mapGetters({
             settings: 'settings',
             user: 'user/user'
         }),
+        model({ value }) {
+            return { ...value}.obespechenie || []
+        },
         rows({ settings }) {
             return settings.minRows
         }

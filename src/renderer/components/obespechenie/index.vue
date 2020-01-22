@@ -12,7 +12,9 @@
             <row  v-for="(item, index) in value" :key="index" class="items"
             :value="item" @input="value => input(index, value)" :editable="!disabled"/>
             <tr class="add">
-                <td @click="add" >Add </td>
+                <td>
+                    <svg-plus-circle :disabled="disabledAdd" width="15px;" @click="add"/>
+                </td>
                 <td></td>
                 <td></td>
                 <td>{{ ves }}</td>
@@ -25,20 +27,36 @@
 </template>
 
 <script>
+
+import { mapActions, mapGetters } from 'vuex'
 import { toDouble, summ } from '@/functions'
+import { SvgPlusCircle } from '@/svg'
 import Row from './Rows'
 export default {
-    components: { Row },
+    components: { Row, SvgPlusCircle },
     props: { value: Array, disabled: Boolean },
     computed: {
-        ves({ value }) {
-            return summ( ...value.map(v => v.ves))
+        ...mapGetters({
+            settings: 'settings',
+        }),
+        model({ value }) {
+            return value || []
         },
-        derty({ value }) {
-            return summ( ...value.map(v => v.derty))
+        ves({ model }) {
+            return summ( ...model.map(v => v.ves))
         },
-        ocenca({ value }) {
-            return summ( ...value.map(v => v.ocenca))
+        derty({ model }) {
+            return summ( ...model.map(v => v.derty))
+        },
+        ocenca({ model }) {
+            return summ( ...model.map(v => v.ocenca))
+        },
+        rows({ value }) {
+            return value.length
+        },
+        disabledAdd({ rows, settings }){
+            const { maxRows } = {...{ ...settings}.obespeshenie }
+            return rows >= 5
         }
     },
     methods: {

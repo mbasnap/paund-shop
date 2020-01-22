@@ -1,34 +1,45 @@
 <template>
   <div class="klient">
     <tab-one class="col" :value="value" :disabled="disabled">
-        <!-- <slot></slot> -->
+        <slot></slot>
     </tab-one>
     <div class="col">
-      <span class="btn edit" @click="showModal('edit')">edit</span>
+      <svg-address-card width="30px;" @click="showModal('edit')"/>
+      <!-- <span class="btn edit" @click="showModal('edit')">edit</span> -->
     </div>
   </div>
 </template>
 
 <script>
 
+import { mapGetters, mapActions } from 'vuex'
 import { TabOne, Editor } from './editor/index.js'
+import { SvgAddressCard } from '@/svg'
 export default {
-    components: {  TabOne },
+    components: {  TabOne, SvgAddressCard },
     props: { value: Object, disabled: Boolean },
     provide() {
-      return { update: this.update }
+      return { update: this.update, save: this.save }
+    },
+    computed: {
+      ...mapGetters({
+        // map: 'klient/map'
+      })
     },
     methods: {
-
-      showModal (title) {        
-        const { value, update } = this
-        this.$modal.show(Editor, { title, value, update }, { height: 'auto' })
+        ...mapActions({
+          saveKlient: 'klient/save'
+        }),
+      async save(v) {
+        return this.update(await this.saveKlient({ ...v }))
       },
-      update(v) {    
-        const { family, name, sername, passport, idn, address } = v
-        const selectedPassport = 0
-        const valid = ![ family, name, sername, passport, idn ].some(v => !v)
-        this.$emit('input', { ...v, selectedPassport, valid })
+      showModal (title) {        
+        const { value, update, save } = this
+        this.$modal.show(Editor, { title, value, save }, { height: 'auto' })
+      },
+      update(v) {
+        this.$emit('input', { ...v })
+        return v
       }
     }
 }

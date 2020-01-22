@@ -1,25 +1,25 @@
 <template>
-    <div v-if="value.length" class="history border-top">
+    <div v-if="value" class="history border-top">
             <ul  class="item">
-                <div v-if="bilet">
+                <div >
                     <li class="row ">
-                        <div class="row">
-                            <div class="col">
-                                <span> Number {{ bilet.number }}</span>
+                        <div class="row print-lincks">
+                            <div  class="col-6">
+                                <span class="badge badge-pill badge-light" 
+                                @click="$emit('printOrder', {value: model})">
+                                    Order {{ model.number }}
+                                </span>
                             </div>
-                            <div  class="col-4">
-                                <span class=" btn badge badge-primary"
-                                @click="print(bilet)"
-                                >{{ $t('print-btn') }}</span>
+                            <div class="col">
+                                <span v-if=" model.bilet" class="badge badge-pill badge-light" 
+                                @click="$emit('printBilet', {value: model})">
+                                    Bilet {{ model.bilet }}
+                                </span>
                             </div>
                         </div>
                     </li>
                     <li class="row">
-                        <div class="col p-0">
-                            <span>{{ klient.family }}</span>
-                            <span>{{ klient.name }}</span>
-                            <span>{{ klient.sername }}</span>
-                        </div>
+                        <div class="col p-0">{{ model.from }}</div>
                     </li>
                 </div>
                     <li class="row" v-for="(v, i) in model.values" :key="i">
@@ -34,31 +34,37 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { Bilet } from '@/zvit'
+import { toNumber, moment } from '@/functions'
 export default {
-    props: { value: Array },
+    props: { value: String },
     computed: {
         ...mapGetters({
             map: 'reestr/map',
-            klients: 'klient/map',
+            bilets: 'reestr/bilets',
+            orders: 'reestr/orders',
             accounts: 'accounts',
         }),
-        model({ value }) {
-            const [ id, values = [] ] = value
-            return { id, values: values.filter(({ dt, ct }) => [dt, ct].includes('301')) }
+        bilet({ value: id, bilets}) {
+            return { ...{...bilets}[id] }
         },
-        bilet({ value, map }) {
-            const [ id ] = value
-            return map[id]
+        order({ value: id, orders }) {
+            return {...{...orders}[id]}
         },
-        klient({ bilet, klients }) {
-            return { ...klients[bilet.klient]}
+        values({ value: id, map }) {
+            const acc301 = ({ dt, ct, summ }) =>
+                [dt, ct].includes('301') && toNumber(summ)
+            const { values } = {...{...map}[id]}
+            return (values || []).filter(acc301) 
+        },
+        model({ bilet, order, values }) { 
+            const date = moment(bilet.date).format('L')
+            return { ...bilet, ...order, values, date }
         }
     },
     methods: {
-        print(value) {
-            this.$modal.show(Bilet, { value }, { height: '550px', width: '800px'})
-        },
+        // print(value) {
+        //     this.$modal.show(Bilet, { value }, { height: '550px', width: '800px'})
+        // },
         getTitle({ dt, ct }) {
             return Object.entries({ dt, ct })
                 .filter(([k,v]) => v !== '301')
@@ -72,5 +78,9 @@ export default {
 .history ul li {
     text-align: left;
     padding-left: 10px;
+}
+.print-lincks span:hover {
+    background-color: #ced0d2;
+    cursor: pointer;
 }
 </style>

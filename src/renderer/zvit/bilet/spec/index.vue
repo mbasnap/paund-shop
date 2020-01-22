@@ -29,7 +29,7 @@ import Sign from '../Sign'
 import Dater from './Dater'
 export default {
     components: { Klient, Bilet, Sign, Dater },
-    props: { value: Object },
+    props: { value: Object, klient: Object },
     methods: {
         t(v) {
             return this.$t('print.' + v)

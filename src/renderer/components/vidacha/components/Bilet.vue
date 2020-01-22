@@ -6,7 +6,7 @@
         <div class=" input-group mb-2">
             <input class="form-control" :value="procent.summ" readonly/>
             <div class="input-group-append">
-            <named-select class="form-control" name="discount" :value="value" :options="spec.discounts"/>
+            <named-select class="form-control" name="discount" :value="value" :options="discounts"/>
             </div>
         </div>
         <named-input class='form-control' name="ocenca" :value="value"/>  
@@ -26,16 +26,16 @@ components: { DaySlider },
 props: { value: Object, disabled: Boolean },
 computed: {
     ...mapGetters({
-        spec: 'settings'
+        settings: 'settings'
     }),
-    ocenca({ value }) {
-        return value.ocenca
+    discounts({ settings }) {
+        return settings.discounts || []
     },
     procent({ value }) {
-        return value.procent
+        return { ...value.procent }
     },
     ssuda({ value }) {
-        return value.ssuda
+        return { ...value.ssuda }
     }
 },
 methods: {

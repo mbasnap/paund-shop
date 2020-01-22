@@ -1,11 +1,13 @@
 <template> 
-    <modal-editor :title="title" :disabled="disabled" @save="save" >
+    <modal-editor ref="modal-editor" :title="title" :disabled="disabled"
+    @save="save(model).then(v => editor.close())" >
     <div class="tabs" >
         <a v-for="(item, key) in tabs" :key="key" :class="{ active: activetab === key }"
         @click="activetab=key" > {{ item }} </a>
     </div>
     <div class="content">
-        <tab-one class="tabcontent" v-if="activetab === 0" :value="model" :full="true"/>
+        <tab-one class="tabcontent" v-if="activetab === 0"
+        :value="model" :full="true"/>
         <tab-two class="tabcontent" v-if="activetab === 1" :value="model" />
         <tab-three class="tabcontent" v-if="activetab === 2" :value="value" />
     </div>
@@ -18,9 +20,9 @@ import { TabOne, TabTwo, TabThree } from './index.js'
 import ModalEditor from '@/widgets/Modal.vue'
 export default {
     components: { ModalEditor, TabOne, TabTwo, TabThree },
-    props: { title: String, value: Object, update: Function },
+    props: { title: String, value: Object, save: Function },
     provide() {
-        return { update: this.input }
+        return { update: this.update, save: this.save }
     },
     data() {
         return {
@@ -30,8 +32,7 @@ export default {
         }
     },
     computed: {
-        model() {
-            const { value, data } = this
+        model({ data, value }) {
             return { ...value, ...data }
         },
         disabled ({ data }) {
@@ -43,13 +44,8 @@ export default {
         }
     },
     methods: {
-        ...mapActions({ saveKlient: 'klient/save' }),
-        input(v) {
-            this.data = v
-        },
-        async save(editor) {
-            this.update(await this.saveKlient(this.model))
-            editor.close()
+        update(v) {
+            this.data = { ...v }
         }
     }
 }

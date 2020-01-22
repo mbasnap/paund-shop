@@ -3,13 +3,26 @@
     <div class="form-row mb-2">
         <named-input class="form-control col-3 mr-1" name="seria" placeholder="Seria" :value="model" />
         
-        <suggest v-if="full" class="form-control col" name="number" placeholder="Number"
-        :suggest="tostring" :value="model" :options="options" @select="select"/>
+        <suggest v-if="!value._id || !passports.length || full" class="form-control col" name="number" placeholder="Number"
+        :suggest="suggest" :value="model" :options="klients" @select="update"/>
 
         <custom-select v-else class="form-control col" name="number" placeholder="Number"
-        :suggest="tostring" :selected="selected" :options="passport" @select="selectPassport">
-                <li v-for="(item, i) in passport.filter((v,i) => i !== selected)" :key="i"
-                @click="selectPassport(i)"> {{ tostring(item) }} </li>
+        :suggest="tostring" :selected="passport" :options="passports">
+                <li v-for="(item, i) in passports" :key="i" @click="select(i)">
+                    <div class="row m-0">
+                        <div class="col hover">{{ tostring(item) }}</div>
+                        <div class="col-2">
+                            <svg-trash width="13px;" @click="remove(i)"/>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="row m-0">
+                        <div class="col">
+                            <svg-plus-circle width="13px;" @click="select(passports.length)"/>
+                        </div>
+                    </div>
+                </li>
         </custom-select>
   
     </div> 
@@ -20,31 +33,26 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
+import { SvgTrash, SvgPlusCircle} from '@/svg'
 import mix from '@/widgets/named-input/mix.js'
 export default {
     mixins: [ mix ],
+    components: { SvgTrash, SvgPlusCircle },
     props: { value: Object, disabled: Boolean, full: Boolean },
-    inject: [ 'update' ],
+    inject: [ 'update', 'save' ],
     computed: {
         ...mapGetters({
-            klients: 'klient/klients',
-            map: 'klient/map'
+            klients: 'klient/klients'
         }),
-        passports({ klients }) {
-            const passports = ({ _id, passport }) =>
-                (passport || []).map(v => ({ ...v, _id }))
-            return klients.reduce((arr, v) => [ ...arr, ...passports(v)], [])
+        passports({ value }) {
+            return (value.passports || [])
         },
-        passport({ value, selected }) {
-            return (value.passport || [])
-                // .filter((v, i) => i != selected)
+        passport({ value }) {
+            return value.passport || 0
         },
-        selected({ value }) {
-            return value.selected || 0
-        },
-        model({ selected, passport }) {
-            return { ...passport[selected]} 
+        model({ passports, passport }) {
+            return { ...passports[passport]} 
         },
         options({ model, passports, tostring }) {
             const value = tostring(model)
@@ -52,11 +60,12 @@ export default {
         }
     },
     methods: {
-        select({ _id }) {
-            return this.update(this.map[_id])
+        select(passport) {
+            return  this.update({ ...this.value, passport })
         },
-        selectPassport(selected) {
-            return this.update({ ...this.value, selected })
+        remove(index) {
+            const passports = this.passports.filter((v, i) => i !== index)
+            return this.save({ ...this.value, passports, passport: 0 })
         },
         tostring({ seria, number }) {
             return `${seria || ''} ${number || ''}`
@@ -65,8 +74,13 @@ export default {
             return this.disabled
         },
         input({ name, value }) {
-            const passport = [ { ...this.model, [name]: value} ]
-            this.update({ ...this.value, passport })
+            const passports = [ ...this.passports ]
+            passports[this.passport] = { ...this.model, [name]: value }
+            this.update({ ...this.value, passports })
+        },
+        suggest({passports, passport}) {
+            const value = (passports || [])[passport]
+            return this.tostring({ ...value })
         }
     }
 }

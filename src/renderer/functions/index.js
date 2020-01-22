@@ -13,8 +13,10 @@ const mult = (a, b) => {
 const proc = (a, b) => mult(a, b) / 100
 const diff = (a, b) => toDouble(toNumber(a) - toNumber(b))
 const pDiff = (a, b) => {
-    const res = diff(a, b)
-    return res > 0 ? res : 0.00
+    a = toNumber(a)
+    b = toNumber(b)
+    const res = a - (b > 0 ? b : b * -1)
+    return res > 0 ? res : false
 }
 moment.locale('ru')
 const months = {

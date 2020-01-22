@@ -2,18 +2,19 @@
     <div class="row flex-fill vidacha">
         <div  class="col-8 pt-3">
             <div class="row" style="height: 250px;">
-                <klient class="col p-0 " v-model="klient" :disabled="disabled">
+                <klient ref="klient" class="col p-0 " v-model="klient" :disabled="disabled">
                     <span class="reset" @click="klient = {}">x</span>
                 </klient>
                 <div class="col pl-2 border-left">
-                    <bilet class="row" style="height: 75%;" v-model="model" :disabled="disabled"/> 
+                    <bilet class="row" style="height: 75%;" :value="model" :disabled="disabled"
+                    @input="v => bilet = v"/> 
                     <div class="row">
                         <div class="col-3 ">
-                            <button class="btn btn-primary" @click="update({})">reset</button>
+                            <button class="btn btn-primary" @click="update()">reset</button>
                         </div>
                         <div class="col-3">
                             <button class="btn btn-primary"
-                            @click="onSave(values)"> save</button>
+                            @click="save()"> save</button>
                         </div>
                     </div>
                 </div>                                 
@@ -25,97 +26,47 @@
 </template>
 
 <script>
-import { toDouble, diff, pDiff, mult, proc } from '@/functions'
-import { mapGetters, mapActions } from 'vuex'
-import { Kassa, Klient, Bilet, Obespechenie } from './components'
+import { Bilet } from './components'
+import mix from '@/components/mix/vidacha-vozvrat'
+import { proc, summ, toNumber, toDouble, mult, diff, pDiff, moment } from '@/functions'
 export default {
-components: { Kassa, Klient, Bilet, Obespechenie },
-data () {
-    return {
-        klient: {},
-        bilet: {},
-        obespechenie: [ {} ],
-    }
-},
-watch: {
-    date() {
-        this.update({})
-    }
-},
+components: { Bilet },
+mixins: [ mix ],
 computed: {
-    ...mapGetters({
-        klients: 'klient/klients',
-        lastOrder: 'reestr/lastOrder',
-        nextNumber: 'reestr/nextNumber',
-        map: 'reestr/map',
-        spec: 'settings',
-        discounts: 'discounts',
-        date: 'date'
-    }),
-    number({ bilet, nextNumber }) {
-        return bilet.number || nextNumber
-    },   
-    days({ bilet, spec }) {
-        return bilet.days || spec.maxDays
-    },    
-    ocenca({ bilet }) {
-        return toDouble(bilet.ocenca)
+    ocenca({ bilet, obespechenie }) {
+        const ocenca = toNumber(bilet.ocenca)
+            || summ(...obespechenie.map(v => v.ocenca))
+        return toDouble(ocenca)
     },
-    discount({ bilet, discounts }) {
-        return bilet.discount || discounts[0]
+    procent({ ocenca, days, xProc: procent, discount }) {
+        let value = proc(ocenca, procent)
+        value = diff(value, proc(value, discount))
+        return { procent, discount, value, days, summ: toDouble(mult(value, days)) }
     },
-    procent({ ocenca, discount, days, spec }) {
-        let procent = proc(ocenca, spec.procent)
-        procent = toDouble(diff(procent, proc(procent, discount)))
-        const summ = toDouble(mult(procent, days))
-        return { procent, days, summ }
+    penalty({ ocenca, xPen: penalty }) {
+        return { penalty, value: toDouble(proc(ocenca, penalty)) }
     },
-    penalty({ ocenca, days, spec }) {
-        let penalty = toDouble(proc(ocenca, spec.penalty))
-        return { penalty, days }
+    ssuda({ ocenca, days, procent }) {
+        return { days, summ: toDouble(diff(ocenca, procent.summ)) }
     },
-    ssuda({ ocenca, days, procent, title }) {
-        const summ = diff(ocenca, procent.summ)
-        return { days, summ, title }
+    model({ number, ocenca, days, ssuda, procent, discount, penalty }) {
+        return { number, ocenca, days, ssuda, procent, discount, penalty }
     },
-    kassa({ $refs }) {
-        return $refs['kassa']
-    },
-    order({ bilet, klient, lastOrder }) {
-        const number = lastOrder.ct + 1
-        const title = `vidana ssuda po zalogovomu biletu ${bilet.number}`
-        const to = `${klient.family} ${klient.name} ${klient.sername}`
-        return { title, number, to }
-    },
-    model: {
-        get({ number, days, ocenca, discount, procent, penalty, ssuda }) {
-            return { number, days, ocenca, discount, procent, penalty, ssuda }
-        },
-        set(v) {
-            this.bilet = v
-        }
-    },
-    values({ order, model, ssuda, obespechenie }) {
+    values({ model, order, number: bilet, nextOrder }) {
         const { _id: klient, passport } = this.klient
-        return { ...model, klient, passport, order, obespechenie, values: [
-            { dt: '377', ct: '301', ...ssuda }
-        ]}
+        const title = `vidana ssuda po zalogovomu biletu ${bilet}`
+        const obespechenie = (this.obespechenie || []).filter(v => toNumber(v.ocenca))
+        return [
+            { dt: '377', ct: '301', ...model.ssuda },
+            { dt: '001', ...model, obespechenie, klient, passport },
+            { ct: '002', ...order, title, bilet, number: nextOrder['ct'] }         
+        ]
     },
     disabled({ bilet }) {
-        return !!bilet._id
+        return !!{ ...bilet }._id
     }
 },
-methods: {
-    async onSave(v) {
-        const [id] = await this.kassa.save(v)
-        return this.update(this.map[id])
-    },
-    update(v) {
-        const { klient: id, obespechenie } = this.bilet = v
-        this.klient = { ...this.klients[id] }
-        this.obespechenie = obespechenie || [ {} ]
-    }
-}
+methods: { }
 }
 </script>
 

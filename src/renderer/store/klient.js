@@ -7,10 +7,11 @@ const state = {
 }
 const getters = {
     klients ({ klients }) {
-        const rows = klients.rows || []
-        return  rows.map(v => v.doc)
+        return  (klients.rows || []).map(v => v.doc)
     },
     map ({}, { klients }) {
+        // const getPassport = ({ passports, selected }) => ({ ...passports[selected] })
+        // const klient = (v) => ({ ...v, passport: getPassport(v) })
         return  klients.reduce((obj, v) => ({ ...obj, [v._id]: v}), {})
     }
 }
@@ -21,12 +22,11 @@ const mutations = {
 }
 const actions = {
     async save ({ dispatch }, v) {    
-        const { id: _id } = await klient.post(v)
-        return dispatch('update', { ...v, _id })
+        return dispatch('update', await klient.post(v))
     },
-    async update ({ commit }, v) {       
+    async update ({ commit, getters }, { id } = {}) {       
         commit('klients', await klient.allDocs({ include_docs: true }))
-        return v
+        return getters.map[id]
     }
 }
 

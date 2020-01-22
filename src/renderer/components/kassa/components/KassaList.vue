@@ -1,7 +1,7 @@
 <template>  
   <ul class="kassa-list small p-0 m-0">
     <li v-for="index in rows" :key="index-1"
-    :selected="isSelected(value[index-1])"
+    :selected="isSelected(...value[index-1])"
     @contextmenu.prevent="context($event, ...value[index-1])"
     @mouseleave="({ toElement }) => close(toElement)"
     @click="select(...value[index-1])"
@@ -13,12 +13,12 @@
 import { summ } from '@/functions'
 import { mapGetters, mapActions } from 'vuex'
 export default {
-  props: { value: Array, selected: Array, type: String, rows: Number },
+  props: { value: Array, selected: String, type: String, rows: Number },
   inject: ['open', 'close', 'select' ],
   computed: { },
   methods: {
-    isSelected(v) {
-      return v && v[0] === this.selected[0]
+    isSelected(id) {
+      return !!id && id === this.selected
     },
     summ(_id, values) {
       return _id ? summ( ...values.map(v => v.summ)) : ''

@@ -18,10 +18,10 @@
         </div>
         <div class="col p-0">
             <div v-for="(item, index) in obespechenie" :key="index">
-                <div class="row">
-                    <div class="col">{{ item.title}}</div>
+                <div class="row" style="overflow: hiden">
+                    <div class="col" style="font-size: 12px;">{{ item.title}}</div>
                     <div class="col" style="font-size: 12px; line-height: 25px; text-align: right;">
-                        <span>{{ item.derty}}</span>
+                        <!-- <span>{{ item.derty}}</span> -->
                         <span>{{ item.total}}</span>
                         <span>{{ item.ocenca}}</span>
                     </div>
@@ -33,13 +33,16 @@
 
 <script>
 export default {
-    props: { bilet: Object, klient: Object },
+    props: { value: Object },
     computed: {
+        bilet({ value }) {
+            return {...value}
+        },
         ssuda({ bilet }) {
-            return bilet.ssuda
+            return { ...bilet.ssuda }
         },
         obespechenie({ bilet }) {
-            return bilet.obespechenie
+            return bilet.obespechenie || []
         }
     },
     methods: {

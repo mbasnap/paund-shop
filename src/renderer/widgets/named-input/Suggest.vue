@@ -84,8 +84,8 @@ export default {
     white-space: nowrap;
 }
 .suggest .options {
-    min-width: 300px;
-    border-radius: unset;
+    /* min-width: 300px;
+    border-radius: unset; */
 } 
 .suggest .options li {
     cursor: pointer;

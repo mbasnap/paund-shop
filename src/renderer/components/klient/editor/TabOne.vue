@@ -10,8 +10,7 @@
             <named-input class="form-control col-5 mr-1" name="name" placeholder="Name" :value="value"/>
             <named-input class="form-control col" name="sername" placeholder="Sername" :value="value"/>
         </div>
-        <passport class="mb-2" :value="value" :disabled="disabled" :full="full"
-        @select="update"/>
+        <passport class="mb-2" :value="value" :disabled="disabled" :full="full"/>
         <div class="form-row mb-2">
             <named-input class="form-control col" name="idn" placeholder="ID" :value="value"/>
         </div>
@@ -25,7 +24,7 @@ export default {
     mixins: [ mix ],
     props: { value: Object, disabled: Boolean, full: Boolean },
     components: { Passport },
-    inject: [ 'update' ],
+    inject: [ 'update', 'save' ],
     computed: {
       ...mapGetters({
           klients: 'klient/klients'

@@ -2,7 +2,7 @@
     <div class="row flex-fill vidacha">
         <div class="col-8 pt-3">
             <div class="row " style="height: 250px;">
-                <klient class="col p-0" :value="klient" :disabled="disabled"/>
+                <klient ref="klient" class="col p-0" :value="klient" :disabled="disabled"/>
                 <div class="col p-0 border-left">
                     <number class="col mb-2" v-model="bilet" :disabled="disabled" @select="update"/>
                     <bilet class="col mb-5" :value="model" :disabled="disabled"/>
@@ -13,7 +13,7 @@
                             </div>
                             <div class="col-6">
                                 <button class="btn btn-primary" :disabled="disabled"
-                                @click="kassa.save(values)">save</button>
+                                @click="save().then(v => update())">save</button>
                             </div>   
                         </div>
                     </div>
@@ -26,85 +26,50 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import { toNumber, toDouble, summ, mult, diff, pDiff, moment } from '@/functions'
-import { Klient, Number, Bilet, Obespechenie, Kassa } from './components'
-export default {
-components: { Klient, Number, Bilet, Obespechenie, Kassa },
-data () {
-    return {
-        bilet: {}
-    }
-},
-watch: {
-    date() {
-        this.update({})
-    }
-},
-computed: {
-    ...mapGetters({ 
-        klients: 'klient/map',
-        date: 'date',
-        empty: 'reestr/empty',
-        lastOrder: 'reestr/lastOrder'
-    }),
-    klient({ bilet,  klients }) {
-        const { klient } = bilet
-        return { ...klients[klient] }
-    },
-    obespechenie({ bilet, dt001 }) {
-        const { obespechenie } = bilet
-        return obespechenie || []
-    },
 
+import { Number, Bilet } from './components'
+import mix from '@/components/mix/vidacha-vozvrat'
+import { toNumber, toDouble, summ, mult, diff, pDiff, moment } from '@/functions'
+export default {
+components: { Number, Bilet },
+mixins: [ mix ],
+computed: {
     days({ bilet }) {
-        return moment(this.date).diff(bilet.date, 'd') || 1
+        return moment(this.date).diff(bilet.date, 'd')
+    },
+    procent({ bilet }) {
+        const { value, days: plan } = { ...bilet.procent }
+        let days = this.days        
+        days = days <= 0 ? 1 : days > plan ? plan : this.days
+        return { ...bilet.procent, days, summ: toDouble(mult(value, days)) }
+    },
+    penalty({ bilet, procent }) {
+        const { value } = { ...bilet.penalty}       
+        const days = pDiff(this.days, procent.days)
+        return { ...bilet.penalty, days, summ: toDouble(mult(value, days)) }
     },
     ssuda({ bilet, days }) {
         return { ...bilet.ssuda, days }
     },
-    procent({ bilet }) {
-        let { procent, days, summ } = bilet.procent || {}
-        days = pDiff(this.days, days) ? days : this.days
-        summ = toDouble(mult(days, procent))
-        return { ...bilet.procent, days, summ }
+    model({ bilet, days, ssuda, procent, penalty }) {
+        return { days, ssuda, procent, penalty, ref: bilet._id }
     },
-    penalty({ bilet }) {
-        let { penalty, days, summ } = bilet.penalty || {}
-        days = pDiff(this.days, days)
-        summ = toDouble(mult(days, penalty))
-        return { ...bilet.penalty, days, summ }
-    },
-    order({ bilet, klient, lastOrder }) {
-        const number = lastOrder.dt + 1
-        const title = `vozvrashena ssuda po zalogovomu biletu ${bilet.number}`
-        const from = `${klient.family} ${klient.name} ${klient.sername}`
-        return { title, number, from }
-    },
-    model({ ssuda, procent, penalty }) {
-        return { ssuda, procent, penalty }
-    },
-    values({ order, ssuda, procent, penalty }) {
+    values({ model, order, number: bilet, nextOrder }) {
         const { _id: klient, passport } = this.klient
-        const { _id: ref, number } = this.bilet
-        return { ref, number, klient, passport, order, values: [
-            { dt: '301', ct: '377', ...ssuda },
-            { dt: '301', ct: '703', ...procent },
-            { dt: '301', ct: '704', ...penalty }              
-        ]}
+        const title = `vozvtashena ssuda po zalogovomu biletu ${bilet}`
+        return [
+            { dt: '301', ct: '377', ...model.ssuda },
+            { dt: '301', ct: '703', ...model.procent },
+            { dt: '301', ct: '704', ...model.penalty },
+            { ct: '001', ...model, klient, passport },
+            { dt: '002', ...order, title, bilet, number: nextOrder['dt'] }         
+        ]
     },
-    disabled({ bilet, empty }) {
-        return !empty[bilet._id]
-    },
-    kassa({ $refs }) {
-        return $refs['kassa']
-    },
-},
-methods: {
-    update(v) {
-        this.bilet = { ...v }
+    disabled({ bilet }) {
+        return !{ ...bilet }._id
     }
-}
+},
+methods: {}
 }
 </script>
 

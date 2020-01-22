@@ -1,6 +1,6 @@
 <template>
     <div class="suggest dropdown" :readonly="readonly()" tabindex="0"
-    @blur="highlight(-1)" @keydown.esc.prevent="highlight(-1)">
+        @blur="highlight(-1)" @keydown.esc.prevent="highlight(-1)">
         
         <div class="named-input editor" ref="editor" 
         :name="name" :placeholder="placeholder" :readonly="readonly()">
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import RowDown from "@/swg/row-down"
+import RowDown from "@/svg/row-down"
 export default {
     components: { RowDown },
     props: {
@@ -51,11 +51,6 @@ export default {
         switchClose(index) {
             this.highlight( index < 0 ? 0 : -1)
         },
-        // select(index) {
-        //     const selected = this.options[index]
-        //     this.$emit('select', { ...this.options[index], index })
-        //     this.highlight(-1)
-        // },
         highlight(index) {
             const length = this.options.length - 1
             if (index <= length)  this.index = index
@@ -72,13 +67,14 @@ export default {
     white-space: nowrap;
 }
 .suggest .options {
-    min-width: 300px;
-    border-radius: unset;
+    min-width: -webkit-fill-available;
+    /* border-radius: unset; */
 } 
 .suggest .options li {
-    cursor: pointer;
+    /* cursor: pointer; */
+    overflow: hidden;
 } 
-.suggest .options li:hover {
+.suggest .options li .hover:hover {
     background-color: rgba(176, 176, 199, 0.438);
 } 
 </style>

@@ -3,25 +3,22 @@
     :zoom="zoom" @zoom="onZoom" @print="print">
     <div ref="print-content" :style="{ zoom: zoom + '%' }">
         <div>
-            <spec :value="bilet"/>
-            <obespechenie  :value="bilet.obespechenie"/>
+            <spec :value="value"/>
+            <obespechenie  :value="value"/>
         </div>
         <div class="print-only mt-5" style="border: 1px dashed;"></div>
         <div class="print-only mt-5">
-            <spec :value="bilet"/>
+            <spec :value="value"/>
             <div class="row">
-                <obespechenie class="col-9" :value="bilet.obespechenie"/>
+                <obespechenie class="col-9" :value="value"/>
                 <div class="col-3" style="border-top: 1px dashed; border-left: 1px dashed;">
-                    <control-tiket  :bilet="bilet" :klient="klient"/>
+                    <control-tiket  :value="value" :klient="klient"/>
                     <div class="row" style="position: absolute; bottom: 0px; width: 100%;">
                         <sign class="col p-0" :name="t('kassir_sign')"/>
                         <div class="col p-0" style="font-size: 15px; line-height: 30px;">
                             {{ klient.sername}}
                         </div>
                     </div>
-                    <!-- <div class="row" style="position: absolute; bottom: 0px; width: 100%;">
-                        <sign class="col-7" :name="t('klient_sign')" :value="klient.family"/>
-                    </div> -->
                 </div>
             </div>
         </div>
@@ -46,20 +43,20 @@ export default {
     computed: {
         ...mapGetters({
             klients: 'klient/map',
-            map: 'reestr/map',
+            // bilets: 'reestr/bilets',
         }),
         title({ value }) {
-            return value.type
+            return ''
         },
-        bilet({ value, map, klients }) {
-            const bilet = { ...map[value._id] }
-            const klient = { ...klients[bilet.klient]}
-            const ref = { ...map[bilet.ref] }
-            return { ...bilet, ...ref, klient }
+        // bilet({ value, bilets }) {
+        //     return { ...bilets[{ ...value}._id] }
+        // },
+        klient({ value, klients }) {
+            return { ...klients[value.klient] }
         },
-        klient({ bilet }) {
-            return { ...bilet.klient }
-        },
+        // model({ bilet, klient }) {            
+        //     return { ...bilet, klient }
+        // },
         printContent({ $refs }) {
             return $refs['print-content']
         },

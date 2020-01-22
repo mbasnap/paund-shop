@@ -1,10 +1,16 @@
 <template> 
-    <modal-editor :title="type" :disabled="disabled" @save="editor => onSave(editor, model)" >
+    <modal-editor :title="type" :disabled="disabled"
+        @save="({close}) => save(values).then(close)">
         <div class="form-row mb-2">
-            <named-input class="form-control col-6 mr-1" name="summ" placeholder="Summ" :value="model" />
+            <named-input class="form-control col-6 mr-1" name="summ" placeholder="Summ"
+            :value="model" />
             <named-select class="form-control col" :name="account" placeholder="Account"
-            :value="model" :options="Object.keys(accounts[account])"
-            :tostring="v => v + ' ' + accounts[account][v]"/>
+            :tostring="v => v + ' ' + accounts[account][v]"
+            :value="model" :options="Object.keys(accounts[account])"/>
+        </div> 
+        <div class="form-row mb-2">
+            <named-select class="form-control col" name="from" placeholder="From"
+            :value="model" :options="users"/>
         </div> 
         <div class="form-row mb-2">
             <named-textarea class="form-control col" name="title"
@@ -23,32 +29,35 @@ export default {
     props: { type: String, save: Function },
     data() {
         return {
-            value: {}
+            value: {},
+            // filter: true
         }
     },
     computed: {
         ...mapGetters({
             accounts: 'accounts',
-            lastOrder: 'reestr/lastOrder'
+            klients: 'klient/klients',
+            nextOrder: 'reestr/nextOrder'
         }),
         disabled({ value }) {
             // return !Object.entries(value)
             // .some(([ key, value ]) => this.value[key] !== value ? value : undefined)
         },
+        users({ klients }) {
+            return (klients || []).map(v => this.tostringUser(v))
+        },
         account({ type }) {
             return type === 'dt' ? 'ct' : 'dt'
         },
-        title({ value }) {
-            return value.title
+        model({ value }) {
+            return { ...value, summ: toDouble(value.summ) }
         },
-        order({ value, title, type, lastOrder }) {
-            const number = lastOrder[type] + 1
-            const from = value.from || ''
-            return { title, number, from }
-        },
-        model({ value, type }) {
-            const summ = toDouble(value.summ)
-            return { ...value, [type]: '301', summ }
+        values({ model, type, nextOrder }) {
+            const { title, from } = model
+            return [
+                { [type]: '301', ...model },
+                { [type]: '002', ...model, number: nextOrder[type] }
+            ]
         }
     },
     methods: {
@@ -58,10 +67,9 @@ export default {
         change({ name, value }) {
             this.value = { ...this.value, [name]: value }
         },
-        async onSave(modal) {
-            const { order, model } = this
-            await this.save({ order, values: [model] })
-            modal.close()
+        tostringUser(v) {
+            const { family, name, sername } = v
+            return `${family} ${name} ${sername}`
         }
     }
 }
