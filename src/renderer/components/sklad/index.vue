@@ -2,7 +2,7 @@
 
 <div class="sklad row">
     <list-to class="col-6" :value="Object.values(empty)" :actions="{ toSklad: toSklad }"/>
-    <list-to class="col-6" :value="values.filter(v => v.dt === '200')" :actions="{ fromSklad: remove }"/>
+    <list-to class="col-6" :value="sclad" :actions="{ fromSklad: remove }"/>
 </div>
 </template>
 <script>
@@ -17,10 +17,9 @@ export default {
     },
     computed: {
         ...mapGetters({
-            values: 'reestr/values',
-            map: 'reestr/map',
             bilets: 'reestr/bilets',
             empty: 'reestr/empty',
+            sclad: 'reestr/sclad',
             klients: 'klient/map'
         })
     },
@@ -29,15 +28,15 @@ export default {
             remove: 'reestr/remove',
             save: 'reestr/save'
         }),
-        toSklad({ _id: ref, ssuda, date }) {
-            const days = moment(date).diff(this.date, 'd')
+        toSklad({ _id: ref, ssuda }) {
             const values = [
-                { dt: '200', ct: '377', ...ssuda, ref, days }
+                { dt: '200', ct: '377', ...ssuda, ref },
+                { ct: '001', ref }
             ]
             return this.save({ values })
         },
-        tostring({ _id, date }) {
-            const { number, ocenca, klient } = { ...this.bilets[_id]}
+        tostring(v) {
+            const { date, number, ocenca, klient } = v
             const { family } = { ...this.klients[klient]}
             return `${number} ${moment(date).format('L')} ${family} ${ocenca}`     
         }

@@ -15,7 +15,7 @@
                     <control-tiket  :value="value" :klient="klient"/>
                     <div class="row" style="position: absolute; bottom: 0px; width: 100%;">
                         <sign class="col p-0" :name="t('kassir_sign')"/>
-                        <div class="col p-0" style="font-size: 15px; line-height: 30px;">
+                        <div class="col p-0" style="font-size: 10px; line-height: 30px;">
                             {{ klient.sername}}
                         </div>
                     </div>
@@ -43,20 +43,13 @@ export default {
     computed: {
         ...mapGetters({
             klients: 'klient/map',
-            // bilets: 'reestr/bilets',
         }),
         title({ value }) {
             return ''
         },
-        // bilet({ value, bilets }) {
-        //     return { ...bilets[{ ...value}._id] }
-        // },
         klient({ value, klients }) {
             return { ...klients[value.klient] }
         },
-        // model({ bilet, klient }) {            
-        //     return { ...bilet, klient }
-        // },
         printContent({ $refs }) {
             return $refs['print-content']
         },
@@ -69,11 +62,10 @@ export default {
         print({ send }) {
             const { outerHTML: content } = this.printContent
             return send("print", { content, zoom: '149%', silent: true })
-            
         },
         onZoom({ value }) {
             this.zoom = value + ''    
-        },
+        }
     }
 }
 </script>

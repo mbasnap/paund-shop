@@ -2,10 +2,8 @@
     <modal-editor :title="t(type)" @print="print" >
         <div :style="{ zoom }">
             <div ref="printer-content">
-                <dt-order v-if="type === 'dt'" :date="date" :values="items"
-                :bilet="bilet" :fullName="fullName" :order="order"/>
-                <ct-order v-if="type === 'ct'" :date="date" :values="items"
-                :bilet="bilet" :fullName="fullName" :order="order"/>
+                <dt-order v-if="type === 'dt'" :date="date" :value="value"/>
+                <ct-order v-if="type === 'ct'" :date="date" :value="value"/>
             </div>
         </div>
     </modal-editor>
@@ -18,37 +16,22 @@ import DtOrder from './DtOrder'
 import CtOrder from './CtOrder'
 export default {
     components: { ModalEditor, DtOrder, CtOrder },
-    props: { _id: String, values: Array, type: String },
+    props: { value: Object },
     data() {
         return {
             zoom: '85%'
         }
     },
     computed: {
-        ...mapGetters({
-            klients: 'klient/map',
-            map: 'reestr/map',
-            company: 'company'
-        }),
-        bilet({ map, _id  }) {
-            return { ...map[_id] }
-        },
-        order({ bilet, values }) {            
-            return { ...bilet.order }
-        },
-        date({ order }) {
-            const date = moment(order.date)
+        date({ value }) {
+            const date = moment(value.date, 'L')
             const day = date.format('DD')
             const month = months.format[date.month()]
             const year = date.format('YYYY')
             return `«${day}» ${month} ${year} г.`
         },
-        items({ values }) {
-            return (values || []).filter(v => toNumber(v.summ))
-        },
-        fullName({ order }){
-            const { to, from } = order
-            return to || from || ''
+        type({ value }) {
+            return value.type
         },
         printContent({ $refs }) {
             return $refs['printer-content']

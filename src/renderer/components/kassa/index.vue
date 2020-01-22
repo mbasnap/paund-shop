@@ -2,7 +2,7 @@
     <div class="kassa">
         <b-card class="m-2" header-tag="header" footer-tag="footer" body-class="scroll-auto"
         :header="ok" :footer="total">
-        <context class="row " :actions="{ add, print: printOrder, remove }">
+        <context class="row " :actions="{ add, remove }">
             <kassa-list :selected="selected" class="col-6" :rows="rows"
             :value="grope(dt.filter(isSame))" type="dt"/>
             <kassa-list :selected="selected" class="col-6" :rows="rows"
@@ -36,10 +36,8 @@ export default {
     },
     computed: {
         ...mapGetters({
-            nextOrder: 'reestr/nextOrder',
             dt: 'reestr/dt301',
             ct: 'reestr/ct301',
-            map: 'reestr/map',
             settings: 'settings',
             date: 'date',
             accounts: 'accounts'
@@ -90,8 +88,6 @@ export default {
             this.$modal.show(Order, props, { width: '850', height: '500'})
         },
         printBilet(props) {
-            console.log(props);
-            
             this.$modal.show(Bilet, props, { width: '800', height: '550'})
         },
         select(id) {       

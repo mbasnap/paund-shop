@@ -134,7 +134,7 @@
 
       <div class="row" > <!--Основание-->
         <div class="col" style="height: 55px; line-height: 28px; overflow: hidden;">
-          <div style="height: 0px;"> Основание: {{ order.title }} </div>
+          <div style="height: 0px;"> Основание: {{ value.title }} </div>
           <div class=" border-bottom" style="height: 25px;"></div>
           <div class=" border-bottom" style="height: 25px;"></div>
         </div>
@@ -212,7 +212,7 @@
     </div>
     <div class="row mt-3" style="height: 25px; line-height: 35px;"> <!--к приходному кассовому ордеру №-->
       <div class="col pr-0">	к приходному кассовому ордеру</div>
-      <div class="col-3 p-0 border-bottom">№ {{ order.number }}</div>
+      <div class="col-3 p-0 border-bottom">№ {{ value.number }}</div>
     </div>
     <div class="row" style="font-size: 16px;">  <!--от «_____»	__________________г.-->
       <div class="col border-bottom" style="height: 25px; line-height: 35px;"> от {{ date }}</div>
@@ -227,7 +227,7 @@
     </div>
     <div class="row" > <!--Основание-->
       <div class="col" style="height: 90px; line-height: 30px; overflow: hidden;">
-        <div style="height: 0px;"> Основание: {{ order.title }} </div>
+        <div style="height: 0px;"> Основание: {{ value.title }} </div>
         <div class=" border-bottom" style="height: 25px;"></div>
         <div class=" border-bottom" style="height: 30px;"></div>
         <div class=" border-bottom" style="height: 30px;"></div>
@@ -303,14 +303,10 @@ import numberToWordsRu from 'number-to-words-ru';
 export default {
   props: {
     date: String,
-    order: Object,
-    bilet: Object,
-    fullName: String,
-    values: Array
+    value: Object
   },
   computed: {
     ...mapGetters({
-        // klients: 'klient/klients',
         company: 'company',
         user: 'user',
         accounts: 'accounts'
@@ -321,16 +317,18 @@ export default {
     depKod() {
       return '018120'
     },
+    values({value}) {
+      return value.values
+    },
     summ({ values }) {
       return summ( ...values.map(v => v.summ))
     },
     toWordsRu({ values }) {
       return numberToWordsRu.convert(this.summ)
     },
-    // fullName({ klient }) {
-    //   const { family, name, sername } = klient
-    //   return `${family} ${name} ${sername}`
-    // }
+    fullName({ value }) {
+      return value.from
+    }
   },
   methods: {
     getAccount({ct}) {

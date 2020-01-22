@@ -52,14 +52,16 @@ computed: {
     model({ number, ocenca, days, ssuda, procent, discount, penalty }) {
         return { number, ocenca, days, ssuda, procent, discount, penalty }
     },
-    values({ model, order, number: bilet, nextOrder }) {
+    type() {
+        return 'ct'
+    },
+    values({ model, order, number: bilet }) {
         const { _id: klient, passport } = this.klient
-        const title = `vidana ssuda po zalogovomu biletu ${bilet}`
         const obespechenie = (this.obespechenie || []).filter(v => toNumber(v.ocenca))
         return [
             { dt: '377', ct: '301', ...model.ssuda },
             { dt: '001', ...model, obespechenie, klient, passport },
-            { ct: '002', ...order, title, bilet, number: nextOrder['ct'] }         
+            { ...order, title: `vidana ssuda po zalogovomu biletu ${bilet}`}         
         ]
     },
     disabled({ bilet }) {

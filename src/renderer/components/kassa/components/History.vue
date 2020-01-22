@@ -44,7 +44,7 @@ export default {
             orders: 'reestr/orders',
             accounts: 'accounts',
         }),
-        bilet({ value: id, bilets}) {
+        bilet({ value: id, bilets}) {            
             return { ...{...bilets}[id] }
         },
         order({ value: id, orders }) {
@@ -56,15 +56,12 @@ export default {
             const { values } = {...{...map}[id]}
             return (values || []).filter(acc301) 
         },
-        model({ bilet, order, values }) { 
+        model({ bilet, order, values }) {      
             const date = moment(bilet.date).format('L')
-            return { ...bilet, ...order, values, date }
+            return { ...bilet, ...order, values, date, bilet: bilet.number }
         }
     },
     methods: {
-        // print(value) {
-        //     this.$modal.show(Bilet, { value }, { height: '550px', width: '800px'})
-        // },
         getTitle({ dt, ct }) {
             return Object.entries({ dt, ct })
                 .filter(([k,v]) => v !== '301')

@@ -26,10 +26,10 @@ const getters = {
         return values.filter(v => v.dt === '001')
             .reduce((cur, v) => ({ ...cur, [v._id]: v }), {})
     },
-    ctOO1({}, { values, dtOO1 }){
+    ct001({}, { values, dt001 }){ 
         return values.filter(v => v.ct === '001')
             .reduce((cur, { _id, ref, klient, passport }) =>
-                ({ ...cur, [_id]: { ...dtOO1[ref], klient, passport } }), {})
+                ({ ...cur, [_id]: { ...{...dt001}[ref], klient, passport } }), {})
     },
     dt002({}, { values }){        
         return values.filter(v => v.dt === '002')
@@ -46,7 +46,11 @@ const getters = {
         return values.filter(v => v.ct === '301')
     },
     bilets({}, { dt001, ct001 }) {
-        return { ...dt001 , ...ct001 }
+        return { ...dt001, ...ct001  }
+    },
+    sclad({}, { values, dt001 }){
+        return values.filter(v => v.dt === '200')
+            .map(({ _id, ref, date}) => ({ ...dt001[ref], _id, date }))
     },
     orders({}, { dt002, ct002 }) {
         return { ...dt002 , ...ct002 }

@@ -41,11 +41,11 @@ computed: {
     discount({ bilet, discounts }) {
         return bilet.discount || discounts[0] || 10
     },
-    order({ klient }) {
+    order({ klient, nextOrder, type }) {
         const { family, name, sername, passports, passport } = klient
         const from = `${family} ${name} ${sername}`
         const doc = { ...passports[passport] }
-        return {  from, doc }
+        return { [type]: '002', from, doc, type, number: nextOrder[type] } 
     }
 },
 methods: {

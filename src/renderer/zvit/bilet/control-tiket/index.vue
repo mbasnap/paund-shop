@@ -11,18 +11,14 @@
 
         <div class="row border-bottom" style="font-size: 12px; line-height: 25px;">
             <div class="col">{{ bilet.date}}</div>
-            <div class="col">
-                <span>{{ t('ssuda') }}</span>
-                <span>{{ ssuda.summ }}</span>
-            </div>
+            <div class="col"><span>{{ ssuda.summ }}</span></div>
         </div>
         <div class="col p-0">
             <div v-for="(item, index) in obespechenie" :key="index">
-                <div class="row" style="overflow: hiden">
-                    <div class="col" style="font-size: 12px;">{{ item.title}}</div>
-                    <div class="col" style="font-size: 12px; line-height: 25px; text-align: right;">
-                        <!-- <span>{{ item.derty}}</span> -->
-                        <span>{{ item.total}}</span>
+                <div class="row p-0" style="font-size: 10px; line-height: 25px;">
+                    <div class="col"><strong>{{ item.title}}</strong></div>
+                    <div class="col"  style="font-size: 8px; display: flex; text-align: right;">
+                        <span class="pr-2">{{ item.total}}</span>
                         <span>{{ item.ocenca}}</span>
                     </div>
                 </div>

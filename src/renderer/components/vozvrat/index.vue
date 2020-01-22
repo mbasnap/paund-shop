@@ -54,15 +54,17 @@ computed: {
     model({ bilet, days, ssuda, procent, penalty }) {
         return { days, ssuda, procent, penalty, ref: bilet._id }
     },
-    values({ model, order, number: bilet, nextOrder }) {
+    type() {
+        return 'dt'
+    },
+    values({ model, order, number: bilet }) {
         const { _id: klient, passport } = this.klient
-        const title = `vozvtashena ssuda po zalogovomu biletu ${bilet}`
         return [
             { dt: '301', ct: '377', ...model.ssuda },
             { dt: '301', ct: '703', ...model.procent },
             { dt: '301', ct: '704', ...model.penalty },
             { ct: '001', ...model, klient, passport },
-            { dt: '002', ...order, title, bilet, number: nextOrder['dt'] }         
+            { ...order, title: `vozvtashena ssuda po zalogovomu biletu ${bilet}`}         
         ]
     },
     disabled({ bilet }) {
