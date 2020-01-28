@@ -24,8 +24,8 @@ const getters = {
         return getters['user/user']
     },
     isAuth ({}, getters) {
-        // return true
-        return getters['user/isAuth']
+        return true
+        // return getters['user/isAuth']
     },
     isActive ({}, { company }) {
         return !! company.id

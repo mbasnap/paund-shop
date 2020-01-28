@@ -1,5 +1,5 @@
 <template>
-    <suggest class="form-control mb-4" name="number" placeholder="Number"
+    <suggest class="form-control" name="number" placeholder="Number"
         :value="value" :options="options" @select="update">
         <slot></slot>
     </suggest>        
@@ -16,15 +16,13 @@ export default {
     computed: {
         ...mapGetters({
             empty: 'reestr/empty',
-            // map: 'reestr/map',
+            map: 'reestr/map',
             date: 'date'
             }),
         numbers({ empty, date, map }) {   
-            // console.log(empty);
-                     
             return Object.values(empty)
                 .filter(v => moment(v.date).isSameOrBefore(date, 'date'))
-                    // .map(v => map[v._id])
+                    .map(v => map[v._id])
         },
         options({ value, numbers }) {
             const includes = v => (v.number + '').includes(value.number || '')

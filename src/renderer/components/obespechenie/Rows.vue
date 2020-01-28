@@ -7,7 +7,8 @@
         </td>
         <td> <named-input name="ves" :value="model"/> </td>
         <td> <named-input name="derty" :value="model"/> </td>
-        <td class="ocenca"> {{ ocenca }} </td>
+        <td> <named-input name="ocenca" :value="model" style="text-align: right;"/> </td>
+        <!-- <td class="ocenca"> {{ ocenca }} </td> -->
     </tr>
 </template>
 
@@ -18,7 +19,7 @@ import { NamedInput, NamedSelect, mix } from '@/widgets/named-input/index.js'
 export default {
 components: { NamedInput, NamedSelect },
 mixins: [ { provide: mix.provide, methods: mix.methods } ],
-props: { value: Object, editable: Boolean },
+props: { value: Object, editable: Boolean, type: Boolean },
 computed: {
     ...mapGetters(['settings']),
     price({ settings }) {
@@ -36,8 +37,8 @@ computed: {
     ocenca({ value }) {
         return toDouble(value.ocenca)
     },
-    model({ value, ves, derty }) {
-        return { ...value, ves, derty }
+    model({ value, ves, derty, ocenca }) {
+        return { ...value, ves, derty, ocenca }
     }
 },
 methods: {
@@ -49,7 +50,7 @@ methods: {
     },
     update(value) {
         const total = pDiff(value.ves, value.derty)
-        const ocenca = mult(total, this.price[value.proba])
+        const ocenca = !this.type ? mult(total, this.price[value.proba]): value.ocenca
         // const err = diff(value.derty, value.ves) > 0
         this.$emit('input', { ...value, total: toDouble(total), ocenca: toDouble(ocenca) })
     }

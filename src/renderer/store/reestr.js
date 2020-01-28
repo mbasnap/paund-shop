@@ -22,22 +22,11 @@ const getters = {
                 return [ ...arr, ...items ]
             }, [])
     },
-    dt001({}, { values }){
-        return values.filter(v => v.dt === '001')
-            .reduce((cur, v) => ({ ...cur, [v._id]: v }), {})
+    dt377({}, { values }){     
+        return values.filter(v => v.dt === '377')
     },
-    ct001({}, { values, dt001 }){ 
-        return values.filter(v => v.ct === '001')
-            .reduce((cur, { _id, ref, klient, passport }) =>
-                ({ ...cur, [_id]: { ...{...dt001}[ref], klient, passport } }), {})
-    },
-    dt002({}, { values }){        
-        return values.filter(v => v.dt === '002')
-            .reduce((cur, v) => ({ ...cur, [v._id]: v }), {})
-    },
-    ct002({}, { values }){
-        return values.filter(v => v.ct === '002')
-            .reduce((cur, v) => ({ ...cur, [v._id]: v }), {})
+    ct377({}, { values }){
+        return values.filter(v => v.ct === '377')
     },
     dt301({}, { values }){
         return values.filter(v => v.dt === '301')
@@ -48,30 +37,24 @@ const getters = {
     bilets({}, { dt001, ct001 }) {
         return { ...dt001, ...ct001  }
     },
-    sclad({}, { values, dt001 }){
+    dt200({}, { values }){
         return values.filter(v => v.dt === '200')
-            .map(({ _id, ref, date}) => ({ ...dt001[ref], _id, date }))
     },
-    orders({}, { dt002, ct002 }) {
-        return { ...dt002 , ...ct002 }
-    },
-    nextOrder({}, { dt002, ct002 }) {
+    nextOrder({}, { dt301, ct301, map }) {
         const number = v => (Math.max( ...v, 0) + 1)
-        const dt = Object.values({ ...dt002 }).map(v => v.number || 0)
-        const ct = Object.values({ ...ct002 }).map(v => v.number || 0)
+        const dt = dt301.map(v => map[v._id]).map(v => ({...v.order}.dt || 0))
+        const ct = ct301.map(v => map[v._id]).map(v=> ({...v.order}.ct || 0))
         return { dt: number(dt) , ct: number(ct) }
     },
-    nextNumber({}, { dt001 }) {
-        const numbers = Object.values({ ...dt001 }).map(v => v.number || 0)
+    nextNumber({}, { dt377, map }) {
+        const numbers = dt377.map(v => map[v._id]).map(v => v.number || 0)
         return (Math.max( ...numbers, 0) + 1)
     },
-    used({}, { ct001 }) {
-        return Object.values({ ...ct001 }).reduce((obj, v) =>
-            ({...obj, [v._id]: v }), {})
-            
+    used({}, { ct377, map }) {
+        return ct377.map(v => map[v._id]).reduce((obj, v) => ({...obj, [v.ref]: v }), {})
     },
-    empty({}, { dt001, used }) {
-        return Object.values({ ...dt001 }).filter(({ _id }) => !used[_id])
+    empty({}, { dt377, used }) {
+        return dt377.filter(({ _id }) => !used[_id])
             .reduce((cur, v) => ({ ...cur, [v._id]: v }), {})
     }
 }

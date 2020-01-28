@@ -4,8 +4,9 @@
             <div class="row " style="height: 250px;">
                 <klient ref="klient" class="col p-0" :value="klient" :disabled="disabled"/>
                 <div class="col p-0 border-left">
-                    <number class="col mb-2" v-model="bilet" :disabled="disabled" @select="update"/>
-                    <bilet class="col mb-5" :value="model" :disabled="disabled"/>
+                    <number class="col mb-2" v-model="bilet" :disabled="disabled"
+                    @select="update"/>
+                    <bilet class="col mb-3" :value="model" :disabled="disabled"/>
                     <div class="col">
                         <div class="row">
                             <div class="col-6 ">
@@ -24,48 +25,39 @@
         <kassa ref="kassa" class="col-4"></kassa> 
     </div>
 </template>
-
 <script>
 
 import { Number, Bilet } from './components'
 import mix from '@/components/mix/vidacha-vozvrat'
-import { toNumber, toDouble, summ, mult, diff, pDiff, moment } from '@/functions'
+import { proc, toNumber, toDouble, mult, diff, pDiff, moment } from '@/functions'
 export default {
 components: { Number, Bilet },
 mixins: [ mix ],
 computed: {
     days({ bilet }) {
-        return moment(this.date).diff(bilet.date, 'd')
+        var given = moment(bilet.date).startOf('day');
+        var current = moment(this.date).startOf('day');
+        return moment.duration(current.diff(given)).asDays() || 1
     },
     procent({ bilet }) {
         const { value, days: plan } = { ...bilet.procent }
-        let days = this.days        
-        days = days <= 0 ? 1 : days > plan ? plan : this.days
-        return { ...bilet.procent, days, summ: toDouble(mult(value, days)) }
+        let days = plan - this.days 
+        days = days > 0 ? days : 0
+        return { ...bilet.procent, days, summ: toDouble(value * days) }
     },
-    penalty({ bilet, procent }) {
-        const { value } = { ...bilet.penalty}       
-        const days = pDiff(this.days, procent.days)
-        return { ...bilet.penalty, days, summ: toDouble(mult(value, days)) }
+    penalty({ bilet }) {
+        const { value, days: plan } = { ...bilet.penalty}       
+        let days = this.days - plan
+        days = days > 0 ? days : 0
+        return { ...bilet.penalty, days, summ: toDouble(value * days) }
     },
-    ssuda({ bilet, days }) {
-        return { ...bilet.ssuda, days }
-    },
-    model({ bilet, days, ssuda, procent, penalty }) {
-        return { days, ssuda, procent, penalty, ref: bilet._id }
-    },
-    type() {
-        return 'dt'
-    },
-    values({ model, order, number: bilet }) {
-        const { _id: klient, passport } = this.klient
-        return [
-            { dt: '301', ct: '377', ...model.ssuda },
-            { dt: '301', ct: '703', ...model.procent },
-            { dt: '301', ct: '704', ...model.penalty },
-            { ct: '001', ...model, klient, passport },
-            { ...order, title: `vozvtashena ssuda po zalogovomu biletu ${bilet}`}         
-        ]
+    values({ bilet, model, number }) {
+        const title = `vozvtashena ssuda po zalogovomu biletu ${number}`
+        return {...model, title, ref: bilet._id, values: [
+            { dt: '301', ct: '377', summ: model.ocenca },
+            { dt: '703', ct: '301', ...model.procent }, // ct 301 if return procent
+            { dt: '301', ct: '704', ...model.penalty }
+        ].filter(v => toNumber(v.summ))}
     },
     disabled({ bilet }) {
         return !{ ...bilet }._id

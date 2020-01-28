@@ -1,5 +1,5 @@
 import { mapGetters, mapActions } from 'vuex'
-// import { toNumber, toDouble, summ, mult, diff, pDiff, moment } from '@/functions'
+import { round, toNumber, toDouble, summ, mult, diff, pDiff, moment } from '@/functions'
 import { Kassa, Klient, Obespechenie } from './imports'
 export default {
 components: { Kassa, Klient, Obespechenie },
@@ -11,7 +11,12 @@ data () {
     }
 },
 watch: {
-    date() {
+    procent({ summ }) {
+        // const { ocenca, correct } = this.bilet
+        // console.log(summ, ocenca, correct);
+        
+        // const [main] = oc
+        
         // this.update()
     }
 },
@@ -21,8 +26,13 @@ computed: {
         klients: 'klient/map',
         settings: 'settings',
         nextNumber: 'reestr/nextNumber',
-        nextOrder: 'reestr/nextOrder'
+        order: 'reestr/nextOrder'
     }),
+    ocenca({ bilet, obespechenie }) {
+        const ocenca = toNumber(bilet.ocenca)
+            || summ(...obespechenie.map(v => v.ocenca))
+        return toDouble(ocenca)
+    },
     number({ bilet, nextNumber }) {
         return bilet.number || nextNumber
     },   
@@ -33,31 +43,41 @@ computed: {
         return settings.discounts || []
     },
     xProc({ settings }) {
-        return settings.procent
+        return { ...settings.procent }
     },
     xPen({ settings }) {
-        return settings.penalty
+        return { ...settings.penalty }
     },
     discount({ bilet, discounts }) {
-        return bilet.discount || discounts[0] || 10
+        return bilet.discount || discounts[0]
     },
-    order({ klient, nextOrder, type }) {
-        const { family, name, sername, passports, passport } = klient
-        const from = `${family} ${name} ${sername}`
-        const doc = { ...passports[passport] }
-        return { [type]: '002', from, doc, type, number: nextOrder[type] } 
-    }
+    type({ bilet }) {
+        return bilet.type || 'gold'
+    },
+    passport({ klient }) {
+        console.log(klient);
+        
+        return klient.passport || 0
+    },
+    model({ number, passport, order, type, ocenca, days, procent, discount, penalty }) {
+        return { number, passport, order, type, ocenca, days, procent, discount, penalty }
+    },
 },
 methods: {
     async save() {
-        await this.$refs['klient'].save(this.klient)
-        await this.$refs['kassa'].save(this.values)
+        console.log(this.klient);
+        
+        const { _id: klient, passport } = await this.$refs['klient'].save(this.klient)
+        await this.$refs['kassa'].save({ ...this.values, klient, passport })
         return this.update()
     },
     update(v) {
         const { klient, passport, obespechenie } = this.bilet = { ...v }
         this.klient = { ...this.klients[klient], passport }
         this.obespechenie = obespechenie || [ {} ]
+    },
+    onInput(v) {
+        this.bilet = v
     }
 }
 }

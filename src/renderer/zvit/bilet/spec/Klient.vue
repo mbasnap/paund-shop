@@ -75,11 +75,10 @@ computed: {
         return { ...bilet.ssuda }
     },
     fio({ bilet }) {
-        console.log(bilet)
         return bilet.from
     },
     passport({ bilet }) {
-        const { seria, number } = bilet.doc
+        const { seria, number } = { ...bilet.doc}
         return `${seria || ''} ${number || ''}`
     },
     issued({ bilet }) {

@@ -3,15 +3,9 @@
         <context  :actions="actions">
             <div class="list">
                 <div class="header">
-                    <p>Filter</p>
+                    <slot></slot>
                 </div>
-                <items teg="ul" :items="value" :tostring="tostring"/>
-                <!-- <ul class="item">
-                    <li v-for="(item, key) in value" :key="key"
-                    @contextmenu.prevent="open($event, item)"
-                    @mouseleave="({ toElement }) => close(toElement)"  
-                    >{{ tostring(item) }}</li>
-                </ul> -->
+                <items :name="name" :value="items"/>
             </div>
         </context>
     <!-- </draggable> -->
@@ -22,14 +16,20 @@
 import Context from '@/components/Context.vue'
 import Items from './Items.vue'
 import draggable from 'vuedraggable'
+import { mapGetters } from 'vuex'
 export default {
     components: { Context, draggable, Items },
-    props: { value: Array, actions: Object },
-    inject: ['tostring'],
-  computed: {},
-  methods: {
-
-  }
+    props: { value: Array, actions: Object, name: String },
+    computed: {
+        ...mapGetters({
+            map: 'klient/map'
+        }),
+        items({ value, map }) {          
+            return (value || [])
+                .map(v => ({...v, klient: map[v.klient]}))
+        }
+    },
+    methods: {}
 }
 </script>
 

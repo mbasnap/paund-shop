@@ -2,7 +2,7 @@
 <div class="bilet">
     <div class="col-9">
         <named-input class='form-control mb-2' name="number" :value="value"/>
-        <input class='form-control mb-2' :value="ssuda.summ" readonly/>
+        <input class='form-control mb-2' :value="total" @change="v => doFunction(v.target)"/>
         <div class=" input-group mb-2">
             <input class="form-control" :value="procent.summ" readonly/>
             <div class="input-group-append">
@@ -20,6 +20,7 @@
 import { mapGetters } from 'vuex'
 import mix from '@/widgets/named-input/mix.js'
 import DaySlider from './DaySlider'
+import { getProcent, getOcenca, rorrect, round, toNumber, mult, toDouble, diff } from '@/functions'
 export default {
 mixins: [ mix ],
 components: { DaySlider },
@@ -34,11 +35,30 @@ computed: {
     procent({ value }) {
         return { ...value.procent }
     },
-    ssuda({ value }) {
-        return { ...value.ssuda }
-    }
+    ocenca({ value }) {
+        return value.ocenca
+    },
+    total({ ocenca, procent }) {
+        const total = diff(ocenca, procent.summ)
+        return toDouble(total)
+    },
 },
 methods: {
+
+    doFunction({ value }) {
+        const isAfter = ocenca => {
+            const procent = getProcent({ ...this.procent, ocenca })
+            return ocenca - procent >= value
+        }
+        let ocenca = getOcenca({ ...this.procent, ocenca: toNumber(value) }, isAfter)
+        ocenca = getOcenca({ ...this.procent, ocenca}, isAfter, 0.1)
+        ocenca = getOcenca({ ...this.procent, ocenca}, isAfter, 0.01)
+        ocenca = getOcenca({ ...this.procent, ocenca}, isAfter, 0.001)
+        ocenca = getOcenca({ ...this.procent, ocenca}, isAfter, 0.0001)
+        ocenca = rorrect({ ...this.procent, ocenca})
+        this.change({ value: ocenca, name: 'ocenca' })
+        
+    },
     readonly() {
         return this.disabled
     },

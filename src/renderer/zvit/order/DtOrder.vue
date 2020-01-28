@@ -49,18 +49,22 @@
     </div>
     <div class="row pr-3 mt-3"><!-- ПРИХОДНЫЙ КАССОВЫЙ ОРДЕР -->
       <div class="col" style="line-height: 4; text-align: right;"><strong>ПРИХОДНЫЙ КАССОВЫЙ ОРДЕР</strong></div>
-      <div class="col-5" style="text-align: center">
+      <div class="col-6" style="text-align: center">
         <div class="row border-top border-left border-right"> <!--Номер документа Дата составления -->
-          <div class="col border-right">
-            <div class="row">Номер документа</div>
+          <div class="col-5 border-right">
+            <div class="row">
+              <div class="col p-0">Номер документа</div>
+            </div>
           </div>
           <div class="col">
-            <div class="row">Дата составления</div>
+            <div class="row">
+              <div class="col p-0">Дата составления</div>
+            </div>
           </div>
         </div>
         <div class="row border" style="height: 25px">
-          <div class="col border-right"></div>
-          <div class="col"></div>
+          <div class="col-5 p-0 border-right">{{order}}</div>
+          <div class="col p-0">{{date}}</div>
         </div>
       </div>
     </div>
@@ -212,7 +216,7 @@
     </div>
     <div class="row mt-3" style="height: 25px; line-height: 35px;"> <!--к приходному кассовому ордеру №-->
       <div class="col pr-0">	к приходному кассовому ордеру</div>
-      <div class="col-3 p-0 border-bottom">№ {{ value.number }}</div>
+      <div class="col-3 p-0 border-bottom">№ {{ order }}</div>
     </div>
     <div class="row" style="font-size: 16px;">  <!--от «_____»	__________________г.-->
       <div class="col border-bottom" style="height: 25px; line-height: 35px;"> от {{ date }}</div>
@@ -328,6 +332,9 @@ export default {
     },
     fullName({ value }) {
       return value.from
+    },
+    order({ value }) {
+      return value.order
     }
   },
   methods: {

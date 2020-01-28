@@ -1,28 +1,24 @@
 <template>
     <div class="obespechenie" >
-        <div class="row m-0"> 
-            <div class="col">
-            <input type="checkbox" :checked="type"
-            class="form-check-input" id="dropdownCheck2"
-            @change="changeType">
-            <label class="form-check-label" for="dropdownCheck2">shings</label>
-            </div>
-
-        </div>
         <table  :class="[ 'table', 'table-sm', { readonly: disabled } ]">
         <thead >
             <tr>
                 <th class="index">
-
+                    <div>
+                        <input type="checkbox" style="position: unset; margin: 0;"
+                        class="form-check-input" id="dropdownCheck2"
+                        @change="changeType">
+                    </div>
                 </th>
                 <th class="title">
+                    <label class="form-check-label" for="dropdownCheck2">shings</label>
                 </th>
                 <th v-for="(name, index) in [ 'proba', 'ves', 'derty', 'ocenca' ]" 
                 :key="index" :class="name">{{name}}</th>
             </tr>
         </thead>
         <tbody>
-            <row  v-for="(item, index) in value" :key="index" class="items" :type="type"
+            <row  v-for="(item, index) in value" :key="index" class="items"
             :value="item" @input="value => input(index, value)" :editable="!disabled"/>
             <tr class="add">
                 <td>
@@ -47,7 +43,12 @@ import { SvgPlusCircle } from '@/svg'
 import Row from './Rows'
 export default {
     components: { Row, SvgPlusCircle },
-    props: { value: Array, disabled: Boolean, type: Boolean },
+    props: { value: Array, disabled: Boolean },
+    data() {
+        return {
+            things: false
+        }
+    },
     computed: {
         ...mapGetters({
             settings: 'settings',
@@ -74,7 +75,7 @@ export default {
     },
     methods: {
         changeType() {
-            this.$emit('changeType', !this.type)
+            this.things = !this.things
         },
         input(index, value) {
             this.value[index] = value

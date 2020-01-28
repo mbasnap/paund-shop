@@ -1,11 +1,10 @@
 <template>
   <div class="klient">
-    <tab-one class="col" :value="value" :disabled="disabled">
+    <tab-one class="col" :value="model" :disabled="disabled">
         <slot></slot>
     </tab-one>
     <div class="col">
       <svg-address-card width="30px;" @click="showModal('edit')"/>
-      <!-- <span class="btn edit" @click="showModal('edit')">edit</span> -->
     </div>
   </div>
 </template>
@@ -17,14 +16,17 @@ import { TabOne, Editor } from './editor/index.js'
 import { SvgAddressCard } from '@/svg'
 export default {
     components: {  TabOne, SvgAddressCard },
-    props: { value: Object, disabled: Boolean },
+    props: { value: Object, disabled: Boolean, passport: Number },
     provide() {
       return { update: this.update, save: this.save }
     },
     computed: {
       ...mapGetters({
         // map: 'klient/map'
-      })
+      }),
+      model({ value, passport }) {
+        return { ...value, passport }
+      }
     },
     methods: {
         ...mapActions({

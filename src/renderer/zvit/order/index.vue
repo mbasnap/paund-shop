@@ -2,8 +2,8 @@
     <modal-editor :title="t(type)" @print="print" >
         <div :style="{ zoom }">
             <div ref="printer-content">
-                <dt-order v-if="type === 'dt'" :date="date" :value="value"/>
-                <ct-order v-if="type === 'ct'" :date="date" :value="value"/>
+                <dt-order v-if="type === 'dt'" :date="date" :value="model"/>
+                <ct-order v-if="type === 'ct'" :date="date" :value="model"/>
             </div>
         </div>
     </modal-editor>
@@ -23,15 +23,19 @@ export default {
         }
     },
     computed: {
-        date({ value }) {
-            const date = moment(value.date, 'L')
+        model({ value }) {
+            return {...value}
+        },
+        date({ model }) {
+            const date = moment(model.date, 'L')
             const day = date.format('DD')
             const month = months.format[date.month()]
             const year = date.format('YYYY')
+
             return `«${day}» ${month} ${year} г.`
         },
-        type({ value }) {
-            return value.type
+        type({ model }) {
+            return model.type
         },
         printContent({ $refs }) {
             return $refs['printer-content']

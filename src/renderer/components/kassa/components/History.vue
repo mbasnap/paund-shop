@@ -3,18 +3,19 @@
             <ul  class="item">
                 <div >
                     <li class="row ">
-                        <div class="row print-lincks">
-                            <div  class="col-6">
-                                <span class="badge badge-pill badge-light" 
-                                @click="$emit('printOrder', {value: model})">
-                                    Order {{ model.number }}
-                                </span>
-                            </div>
-                            <div class="col">
-                                <span v-if=" model.bilet" class="badge badge-pill badge-light" 
+                        <div class="row m-0 print-lincks">
+                            <div  class="col">
+                                <span v-if=" model.number" class="badge badge-pill badge-light" 
                                 @click="$emit('printBilet', {value: model})">
-                                    Bilet {{ model.bilet }}
+                                    Bilet {{ model.number }}
                                 </span>
+                                <!-- <span class="badge badge-pill badge-light" 
+                                @click="$emit('printOrder', {value: model})">
+                                    Order {{ model.order }}
+                                </span> -->
+                            </div>
+                            <div class="col-1 mr-2" style="text-align: right;">
+                                <svg-trash width="13px;" @click="$emit('remove', model)"></svg-trash>
                             </div>
                         </div>
                     </li>
@@ -25,7 +26,7 @@
                     <li class="row" v-for="(v, i) in model.values" :key="i">
                         <div class="row">
                             <span class="col">{{ getTitle(v) }}</span>
-                            <span class="col">{{ v.summ }}</span>
+                            <span class="col-4 p-0">{{ v.summ }}</span>
                         </div>
                     </li>
             </ul>
@@ -35,30 +36,29 @@
 <script>
 import { mapGetters } from 'vuex'
 import { toNumber, moment } from '@/functions'
+import { SvgTrash } from '@/svg'
 export default {
+    components: { SvgTrash },
     props: { value: String },
     computed: {
         ...mapGetters({
             map: 'reestr/map',
-            bilets: 'reestr/bilets',
-            orders: 'reestr/orders',
+            klients: 'klient/map',
             accounts: 'accounts',
         }),
-        bilet({ value: id, bilets}) {            
-            return { ...{...bilets}[id] }
+        bilet({ value, map }) {
+            return { ...map[value] }
         },
-        order({ value: id, orders }) {
-            return {...{...orders}[id]}
+        klient({ bilet, klients}) {
+            return {...klients[bilet.klient]}
         },
-        values({ value: id, map }) {
-            const acc301 = ({ dt, ct, summ }) =>
-                [dt, ct].includes('301') && toNumber(summ)
-            const { values } = {...{...map}[id]}
-            return (values || []).filter(acc301) 
+        from({ klient }) {
+            const { family, name, sername } = klient
+            return `${family} ${name} ${sername}`
         },
-        model({ bilet, order, values }) {      
+        model({ bilet, klient, from }) {
             const date = moment(bilet.date).format('L')
-            return { ...bilet, ...order, values, date, bilet: bilet.number }
+            return { ...bilet, klient, from, date }
         }
     },
     methods: {

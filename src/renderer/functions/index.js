@@ -18,6 +18,26 @@ const pDiff = (a, b) => {
     const res = a - (b > 0 ? b : b * -1)
     return res > 0 ? res : false
 }
+const rorrect = v => {
+    const [b] = toDouble(v.ocenca).split('.')
+    const [, k] = toDouble(getProcent(v)).split('.')    
+    return `${b}.${k}`
+}
+const round = v => {
+    return Number(numberFormat(v))
+}
+const getOcenca = (v, isAfter, rate = 1 ) => {
+    const procent = v.ocenca * rate / 100
+    const ocenca = v.ocenca + procent
+    return isAfter(ocenca) ? ocenca - procent  : getOcenca({...v, ocenca}, isAfter, rate)
+}
+const getProcent = ({ ocenca, procent, days, discount }) => {
+    const res = proc(ocenca, procent * toNumber(days))
+    return res - proc(res, discount)
+}
+const firstChar = v => {
+    return (v + '').charAt(0).toUpperCase()
+}
 moment.locale('ru')
 const months = {
     format: 'января_февраля_марта_апреля_мая_июня_июля_августа_сентября_октября_ноября_декабря'.split('_'),
@@ -33,5 +53,10 @@ export  {
     mult,
     proc,
     moment,
-    months
+    months,
+    getOcenca,
+    getProcent,
+    rorrect,
+    round,
+    firstChar
 }

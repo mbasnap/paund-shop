@@ -51,6 +51,7 @@
     "rxjs": "^6.5.4",
     "validator": "^10.11.0",
     "vue": "^2.5.16",
+    "vue-bootstrap-slider": "^2.1.8",
     "vue-context": "^4.1.1",
     "vue-electron": "^1.0.6",
     "vue-html-to-paper": "^1.1.1",

@@ -2,12 +2,13 @@
     <div class="row flex-fill vidacha">
         <div  class="col-8 pt-3">
             <div class="row" style="height: 250px;">
-                <klient ref="klient" class="col p-0 " v-model="klient" :disabled="disabled">
+                <klient ref="klient" class="col p-0 " v-model="klient"
+                :disabled="disabled" :passport="passport">
                     <span class="reset" @click="klient = {}">x</span>
                 </klient>
                 <div class="col pl-2 border-left">
                     <bilet class="row" style="height: 75%;" :value="model" :disabled="disabled"
-                    @input="v => bilet = v"/> 
+                    @input="onInput"/> 
                     <div class="row">
                         <div class="col-3 ">
                             <button class="btn btn-primary" @click="update()">reset</button>
@@ -19,7 +20,8 @@
                     </div>
                 </div>                                 
             </div>        
-            <obespechenie v-model="obespechenie" :disabled="disabled"/>
+            <obespechenie v-model="obespechenie" :disabled="disabled" :type="type !== 'gold'"
+            @changeType="changeType"/>
         </div>
         <kassa ref="kassa" class="col-4"/>
     </div>
@@ -28,47 +30,40 @@
 <script>
 import { Bilet } from './components'
 import mix from '@/components/mix/vidacha-vozvrat'
-import { proc, summ, toNumber, toDouble, mult, diff, pDiff, moment } from '@/functions'
+import { getProcent, proc, toNumber, toDouble, mult, diff, pDiff, moment } from '@/functions'
 export default {
 components: { Bilet },
 mixins: [ mix ],
 computed: {
-    ocenca({ bilet, obespechenie }) {
-        const ocenca = toNumber(bilet.ocenca)
-            || summ(...obespechenie.map(v => v.ocenca))
-        return toDouble(ocenca)
+    procent({ ocenca, days, xProc, discount, type }) {
+        const procent = xProc[type]
+        const summ = getProcent({ ocenca, days, procent, discount })
+        const value = toDouble(summ / days)
+        return { procent, discount, days, value, summ: toDouble(summ) }
     },
-    procent({ ocenca, days, xProc: procent, discount }) {
-        let value = proc(ocenca, procent)
-        value = diff(value, proc(value, discount))
-        return { procent, discount, value, days, summ: toDouble(mult(value, days)) }
+    penalty({ ocenca, days, xPen, type }) {
+        const penalty = xPen[type]
+        let value = proc(ocenca, penalty)
+        return { days, penalty, value: toDouble(value) }
     },
-    penalty({ ocenca, xPen: penalty }) {
-        return { penalty, value: toDouble(proc(ocenca, penalty)) }
-    },
-    ssuda({ ocenca, days, procent }) {
-        return { days, summ: toDouble(diff(ocenca, procent.summ)) }
-    },
-    model({ number, ocenca, days, ssuda, procent, discount, penalty }) {
-        return { number, ocenca, days, ssuda, procent, discount, penalty }
-    },
-    type() {
-        return 'ct'
-    },
-    values({ model, order, number: bilet }) {
-        const { _id: klient, passport } = this.klient
-        const obespechenie = (this.obespechenie || []).filter(v => toNumber(v.ocenca))
-        return [
-            { dt: '377', ct: '301', ...model.ssuda },
-            { dt: '001', ...model, obespechenie, klient, passport },
-            { ...order, title: `vidana ssuda po zalogovomu biletu ${bilet}`}         
-        ]
+    values({ model, ocenca, procent, number }) {
+        const title = `vidana ssuda po zalogovomu biletu ${number}`
+        const obespechenie = this.obespechenie.filter(v => toNumber(v.ocenca))
+        return {...model, obespechenie, title, values: [
+            { dt: '377', ct: '301', summ: ocenca },
+            { dt: '301', ct: '703', ...procent }
+        ].filter(v => toNumber(v.summ))}
     },
     disabled({ bilet }) {
         return !!{ ...bilet }._id
     }
 },
-methods: { }
+methods: {
+    changeType(v) {
+        const type = !v ? 'gold' : 'things'
+        this.onInput({ ...this.bilet, type })
+    }
+}
 }
 </script>
 

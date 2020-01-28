@@ -2,16 +2,15 @@
     <div class="kassa">
         <b-card class="m-2" header-tag="header" footer-tag="footer" body-class="scroll-auto"
         :header="ok" :footer="total">
-        <context class="row " :actions="{ add, remove }">
+        <context class="row " :actions="{ add, print }">
             <kassa-list :selected="selected" class="col-6" :rows="rows"
             :value="grope(dt.filter(isSame))" type="dt"/>
             <kassa-list :selected="selected" class="col-6" :rows="rows"
             :value="grope(ct.filter(isSame))" type='ct'/>
         </context>
         </b-card>
-        <history class="col" :value="selected" 
-        @printBilet="printBilet" @printOrder="printOrder"
-        />
+        <history ref="history" class="col" :value="selected"
+        @remove="remove" @printBilet="printBilet" @printOrder="printOrder" />
     </div>
 </template>
 <script>
@@ -51,7 +50,7 @@ export default {
         },
         rows({ dt, ct, settings }) {
             const min = settings['minRows'] || 0
-            const grope = v => this.grope(v.filter(this.isSame))           
+            const grope = v => this.grope(v.filter(this.isSame))                      
             return Math.max( min, grope(dt).length, grope(ct).length )
         },
 
@@ -66,13 +65,18 @@ export default {
             removeReestr: 'reestr/remove',
             saveReestr: 'reestr/save',
         }),
-        async save(values) {
-            const { _id } = await this.saveReestr({ values })
+        async save(v) {
+            const { _id } = await this.saveReestr(v)
             return this.select( _id)         
         },
         async remove(v) {
             await this.removeReestr(v)
             return this.select()
+        },
+        print({ type, values }) {
+            const { model } = this.$refs['history']
+            const order = {...model.order}[type]
+            this.printOrder({value: {...model, type, order, values }})
         },
         add({ type }) {  
             this.$modal.show(PrixoRasxod, { type, save: this.save })
@@ -85,9 +89,13 @@ export default {
             return moment(date).isSame(this.date, 'date')
         },
         printOrder(props) {
+            // console.log(props);
+            
             this.$modal.show(Order, props, { width: '850', height: '500'})
         },
         printBilet(props) {
+            console.log(props);
+            
             this.$modal.show(Bilet, props, { width: '800', height: '550'})
         },
         select(id) {       
