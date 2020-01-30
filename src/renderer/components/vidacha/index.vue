@@ -7,8 +7,10 @@
                     <span class="reset" @click="klient = {}">x</span>
                 </klient>
                 <div class="col pl-2 border-left">
+                    <draggable v-if="target" class="target" :group="{ name: 'bilet', pull: 'clone' }"
+                    :value="[]" @input="([v]) => onCopy(...v)"/>
                     <bilet class="row" style="height: 75%;" :value="model" :disabled="disabled"
-                    @input="onInput"/> 
+                    @input="onInput"/>
                     <div class="row">
                         <div class="col-3 ">
                             <button class="btn btn-primary" @click="update()">reset</button>
@@ -23,7 +25,7 @@
             <obespechenie v-model="obespechenie" :disabled="disabled" :type="type !== 'gold'"
             @changeType="changeType"/>
         </div>
-        <kassa ref="kassa" class="col-4"/>
+        <kassa ref="kassa" class="col-4" @start="target = true" @end="target = false"/>
     </div>
 </template>
 
@@ -31,9 +33,15 @@
 import { Bilet } from './components'
 import mix from '@/components/mix/vidacha-vozvrat'
 import { getProcent, proc, toNumber, toDouble, mult, diff, pDiff, moment } from '@/functions'
+import draggable from 'vuedraggable'
 export default {
-components: { Bilet },
+components: { Bilet, draggable },
 mixins: [ mix ],
+data() {
+    return {
+        target: false
+    }
+},
 computed: {
     procent({ ocenca, days, xProc, discount, type }) {
         const procent = xProc[type]
@@ -62,10 +70,22 @@ methods: {
     changeType(v) {
         const type = !v ? 'gold' : 'things'
         this.onInput({ ...this.bilet, type })
+    },
+    onCopy(id) {
+        const { klient, passport, obespechenie, ocenca, days, discount, type } = { ...this.map[id]}
+        this.update({ klient, passport, obespechenie, ocenca, days, discount, type})
     }
 }
 }
 </script>
 
-<style></style>
+<style>
+.target {
+    height: 200px;
+    position: absolute;
+    z-index: 1000;
+    width: 300px;
+    background-color: rgba(0, 0, 0, 0.14);
+}
+</style>
 

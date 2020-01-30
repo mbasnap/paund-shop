@@ -4,7 +4,7 @@
     :disabled="readonly()"
     @change="change($event.target)">
     <option v-if="placeholder" value="" disabled selected hidden>{{ placeholder }}</option>
-      <option v-for="(item, index) in options" :key="index" :value="options[index]"
+      <option v-for="(item, index) in options" :key="index" :value="tovalue(options[index], index)"
        >{{ tostring(item) }}</option>
   </select>
 </template>
@@ -17,6 +17,9 @@ export default {
         options: Array,
         placeholder: String,
         tostring: { type: Function,
+          default: v => v
+        },
+        tovalue: { type: Function,
           default: v => v
         }
     },

@@ -36,11 +36,11 @@ export default {
         return this.update(await this.saveKlient({ ...v }))
       },
       showModal (title) {        
-        const { value, update, save } = this
+        const { model: value, update, save } = this
         this.$modal.show(Editor, { title, value, save }, { height: 'auto' })
       },
       update(v) {
-        this.$emit('input', { ...v })
+        this.$emit('input', { ...this.model, ...v })
         return v
       }
     }

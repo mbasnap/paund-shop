@@ -45,6 +45,7 @@ export default {
             map: 'reestr/map',
             klients: 'klient/map',
             accounts: 'accounts',
+            company: 'company'
         }),
         bilet({ value, map }) {
             return { ...map[value] }
@@ -56,9 +57,15 @@ export default {
             const { family, name, sername } = klient
             return `${family} ${name} ${sername}`
         },
-        model({ bilet, klient, from }) {
+        doc({ bilet, klient }) {
+            const passports = klient.passports || []
+            const passport = bilet.passport || 0
+            return { ...passports[passport]}
+        },
+        model({ bilet, klient, doc, from, company }) {
             const date = moment(bilet.date).format('L')
-            return { ...bilet, klient, from, date }
+            const returnDate = moment(bilet.date).add(bilet.days, 'd').format('L')
+            return { ...bilet, klient, doc, from, date, returnDate, company }
         }
     },
     methods: {

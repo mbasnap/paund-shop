@@ -1,5 +1,4 @@
 <template>
-
 <div class="sklad row">
     <list-to class="col-6" :value="values" :actions="{ toSklad: toSklad }"
     name="list-from">
@@ -36,11 +35,8 @@ export default {
             dt200: 'reestr/dt200',
         }),
         values({ empty, isAfter, map }) {
-            console.log(empty);
-            
             return Object.values(empty).filter(isAfter)
                 .map(v => ({...map[v._id]}))
-
         },
         sklad({ dt200, map }) {
             return dt200.map(v => ({...map[v._id]}))

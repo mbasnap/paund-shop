@@ -16,8 +16,10 @@
         <div class="col p-0">
             <div v-for="(item, index) in obespechenie" :key="index">
                 <div class="row p-0" style="font-size: 10px; line-height: 25px;">
-                    <div class="col"><strong>{{ item.title}}</strong></div>
-                    <div class="col"  style="font-size: 8px; display: flex; text-align: right;">
+                    <div class="col-7 pr-0" style="overflow: hidden; width: 50px; text-overflow: ellipsis; white-space: nowrap;">
+                        <strong>{{ item.title}}</strong>
+                    </div>
+                    <div class="col p-0"  style="font-size: 8px; display: flex; text-align: right;">
                         <span class="pr-2">{{ item.total}}</span>
                         <span>{{ item.ocenca}}</span>
                     </div>
@@ -30,6 +32,7 @@
 <script>
 export default {
     props: { value: Object },
+    inject: ['t'],
     computed: {
         bilet({ value }) {
             return {...value}
@@ -41,11 +44,7 @@ export default {
             return bilet.obespechenie || []
         }
     },
-    methods: {
-        t(v) {
-            return this.$t('print.' + v)
-        }
-    }
+    methods: {}
 }
 </script>
 

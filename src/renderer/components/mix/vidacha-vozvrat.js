@@ -10,22 +10,13 @@ data () {
         obespechenie: [{}],
     }
 },
-watch: {
-    procent({ summ }) {
-        // const { ocenca, correct } = this.bilet
-        // console.log(summ, ocenca, correct);
-        
-        // const [main] = oc
-        
-        // this.update()
-    }
-},
 computed: {
     ...mapGetters({
         date: 'date',
         klients: 'klient/map',
         settings: 'settings',
-        nextNumber: 'reestr/nextNumber',
+        map: 'reestr/map',
+        numbers: 'reestr/numbers',
         order: 'reestr/nextOrder'
     }),
     ocenca({ bilet, obespechenie }) {
@@ -33,8 +24,8 @@ computed: {
             || summ(...obespechenie.map(v => v.ocenca))
         return toDouble(ocenca)
     },
-    number({ bilet, nextNumber }) {
-        return bilet.number || nextNumber
+    number({ bilet, numbers }) {
+        return bilet.number || numbers[0]
     },   
     days({ bilet, settings }) {
         return bilet.days || settings.maxDays
@@ -55,8 +46,6 @@ computed: {
         return bilet.type || 'gold'
     },
     passport({ klient }) {
-        console.log(klient);
-        
         return klient.passport || 0
     },
     model({ number, passport, order, type, ocenca, days, procent, discount, penalty }) {
@@ -65,8 +54,6 @@ computed: {
 },
 methods: {
     async save() {
-        console.log(this.klient);
-        
         const { _id: klient, passport } = await this.$refs['klient'].save(this.klient)
         await this.$refs['kassa'].save({ ...this.values, klient, passport })
         return this.update()

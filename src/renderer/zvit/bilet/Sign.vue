@@ -9,7 +9,7 @@ export default {
         style() {
             return {
                 'color': 'gray',
-                'font-size': '12px',
+                'font-size': '10px',
                 'margin-top': '25px',
                 'text-align': 'center',
                 'font-style': 'italic'

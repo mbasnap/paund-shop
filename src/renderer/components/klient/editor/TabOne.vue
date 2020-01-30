@@ -13,6 +13,11 @@
         <passport class="mb-2" :value="value" :disabled="disabled" :full="full"/>
         <div class="form-row mb-2">
             <named-input class="form-control col" name="idn" placeholder="ID" :value="value"/>
+            <div v-if="full" class="col-5" style="text-align: right;">
+                <input type="checkbox" :checked="!!value.user" class="form-check-input" id="check"
+                @change="input({ name: 'user', value: !value.user})">
+                <label class="form-check-label" for="dropdownCheck2">User</label>
+            </div>        
         </div>
     </div>
 </template>

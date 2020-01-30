@@ -46,9 +46,17 @@ const getters = {
         const ct = ct301.map(v => map[v._id]).map(v=> ({...v.order}.ct || 0))
         return { dt: number(dt) , ct: number(ct) }
     },
-    nextNumber({}, { dt377, map }) {
-        const numbers = dt377.map(v => map[v._id]).map(v => v.number || 0)
-        return (Math.max( ...numbers, 0) + 1)
+    // nextNumber({}, { dt377, map }) {
+    //     const numbers = dt377.map(v => map[v._id]).map(v => v.number || 0)
+    //     return (Math.max( ...numbers, 0) + 1)
+    // },
+    numbers({}, { dt377, map }) {
+        const arr = dt377.map(v => ({...map[v._id]})).map(v => v.number || 0)        
+        const [min,max] = [Math.min(...arr), Math.max(...arr)]
+        const numbers = Number.isFinite(max - min) ? max - min : 0       
+        const res = Array.from(Array(numbers), (v,i) => i + min)
+            .filter(i=>!arr.includes(i))
+        return [...res, max + 1]
     },
     used({}, { ct377, map }) {
         return ct377.map(v => map[v._id]).reduce((obj, v) => ({...obj, [v.ref]: v }), {})

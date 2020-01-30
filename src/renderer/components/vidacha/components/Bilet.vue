@@ -1,7 +1,8 @@
 <template>
+
 <div class="bilet">
     <div class="col-9">
-        <named-input class='form-control mb-2' name="number" :value="value"/>
+        <named-select class="form-control mb-2" name="number" :value="value" :options="numbers"/>
         <input class='form-control mb-2' :value="total" @change="v => doFunction(v.target)"/>
         <div class=" input-group mb-2">
             <input class="form-control" :value="procent.summ" readonly/>
@@ -9,10 +10,13 @@
             <named-select class="form-control" name="discount" :value="value" :options="discounts"/>
             </div>
         </div>
-        <named-input class='form-control' name="ocenca" :value="value"/>  
+        
+        <named-input class='form-control' name="ocenca" :value="value"/> 
+
     </div>
     <day-slider class="col-3" :value="value"/>
 </div>
+
 </template>
 
 <script>
@@ -27,7 +31,8 @@ components: { DaySlider },
 props: { value: Object, disabled: Boolean },
 computed: {
     ...mapGetters({
-        settings: 'settings'
+        settings: 'settings',
+        numbers: 'reestr/numbers'
     }),
     discounts({ settings }) {
         return settings.discounts || []
@@ -41,7 +46,7 @@ computed: {
     total({ ocenca, procent }) {
         const total = diff(ocenca, procent.summ)
         return toDouble(total)
-    },
+    }
 },
 methods: {
 
@@ -57,7 +62,6 @@ methods: {
         ocenca = getOcenca({ ...this.procent, ocenca}, isAfter, 0.0001)
         ocenca = rorrect({ ...this.procent, ocenca})
         this.change({ value: ocenca, name: 'ocenca' })
-        
     },
     readonly() {
         return this.disabled

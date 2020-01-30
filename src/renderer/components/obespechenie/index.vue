@@ -2,12 +2,11 @@
     <div class="obespechenie" >
         <div class="row m-0"> 
             <div class="col">
-            <input type="checkbox" :checked="type"
-            class="form-check-input" id="dropdownCheck2"
-            @change="changeType">
-            <label class="form-check-label" for="dropdownCheck2">shings</label>
+                <input type="checkbox" :checked="type"
+                class="form-check-input" id="dropdownCheck2"
+                @change="changeType">
+                <label class="form-check-label" for="dropdownCheck2">shings</label>
             </div>
-
         </div>
         <table  :class="[ 'table', 'table-sm', { readonly: disabled } ]">
         <thead >

@@ -21,7 +21,9 @@ import { Bilet, Order } from '@/zvit'
 export default {
     components: { KassaList, Context, History },
     provide() {
-        return { select: this.select }
+        const onStart = () => this.$emit('start')
+        const onEnd = () => this.$emit('end')
+        return { select: this.select, onStart, onEnd }
     },
     data() {
         return {
@@ -65,7 +67,12 @@ export default {
             removeReestr: 'reestr/remove',
             saveReestr: 'reestr/save',
         }),
+        onStart() {
+            console.log('dfdf');
+            
+        },
         async save(v) {
+            // console.log(v);
             const { _id } = await this.saveReestr(v)
             return this.select( _id)         
         },
@@ -89,12 +96,9 @@ export default {
             return moment(date).isSame(this.date, 'date')
         },
         printOrder(props) {
-            // console.log(props);
-            
             this.$modal.show(Order, props, { width: '850', height: '500'})
         },
         printBilet(props) {
-            console.log(props);
             
             this.$modal.show(Bilet, props, { width: '800', height: '550'})
         },

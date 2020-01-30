@@ -1,20 +1,24 @@
 <template>  
-  <ul class="kassa-list small p-0 m-0">
-    <li v-for="index in rows" :key="index-1"
-    :selected="isSelected(...value[index-1])"
-    @contextmenu.prevent="context($event, ...value[index-1])"
-    @mouseleave="({ toElement }) => close(toElement)"
-    @click="select(...value[index-1])"
-    >{{ summ(...value[index-1]) }}</li>
-  </ul>
+    <draggable teg="ul" class="kassa-list small p-0 m-0" :value="value"
+    @start="onStart" @end="onEnd" :sort="false"
+     :group="{ name: 'bilet', pull: 'clone', put: 'false' }">
+      <li v-for="index in rows" :key="index-1"
+      :selected="isSelected(...value[index-1])"
+      @contextmenu.prevent="context($event, ...value[index-1])"
+      @mouseleave="({ toElement }) => close(toElement)"
+      @click="select(...value[index-1])"
+      >{{ summ(...value[index-1]) }}</li>
+    </draggable>
 </template>
 
 <script>
 import { summ } from '@/functions'
 import { mapGetters, mapActions } from 'vuex'
+import draggable from 'vuedraggable'
 export default {
   props: { value: Array, selected: String, type: String, rows: Number },
-  inject: ['open', 'close', 'select' ],
+  components: { draggable },
+  inject: ['open', 'close', 'select', 'onStart', 'onEnd'],
   computed: { },
   methods: {
     isSelected(id) {

@@ -2,53 +2,48 @@
     <div>
         <table class="table table-sm table-bordered">
         <thead>
-            <tr>
-            <th scope="col" style="width: 10%">#</th>
-            <th scope="col" style="width: 50%">{{t('title')}}</th>
-            <th scope="col" style="width: 10%">{{t('proba')}}</th>
-            <th scope="col" style="width: 10%">{{t('ves')}}</th>
-            <th scope="col" style="width: 10%">{{t('derty')}}</th>
-            <th scope="col" style="width: 10%">{{t('ocenca')}}</th>
+            <tr style="font-size: 10px; text-align: center;">
+                <th scope="col" style="width: 2%; font-size: 15px; font-weight: initial;">9</th>
+                <th scope="col" style="width: 60%">{{t('title')}}</th>
+                <th scope="col" style="width: 5%">{{t('proba')}}</th>
+                <th scope="col" style="width: 9%">{{t('comon-ves')}}</th>
+                <th scope="col" style="width: 5%">{{t('derty')}}</th>
+                <th scope="col" style="width: 9%">{{t('clear-ves')}}</th>
+                <th scope="col" style="width: 10%">{{t('ocenca')}}</th>
             </tr>
         </thead>
         <tbody>
             <table-row v-for="index in rows" :key="index-1" :value="model[index-1]" :index="index"/>
         </tbody>
         </table>
-        <div class="row">
-            <!-- <div class="col-4"></div> -->
-            <div class="col" style="font-style: italic;">
-                <span class="">{{ t('prinal_kassir') }}</span>
-                <span>_________________</span>
-                <span>{{ user.name }}</span>
-            </div>
-        </div>
     </div>
 </template>
 
 <script>
+import Sign from '../Sign'
 import { mapGetters } from 'vuex'
 import TableRow from './TableRow'
 export default {
-    components: { TableRow },
+    components: { TableRow, Sign },
     props: { value: Object },
+    inject: ['t'],
     computed: {
         ...mapGetters({
             settings: 'settings',
-            user: 'user/user'
+            // user: 'user/user'
         }),
-        model({ value }) {
-            return { ...value}.obespechenie || []
+        bilet({ value }) {
+            return { ...value }
+        },
+
+        model({ bilet }) {
+            return bilet.obespechenie || []
         },
         rows({ settings }) {
             return settings.minRows
         }
     },
-    methods: {
-        t(v) {
-            return this.$t('print.' + v)
-        }
-    }
+    methods: {}
 }
 </script>
 

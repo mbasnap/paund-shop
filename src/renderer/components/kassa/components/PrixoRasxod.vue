@@ -1,16 +1,20 @@
 <template> 
-    <modal-editor :title="type" :disabled="disabled"
+    <modal-editor :title="type"
         @save="({close}) => save(values).then(close)">
         <div class="form-row mb-2">
             <named-input class="form-control col-6 mr-1" name="summ" placeholder="Summ"
             :value="model" />
             <named-select class="form-control col" :name="account" placeholder="Account"
-            :tostring="v => v + ' ' + accounts[account][v]"
+            :tostring="toStringAccount"
             :value="model" :options="Object.keys(accounts[account])"/>
         </div> 
         <div class="form-row mb-2">
-            <named-select class="form-control col" name="from" placeholder="From"
+            <named-select class="form-control col" name="klient" placeholder="From"
+            :tostring="toStringKlient" :tovalue="v => v._id"
             :value="model" :options="users"/>
+            <!-- <named-select class="form-control col" name="passport" placeholder="Passport"
+            :tostring="toStringPassport" :tovalue="(v, i) => i"
+            :value="model" :options="passports"/> -->
         </div> 
         <div class="form-row mb-2">
             <named-textarea class="form-control col" name="title"
@@ -30,46 +34,49 @@ export default {
     data() {
         return {
             value: {},
-            // filter: true
         }
     },
     computed: {
         ...mapGetters({
             accounts: 'accounts',
-            klients: 'klient/klients',
+            users: 'klient/users',
             nextOrder: 'reestr/nextOrder'
         }),
-        disabled({ value }) {
-            // return !Object.entries(value)
-            // .some(([ key, value ]) => this.value[key] !== value ? value : undefined)
-        },
-        users({ klients }) {
-            return (klients || []).map(v => this.tostringUser(v))
-        },
         account({ type }) {
             return type === 'dt' ? 'ct' : 'dt'
+        },
+        passports({ value }) {
+            // console.log(value);
+            
+            return []
         },
         model({ value }) {
             return { ...value, summ: toDouble(value.summ) }
         },
-        values({ model, type, nextOrder }) {
-            const { title, from } = model
-            return [
-                { [type]: '301', ...model },
-                { [type]: '002', ...model, number: nextOrder[type] }
-            ]
+        values({ model, account, type, nextOrder }) {
+            const order = { [type]: nextOrder[type]}            
+            return {...model, order, values: [
+                { [type]: '301', [account]: model[account], summ: model.summ },
+            ]}
         }
     },
     methods: {
         readonly() {
             return this.disabled
         },
-        change({ name, value }) {
+        change({ name, value }) {          
             this.value = { ...this.value, [name]: value }
         },
-        tostringUser(v) {
-            const { family, name, sername } = v
+        toStringKlient({ family, name, sername }) {
             return `${family} ${name} ${sername}`
+        },
+        toStringPassport({ seria, number }) {
+            return `${seria} ${number}`
+        },
+        toStringAccount(v) {
+            const { accounts, account } = this
+            const title = accounts[account][v]
+            return `${v} ${title}`
         }
     }
 }

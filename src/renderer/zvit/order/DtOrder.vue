@@ -157,7 +157,7 @@
       </div>
       <div class="row mb-2"> <!-- Приложение-->
         <div class="col-3">Приложение</div>
-        <div class="col border-bottom"></div>
+        <div class="col border-bottom">{{ docToString }}</div>
       </div>
       <div class="row"> <!-- Главный бухгалтер -->
         <div class="col-4">Главный бухгалтер</div>
@@ -322,7 +322,7 @@ export default {
       return '018120'
     },
     values({value}) {
-      return value.values
+      return value.values || []
     },
     summ({ values }) {
       return summ( ...values.map(v => v.summ))
@@ -335,6 +335,10 @@ export default {
     },
     order({ value }) {
       return value.order
+    },
+    docToString({ value, t }) {
+      const { seria, number, issued } = { ...value.doc }
+      return `${t('passport')}: ${seria} ${number} ${t('issued')}: ${issued}`
     }
   },
   methods: {
@@ -346,6 +350,9 @@ export default {
       const [ rub, kop ] = v.split('.') || []
       return `${rub} руб. ${kop} коп.`
     },
+    t(v) {
+      return this.$t(`zvit.${v}`)
+    }
   }
 }
 </script>

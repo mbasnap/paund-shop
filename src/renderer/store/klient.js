@@ -1,18 +1,20 @@
 import { klient } from '@/db'
 
-
-
 const state = {
     klients: {},
 }
 const getters = {
-    klients ({ klients }) {
-        return  (klients.rows || []).map(v => v.doc)
+    docs ({ klients }) {
+        return  (klients.rows || []).map(v => v.doc) || []
     },
-    map ({}, { klients }) {
-        // const getPassport = ({ passports, selected }) => ({ ...passports[selected] })
-        // const klient = (v) => ({ ...v, passport: getPassport(v) })
-        return  klients.reduce((obj, v) => ({ ...obj, [v._id]: v}), {})
+    klients ({}, { docs }) {
+        return  docs.filter(v => !v.user)
+    },
+    users ({}, { docs }) {
+        return  docs.filter(v => v.user)
+    },
+    map ({}, { klients, users }) {
+        return  [...klients, ...users].reduce((obj, v) => ({ ...obj, [v._id]: v}), {})
     }
 }
 const mutations = {

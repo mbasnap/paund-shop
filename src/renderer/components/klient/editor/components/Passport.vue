@@ -49,7 +49,7 @@ export default {
             return (value.passports || [])
         },
         passport({ value }) {
-            return value.passport || 0
+            return value.passport
         },
         model({ passports, passport }) {
             return { ...passports[passport]} 
