@@ -16,7 +16,7 @@ import { TabOne, Editor } from './editor/index.js'
 import { SvgAddressCard } from '@/svg'
 export default {
     components: {  TabOne, SvgAddressCard },
-    props: { value: Object, disabled: Boolean, passport: Number },
+    props: { value: Object, disabled: Boolean },
     provide() {
       return { update: this.update, save: this.save }
     },
@@ -24,8 +24,8 @@ export default {
       ...mapGetters({
         // map: 'klient/map'
       }),
-      model({ value, passport }) {
-        return { ...value, passport }
+      model({ value }) {
+        return { ...value }
       }
     },
     methods: {

@@ -18,22 +18,23 @@ const pDiff = (a, b) => {
     const res = a - (b > 0 ? b : b * -1)
     return res > 0 ? res : false
 }
-const rorrect = v => {
-    const [b] = toDouble(v.ocenca).split('.')
-    const [, k] = toDouble(getProcent(v)).split('.')    
+const rorrect = (v1, v2) => {
+    const [b] = toDouble(v1).split('.')
+    const [, k] = toDouble(v2).split('.')    
     return `${b}.${k}`
 }
 const round = v => {
     return Number(numberFormat(v))
 }
-const getOcenca = (v, isAfter, rate = 1 ) => {
-    const procent = v.ocenca * rate / 100
-    const ocenca = v.ocenca + procent
-    return isAfter(ocenca) ? ocenca - procent  : getOcenca({...v, ocenca}, isAfter, rate)
+const getOcenca = (v, isAfter, rate ) => {
+    const procent = v * rate / 100
+    // console.log(procent);
+    
+    return isAfter(v + procent) ? v : getOcenca(v + procent, isAfter, rate)
 }
 const getProcent = ({ ocenca, procent, days, discount }) => {
-    const res = proc(ocenca, procent * toNumber(days))
-    return res - proc(res, discount)
+    return proc(ocenca, procent * toNumber(days))
+    // return res - proc(res, discount)
 }
 const firstChar = v => {
     return (v + '').charAt(0).toUpperCase()

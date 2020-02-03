@@ -23,14 +23,9 @@
                 <obespechenie class="col-9" :value="value"/>
                 <div class="col-3" style="border-top: 1px dashed; border-left: 1px dashed;">
                     <control-tiket  :value="value" :klient="klient" />
-                    <!-- <div class="row" > -->
-                        <sign class="col-8" 
-                        style="position: absolute; bottom: -35px;" 
-                        :name="t('klient_sign')"/>
-                        <!-- <div class="col p-0" style="font-size: 10px; line-height: 30px;">
-                            {{ klient.sername}}
-                        </div> -->
-                    <!-- </div> -->
+                    <sign class="col-8" 
+                    style="position: absolute; bottom: -35px;" 
+                    :name="t('klient_sign')"/>
                 </div>
             </div>
             <div class="row m-0" style="font-style: italic;">

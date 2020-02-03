@@ -1,23 +1,17 @@
 <template>
     <div>
         <div class="form-row mb-2">
-            <suggest class="form-control col" name="family" placeholder="Family"
+            <suggest class="form-control col" name="family" :placeholder="t('family')"
             :suggest="({ family, name, sername }) => family + ' ' + name + ' ' + sername"
             :value="value" :options="options" @select="update"/>
-            <named-input v-if="full" class="form-control col-3 ml-1" name="bithday" placeholder="Bithday" :value="value"/>
         </div>
         <div class="form-row mb-2">
-            <named-input class="form-control col-5 mr-1" name="name" placeholder="Name" :value="value"/>
-            <named-input class="form-control col" name="sername" placeholder="Sername" :value="value"/>
+            <named-input class="form-control col-5 mr-1" name="name" :placeholder="t('name')" :value="value"/>
+            <named-input class="form-control col" name="sername" :placeholder="t('sername')" :value="value"/>
         </div>
         <passport class="mb-2" :value="value" :disabled="disabled" :full="full"/>
         <div class="form-row mb-2">
-            <named-input class="form-control col" name="idn" placeholder="ID" :value="value"/>
-            <div v-if="full" class="col-5" style="text-align: right;">
-                <input type="checkbox" :checked="!!value.user" class="form-check-input" id="check"
-                @change="input({ name: 'user', value: !value.user})">
-                <label class="form-check-label" for="dropdownCheck2">User</label>
-            </div>        
+            <named-input class="form-control col" name="idn" :placeholder="t('idn')" :value="value"/>   
         </div>
     </div>
 </template>
@@ -45,6 +39,9 @@ export default {
       },
       input({ name, value }) {
         this.update({ ...this.value, [name]: value })
+      },
+      t(v) {
+          return this.$t(`klient.${v}`)
       }
     }
 }

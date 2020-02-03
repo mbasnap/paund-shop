@@ -20,9 +20,7 @@ mixins: [mix]
 </script>
 
 <style >
-/* .trash {
-  line-height: 20px;
-} */
+
 .trash span {
     color: rgba(4, 4, 4, 0.51);
 }

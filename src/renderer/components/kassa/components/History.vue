@@ -19,7 +19,7 @@
                             </div>
                         </div>
                     </li>
-                    <li class="row">
+                    <li class="row" style="white-space: nowrap; overflow: hidden;">
                         <div class="col p-0">{{ model.from }}</div>
                     </li>
                 </div>

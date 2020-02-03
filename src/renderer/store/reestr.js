@@ -79,6 +79,10 @@ const actions = {
         const date = getters['date']
         return dispatch('update', await reestr.post({ ...v, date }))
     },
+    async updateValue ({ dispatch, getters }, v) {
+        console.log(v);
+        return dispatch('update', await reestr.post(v))
+    },
 
     async remove ({ dispatch, getters }, { _id }) {     
         const used = getters.used[_id]

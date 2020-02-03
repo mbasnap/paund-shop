@@ -1,5 +1,5 @@
 <template>
-    <suggest class="form-control" name="number" placeholder="Number"
+    <suggest class="form-control" name="number" :placeholder="t('number')"
         :value="value" :options="options" @select="update">
         <slot></slot>
     </suggest>        
@@ -35,6 +35,9 @@ export default {
         },
         input({ value: number }) {
             this.$emit('input', { ...this.value, number })
+        },
+        t(v) {
+            return this.$t(`vozvrat.${v}`)
         }
     } 
 }

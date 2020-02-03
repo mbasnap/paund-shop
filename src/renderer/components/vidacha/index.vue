@@ -2,15 +2,14 @@
     <div class="row flex-fill vidacha">
         <div  class="col-8 pt-3">
             <div class="row" style="height: 250px;">
-                <klient ref="klient" class="col p-0 " v-model="klient"
-                :disabled="disabled" :passport="passport">
+                <klient ref="klient" class="col p-0 " v-model="klient" :disabled="disabled">
                     <span class="reset" @click="klient = {}">x</span>
                 </klient>
                 <div class="col pl-2 border-left">
                     <draggable v-if="target" class="target" :group="{ name: 'bilet', pull: 'clone' }"
                     :value="[]" @input="([v]) => onCopy(...v)"/>
-                    <bilet class="row" style="height: 75%;" :value="model" :disabled="disabled"
-                    @input="onInput"/>
+                    <bilet ref="bilet" class="row" style="height: 75%;" :type="type"
+                    v-model="bilet" :disabled="disabled"/>
                     <div class="row">
                         <div class="col-3 ">
                             <button class="btn btn-primary" @click="update()">reset</button>
@@ -22,8 +21,8 @@
                     </div>
                 </div>                                 
             </div>        
-            <obespechenie v-model="obespechenie" :disabled="disabled" :type="type !== 'gold'"
-            @changeType="changeType"/>
+            <obespechenie v-model="obespechenie" :disabled="disabled" :type="type"
+            @changeType="v => type = v" @change=" ocenca => $refs['bilet'].calculate({ocenca})"/>
         </div>
         <kassa ref="kassa" class="col-4" @start="target = true" @end="target = false"/>
     </div>
@@ -39,27 +38,22 @@ components: { Bilet, draggable },
 mixins: [ mix ],
 data() {
     return {
-        target: false
+        target: false,
+        type: 'gold'
     }
 },
 computed: {
-    procent({ ocenca, days, xProc, discount, type }) {
-        const procent = xProc[type]
-        const summ = getProcent({ ocenca, days, procent, discount })
-        const value = toDouble(summ / days)
-        return { procent, discount, days, value, summ: toDouble(summ) }
-    },
-    penalty({ ocenca, days, xPen, type }) {
-        const penalty = xPen[type]
-        let value = proc(ocenca, penalty)
-        return { days, penalty, value: toDouble(value) }
-    },
-    values({ model, ocenca, procent, number }) {
-        const title = `vidana ssuda po zalogovomu biletu ${number}`
+    model({ bilet, type }) {
+        const title = `vidana ssuda po zalogovomu biletu ${bilet.number}`
         const obespechenie = this.obespechenie.filter(v => toNumber(v.ocenca))
-        return {...model, obespechenie, title, values: [
-            { dt: '377', ct: '301', summ: ocenca },
-            { dt: '301', ct: '703', ...procent }
+        return { ...this.$refs['bilet'].model, title, obespechenie, type }
+    },
+    values({ model }) {
+        const { dt, ct } = this.order
+        const { ocenca, procent } = model
+        return {...model, values: [
+            { dt: '377', ct: '301', summ: ocenca, order: ct},
+            { dt: '301', ct: '703', summ: procent, order: dt }
         ].filter(v => toNumber(v.summ))}
     },
     disabled({ bilet }) {
@@ -68,8 +62,7 @@ computed: {
 },
 methods: {
     changeType(v) {
-        const type = !v ? 'gold' : 'things'
-        this.onInput({ ...this.bilet, type })
+        this.type = !v ? 'gold' : 'things'
     },
     onCopy(id) {
         const { klient, passport, obespechenie, ocenca, days, discount, type } = { ...this.map[id]}

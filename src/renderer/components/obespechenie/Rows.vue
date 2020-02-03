@@ -53,6 +53,9 @@ methods: {
         const ocenca = !this.type ? mult(total, this.price[value.proba]): value.ocenca
         // const err = diff(value.derty, value.ves) > 0
         this.$emit('input', { ...value, total: toDouble(total), ocenca: toDouble(ocenca) })
+    },
+    t(v) {
+        return this.$t(`obespechenie.${v}`)
     }
 }
 }

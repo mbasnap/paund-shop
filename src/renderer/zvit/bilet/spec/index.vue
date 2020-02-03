@@ -4,7 +4,7 @@
             <klient class="col " :value="value"/>
             <bilet class="col border-left" :value="value"/>
         </div>
-        <div class="row" style="height: 55px; margin-top: -10px;">
+        <div class="row" style="height: 45px; ">
             <div class="col">
                 <div class="row">
                     <div class="col pr-0" style="font-style: italic; line-height: 14px; font-size: 11px; text-align: right;">
@@ -24,7 +24,7 @@
                     <div class="col" style="font-style: italic; line-height: 14px; font-size: 11px; text-align: right;">
                         {{ t('poluchil')}}
                     </div>
-                    <sign class="col-4" :name="t('klient_sign')" style="margin-top: 10px;"/>
+                    <sign class="col-4" :name="t('klient_sign')" style="margin-top: 7px;"/>
                 </div>
             </div>
         </div>

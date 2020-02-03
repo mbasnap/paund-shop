@@ -10,12 +10,37 @@
 
         <div class="row">
             <div class="col border-top border-right" style="text-align: right;">
+                <div class="row ">
+                    <div class="col-1 border-right">4</div>
+                    <div class="col" >{{ t('srok-zaima') }}</div>
+                </div>
+            </div>
+            <div class="col border-bottom">
+                {{ bilet.days }} дн.
+            </div>
+        </div>
+        <div class="row">
+            <div class="col border-top border-right" style="text-align: right;">
+                <div class="row ">
+                    <div class="col-1 border-right">5</div>
+                    <div class="col" >{{ t('srok-vozvrata') }}</div>
+                </div>
+            </div>
+            <div class="col border-bottom">
+                {{ bilet.returnDate }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col border-top border-right" style="text-align: right;">
                 <div class="row border-bottom">
                     <div class="col-1 border-right">6</div>
                     <div class="col" >{{ t('summa-na-ruki') }}</div>
                 </div>
             </div>
-            <div class="col border-bottom">{{ total }}</div>
+            <div class="col border-bottom">
+                {{ total }}
+                <span style="font-size: 11px; font-style: italic;">{{ t('curency') }}</span>
+            </div>
         </div>
         <div class="row border-bottom">
             <div class="col border-right" style="text-align: right;">
@@ -24,7 +49,10 @@
                     <div class="col" style="font-size: 14px;">{{ t('procent-po-zaimu') }}</div>
                 </div>
             </div>
-            <div class="col">{{ procent.summ }}</div>
+            <div class="col">
+                {{ procent }}
+                <span style="font-size: 11px; font-style: italic;">{{ t('curency') }}</span>
+            </div>
         </div>
         <div class="row border-bottom">
             <div class="col border-right" style="text-align: right;">
@@ -35,10 +63,13 @@
                     </div>
                 </div>
             </div>
-            <div class="col">{{ bilet.ocenca }}</div>
+            <div class="col">
+                {{ bilet.ocenca }}
+                <span style="font-size: 11px; font-style: italic;">{{ t('curency') }}</span>
+            </div>
         </div>
-        <div class="row mt-1">
-            <div class="col-4">
+        <!-- <div class="row mt-1"> -->
+            <!-- <div class="col-4">
                 <sign class="mt-5" :name="t('kassir_sign')"/>
             </div>
             <div class="col" style="height: 28px; font-size: 12px; ">
@@ -48,15 +79,15 @@
                 <div class="row border-bottom" style="line-height: 18px;">
                     {{ t('procent')  }} / {{ t('penalty')}}
                 </div>
-            </div>
-        </div>
+            </div> -->
+        <!-- </div> -->
     </div>
 </template>
 
 <script>
 import Sign from '../Sign'
 import { mapGetters, mapActions } from 'vuex'
-import { toDouble } from '@/functions'
+import { toDouble, toNumber } from '@/functions'
 export default {
 props: { value: Object },
 components: {Sign},
@@ -69,10 +100,11 @@ computed: {
         return { ...bilet.company }
     },
     procent({ bilet }) {
-        return { ...bilet.procent }
+        return bilet.procent
     },
     total({ bilet, procent }) {
-        return toDouble(bilet.ocenca - procent.summ)
+        const total = toNumber(bilet.ocenca) - toNumber(procent)
+        return toDouble(total)
     },
 },
 

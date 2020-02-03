@@ -20,7 +20,7 @@ export default {
 props: { value: Object, index: Number },
 computed: {
     model({ value }) {
-        console.log(value);
+        // console.log(value);
         
         return { ...value }
     }

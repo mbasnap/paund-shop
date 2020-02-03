@@ -1,30 +1,33 @@
 <template>
     <div>
-        <div class="row" style="margin-top: -10px;">
+        <div class="row" style="margin-top: -11px;">
           <div class="col " style="font-size: 18px;">
                 <strong>{{company.name}}</strong>
             </div>
         </div>
-        <div class="row border-left">
+        <div class="row border-left border-bottom">
             <div class="col-5 border-top border-right">
                 <div class="row ">
                     <div class="col-1 border-right">1</div>
                     <div class="col" >{{ t('data-zaima') }}</div>
                 </div>
             </div>
-            <div class="col border-bottom">{{ bilet.date }}</div>
+            <div class="col ">{{ bilet.date }}</div>
         </div>
-        <div class="row border-left">
-            <div class="col-5 border-top border-right">
+        <div class="row border-left border-bottom">
+            <div class="col-5  border-right">
                 <div class="row ">
                     <div class="col-1 border-right">2</div>
                     <div class="col pr-0" style="font-size: 14px;" >{{ t('summ-zaima') }}</div>
                 </div>
             </div>
-            <div class="col border-bottom">{{ bilet.ocenca }}</div>
+            <div class="col ">
+                {{ bilet.ocenca }}
+                <span style="font-size: 11px; font-style: italic;">{{ t('curency') }}</span>
+            </div>
         </div>
         <div class="row border-left">
-            <div class="col-5 border-top border-right">
+            <div class="col-5  border-right">
                 <div class="row ">
                     <div class="col-1 border-right">3</div>
                     <div class="col" style="font-size: 14px; line-height: 24px;">
@@ -32,36 +35,33 @@
                     </div>
                 </div>
             </div>
-            <div class="col p-0 border-bottom"
-            style="font-size: 14px; line-height: 24px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+            <div class="col p-0 "
+            style="font-size: 14px; line-height: 15px;">
                 {{ fio }}
             </div>
         </div>
-        <div class="row border-left">
-            <div class="col-5 border-top border-right" >
-                <div class="row ">
-                    <div class="col-1 border-right">4</div>
-                    <div class="col pr-0" style="font-size: 14px;">{{ t('srok-vozvrata') }}</div>
-                </div>
-            </div>
-            <div class="col border-bottom">{{ bilet.returnDate }}</div>
-        </div>
-        <div class="row border-left">
-            <div class="col-5 border-top border-right">
-                <div class="row border-bottom">
-                    <div class="col-1 border-right">5</div>
-                    <div class="col" >{{ t('srok-zaima') }}</div>
-                </div>
-            </div>
-            <div class="col border-bottom">{{ bilet.days }} дней</div>
-        </div>
 
-        <div class="row border-bottom" style="height: 20px;  line-height: 22px;">
-            <span class="pr-1" style="font-size: 12px;" >
+        <div class="row border-bottom border-left" style="height: 20px; line-height: 22px;">
+            <span class="pl-1 pr-1" style="font-size: 12px;" >
                 {{ t('passport') }}: {{ passport }}, выдан: {{ issued }}, инн: {{ idn }}
             </span>
         </div>
-        <div class="row border-bottom" style="height: 20px;"> </div>
+        <div class="row border-bottom border-left" style="height: 20px;"> </div>
+        <div class="row border-bottom border-left" style="height: 20px; line-height: 22px;">
+            <span class="pl-1 pr-1" style="font-size: 12px;" >
+                {{ t('address') }}: {{ address }}
+            </span>
+        </div>
+        <div class="row border-bottom border-left" style="height: 20px; line-height: 22px;">
+            <span class="pl-1 pr-1" style="font-size: 12px;" >
+                {{ t('bithday') }}: {{ bithday }}
+            </span>
+        </div>
+        <div class="row border-bottom border-left" style="height: 20px; line-height: 22px;">
+            <span class="pl-1 pr-1" style="font-size: 12px;" >
+                {{ phone }}
+            </span>
+        </div>
     </div>
 </template>
 
@@ -89,9 +89,23 @@ computed: {
     issued({ bilet }) {
         return { ...bilet.doc}.issued
     },
-    idn({ bilet }) {
-        
-        return { ...bilet.klient}.idn
+    klient({ bilet }) {
+        return { ...bilet.klient}
+    },
+    idn({ klient }) {
+        return klient.idn
+    },
+    address({ klient }) {
+        const { post, city, street, home  } = { ...klient.address }
+        return `${post} г.${city} ул.${street} д.${home}`
+    },
+    bithday({ klient }) {
+        const { bithday, cityBith } = klient
+        return `${bithday} ${cityBith}`
+    },
+    phone({ klient }) {
+        const { phone } = klient
+        return `тел: ${phone}`
     }
 },
 

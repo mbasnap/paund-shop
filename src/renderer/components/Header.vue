@@ -9,7 +9,7 @@
 
       <b-collapse id="nav-collapse" is-nav >
         <b-navbar-nav v-for="(item, index) in menu" :key="index" >
-          <b-link  class="nav-link mr-2" :to="'/' + item">{{item}}</b-link>     
+          <b-link  class="nav-link mr-2" :to="'/' + item">{{ $t(`menu.${item}`)}}</b-link>     
         </b-navbar-nav>
       <b-navbar-nav class="ml-auto nav-right">
         <b-nav-form >

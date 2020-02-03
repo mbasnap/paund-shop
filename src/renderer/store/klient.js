@@ -23,7 +23,7 @@ const mutations = {
     }
 }
 const actions = {
-    async save ({ dispatch }, v) {    
+    async save ({ dispatch }, v) {
         return dispatch('update', await klient.post(v))
     },
     async update ({ commit, getters }, { id } = {}) {       

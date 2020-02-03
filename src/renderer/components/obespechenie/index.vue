@@ -1,27 +1,26 @@
 <template>
     <div class="obespechenie" >
-        <div class="row m-0"> 
+        <div class="row m-0" v-show="type"> 
             <div class="col">
-                <input type="checkbox" :checked="type"
+                <input type="checkbox" :checked="type !== 'gold'"
                 class="form-check-input" id="dropdownCheck2"
                 @change="changeType">
-                <label class="form-check-label" for="dropdownCheck2">shings</label>
+                <label class="form-check-label" for="dropdownCheck2">{{ t('things') }}</label>
             </div>
         </div>
         <table  :class="[ 'table', 'table-sm', { readonly: disabled } ]">
         <thead >
             <tr>
                 <th class="index">
-
                 </th>
                 <th class="title">
                 </th>
                 <th v-for="(name, index) in [ 'proba', 'ves', 'derty', 'ocenca' ]" 
-                :key="index" :class="name">{{name}}</th>
+                :key="index" :class="name">{{ t(name) }}</th>
             </tr>
         </thead>
         <tbody>
-            <row  v-for="(item, index) in value" :key="index" class="items" :type="type"
+            <row  v-for="(item, index) in value" :key="index" class="items" :type="type !=='gold'"
             :value="item" @input="value => input(index, value)" :editable="!disabled"/>
             <tr class="add">
                 <td>
@@ -46,12 +45,17 @@ import { SvgPlusCircle } from '@/svg'
 import Row from './Rows'
 export default {
     components: { Row, SvgPlusCircle },
-    props: { value: Array, disabled: Boolean, type: Boolean },
+    props: { value: Array, disabled: Boolean, type: String },
+    watch: {
+        ocenca(v) {
+            this.$emit('change', v)       
+        }
+    },
     computed: {
         ...mapGetters({
             settings: 'settings',
         }),
-        model({ value }) {
+        model({ value, type }) {
             return value || []
         },
         ves({ model }) {
@@ -73,7 +77,8 @@ export default {
     },
     methods: {
         changeType() {
-            this.$emit('changeType', !this.type)
+            const type = this.type === 'gold'
+            this.$emit('changeType', type ? 'things': 'gold')
         },
         input(index, value) {
             this.value[index] = value
@@ -81,6 +86,9 @@ export default {
         },
         add() {
             this.$emit('input', [...this.value, {}] )
+        },
+        t(v) {
+            return this.$t(`obespechenie.${v}`)
         }
     }
 }

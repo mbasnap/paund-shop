@@ -2,6 +2,7 @@
     <div class="vertical-slider">
         <input type="range" vertical :min="min" :max="max"
         :disabled="!editable"
+        @change="onChange"
         :style="{ height: height + 'px' }"
         v-model="model"/>
         <p class="vertical-slider-output" :style="{ bottom: bottom + 'px', 'margin-bottom': bottomOffset + '%' }">
@@ -39,6 +40,13 @@ export default {
             set(v) {
                 this.$emit('input', v)
             }
+        }
+    },
+    methods: {
+        onChange({ target }) {
+            const { value } = target
+            this.$emit('change', value)
+            
         }
     }
 }
