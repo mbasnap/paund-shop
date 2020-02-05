@@ -62,7 +62,7 @@ const actions = {
     },
 
     async update  ({ commit, dispatch }) {
-        getToken('x-token')
+        // getToken('x-token')
         commit('company', await company.allDocs({include_docs: true}))
         dispatch('reestr/update')
         dispatch('klient/update')

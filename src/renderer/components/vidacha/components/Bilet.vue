@@ -51,7 +51,7 @@ computed: {
         return value.days || settings.maxDays
     },
     xProc({ type, settings }) {
-        return { ...settings.procent}[type]
+        return { ...settings.procent}[type ]
     },
     xPen({ type, settings }) {
         return { ...settings.penalty}[type]
@@ -82,7 +82,7 @@ computed: {
 },
 methods: { toDouble, toNumber,
     calculate(v = { [this.from]: this[this.from]}) {
-        const [from, value] = Object.entries(v)[0]
+        const [from, value] = Object.entries(v)[0]        
         this.from = from
         from === 'ssuda' ? this.fromSsuda(value) : this.fromOcenca(value)
     },
@@ -98,7 +98,7 @@ methods: { toDouble, toNumber,
         const ssuda = toNumber(ocenca) - procent + discount
         this.fromSsuda(ssuda - ssuda * rent)
     },
-    getOcenca(value, xProc, xDisc) {
+    getOcenca(value, xProc, xDisc) {        
         const getProcent = v => toNumber(v) * xProc / 100
         const isAfter = v => toNumber(v) - getProcent(v) >= toNumber(value)
         let ocenca = getOcenca(toNumber(value),  isAfter, xProc)
@@ -106,9 +106,9 @@ methods: { toDouble, toNumber,
         ocenca = getOcenca(ocenca, isAfter, xProc * 0.01)
         ocenca = getOcenca(ocenca, isAfter, xProc * 0.001)
         let procent = toNumber(ocenca) - toNumber(value)
-        procent = procent > 10 ? procent : 10
+        // procent = procent > 10 ? procent : 10
         let discount = toNumber(procent) * xDisc / 100
-        discount = toNumber(procent) - discount > 10 ? discount : 0
+        // discount = toNumber(procent) - discount > 10 ? discount : 0
         ocenca = toNumber(value) + toNumber(procent) - toNumber(discount)
         return { discount, procent, ocenca: toDouble(ocenca) }
     },

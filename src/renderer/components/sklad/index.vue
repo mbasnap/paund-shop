@@ -1,42 +1,41 @@
 <template>
 <div class="sklad row">
-    <list-to class="col-6" :value="values" :actions="{ toSklad: toSklad }"
-    name="list-from">
-        <div class="row m-0 p-2 form-check" style="text-align: left;">
+    <list-to class="col-6" :value="values" :actions="{ toSklad: toSklad }" name="list-from">
+        <div class="row m-0 p-2 form-check" style="text-align: left; height: 40px;">
             <input type="checkbox" class="form-check-input m-0" id="dropdownCheck2"
+            :checked="showOver" @change="showOver = !showOver"
             style="position: unset;">
-            <label class="form-check-label" for="dropdownCheck2">
-                Show all
-            </label>
+            <label class="form-check-label" for="dropdownCheck2"> Просроченные </label>
         </div>        
     </list-to>
-    <list-to class="col-6" :value="sklad" :actions="{ fromSklad: remove }"
-    name="list-to">
-        <div class="row m-0 p-2 form-check" style="text-align: left;">
-            <input type="checkbox" class="form-check-input m-0" id="dropdownCheck2"
-            style="position: unset;">
-            <label class="form-check-label" for="dropdownCheck2">
-                Show shings
-            </label>
+    <list-to class="col-6" :value="sklad" :actions="{ fromSklad: remove }" name="list-to">
+        <div class="row m-0 p-2 form-check" style="text-align: left; height: 40px;">
+            <div class="col"> На складе </div>
         </div> 
     </list-to>
 </div>
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { moment } from '@/functions'
+import { moment, daysDiff } from '@/functions'
 import ListTo from "./components/ListTo"
 export default {
     components: { ListTo },
+    data() {
+        return {
+            showOver: true
+        }
+    },
     computed: {
         ...mapGetters({
             map: 'reestr/map',
             empty: 'reestr/empty',
             dt200: 'reestr/dt200',
+            date: 'date'
         }),
-        values({ empty, isAfter, map }) {
-            return Object.values(empty).filter(isAfter)
-                .map(v => ({...map[v._id]}))
+        values({ empty, map, isOver }) {
+            return Object.values(empty)
+                .map(v => ({...map[v._id]})).filter(isOver)
         },
         sklad({ dt200, map }) {
             return dt200.map(v => ({...map[v._id]}))
@@ -46,10 +45,12 @@ export default {
     methods: {
         ...mapActions({
             remove: 'reestr/remove',
-            save: 'reestr/save'
+            save: 'reestr/save',
         }),
-        isAfter(v) {
-            return true
+        isOver({ date, days, statment }) {
+            if(!this.showOver) return true
+            const plan = moment(date).add(days, 'd').add({ ...statment}.days, 'd')                       
+            return daysDiff(plan, moment(this.date)) + 1 < 0
         },
         toSklad({ _id: ref, klient, ocenca }) {
             const values = {ref, klient: klient._id, values: [

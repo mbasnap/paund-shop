@@ -1,24 +1,24 @@
 <template> 
-    <modal-editor :title="type"
+    <modal-editor :title="t(type)"
         @save="({close}) => save(values).then(close)">
         <div class="form-row mb-2">
-            <named-input class="form-control col-6 mr-1" name="summ" placeholder="Summ"
+            <named-input class="form-control col-6 mr-1" name="summ" :placeholder="t('summ')"
             :value="model" />
-            <named-select class="form-control col" :name="account" placeholder="Account"
-            :tostring="toStringAccount"
-            :value="model" :options="Object.keys(accounts[account])"/>
+            <named-select class="form-control col" :name="account" :placeholder="t('account')"
+            :value="model" :options="Object.keys(accounts[account])" @change="change"
+            :tostring="toStringAccount"/>
         </div> 
         <div class="form-row mb-2">
-            <named-select class="form-control col" name="klient" placeholder="From"
-            :tostring="toStringKlient" :tovalue="v => v._id"
-            :value="model" :options="users"/>
+            <named-select class="form-control col" name="klient" :placeholder="t('from')"
+            :value="model" :options="users" @change="change"
+            :tostring="toStringKlient" :tovalue="v => v._id"/>
             <!-- <named-select class="form-control col" name="passport" placeholder="Passport"
             :tostring="toStringPassport" :tovalue="(v, i) => i"
             :value="model" :options="passports"/> -->
         </div> 
         <div class="form-row mb-2">
             <named-textarea class="form-control col" name="title"
-            placeholder="Discription" :value="model"/>
+            :placeholder="t('discription')" :value="model"/>
         </div>        
     </modal-editor>
 </template>
@@ -40,7 +40,7 @@ export default {
         ...mapGetters({
             accounts: 'accounts',
             users: 'klient/users',
-            nextOrder: 'reestr/nextOrder'
+            // nextOrder: 'reestr/nextOrder'
         }),
         account({ type }) {
             return type === 'dt' ? 'ct' : 'dt'
@@ -53,9 +53,9 @@ export default {
         model({ value }) {
             return { ...value, summ: toDouble(value.summ) }
         },
-        values({ model, account, type, nextOrder }) {
-            const order = { [type]: nextOrder[type]}            
-            return {...model, order, values: [
+        values({ model, account, type }) {
+            // const order = { [type]: nextOrder[type]}    
+            return {...model, values: [
                 { [type]: '301', [account]: model[account], summ: model.summ },
             ]}
         }
@@ -77,6 +77,9 @@ export default {
             const { accounts, account } = this
             const title = accounts[account][v]
             return `${v} ${title}`
+        },
+        t(v) {
+            return this.$t(`prixod-rasxod.${v}`)
         }
     }
 }

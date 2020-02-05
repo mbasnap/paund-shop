@@ -22,9 +22,9 @@
 
     </div>
     <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" @click="close">Close</button>
+    <button type="button" class="btn btn-secondary" @click="close">{{ $t('cansel') }}</button>
     <button type="button" class="btn btn-primary"
-    @click="onPrint">print</button>
+    @click="onPrint">{{ $t('print') }}</button>
     </div>
 </div>
 </template>

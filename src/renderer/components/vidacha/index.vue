@@ -2,26 +2,26 @@
     <div class="row flex-fill vidacha">
         <div  class="col-8 pt-3">
             <div class="row" style="height: 250px;">
-                <klient ref="klient" class="col p-0 " v-model="klient" :disabled="disabled">
+                <klient ref="klient" class="col p-0 " v-model="klient">
                     <span class="reset" @click="klient = {}">x</span>
                 </klient>
                 <div class="col pl-2 border-left">
                     <draggable v-if="target" class="target" :group="{ name: 'bilet', pull: 'clone' }"
                     :value="[]" @input="([v]) => onCopy(...v)"/>
                     <bilet ref="bilet" class="row" style="height: 75%;" :type="type"
-                    v-model="bilet" :disabled="disabled"/>
+                    v-model="bilet"/>
                     <div class="row">
-                        <div class="col-3 ">
-                            <button class="btn btn-primary" @click="update()">reset</button>
+                        <div class="col-6 ">
+                            <button class="btn btn-primary" @click="update()">{{ t('reset') }}</button>
                         </div>
-                        <div class="col-3">
-                            <button class="btn btn-primary"
-                            @click="save()"> save</button>
+                        <div class="col-6">
+                            <button class="btn btn-primary" :disabled="disabled"
+                            @click="save()">{{ t('save') }}</button>
                         </div>
                     </div>
                 </div>                                 
             </div>        
-            <obespechenie v-model="obespechenie" :disabled="disabled" :type="type"
+            <obespechenie v-model="obespechenie" :type="type"
             @changeType="v => type = v" @change=" ocenca => $refs['bilet'].calculate({ocenca})"/>
         </div>
         <kassa ref="kassa" class="col-4" @start="target = true" @end="target = false"/>
@@ -39,7 +39,6 @@ mixins: [ mix ],
 data() {
     return {
         target: false,
-        type: 'gold'
     }
 },
 computed: {
@@ -49,25 +48,18 @@ computed: {
         return { ...this.$refs['bilet'].model, title, obespechenie, type }
     },
     values({ model }) {
-        const { dt, ct } = this.order
         const { ocenca, procent } = model
         return {...model, values: [
-            { dt: '377', ct: '301', summ: ocenca, order: ct},
-            { dt: '301', ct: '703', summ: procent, order: dt }
+            { dt: '377', ct: '301', summ: ocenca },
+            { dt: '301', ct: '703', summ: procent }
         ].filter(v => toNumber(v.summ))}
     },
-    disabled({ bilet }) {
-        return !!{ ...bilet }._id
+    disabled({ bilet, klient }) {
+        return !klient.isValid
     }
 },
 methods: {
-    changeType(v) {
-        this.type = !v ? 'gold' : 'things'
-    },
-    onCopy(id) {
-        const { klient, passport, obespechenie, ocenca, days, discount, type } = { ...this.map[id]}
-        this.update({ klient, passport, obespechenie, ocenca, days, discount, type})
-    }
+
 }
 }
 </script>

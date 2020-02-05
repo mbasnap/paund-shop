@@ -44,6 +44,12 @@ const months = {
     format: 'января_февраля_марта_апреля_мая_июня_июля_августа_сентября_октября_ноября_декабря'.split('_'),
     standalone: 'январь_февраль_март_апрель_май_июнь_июль_август_сентябрь_октябрь_ноябрь_декабрь'.split('_')
 }
+const daysDiff = (d1, d2) => {
+  if(!d1 || !d2) return
+    d1 = moment(d1).startOf('day')
+    d2 = moment(d2).startOf('day')
+  return moment.duration(d1.diff(d2)).asDays()
+}
 export  {
     numberFormat,
     toDouble,
@@ -59,5 +65,6 @@ export  {
     getProcent,
     rorrect,
     round,
-    firstChar
+    firstChar,
+    daysDiff
 }

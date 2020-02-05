@@ -1,25 +1,22 @@
 <template>
     <div class="obespechenie" >
-        <div class="row m-0" v-show="type"> 
+        <div class="row m-0 ml-2" v-show="type"> 
             <div class="col">
                 <input type="checkbox" :checked="type !== 'gold'"
-                class="form-check-input" id="dropdownCheck2"
-                @change="changeType">
+                class="form-check-input" id="dropdownCheck2" @change="changeType">
                 <label class="form-check-label" for="dropdownCheck2">{{ t('things') }}</label>
             </div>
         </div>
         <table  :class="[ 'table', 'table-sm', { readonly: disabled } ]">
         <thead >
-            <tr>
-                <th class="index">
-                </th>
-                <th class="title">
-                </th>
+            <tr style="font-size: 12px;">
+                <th class="index"></th>
+                <th class="title">{{ t('title') }}</th>
                 <th v-for="(name, index) in [ 'proba', 'ves', 'derty', 'ocenca' ]" 
                 :key="index" :class="name">{{ t(name) }}</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody style="font-size: 14px;">
             <row  v-for="(item, index) in value" :key="index" class="items" :type="type !=='gold'"
             :value="item" @input="value => input(index, value)" :editable="!disabled"/>
             <tr class="add">
@@ -40,7 +37,7 @@
 <script>
 
 import { mapActions, mapGetters } from 'vuex'
-import { toDouble, summ } from '@/functions'
+import { toDouble, toNumber, summ } from '@/functions'
 import { SvgPlusCircle } from '@/svg'
 import Row from './Rows'
 export default {
@@ -48,6 +45,7 @@ export default {
     props: { value: Array, disabled: Boolean, type: String },
     watch: {
         ocenca(v) {
+            if(!toNumber(v)) return
             this.$emit('change', v)       
         }
     },

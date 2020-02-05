@@ -11,11 +11,11 @@
                     <div class="col">
                         <div class="row">
                             <div class="col-6 ">
-                                <button class="btn btn-primary" @click="update({})">reset</button>
+                                <button class="btn btn-primary" @click="update({})">{{ t('reset') }}</button>
                             </div>
                             <div class="col-6">
                                 <button class="btn btn-primary" :disabled="disabled"
-                                @click="save().then(v => update())">save</button>
+                                @click="save().then(v => update())">{{ t('save') }}</button>
                             </div>   
                         </div>
                     </div>
@@ -35,16 +35,15 @@ export default {
 components: { Number, Bilet },
 mixins: [ mix ],
 computed: {
-    values() {
-        const { dt, ct } = this.order
-        const { _id: ref, number } = this.bilet
+    values({ bilet }) {
+        const { _id: ref, number } = bilet
         const title = `vozvtashena ssuda po zalogovomu biletu ${number}`
         const { ocenca, procent, penalty, statment } = this.$refs['bilet'].model
         return { ref, number, values: [
-            { dt: '301', ct: '377', summ: ocenca, order: dt },
-            { dt: '301', ct: '703', ...statment, order: dt }, // ct 301 if return procent statment
-            { dt: '703', ct: '301', ...procent, order: ct }, // ct 301 if return procent
-            { dt: '301', ct: '704', ...penalty, order: dt }
+            { dt: '301', ct: '377', summ: ocenca },
+            { dt: '301', ct: '703', ...statment }, // ct 301 if return procent statment
+            { dt: '703', ct: '301', ...procent }, // ct 301 if return procent
+            { dt: '301', ct: '704', ...penalty }
         ].filter(v => toNumber(v.summ))}
     },
     disabled({ bilet }) {

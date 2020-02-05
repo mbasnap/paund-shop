@@ -2,8 +2,9 @@
     <modal-editor :title="t(type)" @print="print" >
         <div :style="{ zoom }">
             <div ref="printer-content">
-                <dt-order v-if="type === 'dt'" :date="date" :value="model"/>
-                <ct-order v-if="type === 'ct'" :date="date" :value="model"/>
+                <!-- <dt-order v-if="type === 'dt'" :date="date" :value="model"/>
+                <ct-order v-if="type === 'ct'" :date="date" :value="model"/> -->
+                <order :title="t(type)" :type="type" :date="date" :value="model"/>
             </div>
         </div>
     </modal-editor>
@@ -12,10 +13,11 @@
 import { mapGetters } from 'vuex'
 import { moment, months, toNumber } from '@/functions'
 import ModalEditor from '@/components/ModalPrint'
-import DtOrder from './DtOrder'
-import CtOrder from './CtOrder'
+// import DtOrder from './DtOrder'
+// import CtOrder from './CtOrder'
+import Order from './Order'
 export default {
-    components: { ModalEditor, DtOrder, CtOrder },
+    components: { ModalEditor, Order },
     props: { value: Object },
     data() {
         return {

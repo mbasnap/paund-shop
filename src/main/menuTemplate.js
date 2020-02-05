@@ -5,20 +5,20 @@ const {app, shell, ipcMain} = electron;
 let menuTemplate = function() {
     return [
         {
-            label: 'Zvit',
+            label: 'Отчёты',
             submenu: [
               {
-                label: 'Kassa',
+                label: 'Касса',
                 click: function () {
                   ipcMain.emit('show-zvit', 'Kassa') // In such way we can trigger function in the main process
                 }
               },
-              {
-                label: 'Reload', accelerator: 'CmdOrCtrl+R',
-                click: function (item, focusedWindow) {
-                  focusedWindow.reload(); // reload the page
-                }
-              }
+              // {
+              //   label: 'Reload', accelerator: 'CmdOrCtrl+R',
+              //   click: function (item, focusedWindow) {
+              //     focusedWindow.reload(); // reload the page
+              //   }
+              // }
             ]
         }        
     ]

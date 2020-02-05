@@ -2,7 +2,7 @@
     <div class="kassa">
         <b-card class="m-2" header-tag="header" footer-tag="footer" body-class="scroll-auto"
         :header="ok" :footer="total">
-        <context class="row " :actions="{ add, print }">
+        <context class="row " :actions="{ addOrder, print }">
             <kassa-list :selected="selected" class="col-6" :rows="rows"
             :value="grope(dt.filter(isSame))" type="dt"/>
             <kassa-list :selected="selected" class="col-6" :rows="rows"
@@ -41,7 +41,8 @@ export default {
             ct: 'reestr/ct301',
             settings: 'settings',
             date: 'date',
-            accounts: 'accounts'
+            accounts: 'accounts',
+            order: 'reestr/nextOrder'
         }),
 
         ok({ settings, dt, ct, date }) {
@@ -67,13 +68,12 @@ export default {
             removeReestr: 'reestr/remove',
             saveReestr: 'reestr/save',
         }),
-        onStart() {
-            console.log('dfdf');
-            
-        },
         async save(v) {
             // console.log(v);
-            const { _id } = await this.saveReestr(v)
+            
+            const dt = v.values.map(v => v.dt === '301').includes(true) ? this.order['dt'] : false
+            const ct = v.values.map(v => v.ct === '301').includes(true) ? this.order['ct'] : false
+            const { _id } = await this.saveReestr({...v, order: { dt, ct } })
             return this.select( _id)         
         },
         async remove(v) {
@@ -81,11 +81,12 @@ export default {
             return this.select()
         },
         print({ type, values }) {
-            const { model } = this.$refs['history']
+            const { model, getTitle } = this.$refs['history']
             const order = {...model.order}[type]
+            values = values.map(v => ({ ...v, title: getTitle(v)}))
             this.printOrder({value: {...model, type, order, values }})
         },
-        add({ type }) {  
+        addOrder({ type }) {  
             this.$modal.show(PrixoRasxod, { type, save: this.save })
         },
         grope(v) {

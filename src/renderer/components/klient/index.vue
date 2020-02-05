@@ -24,8 +24,12 @@ export default {
       ...mapGetters({
         // map: 'klient/map'
       }),
-      model({ value }) {
-        return { ...value }
+      model({ value, isValid }) {
+        return { ...value, isValid }
+      },
+      isValid({ value }) {
+        const { family, name, sername } = value
+        return [family, name, sername].every(v => !!v)
       }
     },
     methods: {

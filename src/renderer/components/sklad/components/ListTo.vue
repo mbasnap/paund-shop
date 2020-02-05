@@ -24,9 +24,11 @@ export default {
         ...mapGetters({
             map: 'klient/map'
         }),
-        items({ value, map }) {          
+        items({ value, map }) {   
+            const compareNumbers = (a, b) => a.number > b.number       
             return (value || [])
-                .map(v => ({...v, klient: map[v.klient]}))
+                .sort(compareNumbers)
+                    .map(v => ({...v, klient: map[v.klient]}))
         }
     },
     methods: {}

@@ -1,15 +1,13 @@
 <template>
-    <tr :class="{'err': value.err}">
-        <td class="index">{{ $vnode.key + 1 }}</td>
-        <td> <named-input name="title" :value="model"/> </td>
-        <td>
-            <named-select  name="proba" :value="model" :options="Object.keys(price)" />
-        </td>
-        <td> <named-input name="ves" :value="model"/> </td>
-        <td> <named-input name="derty" :value="model"/> </td>
-        <td> <named-input name="ocenca" :value="model" style="text-align: right;"/> </td>
-        <!-- <td class="ocenca"> {{ ocenca }} </td> -->
-    </tr>
+<tr :class="{'err': value.err}">
+    <td class="index" style="width: 10px; text-align: center;">{{ $vnode.key + 1 }}</td>
+    <td><named-input name="title" :value="model" style="width: 250px;"/></td>
+    <td><named-select name="proba" style="width: 50px;"
+    :value="model" :options="options" @change="change"/></td>
+    <td><named-input name="ves" :value="model"/></td>
+    <td><named-input name="derty" :value="model"/></td>
+    <td><named-input name="ocenca" :value="model" style="width: 100px;"/></td>
+</tr>
 </template>
 
 <script>
@@ -24,6 +22,9 @@ computed: {
     ...mapGetters(['settings']),
     price({ settings }) {
         return { ...settings.price }
+    },
+    options({ price }) {
+        return Object.keys(price)
     },
     ves({ value }) {
         return toDouble(value.ves)
@@ -51,7 +52,6 @@ methods: {
     update(value) {
         const total = pDiff(value.ves, value.derty)
         const ocenca = !this.type ? mult(total, this.price[value.proba]): value.ocenca
-        // const err = diff(value.derty, value.ves) > 0
         this.$emit('input', { ...value, total: toDouble(total), ocenca: toDouble(ocenca) })
     },
     t(v) {
@@ -64,16 +64,5 @@ methods: {
 <style>
     .obespechenie .items.err{
         background-color: rgba(249, 124, 124, 0.44);
-    }
-    .obespechenie .index {
-        text-align: center;
-        width: 10px;
-    }
-    .obespechenie .title {
-        width: 250px;
-    }
-    .obespechenie .ocenca {
-        width: 100px;
-        text-align: right;
     }
 </style>

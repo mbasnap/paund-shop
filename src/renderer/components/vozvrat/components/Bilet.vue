@@ -65,7 +65,7 @@
 import mix from '@/widgets/named-input/mix.js'
 import { SvgSave, SvgTrash } from '@/svg'
 import { mapGetters, mapActions } from 'vuex'
-import { proc, toNumber, toDouble, mult, diff, moment } from '@/functions'
+import { proc, daysDiff, toNumber, toDouble, mult, diff, moment } from '@/functions'
 export default {
     props: { value: Object, disabled: Boolean },
     mixins: [ mix ],
@@ -76,29 +76,28 @@ export default {
           order: 'reestr/nextOrder'
       }),
       days({ value, date }) {
-          return this.daysDiff(date, value.date) || 1
+          return daysDiff(date, value.date) || 1
       },
       daysBefore({ date, value }) {
         if (!value.date) return
         const plan = moment(value.date).add(value.days, 'd')
-        const res = this.daysDiff(plan, date)
-        // console.log('procent', res);
+        const res = daysDiff(plan, date)
+        // console.log('procent', res, value.days );
         return res < 0 ? 0 
-          : res === value.days ? res - 1
-            : res < value.days ? res : 0
+          : res === toNumber(value.days) ? res - 1
+            : res < toNumber(value.days) ? res : 0
       },
       statmentDays({ date: fact, value }) {
         const { date, days } = { ...value.statment}
         if(!date) return
-        const res = this.daysDiff(fact, date)
+        const res = daysDiff(fact, date)
         return res < 0 ? 0 
-          : res <= days ? res : days
+          : res <= toNumber(days) ? res : days
       },
       daysAfter({ date, value, statmentDays = 0 }) {
         if (!value.date) return
         const plan = moment(value.date).add(value.days, 'd')
-        const res = this.daysDiff(date, plan) - statmentDays 
-        // console.log('penalty', this.daysDiff(date, plan), statmentDays );
+        const res = daysDiff(date, plan) - statmentDays 
         return res < 0 ? 0 :  res
       },
       ocenca({ value }) {
@@ -140,12 +139,6 @@ export default {
       async saveStatment(v) {
         const statment = v ? {...v, date: this.date } : false
         this.$emit('input', await this.save({...this.value, statment}))
-      },
-      daysDiff(d1, d2) {
-        if(!d1 || !d2) return
-          d1 = moment(d1).startOf('day')
-          d2 = moment(d2).startOf('day')
-        return moment.duration(d1.diff(d2)).asDays()
       },
       t(v) {
         return this.$t(`vozvrat.${v}`)

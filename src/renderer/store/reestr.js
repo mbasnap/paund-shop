@@ -1,5 +1,5 @@
 import { db, reestr } from '@/db'
-const { get, post } = db('/reestr')
+// const { get, post } = db('/reestr')
 const state = {
     reestr: {}
 }
@@ -34,9 +34,6 @@ const getters = {
     ct301({}, { values }){
         return values.filter(v => v.ct === '301')
     },
-    bilets({}, { dt001, ct001 }) {
-        return { ...dt001, ...ct001  }
-    },
     dt200({}, { values }){
         return values.filter(v => v.dt === '200')
     },
@@ -46,10 +43,6 @@ const getters = {
         const ct = ct301.map(v => map[v._id]).map(v=> ({...v.order}.ct || 0))
         return { dt: number(dt) , ct: number(ct) }
     },
-    // nextNumber({}, { dt377, map }) {
-    //     const numbers = dt377.map(v => map[v._id]).map(v => v.number || 0)
-    //     return (Math.max( ...numbers, 0) + 1)
-    // },
     numbers({}, { dt377, map }) {
         const arr = dt377.map(v => ({...map[v._id]})).map(v => v.number || 0)        
         const [min,max] = [Math.min(...arr), Math.max(...arr)]
@@ -80,7 +73,7 @@ const actions = {
         return dispatch('update', await reestr.post({ ...v, date }))
     },
     async updateValue ({ dispatch, getters }, v) {
-        console.log(v);
+        // console.log(v);
         return dispatch('update', await reestr.post(v))
     },
 

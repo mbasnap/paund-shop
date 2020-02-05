@@ -7,12 +7,8 @@
                             <div  class="col">
                                 <span v-if=" model.number" class="badge badge-pill badge-light" 
                                 @click="$emit('printBilet', {value: model})">
-                                    Bilet {{ model.number }}
+                                    Билет № {{ model.number }}
                                 </span>
-                                <!-- <span class="badge badge-pill badge-light" 
-                                @click="$emit('printOrder', {value: model})">
-                                    Order {{ model.order }}
-                                </span> -->
                             </div>
                             <div class="col-1 mr-2" style="text-align: right;">
                                 <svg-trash width="13px;" @click="$emit('remove', model)"></svg-trash>
@@ -64,8 +60,9 @@ export default {
         },
         model({ bilet, klient, doc, from, company }) {
             const date = moment(bilet.date).format('L')
+            const time = moment(bilet.date).format('hh: mm')
             const returnDate = moment(bilet.date).add(bilet.days, 'd').format('L')
-            return { ...bilet, klient, doc, from, date, returnDate, company }
+            return { ...bilet, klient, doc, from, date, time, returnDate, company }
         }
     },
     methods: {

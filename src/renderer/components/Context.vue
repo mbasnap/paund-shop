@@ -5,7 +5,7 @@
         <div class="pl-4" slot-scope="{data}" @mouseleave="close()">
             <li v-for="(action, name) in actions" :key="name" 
                 @click="action(data)">
-                <span>{{name}}</span>
+                <span>{{ $t(`context.${name}`) }}</span>
             </li>
         </div>
     </vue-context>   

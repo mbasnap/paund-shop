@@ -1,6 +1,6 @@
 <template>
     <b-nav-item-dropdown :text="user.name" right >
-     <b-link class="dropdown-item" @click="logout">logout</b-link>
+     <b-link class="dropdown-item" @click="logout">{{ $t('auth.logout') }}</b-link>
     </b-nav-item-dropdown>
 </template>
 
