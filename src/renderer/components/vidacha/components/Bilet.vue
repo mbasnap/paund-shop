@@ -2,15 +2,21 @@
 
 <div class="bilet">
     <div class="col-9">
-        <named-select class="form-control mb-2" name="number" :value="{number}" :options="numbers"/>
+        <div class="row">
+            <div class="col-5" style="line-height: 40px; text-align: right;">Билет № </div>
+            <div class="col">
+                <named-select class="form-control mb-2" name="number"
+                :value="{number}" :options="numbers"/>
+            </div>
+        </div>
         <input class='form-control mb-2' name="ssuda" :value="ssuda"
         @input="({ target }) => input(target)"
         @change="calculate({ssuda})"/>
         <div class=" input-group mb-2">
-            <input class="form-control" :value="toDouble(toNumber(procent) - toNumber(discount))"/>
+            <input class="form-control" :value="procent"/>
             <div class="input-group-append">
-            <named-select class="form-control" name="xDisc" @change="calculate()"
-            :value="{xDisc}" :options="discounts"/>
+            <named-select class="form-control" name="xDisc"
+             @change="calculate()" :value="{xDisc}" :options="discounts"/>
             </div>
         </div>   
         <input class='form-control mb-2' name="ocenca" :value="ocenca"
@@ -30,7 +36,15 @@ import { getOcenca, rorrect, toNumber, mult, toDouble, diff } from '@/functions'
 export default {
 mixins: [ mix ],
 components: { DaySlider },
-props: { value: Object, disabled: Boolean, type: String },
+props: {
+    value: { type: Object,
+        default() {
+            return {}
+        }
+    },
+    disabled: Boolean,
+    type: String
+},
 data() {
     return {
         from: 'ocenca'
@@ -57,27 +71,38 @@ computed: {
         return { ...settings.penalty}[type]
     },
     xDisc({ value, discounts  }) {
+        // const { ocenca, ssuda, procent } = { ...value }
         return value.xDisc || discounts[0]
     },
-    ssuda({ value }) {
-        const ssuda = value.ssuda
-        return ssuda!== undefined ? ssuda : '0.00'
+    ssuda({ value, fix, from  }) {
+        const ssuda =  value.ssuda !== undefined ? value.ssuda : '0.00'
+        return from ==='ssuda' ? ssuda 
+            : toDouble(toNumber(this.ocenca) - toNumber(this.procent))
     },
-    procent({ value }) {
-        const procent = value.procent
-        return toDouble(procent)
+    fix({ value }) {
+        return value.fix
     },
-    discount({ value }) {
-        const discount = value.discount
+    procent({ value, discount }) {
+        const { ocenca, ssuda, procent } = { ...value }
+        return toDouble( ocenca || ssuda ? procent > 10 ? 
+            toNumber(procent) - toNumber(discount) : 10 : 0) 
+    },
+    discount({ value, xDisc }) {
+        const { procent } = { ...value }
+        const discount = toNumber(procent) >= 10 ? toNumber(procent) * xDisc / 100 : 0
         return toDouble(discount)
     },
-
-    ocenca({ value }) {
-        const ocenca = value.ocenca
-        return ocenca !== undefined ? ocenca : '0.00'
+    ocenca({ value, from }) {    
+        const ocenca =  value.ocenca !== undefined ? value.ocenca : '0.00'
+        return from ==='ocenca' ? ocenca
+            : toDouble(toNumber(this.ssuda) + toNumber(this.procent))
     },
-    model({ number, days, xProc, xPen, xDisc, ssuda, procent, discount, ocenca }) {
-        return { number, days, xProc, xPen, xDisc, ssuda, procent, discount, ocenca }
+    model({ number, type, days, xProc, xPen, xDisc, ssuda, procent, discount, ocenca }) {
+        return { number, type, days, xProc, xPen, xDisc, ssuda, procent, discount, ocenca, 
+        values: [
+            { dt: '377', ct: '301', summ: ocenca },
+            { dt: '301', ct: '703', summ: procent }
+        ].filter(v => toNumber(v.summ)) }
     }
 },
 methods: { toDouble, toNumber,
@@ -87,39 +112,33 @@ methods: { toDouble, toNumber,
         from === 'ssuda' ? this.fromSsuda(value) : this.fromOcenca(value)
     },
     fromSsuda(ssuda) {
-        const { days, xProc, xDisc } = this
-        const { ocenca, procent, discount } = this.getOcenca(ssuda, xProc * toNumber(days), xDisc)
-        this.update({ ocenca, procent, discount, ssuda: toDouble(ssuda) })
+        const { days, xProc } = this
+        const ocenca = this.getOcenca(ssuda, xProc * toNumber(days))
+        const procent = ocenca - toNumber(ssuda)
+        this.update({ procent, ssuda: toDouble(ssuda) })
     },
-    fromOcenca(value) {
-        const { days, xProc, xDisc } = this
-        const { ocenca, procent, discount } = this.getOcenca(value, xProc * toNumber(days), xDisc)
-        const rent = (procent - discount) / toNumber(ocenca)
-        const ssuda = toNumber(ocenca) - procent + discount
-        this.fromSsuda(ssuda - ssuda * rent)
+    fromOcenca(ocenca) {
+        const { days, xProc } = this
+        const procent = toNumber(ocenca) * xProc / 100 * days
+        this.update({ ocenca: toDouble(ocenca), procent })
     },
-    getOcenca(value, xProc, xDisc) {        
+    getOcenca(value, xProc = 0, xDisc = 0) {    
         const getProcent = v => toNumber(v) * xProc / 100
         const isAfter = v => toNumber(v) - getProcent(v) >= toNumber(value)
         let ocenca = getOcenca(toNumber(value),  isAfter, xProc)
         ocenca = getOcenca(ocenca, isAfter, xProc * 0.1)
         ocenca = getOcenca(ocenca, isAfter, xProc * 0.01)
-        ocenca = getOcenca(ocenca, isAfter, xProc * 0.001)
-        let procent = toNumber(ocenca) - toNumber(value)
-        // procent = procent > 10 ? procent : 10
-        let discount = toNumber(procent) * xDisc / 100
-        // discount = toNumber(procent) - discount > 10 ? discount : 0
-        ocenca = toNumber(value) + toNumber(procent) - toNumber(discount)
-        return { discount, procent, ocenca: toDouble(ocenca) }
+        return getOcenca(ocenca, isAfter, xProc * 0.001)
     },
     readonly() {
         return this.disabled
     },
     input({ name, value }) {
+        if(['ssuda', 'ocenca'].includes(name)) this.from = name
         this.update({ [name]: value })
     },
     update(v) {
-        this.$emit('input', { ...this.model, ...v })
+        this.$emit('input', { ...this.value, ...v })
     }
 }
 }

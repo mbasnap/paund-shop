@@ -50,7 +50,7 @@ export default {
             return (value.passports || [])
         },
         passport({ value }) {
-            return value.passport
+            return value.passport || 0
         },
         model({ passports, passport }) {
             return { ...passports[passport]} 
@@ -76,7 +76,7 @@ export default {
         },
         input({ name, value }) {
             const passports = [ ...this.passports ]
-            passports[this.passport] = { ...this.model, [name]: value }
+            passports[this.passport ] = { ...this.model, [name]: value }
             this.update({ ...this.value, passports })
         },
         suggest({passports, passport}) {

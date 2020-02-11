@@ -16,7 +16,9 @@
                         </div>
                         <div class="col-6">
                             <button class="btn btn-primary" :disabled="disabled"
-                            @click="save()">{{ t('save') }}</button>
+                                @click="saveKlient(klient).then(v => saveBilet(model)).then(v => select(v))">
+                                {{ t('save') }}
+                            </button>
                         </div>
                     </div>
                 </div>                                 
@@ -42,17 +44,10 @@ data() {
     }
 },
 computed: {
-    model({ bilet, type }) {
-        const title = `vidana ssuda po zalogovomu biletu ${bilet.number}`
+    model() {
+        const { _id: klient, passport } = this.klient
         const obespechenie = this.obespechenie.filter(v => toNumber(v.ocenca))
-        return { ...this.$refs['bilet'].model, title, obespechenie, type }
-    },
-    values({ model }) {
-        const { ocenca, procent } = model
-        return {...model, values: [
-            { dt: '377', ct: '301', summ: ocenca },
-            { dt: '301', ct: '703', summ: procent }
-        ].filter(v => toNumber(v.summ))}
+        return { ...this.$refs['bilet'].model, klient, passport, obespechenie }
     },
     disabled({ bilet, klient }) {
         return !klient.isValid

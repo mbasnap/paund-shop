@@ -43,12 +43,14 @@ const getters = {
         const ct = ct301.map(v => map[v._id]).map(v=> ({...v.order}.ct || 0))
         return { dt: number(dt) , ct: number(ct) }
     },
-    numbers({}, { dt377, map }) {
-        const arr = dt377.map(v => ({...map[v._id]})).map(v => v.number || 0)        
-        const [min,max] = [Math.min(...arr), Math.max(...arr)]
-        const numbers = Number.isFinite(max - min) ? max - min : 0       
-        const res = Array.from(Array(numbers), (v,i) => i + min)
-            .filter(i=>!arr.includes(i))
+    numbers({}, { dt377, map }) {      
+        const fin = v => Number.isFinite(v) ? v : 0
+        const arr = dt377.map(v => ({...map[v._id]})).map(v => Number(v.number))
+        const min = 1000
+        const max = fin(Math.max(...arr))
+        const count = max - min > 0 ? max - min : 0
+        const res = Array.from(Array(count), (v,i) => i + min)
+            .filter(i => !arr.includes(i))
         return [...res, max + 1]
     },
     used({}, { ct377, map }) {
@@ -70,6 +72,7 @@ const actions = {
     },
     async save ({ dispatch, getters }, v) {
         const date = getters['date']
+        // const _id = await reestr.post({ ...v, date })
         return dispatch('update', await reestr.post({ ...v, date }))
     },
     async updateValue ({ dispatch, getters }, v) {

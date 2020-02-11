@@ -1,6 +1,5 @@
 <template>
     <div class="row-down" @click="$emit('click')">
-
         <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="caret-down"
           class="svg-inline--fa fa-caret-down fa-w-10" role="img"
           xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">

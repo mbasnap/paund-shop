@@ -1,12 +1,10 @@
 <template>
-    <div class="suggest dropdown" :readonly="readonly()"
-    @mouseleave="highlight(-1)">
+    <div class="suggest dropdown" >
         <slot></slot>
         <textarea class="named-input editor" ref="editor"
         :name="name"
         :value="value[name]"
         :placeholder="placeholder"
-        :readonly="readonly()"
         @input="input($event.target)"
         @change="change($event.target)"
         @keydown.up.prevent="highlight(index > 0 ? index - 1 : 0)"
@@ -22,7 +20,6 @@
 </template>
 
 <script>
-// import mix from "./mix.js"
 export default {
     props: {
         name: String,
@@ -35,12 +32,7 @@ export default {
             }
         },
     },
-    inject: [ "input", "change", "readonly" ],
-    // mixins: [ { props: mix.props, inject: mix.inject } ],
-    // props: {
-    //     options: Array,
-    //     suggest: { type: Function, default: (item, name) => item[name] },
-    // },
+    inject: [ "input", "change" ],
     data() {
         return {
             index: -1
@@ -57,7 +49,8 @@ export default {
             this.$emit('select', v)
             this.highlight(-1)
         },
-        highlight(index) {
+        highlight(index, bool) {
+            if(bool && this.index >= 0) return this.index = -1
             const length = this.options.length - 1
             if (index <= length)  this.index = index
         }
@@ -75,25 +68,16 @@ export default {
     color: black
 }
 .suggest .editor {
-    /* outline-style: none; */
-    /* width: 100%; */
     padding: 0;
     max-height: 100%;
     resize: none;
     border: none;
     white-space: nowrap;
 }
-.suggest .options {
-    /* min-width: 300px;
-    border-radius: unset; */
-} 
 .suggest .options li {
     cursor: pointer;
 } 
 .suggest .options .highlight {
     background-color: rgba(176, 176, 199, 0.438);
-} 
-/* .suggest .options li:hover {
-        background-color: rgba(230, 230, 234, 0.41);
-}  */
+}
 </style>

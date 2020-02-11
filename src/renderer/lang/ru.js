@@ -54,6 +54,7 @@ export default {
       'total': 'Всего',
       'penalty': 'Пеня',
       'procent': 'Процент',
+      'pereraschet': 'Перерасчёт',
       'ocenca': 'Оценка',
       'statment': 'Заявление',
       'number': 'Номер билета',

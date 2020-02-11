@@ -1,79 +1,71 @@
 <template>
-<div :class="['bilet', { disabled }]">
+<div :class="['bilet', { disabled }]" style="font-size: 14px; text-align: right;">
       <div class=" form-row mb-2" >
-        <span class="col-3"> {{ t('ocenca') }} </span>
+        <span class="col-2"> {{ t('ocenca') }} </span>
         <div class="value col">
-            <span > {{ ocenca }} </span>
+          {{ moment(value.date).format('L') }} x {{ value.days }}дн
         </div>
+        <div class="value col-4 border-left">{{ ocenca }}</div>
       </div>
-      <div v-show="daysBefore" class=" form-row mb-2" >
-        <span class="col-3"> {{ t('procent') }} </span>
-        <div class="value col">
-            <span>{{ xProc }} x {{ daysBefore }} = </span>
-            <span > {{ procent.summ }} </span>
-        </div>
-      </div>
-      <div v-show="statmentDays" class=" form-row mb-2" >
-        <span class="col-3"> {{ t('statment') }} </span>
-        <div class="value col">
-            <span>{{ statment.value }} x {{ statment.count }} = </span>
-            <span > {{ statment.summ }} </span>
-        </div>
-      </div>
-      <div v-show="daysAfter" class=" form-row mb-2" >
-        <span class="col-3"> {{  t('penalty') }} </span>
-        <div class="value col">
-            <span>{{ xPen }} x {{ daysAfter }} = </span>
-            <span > {{ penalty.summ }} </span>
-        </div>
-      </div>
-      <div class=" form-row mb-2" >
-        <span class="col-3"> {{ t('total') }} </span>
-        <div class="value col">
-            <span > {{ total }} </span>
-        </div>
-      </div>
-    <div  v-if="value._id"  class="form-row m-0 mb-2" >
-      <div v-if="statment && statment.date" class="col-4" >
-        {{ moment(statment.date).format('L')}}
-      </div>
-      <div v-else class="col-1" >
-        <input type="checkbox" class="form-check-input ml-0" id="dropdownCheck2"
-        @change="addStatment(!statment.days)" :checked="!!statment.days">
-      </div>
-      <div class="col">
-          <div v-if="!statment.days" style="text-align: left;">
-            <label class="form-check-label" for="dropdownCheck2">{{t('add-statment')}}</label>
+
+      <div class=" form-row mb-2" style="text-align: left">
+        <div class="col-5">
+          <div class="row m-0">
+            <div class="col p-0">Процент {{ value.xProc }} %</div>
+            <div class="col-3 p-0">{{ value.procent }}</div>
           </div>
-          <div v-else>
-            <div class="row m-0">
-              <named-select class="form-control col" name="days" :disabled="!!statment.date"
-              @change="({value}) => addStatment(true, value)"
-              :value="{ days: statment.days }" :options="[10, 15, 20]"/>
-              <svg-save v-if="!statment.date" class="col" width="20px" style="line-height: 30px;"
-              @click="saveStatment(statment)"/>
-              <svg-trash v-else class="col" width="20px" style="line-height: 30px;"
-              @click="saveStatment(false)"/>
-            </div>
+        </div>
+        <div v-show="toNumber(value.discount)" class="col-5">
+          <div class="row m-0">
+            <div class="col p-0">Скидка {{ value.xDisc }} %</div>
+            <div class="col-3 p-0">{{ value.discount }}</div>
           </div>
+        </div>
       </div>
-    </div>
+      <div v-show="daysBefore" class="form-row mb-2" style="color: #860d0d;">
+        <div class="col-2"> {{ t('pereraschet') }} </div>
+        <div class="value col">{{ xProc }} x {{ daysBefore }} дн</div>
+        <div class="col-4 border-left">{{ procent.summ }}</div>
+      </div>
+      <div v-show="statmentDays" class="form-row mb-2">
+        <div class="col-4" style="text-align: left"> {{ t('statment') }} {{ value.xProc}} % </div>
+        <div class="value col">{{statment.value}} x {{statment.count}} дн</div>
+        <div class="col-4 border-left">{{statment.summ}}</div>
+      </div>
+      <div v-show="daysAfter" class="form-row mb-2">
+        <div class="col-3" style="text-align: left"> {{ t('penalty') }} {{ value.xPen }} % </div>
+        <div class="value col">{{xPen}} x {{daysAfter}} дн</div>
+        <div class="col-4 border-left">{{penalty.summ}}</div>
+      </div>
+      <div class=" form-row mb-2">
+        <div class="col-2" style="text-align: left"> <strong>{{ t('total') }}</strong> </div>
+        <div class="value col">
+          {{ moment(value.date).add(value.days, 'd').add(statment.days, 'd').format('L') }} {{ days }} дн
+        </div>
+        <div class="value col-4 border-left" style="font-weight: 500;">{{ total }}</div>
+      </div>
 </div>
 </template>
 
 <script>
 import mix from '@/widgets/named-input/mix.js'
-import { SvgSave, SvgTrash } from '@/svg'
+// import StatmentRow from './StatmentRow.vue'
 import { mapGetters, mapActions } from 'vuex'
 import { proc, daysDiff, toNumber, toDouble, mult, diff, moment } from '@/functions'
 export default {
-    props: { value: Object, disabled: Boolean },
+    props: {
+      value: { type: Object,
+        default() {
+          return {}
+        }
+      },
+      disabled: Boolean
+    },
     mixins: [ mix ],
-    components: { SvgSave, SvgTrash },
+    // components: { StatmentRow },
     computed: {
       ...mapGetters({
           date: 'date',
-          order: 'reestr/nextOrder'
       }),
       days({ value, date }) {
           return daysDiff(date, value.date) || 1
@@ -82,7 +74,6 @@ export default {
         if (!value.date) return
         const plan = moment(value.date).add(value.days, 'd')
         const res = daysDiff(plan, date)
-        // console.log('procent', res, value.days );
         return res < 0 ? 0 
           : res === toNumber(value.days) ? res - 1
             : res < toNumber(value.days) ? res : 0
@@ -105,11 +96,16 @@ export default {
       },
       xProc({ value }) {
           const { procent, discount, days } = value
-          return toDouble((procent - discount) / days)
+          return toDouble(toNumber(procent) / toNumber(days))
+      },
+      xStatment({ value }) {
+          const { ocenca, discount, xProc, days } = value
+          const res =  (toNumber(ocenca) + toNumber(discount)) * xProc * days / 100
+          return toDouble(res)
       },
       xPen({ value }) {
-          const { ocenca, xPen } = value
-          return toDouble(toNumber(ocenca) * xPen / 100)
+        const { ocenca, discount, xPen } = value
+        return toDouble((toNumber(ocenca) + toNumber(discount)) * xPen / 100)
       },
       procent({ xProc: value, daysBefore: count }) {        
         return { value, count, summ: toDouble(value * count)}
@@ -117,29 +113,28 @@ export default {
       penalty({ xPen: value, daysAfter: count }) {
         return { value, count, summ: toDouble(value * count)}
       },
-      statment({ xProc: value, statmentDays: count }) {
+      statment({ xStatment: value, statmentDays: count }) {       
         return { ...this.value.statment, count, value, summ: toDouble(value * count) }
       },
       total({ ocenca, procent, penalty, statment }) {
         const total = toNumber(ocenca) - toNumber(procent.summ)
         return toDouble(total + toNumber(statment.summ) + toNumber(penalty.summ))
       },
-      model({ ocenca, procent, penalty, statment }) {
-          return { ocenca, procent, penalty, statment }
+      number({ value }) {
+        return value.number
+      },
+      model({ value, type, ocenca, procent, penalty, statment, total }) {
+        const { _id: ref, number } = value
+        return { ref, number, type, ocenca, procent, penalty, statment, total,
+          values: [
+            { dt: '301', ct: '377', summ: ocenca },
+            { dt: '301', ct: '703', ...statment }, // ct 301 if return procent statment
+            { dt: '703', ct: '301', ...procent }, // ct 301 if return procent
+            { dt: '301', ct: '704', ...penalty }
+          ].filter(v => toNumber(v.summ)) }
       }
     },
-    methods: { moment,
-      ...mapActions({
-        save: 'reestr/updateValue'
-      }),
-      addStatment(bool, days = 15 ) {
-        const statment = bool ? { days } : false
-        this.$emit('input', {...this.value, statment })
-      },
-      async saveStatment(v) {
-        const statment = v ? {...v, date: this.date } : false
-        this.$emit('input', await this.save({...this.value, statment}))
-      },
+    methods: { moment, toNumber,
       t(v) {
         return this.$t(`vozvrat.${v}`)
       }

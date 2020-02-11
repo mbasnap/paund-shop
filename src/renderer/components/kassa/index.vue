@@ -69,12 +69,9 @@ export default {
             saveReestr: 'reestr/save',
         }),
         async save(v) {
-            // console.log(v);
-            
             const dt = v.values.map(v => v.dt === '301').includes(true) ? this.order['dt'] : false
             const ct = v.values.map(v => v.ct === '301').includes(true) ? this.order['ct'] : false
-            const { _id } = await this.saveReestr({...v, order: { dt, ct } })
-            return this.select( _id)         
+            return this.saveReestr({...v, order: { dt, ct } })
         },
         async remove(v) {
             await this.removeReestr(v)
@@ -99,12 +96,11 @@ export default {
         printOrder(props) {
             this.$modal.show(Order, props, { width: '850', height: '500'})
         },
-        printBilet(props) {
-            
+        printBilet(props) {      
             this.$modal.show(Bilet, props, { width: '800', height: '550'})
         },
         select(id) {       
-            return this.selected = id
+            this.selected = id
         }
     }
 }

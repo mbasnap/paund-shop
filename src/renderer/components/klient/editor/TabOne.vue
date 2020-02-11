@@ -1,9 +1,11 @@
 <template>
     <div>
         <div class="form-row mb-2">
-            <suggest class="form-control col" name="family" :placeholder="t('family')"
+            <suggest ref="klients" class="form-control col" name="family" :placeholder="t('family')"
             :suggest="({ family, name, sername }) => family + ' ' + name + ' ' + sername"
-            :value="value" :options="options" @select="update"/>
+            :value="value" :options="options" @select="update">
+                <svg-row-down class="reset" @click="$refs['klients'].highlight(0, true)"/>
+            </suggest>
         </div>
         <div class="form-row mb-2">
             <named-input class="form-control col-5 mr-1" name="name" :placeholder="t('name')" :value="value"/>
@@ -19,18 +21,20 @@
 <script>
 import { mapGetters } from 'vuex'
 import { Passport, mix} from './components'
+import { SvgRowDown } from '@/svg'
 export default {
     mixins: [ mix ],
     props: { value: Object, disabled: Boolean, full: Boolean },
-    components: { Passport },
+    components: { Passport, SvgRowDown },
     inject: [ 'update', 'save' ],
     computed: {
       ...mapGetters({
           klients: 'klient/klients'
       }),
       options({ value, klients }) {
-          return klients.filter(({ family }) => (family || '')
-            .includes(value.family || ''))
+          return klients
+          .filter(({ family }) => (family || '').includes(value.family || ''))
+            
       }
     },
     methods: {
@@ -39,6 +43,8 @@ export default {
       },
       input({ name, value }) {
         this.update({ ...this.value, [name]: value })
+          if(name === 'family')  this.$refs['klients'].highlight(0)
+
       },
       t(v) {
           return this.$t(`klient.${v}`)
