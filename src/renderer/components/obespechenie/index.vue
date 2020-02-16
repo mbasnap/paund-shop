@@ -69,7 +69,7 @@ export default {
             return value.length
         },
         disabledAdd({ rows, settings }){
-            const { maxRows } = {...{ ...settings}.obespeshenie }
+            // const { maxRows } = {...{ ...settings}.obespeshenie }
             return rows >= 5
         }
     },

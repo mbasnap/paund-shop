@@ -27,7 +27,8 @@ function createWindow ( ddd ) {
   mainWindow = new BrowserWindow({
     webPreferences: {
       webSecurity: false,
-      nativeWindowOpen: true
+      nativeWindowOpen: true,
+      nodeIntegration: true
     },
     height: 563,
     width: 1000,
@@ -58,6 +59,7 @@ app.on('ready', async () => {
 
   createWindow()
   Menu.setApplicationMenu( Menu.buildFromTemplate( menuTemplate() ))
+  // mainWindow.webContents.openDevTools();
 })
 
 app.on('window-all-closed', () => {
