@@ -20,6 +20,9 @@ import { KassaList, Context, PrixoRasxod, History } from './components'
 import { Bilet, Order } from '@/zvit'
 export default {
     components: { KassaList, Context, History },
+    created() {
+      this.reestrUpdate()
+    },
     provide() {
         const onStart = () => this.$emit('start')
         const onEnd = () => this.$emit('end')
@@ -67,6 +70,7 @@ export default {
         ...mapActions({
             removeReestr: 'reestr/remove',
             saveReestr: 'reestr/save',
+            reestrUpdate: 'reestr/update'
         }),
         async save(v) {
             const dt = v.values.map(v => v.dt === '301').includes(true) ? this.order['dt'] : false

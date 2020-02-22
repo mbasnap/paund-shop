@@ -1,6 +1,6 @@
 <template>
   <select :name="name" class="named-input" :placeholder="placeholder"
-    :value="value[name]"
+    :value="model"
     :disabled="disabled || readonly()"
     @change="$nextTick(() => $emit('change', $event.target))"
     @input="input($event.target)">
@@ -26,6 +26,13 @@ export default {
         }
     },
     inject: [ "input", "readonly"],
+    computed: {
+      model({ value, name }) {
+        // console.log(value[name]);
+        
+        return value[name]
+      }
+    },
     methods: {}
 }
 </script>

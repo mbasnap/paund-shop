@@ -7,8 +7,6 @@ import { store } from '@/setup'
 const local =  `http://localhost:5984`
 const remote = `http://93.125.75.52:5984/virus`
 const auth = { 
-  // username: 'mbasnap@yandex.ua',
-  // password: 'Stalker01',
   username: 'admin',
   password: 'Stalker01'
 }
@@ -16,16 +14,16 @@ const user = new PouchDB(`${local}/_users`, { auth })
 user.useAsAuthenticationDB()
 
 const klient = new PouchDB(`${local}/klient`)
-  klient.sync( new PouchDB(`${remote}-klient`), { live: true })
-  .on('change', v => console.log(v))
+  klient.sync( new PouchDB(`${remote}-klient`), { live: true, retry: true })
+  .on('change', v => store.dispach('klient/update'))
   .on('error', v => console.log(v))
 const company = new PouchDB(`${local}/company`)
-  company.sync( new PouchDB(`${remote}-company`), { live: true })
-  .on('change', v => console.log(v))
+  company.sync( new PouchDB(`${remote}-company`), { live: true, retry: true })
+  .on('change', v => store.dispach('company/update'))
   .on('error', v => console.log(v))
 const reestr = new PouchDB(`${local}/reestr`)
-  reestr.sync( new PouchDB(`${remote}-reestr`), { live: true })
-  .on('change', v => console.log(v))
+  reestr.sync( new PouchDB(`${remote}-reestr`), { live: true, retry: true })
+  .on('change', v => store.dispach('reestr/update'))
   .on('error', v => console.log(v))
 
 

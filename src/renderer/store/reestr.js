@@ -48,7 +48,7 @@ const getters = {
         const arr = dt377.map(v => ({...map[v._id]})).map(v => Number(v.number))
         const min = 1000
         const max = fin(Math.max(...arr))
-        const count = max - min > 0 ? max - min : 0
+        const count = max - min > 0 ? max - min : 1
         const res = Array.from(Array(count), (v,i) => i + min)
             .filter(i => !arr.includes(i))
         return [...res, max + 1]
@@ -72,22 +72,21 @@ const actions = {
     },
     async save ({ dispatch, getters }, v) {
         const date = getters['date']
-        // const _id = await reestr.post({ ...v, date })
         return dispatch('update', await reestr.post({ ...v, date }))
     },
-    async updateValue ({ dispatch, getters }, v) {
-        // console.log(v);
+    async updateValue ({ dispatch }, v) {
         return dispatch('update', await reestr.post(v))
     },
 
     async remove ({ dispatch, getters }, { _id }) {     
         const used = getters.used[_id]
-        if(used) throw { used }
-        const doc = await reestr.get(_id)
-        return dispatch('update', await reestr.remove(doc))
+        if (used) throw { used }
+        return dispatch('updateValue', {...await reestr.get(_id), _deleted: true })
     },
 
     async update({ commit, getters }, { id } = {}) {
+        // console.log('update', id);
+        
         commit('reestr', await reestr.allDocs({ include_docs: true }))
         return getters.map[id]
     }

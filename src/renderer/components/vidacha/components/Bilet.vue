@@ -6,7 +6,7 @@
             <div class="col-5" style="line-height: 40px; text-align: right;">Билет № </div>
             <div class="col">
                 <named-select class="form-control mb-2" name="number"
-                :value="{number}" :options="numbers"/>
+                :value="{ number }" :options="numbers"/>
             </div>
         </div>
         <input class='form-control mb-2' name="ssuda" :value="ssuda"
@@ -56,6 +56,8 @@ computed: {
         numbers: 'reestr/numbers'
     }),
     number({ value, numbers }) {
+        // console.log(value.number, numbers);
+        
         return value.number || numbers[0]
     },   
     discounts({ settings }) {

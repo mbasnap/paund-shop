@@ -20,6 +20,9 @@ export default {
     provide() {
       return { update: this.update, save: this.save }
     },
+    created() {
+      this.klientUpdate()
+    },
     computed: {
       ...mapGetters({
         // map: 'klient/map'
@@ -34,7 +37,8 @@ export default {
     },
     methods: {
         ...mapActions({
-          saveKlient: 'klient/save'
+          saveKlient: 'klient/save',
+          klientUpdate: 'klient/update'
         }),
       async save(v) {
         return this.update(await this.saveKlient({ ...v }))
