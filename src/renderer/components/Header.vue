@@ -2,7 +2,7 @@
 <template>
 <div class="main-menu">
   <b-navbar toggleable="sm" type="dark" variant="info">
-    <b-navbar-brand href="#" :style="{color: conn ? 'green' : 'red'}">{{logo}}</b-navbar-brand>
+    <b-navbar-brand href="#" :style="{color: conn ? 'green' : 'red'}">{{company.logo}}</b-navbar-brand>
 
     <div class="container-fluid" v-show="isAuth">
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
@@ -36,7 +36,7 @@ export default {
     }
   },
   computed: {
-     ...mapGetters(['menu', 'logo', 'date', 'isAuth']),
+     ...mapGetters(['menu', 'date', 'isAuth', 'company']),
 
   },
   methods: {
