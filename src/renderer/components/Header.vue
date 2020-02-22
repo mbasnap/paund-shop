@@ -30,13 +30,20 @@
   import User from './User';
 export default {
   components: { Datepicker, User},
+  created() {
+    window.addEventListener('online', () => this.conn = true)
+    window.addEventListener('offline', () => this.conn = false)
+  },
   data() {
     return {
-      conn: false
+      conn: navigator.onLine
     }
   },
   computed: {
-     ...mapGetters(['menu', 'date', 'isAuth', 'company']),
+     ...mapGetters(['menu', 'date', 'user', 'company']),
+     isAuth({ user }) {
+       return !!user
+     }
 
   },
   methods: {

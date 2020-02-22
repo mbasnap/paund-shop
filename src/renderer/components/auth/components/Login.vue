@@ -19,7 +19,7 @@
 
 <button class="btn btn-primary mb-3" type="button" 
     :disabled="formInputs.some(({value, error}) => !value || error)"
-     @click="login(userData)"
+     @click="logIn(userData)"
     > {{$t('auth.login')}}
 </button>
 
@@ -48,7 +48,8 @@ export default {
             email: new Input({
                 name: 'email',
                 onInput: (val) => {
-                    let error = !val ? 'field_required' : !isEmail(val) ? 'incorrect_email' : false
+                    // let error = !val ? 'field_required' : !isEmail(val) ? 'incorrect_email' : false
+                    let error = !val ? 'field_required' : false
                     this.email.error = error
                 }
             }),
@@ -78,7 +79,7 @@ export default {
         }
     },
     methods: {
-        ...mapActions('user', ['login']), setErrors,
+        ...mapActions(['logIn']), setErrors,
     }
 
 }

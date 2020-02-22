@@ -1,9 +1,10 @@
-import { getToken, company } from '@/db'
+import { company, user } from '@/db'
 import { router } from '@/setup'
 
 const state = {
     date: new Date(),
-    company: {}
+    company: {},
+    user: false
 }
 
 const getters = {
@@ -20,53 +21,50 @@ const getters = {
     discounts ({}, { settings }) {
         return settings.discounts || []
     },
-    user({}, getters) {
-        return getters['user/user']
-    },
-    isAuth ({}, getters) {
-        return true
-        // return getters['user/isAuth']
-    },
-    isActive ({}, { company }) {
-        return !! company.id
+    user({ user }) {
+        return user || ''
     },
     date ({ date }) {
         return date
     },
     menu ({}, { company }) {
         return company.menu || []
-    },
-    logo ({}, { company }) {
-        return company.name
     }
-
 }
 const mutations = {
     date (state, v) {
         state.date = v
     },
-    company (state, v) {
-        
+    company (state, v) {        
         state.company = v
+    },
+    user (state, v) {        
+        state.user = v
     }
 }
 const actions = {
-
-    async activate({ dispatch }, token) {
-        localStorage.setItem('x-token', token)
-        await dispatch('update')
-        router.push('/login')
+    logIn({ dispatch }, { email, password }) {
+        return user.logIn(email, password)
+            .then(() => {
+                localStorage.setItem('user', email)
+                dispatch('update')
+            })
+    },
+    logOut({ dispatch }) {
+        user.logOut().then(() => {
+            localStorage.removeItem('user')
+            dispatch('update')
+        })        
     },
 
     setDate  ({ commit }, v) {
         commit('date', v)
     },
-
-    async update  ({ commit, dispatch }) {
-        // getToken('x-token')
+    async update  ({ commit }, path = '/vidacha') {
+        const user = localStorage.getItem('user')
+        commit('user', user)
         commit('company', await company.allDocs({include_docs: true}))
-        dispatch('reestr/update')
-        dispatch('klient/update')
+        router.push(user ? path : '/login')
     }
 }
 

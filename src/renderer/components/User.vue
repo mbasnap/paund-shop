@@ -1,20 +1,17 @@
 <template>
-    <b-nav-item-dropdown :text="user.name" right >
-     <b-link class="dropdown-item" @click="logout">{{ $t('auth.logout') }}</b-link>
+    <b-nav-item-dropdown :text="user" right >
+     <b-link class="dropdown-item" @click="logOut">{{ $t('auth.logout') }}</b-link>
     </b-nav-item-dropdown>
 </template>
 
 <script>
 import {mapGetters, mapActions} from 'vuex'
 export default {
-created() {
-    this.update()
-},
 computed: {
-    ...mapGetters('user', ['user'])
+    ...mapGetters(['user'])
 },
 methods: {
-    ...mapActions('user', ['logout', 'update'])
+    ...mapActions(['logOut'])
 }
 }
 </script>
