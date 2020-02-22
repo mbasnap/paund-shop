@@ -5,7 +5,7 @@ PouchDB.plugin(Auth)
 import axios from 'axios'
 import { store } from '@/setup'
 const local =  `http://localhost:5984`
-const remote = `http://91.235.129.14:5984/virus`
+const remote = `http://93.125.75.52:5984/virus`
 const auth = { 
   // username: 'mbasnap@yandex.ua',
   // password: 'Stalker01',
@@ -13,17 +13,18 @@ const auth = {
   password: 'Stalker01'
 }
 const user = new PouchDB(`${local}/_users`, { auth })
-  user.useAsAuthenticationDB()
-const klient = new PouchDB(`${local}/klient`, { auth })
-  klient.sync( new PouchDB(`${remote}-klient`,{ auth }), { live: true })
+user.useAsAuthenticationDB()
+
+const klient = new PouchDB(`${local}/klient`)
+  klient.sync( new PouchDB(`${remote}-klient`), { live: true })
   .on('change', v => console.log(v))
   .on('error', v => console.log(v))
-const company = new PouchDB(`${local}/company`, { auth })
-  company.sync( new PouchDB(`${remote}-company`,{ auth }), { live: true })
+const company = new PouchDB(`${local}/company`)
+  company.sync( new PouchDB(`${remote}-company`), { live: true })
   .on('change', v => console.log(v))
   .on('error', v => console.log(v))
-const reestr = new PouchDB(`${local}/reestr`, { auth })
-  reestr.sync( new PouchDB(`${remote}-reestr`,{ auth }), { live: true })
+const reestr = new PouchDB(`${local}/reestr`)
+  reestr.sync( new PouchDB(`${remote}-reestr`), { live: true })
   .on('change', v => console.log(v))
   .on('error', v => console.log(v))
 

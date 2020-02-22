@@ -46,7 +46,6 @@ const mutations = {
         state.date = v
     },
     company (state, v) {
-        console.log(v);
         
         state.company = v
     }

@@ -21,7 +21,7 @@ let mainWindow, workerWindow
 const winURL = process.env.NODE_ENV === 'development' ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
 const workURL = process.env.NODE_ENV === 'development' ? `http://localhost:9080/static/assets/worker.html`
-  : `file://${__dirname}/worker.html`
+  : `file://${__dirname}/static/assets/worker.html`
 
 function createWindow ( ddd ) {
   mainWindow = new BrowserWindow({
@@ -42,7 +42,7 @@ function createWindow ( ddd ) {
   // mainWindow.custom = { db: ddd }
   workerWindow = new BrowserWindow({ 
     show: false,
-    webPreferences: { webSecurity: false },
+    webPreferences: { webSecurity: false, nodeIntegration: true },
     protocol: 'file',
     parent:mainWindow
   })
@@ -59,7 +59,7 @@ app.on('ready', async () => {
 
   createWindow()
   Menu.setApplicationMenu( Menu.buildFromTemplate( menuTemplate() ))
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 })
 
 app.on('window-all-closed', () => {
@@ -81,10 +81,12 @@ ipcMain.on("show-zvit", (v) => {
 })
 
 ipcMain.on('print', (e, v) => {
+  
   workerWindow.webContents.send('print', v)
 })
 
 ipcMain.on('readyToPrint', ({ sender }, v) => {
+  // console.log('print');
   const { size, zoom, silent } = v  
   workerWindow.webContents.insertCSS(`@media print { @page {size: ${ size }} }`)
   workerWindow.webContents.print({ silent, landscape: size === 'landscape' })

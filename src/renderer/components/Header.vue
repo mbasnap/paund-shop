@@ -2,7 +2,7 @@
 <template>
 <div class="main-menu">
   <b-navbar toggleable="sm" type="dark" variant="info">
-    <b-navbar-brand href="#">{{logo}}</b-navbar-brand>
+    <b-navbar-brand href="#" :style="{color: conn ? 'green' : 'red'}">{{logo}}</b-navbar-brand>
 
     <div class="container-fluid" v-show="isAuth">
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
@@ -28,9 +28,13 @@
   import {mapGetters, mapActions} from 'vuex'
   import {Datepicker} from '@/widgets';
   import User from './User';
-  // import {ru} from 'vuejs-datepicker/dist/locale'
 export default {
   components: { Datepicker, User},
+  data() {
+    return {
+      conn: false
+    }
+  },
   computed: {
      ...mapGetters(['menu', 'logo', 'date', 'isAuth']),
 
