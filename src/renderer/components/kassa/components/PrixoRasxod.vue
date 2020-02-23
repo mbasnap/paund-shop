@@ -5,8 +5,7 @@
             <named-input class="form-control col-6 mr-1" name="summ" :placeholder="t('summ')"
             :value="model" />
             <named-select class="form-control col" :name="account" :placeholder="t('account')"
-            :value="model" :options="Object.keys(accounts[account])" @change="change"
-            :tostring="toStringAccount"/>
+            :value="model" :options="options" @change="change" :tostring="toStringAccount"/>
         </div> 
         <div class="form-row mb-2">
             <named-select class="form-control col" name="klient" :placeholder="t('from')"
@@ -39,25 +38,27 @@ export default {
     computed: {
         ...mapGetters({
             accounts: 'accounts',
-            users: 'klient/users',
-            // nextOrder: 'reestr/nextOrder'
+            map: 'klient/map',
+            company: 'company'
         }),
         account({ type }) {
             return type === 'dt' ? 'ct' : 'dt'
         },
-        passports({ value }) {
-            // console.log(value);
-            
-            return []
-        },
+        passports({ value }) { return []},
         model({ value }) {
             return { ...value, summ: toDouble(value.summ) }
         },
         values({ model, account, type }) {
-            // const order = { [type]: nextOrder[type]}    
             return {...model, values: [
                 { [type]: '301', [account]: model[account], summ: model.summ },
             ]}
+        },
+        options({ accounts, account }) {
+            const excludes = v => !(accounts.excludes || []).includes(v)
+            return Object.keys(accounts[account]).filter(excludes)
+        },
+        users({ company, map }) {
+            return (company.users || []).map(v => map[v])
         }
     },
     methods: {

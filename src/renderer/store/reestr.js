@@ -70,25 +70,25 @@ const actions = {
     err({}, err) {
         console.log({ used: err });
     },
-    async save ({ dispatch, getters }, v) {
-        const date = getters['date']
-        return dispatch('update', await reestr.post({ ...v, date }))
+    save ({ dispatch, getters }, v) {
+        return reestr.post({ ...v, date: getters['date']})
+            .then(v => dispatch('update', v))
     },
-    async updateValue ({ dispatch }, v) {
-        return dispatch('update', await reestr.post(v))
+    updateValue ({ dispatch }, v) {
+        return reestr.post(v)
+            .then(v => dispatch('update', v))
+    },
+    remove ({ dispatch }, { _id }) {     
+        return reestr.get(_id)
+            .then(v => dispatch('updateValue', { ...v, _deleted: true }))
+                .then(v => dispatch('update', v))
     },
 
-    async remove ({ dispatch, getters }, { _id }) {     
-        const used = getters.used[_id]
-        if (used) throw { used }
-        return dispatch('updateValue', {...await reestr.get(_id), _deleted: true })
-    },
-
-    async update({ commit, getters }, { id } = {}) {
-        // console.log('update', id);
+    async update({ commit, getters }, v) {
+        console.log(v);
         
         commit('reestr', await reestr.allDocs({ include_docs: true }))
-        return getters.map[id]
+        return getters.map[{ ...v}.id]
     }
 }
 

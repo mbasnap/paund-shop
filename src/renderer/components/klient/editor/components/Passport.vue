@@ -5,7 +5,7 @@
         
         <suggest v-if="!value._id || !passports.length || full" class="form-control col" name="number"
         :placeholder="t('number')"
-        :suggest="suggest" :value="model" :options="klients" @select="update"/>
+        :suggest="suggest" :value="model" :options="options" @select="update"/>
 
         <custom-select v-else class="form-control col" name="number" :placeholder="t('number')"
         :suggest="tostring" :selected="passport" :options="passports">
@@ -40,7 +40,7 @@ import mix from '@/widgets/named-input/mix.js'
 export default {
     mixins: [ mix ],
     components: { SvgTrash, SvgPlusCircle },
-    props: { value: Object, disabled: Boolean, full: Boolean },
+    props: { value: Object, disabled: Boolean, full: Boolean, options: Array },
     inject: [ 'update', 'save' ],
     computed: {
         ...mapGetters({
@@ -55,10 +55,10 @@ export default {
         model({ passports, passport }) {
             return { ...passports[passport]} 
         },
-        options({ model, passports, tostring }) {
-            const value = tostring(model)
-                return passports.filter(v => tostring(v).includes(value))
-        }
+        // options({ model, passports, tostring }) {
+        //     const value = tostring(model)
+        //         return passports.filter(v => tostring(v).includes(value))
+        // }
     },
     methods: {
         select(passport) {

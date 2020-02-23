@@ -15,15 +15,15 @@ user.useAsAuthenticationDB()
 
 const klient = new PouchDB(`${local}/klient`)
   klient.sync( new PouchDB(`${remote}-klient`), { live: true, retry: true })
-  .on('change', v => store.dispach('klient/update'))
+  .on('change', v => store.dispatch('klient/update'))
   .on('error', v => console.log(v))
 const company = new PouchDB(`${local}/company`)
   company.sync( new PouchDB(`${remote}-company`), { live: true, retry: true })
-  .on('change', v => store.dispach('company/update'))
+  .on('change', v => store.dispatch('update'))
   .on('error', v => console.log(v))
 const reestr = new PouchDB(`${local}/reestr`)
   reestr.sync( new PouchDB(`${remote}-reestr`), { live: true, retry: true })
-  .on('change', v => store.dispach('reestr/update'))
+  .on('change', v => store.dispatch('reestr/update'))
   .on('error', v => console.log(v))
 
 

@@ -11,7 +11,7 @@
             <named-input class="form-control col-5 mr-1" name="name" :placeholder="t('name')" :value="value"/>
             <named-input class="form-control col" name="sername" :placeholder="t('sername')" :value="value"/>
         </div>
-        <passport class="mb-2" :value="value" :disabled="disabled" :full="full"/>
+        <passport class="mb-2" :value="value" :options="klients" :disabled="disabled" :full="full"/>
         <div class="form-row mb-2">
             <named-input class="form-control col" name="idn" :placeholder="t('idn')" :value="value"/>   
         </div>
@@ -29,11 +29,16 @@ export default {
     inject: [ 'update', 'save' ],
     computed: {
       ...mapGetters({
-          klients: 'klient/klients'
+          docs: 'klient/docs',
+          company: 'company'
       }),
+      klients({ docs, company }) {
+          const users = v => !(company.users || []).includes(v._id)
+          return docs.filter(users)
+      },
       options({ value, klients }) {
-          return klients
-          .filter(({ family }) => (family || '').includes(value.family || ''))
+          const byFamily = ({ family }) => (family || '').includes(value.family || '')
+          return klients.filter(byFamily)
             
       }
     },

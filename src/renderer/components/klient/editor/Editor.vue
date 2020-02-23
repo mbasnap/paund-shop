@@ -1,6 +1,5 @@
 <template> 
-    <modal-editor ref="modal-editor" :title="title" :disabled="disabled"
-    @save="save(model).then(v => editor.close())" >
+    <modal-editor ref="modal-editor" :title="title" :disabled="disabled" @save="onSave" >
     <div class="tabs" >
         <a v-for="(item, key) in tabs" :key="key" :class="{ active: activetab === key }"
         @click="activetab=key" > {{ item }} </a>
@@ -9,7 +8,7 @@
         <tab-one class="tabcontent" v-if="activetab === 0"
         :value="model" :full="true"/>
         <tab-two class="tabcontent" v-if="activetab === 1" :value="model" />
-        <tab-three class="tabcontent" v-if="activetab === 2" :value="value" />
+        <tab-three class="tabcontent" v-if="activetab === 2" :value="model" />
     </div>
     </modal-editor>
 </template>
@@ -22,7 +21,7 @@ export default {
     components: { ModalEditor, TabOne, TabTwo, TabThree },
     props: { title: String, value: Object, save: Function },
     provide() {
-        return { update: this.update, save: this.save }
+        return { update: this.update, save: this.onSave }
     },
     data() {
         return {
@@ -46,6 +45,10 @@ export default {
     methods: {
         update(v) {
             this.data = { ...v }
+        },
+        onSave() {
+            return this.save(this.model)
+                .then(() => this.editor.close())
         }
     }
 }

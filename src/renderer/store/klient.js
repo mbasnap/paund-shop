@@ -7,14 +7,8 @@ const getters = {
     docs ({ klients }) {
         return  (klients.rows || []).map(v => v.doc) || []
     },
-    klients ({}, { docs }) {
-        return  docs.filter(v => !v.user)
-    },
-    users ({}, { docs }) {
-        return  docs.filter(v => v.user)
-    },
-    map ({}, { klients, users }) {
-        return  [...klients, ...users].reduce((obj, v) => ({ ...obj, [v._id]: v}), {})
+    map ({}, { docs }) {
+        return  docs.reduce((obj, v) => ({ ...obj, [v._id]: v}), {})
     }
 }
 const mutations = {

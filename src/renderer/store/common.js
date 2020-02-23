@@ -24,6 +24,9 @@ const getters = {
     user({ user }) {
         return user || ''
     },
+    users({}, { company }) {
+        return company.users || []
+    },
     date ({ date }) {
         return date
     },
@@ -43,6 +46,25 @@ const mutations = {
     }
 }
 const actions = {
+    save ({ dispatch, getters }, v) {
+        return company.post({ ...v, date: getters['date']})
+            .then(v => dispatch('update', v))
+                .catch(e => {
+                    console.log(e);
+                })
+    },
+    addUser({ dispatch, getters }, { email, _id }) {
+        console.log(email, _id);
+        const users = [ ...getters['users'], _id]
+        return user.signUp(email, '1234', { roles: ['user']})
+            .then(() => dispatch('save', { users }))
+                .catch(({ docId }) => dispatch('removeUser', { docId, _id }))
+    },
+    removeUser({ dispatch, getters }, { docId, _id }) {
+        const users = getters['users'].filter(v => v !== _id)
+        return user.get(docId).then(v => user.put({ ...v, _deleted: true }))
+            .then(() => dispatch('save', { users }))
+    },
     logIn({ dispatch }, { email, password }) {
         return user.logIn(email, password)
             .then(() => {

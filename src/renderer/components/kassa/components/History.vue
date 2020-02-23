@@ -11,7 +11,7 @@
                                 </span>
                             </div>
                             <div class="col-1 mr-2" style="text-align: right;">
-                                <svg-trash width="13px;" @click="$emit('remove', model)"></svg-trash>
+                                <svg-trash width="13px;" @click="removeValue(model)"></svg-trash>
                             </div>
                         </div>
                     </li>
@@ -41,7 +41,8 @@ export default {
             map: 'reestr/map',
             klients: 'klient/map',
             accounts: 'accounts',
-            company: 'company'
+            company: 'company',
+            used: 'reestr/used'
         }),
         bilet({ value, map }) {
             return { ...map[value] }
@@ -70,6 +71,10 @@ export default {
             return Object.entries({ dt, ct })
                 .filter(([k,v]) => v !== '301')
                     .map(([k,v]) => this.accounts[k][v])[0]
+        },
+        removeValue(model) {
+        if (!this.used[model._id]) 
+        return this.$emit('remove', model)  
         }
     }
 }

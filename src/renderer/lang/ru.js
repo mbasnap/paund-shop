@@ -48,6 +48,8 @@ export default {
       'home': 'Дом/кв.',
       'bithday': 'Дата рождения',
       'phone': 'Телефон',
+      'user': 'Сотрудник',
+      'email': 'E-mail'
     },
     vozvrat: {
       'add-statment': 'Добавить заявление',
