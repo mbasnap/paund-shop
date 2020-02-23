@@ -10,7 +10,10 @@
         <div class="form-row mb-2">
             <named-select class="form-control col" name="klient" :placeholder="t('from')"
             :value="model" :options="users" @change="change"
-            :tostring="toStringKlient" :tovalue="v => v._id"/>
+            :tostring="toStringKlient" :tovalue="toValueKlient"/>
+            <div class="col-1">
+                <svg-address-card width="30px;" @click="showModal('edit')"/>
+            </div>            
             <!-- <named-select class="form-control col" name="passport" placeholder="Passport"
             :tostring="toStringPassport" :tovalue="(v, i) => i"
             :value="model" :options="passports"/> -->
@@ -25,10 +28,12 @@
 import { mapGetters, mapActions } from 'vuex'
 import { toDouble } from '@/functions'
 import ModalEditor from '@/widgets/Modal.vue'
+import { Editor } from '@/components/klient/editor/index.js'
+import { SvgAddressCard } from '@/svg'
 import mix from '@/widgets/named-input/mix.js'
 export default {
     mixins: [ mix ],
-    components: { ModalEditor },
+    components: { ModalEditor, SvgAddressCard },
     props: { type: String, save: Function },
     data() {
         return {
@@ -58,18 +63,29 @@ export default {
             return Object.keys(accounts[account]).filter(excludes)
         },
         users({ company, map }) {
-            return (company.users || []).map(v => map[v])
+            return (company.users || []).map(v => map[v]).filter(v => v)
         }
     },
     methods: {
+        ...mapActions({
+          saveKlient: 'klient/save',
+        //   remove: 'klient/remove'
+        }),
+        showModal (title) {        
+            const value = {...this.map[{...this.value}.klient] }
+            this.$modal.show(Editor, { title, value, save: this.saveKlient }, { height: 'auto' })
+        },
         readonly() {
             return this.disabled
         },
-        change({ name, value }) {          
+        change({ name, value }) {
             this.value = { ...this.value, [name]: value }
         },
         toStringKlient({ family, name, sername }) {
             return `${family} ${name} ${sername}`
+        },
+        toValueKlient(v) {
+            return {...v}._id
         },
         toStringPassport({ seria, number }) {
             return `${seria} ${number}`

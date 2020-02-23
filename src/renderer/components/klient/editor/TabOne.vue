@@ -6,6 +6,9 @@
             :value="value" :options="options" @select="update">
                 <svg-row-down class="reset" @click="$refs['klients'].highlight(0, true)"/>
             </suggest>
+            <div v-if="full" class="col-1">
+                <svg-trash width="15px;" @click="$emit('remove')"/>
+            </div>  
         </div>
         <div class="form-row mb-2">
             <named-input class="form-control col-5 mr-1" name="name" :placeholder="t('name')" :value="value"/>
@@ -21,11 +24,11 @@
 <script>
 import { mapGetters } from 'vuex'
 import { Passport, mix} from './components'
-import { SvgRowDown } from '@/svg'
+import { SvgRowDown, SvgTrash } from '@/svg'
 export default {
     mixins: [ mix ],
     props: { value: Object, disabled: Boolean, full: Boolean },
-    components: { Passport, SvgRowDown },
+    components: { Passport, SvgRowDown, SvgTrash },
     inject: [ 'update', 'save' ],
     computed: {
       ...mapGetters({

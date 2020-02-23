@@ -36,14 +36,16 @@ export default {
     methods: {
         ...mapActions({
           saveKlient: 'klient/save',
+          remove: 'klient/remove',
           klientUpdate: 'klient/update'
         }),
-      async save(v) {
-        return this.update(await this.saveKlient({ ...v }))
+      save(v) {
+        return this.saveKlient({ ...v })
+          .then(v => this.update(v))
       },
-      showModal (title) {        
-        const { model: value, update, save } = this
-        this.$modal.show(Editor, { title, value, save }, { height: 'auto' })
+      showModal(title) {        
+        const { model: value, update, save, remove } = this
+        this.$modal.show(Editor, { title, value, save, remove }, { height: 'auto' })
       },
       update(v) {
         this.$emit('input', { ...this.model, ...v })

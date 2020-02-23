@@ -20,6 +20,12 @@ const actions = {
     async save ({ dispatch }, v) {
         return dispatch('update', await klient.post(v))
     },
+    async remove ({ dispatch }, v) {
+        console.log(v);
+        
+        return klient.get(v._id)
+            .then(v => dispatch('save', {...v, _deleted: true }))
+    },
     async update ({ commit, getters }, { id } = {}) {       
         commit('klients', await klient.allDocs({ include_docs: true }))
         return getters.map[id]

@@ -1,11 +1,12 @@
 <template> 
-    <modal-editor ref="modal-editor" :title="title" :disabled="disabled" @save="onSave" >
+    <modal-editor ref="modal-editor" :title="t(title)" :disabled="disabled"
+    @save="save(model).then(() => close())" >
     <div class="tabs" >
         <a v-for="(item, key) in tabs" :key="key" :class="{ active: activetab === key }"
-        @click="activetab=key" > {{ item }} </a>
+        @click="activetab=key" > {{ t(item) }} </a>
     </div>
     <div class="content">
-        <tab-one class="tabcontent" v-if="activetab === 0"
+        <tab-one class="tabcontent" v-if="activetab === 0" @remove="remove(model).then(close)"
         :value="model" :full="true"/>
         <tab-two class="tabcontent" v-if="activetab === 1" :value="model" />
         <tab-three class="tabcontent" v-if="activetab === 2" :value="model" />
@@ -21,11 +22,11 @@ export default {
     components: { ModalEditor, TabOne, TabTwo, TabThree },
     props: { title: String, value: Object, save: Function },
     provide() {
-        return { update: this.update, save: this.onSave }
+        return { update: this.update, save: this.save, close: this.close }
     },
     data() {
         return {
-            tabs: [ 'Tab 1', 'Tab 2', 'Tab 3' ],
+            tabs: [ 'tab_1', 'tab_2', 'tab_3' ],
             activetab: 0,
             data: {}
         }
@@ -43,12 +44,17 @@ export default {
         }
     },
     methods: {
+        ...mapActions({
+          remove: 'klient/remove',
+        }),
         update(v) {
             this.data = { ...v }
         },
-        onSave() {
-            return this.save(this.model)
-                .then(() => this.editor.close())
+        close() {
+            return this.editor.close()
+        },
+        t(v) {
+          return this.$t(`klient.${v}`)
         }
     }
 }

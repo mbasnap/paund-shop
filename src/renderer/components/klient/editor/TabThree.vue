@@ -3,7 +3,7 @@
       <named-input class="form-control col" name="email" :placeholder="t('email')" :value="value"/>
       <div class="col-3" style="text-align: right;">
             <input type="checkbox" class="form-check-input" id="check"
-            :checked="isUser" @change="save().then(() => addUser(value))" :disabled="disabled">
+            :checked="isUser" @change="save(value).then(v => addUser(v)).then(() => close())" :disabled="disabled">
             <label class="form-check-label" for="check">{{ t('user') }}</label>
       </div>
   </div>
@@ -15,14 +15,14 @@ import { mix} from './components'
 export default {
     mixins: [ mix ],
     props: { value: Object },
-    inject: [ 'update', 'save' ],
+    inject: [ 'update', 'save', 'close' ],
     computed: {
       ...mapGetters({
           docs: 'klient/docs',
           company: 'company'
       }),
       isUser({ company, value }) {
-        return (company.users || []).includes(value._id)
+        return (company.users || []).includes({...value}._id)
       },
       disabled({ value }){
         const { isValid } = value

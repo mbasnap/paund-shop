@@ -49,7 +49,11 @@ export default {
       'bithday': 'Дата рождения',
       'phone': 'Телефон',
       'user': 'Сотрудник',
-      'email': 'E-mail'
+      'email': 'E-mail',
+      'tab_1': 'Вкладка 1',
+      'tab_2': 'Вкладка 2',
+      'tab_3': 'Вкладка 3',
+      'edit': 'Редактировать'
     },
     vozvrat: {
       'add-statment': 'Добавить заявление',

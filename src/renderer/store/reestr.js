@@ -85,8 +85,7 @@ const actions = {
     },
 
     async update({ commit, getters }, v) {
-        console.log(v);
-        
+        // console.log(v);
         commit('reestr', await reestr.allDocs({ include_docs: true }))
         return getters.map[{ ...v}.id]
     }
