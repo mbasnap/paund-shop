@@ -1,13 +1,13 @@
-import { db, reestr } from '@/db'
+import { reestr } from '@/db'
 // const { get, post } = db('/reestr')
 const state = {
     reestr: {}
 }
 const getters = {
 
-    date({}, {}, { common }) {        
-        return  common.date
-    },
+    // date({}, {}, { common }) {        
+    //     return  common.date
+    // },
     docs({ reestr }) {        
         const rows = reestr.rows || []
         return  rows.map(v => v.doc)
@@ -45,7 +45,8 @@ const getters = {
     },
     numbers({}, { dt377, map }) {      
         const fin = v => Number.isFinite(v) ? v : 0
-        const arr = dt377.map(v => ({...map[v._id]})).map(v => Number(v.number))
+        const arr = dt377.map(v => ({...map[v._id]}))
+            .map(v => Number(v.number)).filter(v => !!v)
         const min = 1000
         const max = fin(Math.max(...arr))
         const count = max - min > 0 ? max - min : 1
@@ -70,8 +71,11 @@ const actions = {
     err({}, err) {
         console.log({ used: err });
     },
-    save ({ dispatch, getters }, v) {
-        return reestr.post({ ...v, date: getters['date']})
+    save ({ dispatch }, v) {
+        const { date, user } = this.getters
+        console.log(date, user);
+        
+        return reestr.post({ ...v, date, user: user._id })
             .then(v => dispatch('update', v))
     },
     updateValue ({ dispatch }, v) {

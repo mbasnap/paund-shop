@@ -21,8 +21,8 @@ const getters = {
     discounts ({}, { settings }) {
         return settings.discounts || []
     },
-    user({ user }) {
-        return user || ''
+    user({ user }, { 'klient/docs': klients}) {
+        return klients.find(({ email }) => email === user )
     },
     users({}, { company }) {
         return company.users || []

@@ -73,7 +73,7 @@
         }"/>
         <sign v-if="type !== 'dt'" label="Руководитель" :value="company.director"/>
         <sign label="Главный бухгалтер" :value="company.bookkeeper"/>
-        <sign :label="type === 'dt' ? 'Получил кассовый работник' : 'Выдал кассовый работник'" :value="company.kassir"/>
+        <sign :label="type === 'dt' ? 'Получил кассовый работник' : 'Выдал кассовый работник'" :value="kassir"/>
         <bodys-row :label="from2" 
         :value="{
             name: '(должность, фамилия, имя, отчество / фамилия, имя, отчество физического лица заёмщика)',
@@ -97,11 +97,11 @@
         </div>
     </div>
     <div class="ml-2 border-left" style="width: 10px;"></div>
-    <div v-if="type === 'dt'" class="col">
+    <!-- <div v-if="type === 'dt'" class="col">
         <div class="row border-bottom" style="height: 40px;"></div>
         <div class="row border-bottom" style="height: 40px;"></div>
         <div class="row border-bottom" style="height: 40px;"></div>
-    </div>
+    </div> -->
 </div>
 </template>
 
@@ -121,7 +121,7 @@ export default {
   computed: {
     ...mapGetters({
         company: 'company',
-        user: 'user',
+        map: 'klient/map',
         accounts: 'accounts'
     }),
     company({ value }) {
@@ -129,6 +129,10 @@ export default {
     },
     klient({ value }) {
         return { ...value.klient }
+    },
+    kassir({ value, map }) {
+        const { family, name, sername } = {...map[value.user]}
+        return `${family} ${name.charAt(0)}.${sername.charAt(0)}.`
     },
     acc301() {
       return '643'

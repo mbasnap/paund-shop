@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="row" style="margin-top: 3px; font-size: 25px; text-align: right;">
+        <div class="row" style="margin-top: 3px; font-size: 20px; text-align: right;">
             <div class="col">
                 <span class="pr-1"><strong >{{ t('dogovor-zaima') }}</strong></span>
                 <span style="border: 2px solid;"><strong class="pl-1 pr-1"> № {{ bilet.number }}</strong></span>

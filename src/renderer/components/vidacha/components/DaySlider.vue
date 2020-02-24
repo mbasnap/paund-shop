@@ -1,9 +1,9 @@
 <template>
-    <div :class="[ 'day-slider', 'p-0', { readonly: readonly() } ]">
-        <datepicker class="mb-2" v-model="dateModel" :editable="!readonly()"
+    <div :class="[ 'day-slider', 'p-0', { readonly: readonly } ]">
+        <datepicker class="mb-2" v-model="dateModel" :editable="!readonly"
         format="dd.MM.yyyy" input_class="named-input day-slider-date"
         calendar_class="day-slider-left"/> 
-        <vertical-slider :height="130" :offset="-15" v-model="model" :editable="!readonly()"
+        <vertical-slider :height="130" :offset="-15" v-model="model" :editable="!readonly"
         @change="v => $emit('change', v)"
         :min="settings.minDays" :max="settings.maxDays"/>       
     </div>
@@ -17,7 +17,6 @@ const name = 'days'
 export default {
 components: { VerticalSlider, Datepicker },
 props: { value: Object, name: String, readonly: Boolean },
-inject: [ 'input', 'readonly' ],
 computed: {
      ...mapGetters([ "date", "settings" ]),
     dateModel: {
@@ -26,7 +25,7 @@ computed: {
         },
         set(v) {
             const value = moment(v).diff(this.date, 'd') + 1
-            this.input({ name, value })
+            this.$emit('input', { name, value })
         }
     },
     model: {
@@ -34,7 +33,7 @@ computed: {
             return Number(value.days)
         },
         set(v) {
-            this.input({ name, value: Number(v) })
+            this.$emit('input', { name, value: Number(v) })
         }
     }
 }

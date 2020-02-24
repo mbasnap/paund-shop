@@ -1,5 +1,5 @@
 <template>
-    <b-nav-item-dropdown :text="user" right >
+    <b-nav-item-dropdown :text="model.email" right >
      <b-link class="dropdown-item" @click="logOut">{{ $t('auth.logout') }}</b-link>
     </b-nav-item-dropdown>
 </template>
@@ -8,7 +8,10 @@
 import {mapGetters, mapActions} from 'vuex'
 export default {
 computed: {
-    ...mapGetters(['user'])
+    ...mapGetters(['user']),
+    model({ user }) {
+        return {...user }
+    }
 },
 methods: {
     ...mapActions(['logOut'])

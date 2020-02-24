@@ -11,8 +11,8 @@
             <named-select class="form-control col" name="klient" :placeholder="t('from')"
             :value="model" :options="users" @change="change"
             :tostring="toStringKlient" :tovalue="toValueKlient"/>
-            <div class="col-1">
-                <svg-address-card width="30px;" @click="showModal('edit')"/>
+            <div class="col-1" style="text-align: right; line-height: 30px;">
+                <svg-address-card width="25px;" @click="showModal('edit')"/>
             </div>            
             <!-- <named-select class="form-control col" name="passport" placeholder="Passport"
             :tostring="toStringPassport" :tovalue="(v, i) => i"

@@ -9,7 +9,7 @@
         <tab-one class="tabcontent" v-if="activetab === 0" @remove="remove(model).then(close)"
         :value="model" :full="true"/>
         <tab-two class="tabcontent" v-if="activetab === 1" :value="model" />
-        <tab-three class="tabcontent" v-if="activetab === 2" :value="model" />
+        <tab-three class="tabcontent" v-if="activetab === 2" :value="model" :errors="errors" />
     </div>
     </modal-editor>
 </template>
@@ -32,9 +32,27 @@ export default {
         }
     },
     computed: {
-        model({ data, value }) {
+        ...mapGetters({
+            docs: 'klient/docs'
+        }),
+        model({ data, value, notUnicEmail }) {
             return { ...value, ...data }
         },
+        errors() {
+            const email = ['notUnicEmail'].filter(v => this[v])
+            return { email }
+        },
+        klients({ docs, value }) {
+            return docs.filter(({ _id }) => value._id !== _id )
+        },
+        notUnicEmail({ data, klients }) {
+            const emails = klients.map(v => v.email).filter(v => !!v)
+            return emails.includes(data.email)
+        },
+        // notUnicPassport({ data, klients }) {
+        //     const emails = klients.map(v => v.email).filter(v => !!v)
+        //     return emails.includes(data.email)
+        // },
         disabled ({ data }) {
             return !Object.entries(data)
             .some(([ key, value ]) => this.value[key] !== value ? value : undefined)

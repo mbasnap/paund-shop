@@ -26,10 +26,11 @@ export default {
         bottomOffset() {
             return this.model/this.max * this.offset
         },
-        bottom() {
+        bottom() {            
             return this.height * this.newPoint
         },
         newPoint() {
+            
             const point = (this.model - this.min) / (this.max - this.min)
             return point > 1 ? this.max : point < 0 ? this.min : point
         },
@@ -38,6 +39,8 @@ export default {
                 return this.value || this.max
             },
             set(v) {
+                // console.log(v);
+                
                 this.$emit('input', v)
             }
         }
@@ -45,6 +48,8 @@ export default {
     methods: {
         onChange({ target }) {
             const { value } = target
+            // console.log(value);
+            
             this.$emit('change', value)
             
         }

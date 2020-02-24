@@ -6,8 +6,8 @@
             :value="value" :options="options" @select="update">
                 <svg-row-down class="reset" @click="$refs['klients'].highlight(0, true)"/>
             </suggest>
-            <div v-if="full" class="col-1">
-                <svg-trash width="15px;" @click="$emit('remove')"/>
+            <div v-if="full" class="col-1" style="text-align: right; line-height: 30px;">
+                <svg-trash width="12px;" @click="$emit('remove')"/>
             </div>  
         </div>
         <div class="form-row mb-2">

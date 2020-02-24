@@ -24,7 +24,7 @@ export default {
       this.klientUpdate()
     },
     computed: {
-      // ...mapGetters({}),
+
       model({ value, isValid }) {
         return { ...value, isValid }
       },

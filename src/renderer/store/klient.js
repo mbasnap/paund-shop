@@ -21,8 +21,6 @@ const actions = {
         return dispatch('update', await klient.post(v))
     },
     async remove ({ dispatch }, v) {
-        console.log(v);
-        
         return klient.get(v._id)
             .then(v => dispatch('save', {...v, _deleted: true }))
     },

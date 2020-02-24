@@ -84,28 +84,29 @@ computed: {
     },
     passport({ bilet }) {
         const { seria, number, issued, inn } = { ...bilet.doc}
-        return `${seria} ${number}`
+        return `${seria || ''} ${number || ''}`
     },
     issued({ bilet }) {
-        return { ...bilet.doc}.issued
+        return { ...bilet.doc}.issued || ''
     },
     klient({ bilet }) {
         return { ...bilet.klient}
     },
     idn({ klient }) {
-        return klient.idn
+        return klient.idn || ''
     },
     address({ klient }) {
         const { post, city, street, home  } = { ...klient.address }
-        return `${post} г.${city} ул.${street} д.${home}`
+        if ([post, city, street, home].every(v => !v)) return ''
+        return `${post || ''} г.${city || ''} ул.${street || ''} д.${home || ''}`
     },
     bithday({ klient }) {
         const { bithday, cityBith } = klient
-        return `${bithday} ${cityBith}`
+        return `${bithday || ''} ${cityBith || ''}`
     },
     phone({ klient }) {
         const { phone } = klient
-        return `тел: ${phone}`
+        return `тел: ${phone || ''}`
     }
 },
 

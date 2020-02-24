@@ -22,7 +22,8 @@
         <input class='form-control mb-2' name="ocenca" :value="ocenca"
         @input="({ target }) => input(target)" @change="calculate({ocenca})"/> 
     </div>
-    <day-slider class="col-3" :value="{days}" @change="calculate()" />
+    <day-slider class="col-3" :value="{ days }"
+    @input="input" @change="$nextTick(() => calculate({ocenca}))"/>
 </div>
 
 </template>
@@ -56,8 +57,6 @@ computed: {
         numbers: 'reestr/numbers'
     }),
     number({ value, numbers }) {
-        // console.log(value.number, numbers);
-        
         return value.number || numbers[0]
     },   
     discounts({ settings }) {
@@ -73,25 +72,23 @@ computed: {
         return { ...settings.penalty}[type]
     },
     xDisc({ value, discounts  }) {
-        // const { ocenca, ssuda, procent } = { ...value }
         return value.xDisc || discounts[0]
     },
-    ssuda({ value, fix, from  }) {
+    ssuda({ value, from }) {
         const ssuda =  value.ssuda !== undefined ? value.ssuda : '0.00'
         return from ==='ssuda' ? ssuda 
             : toDouble(toNumber(this.ocenca) - toNumber(this.procent))
     },
-    fix({ value }) {
-        return value.fix
+    minProcent({ value,  settings }) {
+        const minProcent = settings.minProcent || 0
+        return value.procent < minProcent ? minProcent : 0
     },
-    procent({ value, discount }) {
-        const { ocenca, ssuda, procent } = { ...value }
-        return toDouble( ocenca || ssuda ? procent > 10 ? 
-            toNumber(procent) - toNumber(discount) : 10 : 0) 
+    procent({ value, discount, minProcent, from }) {
+        const procent = toNumber(this[from]) ? minProcent || value.procent - discount : 0
+        return toDouble(procent)
     },
-    discount({ value, xDisc }) {
-        const { procent } = { ...value }
-        const discount = toNumber(procent) >= 10 ? toNumber(procent) * xDisc / 100 : 0
+    discount({ value, xDisc, minProcent }) {
+        const discount = !minProcent ? value.procent * xDisc / 100 : 0
         return toDouble(discount)
     },
     ocenca({ value, from }) {    
@@ -136,7 +133,9 @@ methods: { toDouble, toNumber,
         return this.disabled
     },
     input({ name, value }) {
-        if(['ssuda', 'ocenca'].includes(name)) this.from = name
+        if (['ssuda', 'ocenca'].includes(name)) this.from = name
+        // console.log(name, value);
+        
         this.update({ [name]: value })
     },
     update(v) {

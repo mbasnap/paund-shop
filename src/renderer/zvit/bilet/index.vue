@@ -13,11 +13,11 @@
                 </span>
                 <div class="col" style="text-align: right; font-size: 10px;">{{ t('prinal_kassir') }}</div>
                 <sign class="col-3" style="margin-top: 20px;" :name="t('kassir_sign')"/>
-                <span style="font-size: 10px;">{{ company.kassir }}</span>
+                <span style="font-size: 10px;">{{ kassir }}</span>
             </div>
         </div>
-        <div class="print-only mt-5" style="border: 1px dashed;"></div>
-        <div class="print-only mt-5">
+        <div class="print-only mt-3" style="border: 1px dashed;"></div>
+        <div class="print-only mt-3">
             <spec :value="value"/>
             <div class="row">
                 <obespechenie class="col-9" :value="value"/>
@@ -34,7 +34,7 @@
                         <span class="pl-4 pr-5"><strong>М.П.</strong></span>
                         <div class="col" style="text-align: right; font-size: 10px;">{{ t('prinal_kassir') }}</div>
                         <sign class="col-3" style="margin-top: 20px;" :name="t('kassir_sign')"/>
-                        <span style="font-size: 10px;">{{ company.kassir }}</span>
+                        <span style="font-size: 10px;">{{ kassir }}</span>
                     </div>
                 </div>
             </div>
@@ -62,9 +62,7 @@ export default {
     },
     computed: {
         ...mapGetters({
-            klients: 'klient/map',
-            user: 'user/user'
-
+            map: 'klient/map',
         }),
         title({ value }) {
             return ''
@@ -75,9 +73,12 @@ export default {
         company({ bilet }) {
             return { ...bilet.company }
         },
-
-        klient({ value, klients }) {
-            return { ...klients[value.klient] }
+        kassir({ value, map }) {
+            const { family, name, sername } = {...map[value.user]}
+            return `${family} ${name.charAt(0)}.${sername.charAt(0)}.`
+        },
+        klient({ value, map }) {
+            return { ...map[value.klient] }
         },
         printContent({ $refs }) {
             return $refs['print-content']

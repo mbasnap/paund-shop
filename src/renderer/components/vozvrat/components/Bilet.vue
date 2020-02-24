@@ -22,9 +22,10 @@
           </div>
         </div>
       </div>
-      <div v-show="daysBefore" class="form-row mb-2" style="color: #860d0d;">
+      <div v-show="daysBefore && toNumber(procent.summ)" class="form-row mb-2" style="color: #860d0d;">
         <div class="col-2"> {{ t('pereraschet') }} </div>
-        <div class="value col">{{ xProc }} x {{ daysBefore }} дн</div>
+        <div v-if="!minProcent" class="value col">{{ xProc }} x {{ daysBefore }} дн</div>
+        <div v-else class="value col">{{ minProcent }} min%</div>
         <div class="col-4 border-left">{{ procent.summ }}</div>
       </div>
       <div v-show="statmentDays" class="form-row mb-2">
@@ -52,6 +53,7 @@ import mix from '@/widgets/named-input/mix.js'
 // import StatmentRow from './StatmentRow.vue'
 import { mapGetters, mapActions } from 'vuex'
 import { proc, daysDiff, toNumber, toDouble, mult, diff, moment } from '@/functions'
+// import { settings } from 'cluster'
 export default {
     props: {
       value: { type: Object,
@@ -66,6 +68,7 @@ export default {
     computed: {
       ...mapGetters({
           date: 'date',
+          settings: 'settings'
       }),
       days({ value, date }) {
           return daysDiff(date, value.date) || 1
@@ -107,8 +110,15 @@ export default {
         const { ocenca, discount, xPen } = value
         return toDouble((toNumber(ocenca) + toNumber(discount)) * xPen / 100)
       },
-      procent({ xProc: value, daysBefore: count }) {        
-        return { value, count, summ: toDouble(value * count)}
+      minProcent({ value, xProc, daysBefore, settings }) {
+        const minProcent = settings.minProcent || 0
+        const procent = toNumber(value.procent) - (xProc * daysBefore)
+        return procent < minProcent ? toDouble(minProcent) : 0
+      },
+      procent({ xProc: value, daysBefore: count, minProcent }) {
+        const procent = !minProcent ? value * count
+          : toNumber(this.value.procent) - minProcent
+        return { minProcent, value, count, summ: toDouble(procent)}
       },
       penalty({ xPen: value, daysAfter: count }) {
         return { value, count, summ: toDouble(value * count)}
