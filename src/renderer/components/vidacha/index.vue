@@ -2,9 +2,7 @@
     <div class="row flex-fill vidacha">
         <div  class="col-8 pt-3">
             <div class="row" style="height: 250px;">
-                <klient ref="klient" class="col p-0 " v-model="klient">
-                    <span class="reset" @click="klient = {}">x</span>
-                </klient>
+                <klient ref="klient" class="col p-0 " v-model="klient" @reset="klient = {}"/>
                 <div class="col pl-2 border-left">
                     <draggable v-if="target" class="target" :group="{ name: 'bilet', pull: 'clone' }"
                     :value="[]" @input="([v]) => onCopy(...v)"/>
@@ -53,9 +51,7 @@ computed: {
         return !klient.isValid
     }
 },
-methods: {
-
-}
+// methods: {}
 }
 </script>
 

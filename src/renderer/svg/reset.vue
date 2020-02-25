@@ -1,33 +1,32 @@
 <template>
-    <div class="reset" @click="$emit('reset')">
-        <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="caret-down"
-          class="svg-inline--fa fa-caret-down fa-w-10" role="img"
-          xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-          <path fill="currentColor" d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z">
+    <div class="reset">
+      <span  @click="click">
+        <svg :style="'width:'+ width"
+          aria-hidden="true" focusable="false" data-prefix="fas" data-icon="times"
+          class="svg-inline--fa fa-times fa-w-11" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512">
+          <path fill="currentColor" d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z">
           </path>
         </svg>
+      </span>
     </div>
 </template>
 <script>
+import mix from './mix'
 export default {
+  mixins: [mix]
+
 }
 </script>
 
 <style>
-.reset {
-  display: block;
-  position: absolute;
-  top: 13px;
-  right: 10px;
-  margin: 0;
-  border: 0;
-  background: none;
-  cursor: pointer;
-  fill: rgba(0, 0, 0, 0.5);
+.reset span {
+    color: rgba(4, 4, 4, 0.51);
 }
-.reset svg {
-  display: block;
-  width: 13px;
-  height: 13px;
+.reset.disabled span {
+    pointer-events: none;
+    color: rgba(20, 20, 21, 0.24);
+}
+.reset span:hover {
+    color: rgba(27, 30, 33, 0.69);
 }
 </style>

@@ -1,8 +1,6 @@
 <template>
   <div class="klient">
-    <tab-one class="col" :value="model" :disabled="disabled">
-        <slot></slot>
-    </tab-one>
+    <tab-one class="col" :value="model" :disabled="disabled" @reset="$emit('reset')"/>
     <div class="col">
       <svg-address-card width="30px;" @click="showModal('edit')"/>
     </div>
@@ -36,7 +34,7 @@ export default {
     methods: {
         ...mapActions({
           saveKlient: 'klient/save',
-          remove: 'klient/remove',
+          // remove: 'klient/remove',
           klientUpdate: 'klient/update'
         }),
       save(v) {
@@ -44,12 +42,15 @@ export default {
           .then(v => this.update(v))
       },
       showModal(title) {        
-        const { model: value, update, save, remove } = this
-        this.$modal.show(Editor, { title, value, save, remove }, { height: 'auto' })
+        const { model: value, update, save } = this
+        this.$modal.show(Editor, { title, value, save }, { height: 'auto' })
       },
       update(v) {
         this.$emit('input', { ...this.model, ...v })
         return v
+      },
+      reset() {
+        this.$emit('reset')
       }
     }
 }

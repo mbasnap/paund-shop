@@ -43,11 +43,11 @@ const getters = {
         const ct = ct301.map(v => map[v._id]).map(v=> ({...v.order}.ct || 0))
         return { dt: number(dt) , ct: number(ct) }
     },
-    numbers({}, { dt377, map }) {      
+    numbers({}, { dt377, map }, {}, { settings }) {      
         const fin = v => Number.isFinite(v) ? v : 0
         const arr = dt377.map(v => ({...map[v._id]}))
             .map(v => Number(v.number)).filter(v => !!v)
-        const min = 1000
+        const min = settings.minNumber || 1
         const max = fin(Math.max(...arr))
         const count = max - min > 0 ? max - min : 1
         const res = Array.from(Array(count), (v,i) => i + min)

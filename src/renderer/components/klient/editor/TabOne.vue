@@ -9,6 +9,9 @@
             <div v-if="full" class="col-1" style="text-align: right; line-height: 30px;">
                 <svg-trash width="12px;" @click="$emit('remove')"/>
             </div>  
+            <div v-else class="col-1" style="text-align: right; line-height: 30px;">
+                <svg-reset width="8px;" @click="$emit('reset')"/>
+            </div>  
         </div>
         <div class="form-row mb-2">
             <named-input class="form-control col-5 mr-1" name="name" :placeholder="t('name')" :value="value"/>
@@ -24,11 +27,11 @@
 <script>
 import { mapGetters } from 'vuex'
 import { Passport, mix} from './components'
-import { SvgRowDown, SvgTrash } from '@/svg'
+import { SvgRowDown, SvgTrash, SvgReset } from '@/svg'
 export default {
     mixins: [ mix ],
     props: { value: Object, disabled: Boolean, full: Boolean },
-    components: { Passport, SvgRowDown, SvgTrash },
+    components: { Passport, SvgRowDown, SvgTrash, SvgReset },
     inject: [ 'update', 'save' ],
     computed: {
       ...mapGetters({

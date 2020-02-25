@@ -8,20 +8,15 @@ const state = {
 }
 
 const getters = {
-    company ({ company }) {    
+    company ({ company }) {
         const rows = company.rows || []
-        return rows.reduce((obj, { doc }) => ({ ...obj, ...doc }), {})
+        return {...rows[0]}.doc || {}
     },
     settings ({}, { company }) {
         return { ...company.settings }
     },
-    accounts ({}, { settings }) {
-        return { ...settings.accounts }
-    },
-    discounts ({}, { settings }) {
-        return settings.discounts || []
-    },
     user({ user }, { 'klient/docs': klients}) {
+        if (user === 'admin') return { email: user }
         return klients.find(({ email }) => email === user )
     },
     users({}, { company }) {
@@ -47,14 +42,10 @@ const mutations = {
 }
 const actions = {
     save ({ dispatch, getters }, v) {
-        return company.post({ ...v, date: getters['date']})
-            .then(v => dispatch('update', v))
-                .catch(e => {
-                    console.log(e);
-                })
+        return company.post({ ...getters['company'], ...v })
+            .then(v => dispatch('update'))
     },
     addUser({ dispatch, getters }, { email, _id }) {
-        console.log(email, _id);
         const users = [ ...getters['users'], _id]
         return user.signUp(email, '1234', { roles: ['user']})
             .then(() => dispatch('save', { users }))
@@ -65,28 +56,23 @@ const actions = {
         return user.get(docId).then(v => user.put({ ...v, _deleted: true }))
             .then(() => dispatch('save', { users }))
     },
-    logIn({ dispatch }, { email, password }) {
-        return user.logIn(email, password)
-            .then(() => {
-                localStorage.setItem('user', email)
-                dispatch('update')
-            })
+    async logIn({ dispatch }, { email, password }) {
+        await user.logIn(email, password)
+        localStorage.setItem('user', email)
+        dispatch('update')
     },
-    logOut({ dispatch }) {
-        user.logOut().then(() => {
-            localStorage.removeItem('user')
-            dispatch('update')
-        })        
+    async logOut({ dispatch }) {
+        await user.logOut()
+        localStorage.removeItem('user')
+        dispatch('update')      
     },
-
     setDate  ({ commit }, v) {
         commit('date', v)
     },
-    async update  ({ commit }, path = '/vidacha') {
-        const user = localStorage.getItem('user')
+    async update  ({ commit }, user = localStorage.getItem('user')) {
         commit('user', user)
         commit('company', await company.allDocs({include_docs: true}))
-        router.push(user ? path : '/login')
+        router.push(user ? '/vidacha' : '/login')
     }
 }
 

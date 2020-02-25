@@ -40,10 +40,13 @@ export default {
         ...mapGetters({
             map: 'reestr/map',
             klients: 'klient/map',
-            accounts: 'accounts',
             company: 'company',
+            settings: 'settings',
             used: 'reestr/used'
         }),
+        accounts({ settings }) {
+            return {...settings.accounts }
+        },
         bilet({ value, map }) {
             return { ...map[value] }
         },

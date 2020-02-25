@@ -42,10 +42,13 @@ export default {
     },
     computed: {
         ...mapGetters({
-            accounts: 'accounts',
             map: 'klient/map',
-            company: 'company'
+            company: 'company',
+            settings: 'settings'
         }),
+        accounts({ settings }) {
+            return {...settings.accounts }
+        },
         account({ type }) {
             return type === 'dt' ? 'ct' : 'dt'
         },
@@ -60,7 +63,7 @@ export default {
         },
         options({ accounts, account }) {
             const excludes = v => !(accounts.excludes || []).includes(v)
-            return Object.keys(accounts[account]).filter(excludes)
+            return Object.keys({...accounts[account] }).filter(excludes)
         },
         users({ company, map }) {
             return (company.users || []).map(v => map[v]).filter(v => v)

@@ -6,8 +6,8 @@
         @click="activetab=key" > {{ t(item) }} </a>
     </div>
     <div class="content">
-        <tab-one class="tabcontent" v-if="activetab === 0" @remove="remove(model).then(close)"
-        :value="model" :full="true"/>
+        <tab-one class="tabcontent" v-if="activetab === 0" :value="model" :full="true"
+        @reset="$emit('reset')" @remove="remove(model).then(close)" />
         <tab-two class="tabcontent" v-if="activetab === 1" :value="model" />
         <tab-three class="tabcontent" v-if="activetab === 2" :value="model" :errors="errors" />
     </div>
