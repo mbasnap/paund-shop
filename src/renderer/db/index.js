@@ -1,11 +1,15 @@
+import jwtDecode  from 'jwt-decode'
 import PouchDB from 'pouchdb-browser'
 var Auth = require('pouchdb-auth')
 PouchDB.plugin(Auth)
 
 import axios from 'axios'
 import { store } from '@/setup'
+const { name, remote_url } = JSON.parse(localStorage.getItem('settings')) || {}
 const local =  `http://localhost:5984`
-const remote = `http://93.125.75.52:5984/virus`
+// const remote = `http://93.125.75.52:5984/virus`
+const remote = `${remote_url}/${name}`
+
 const auth = { 
   username: 'admin',
   password: 'Stalker01'
@@ -30,29 +34,29 @@ const reestr = new PouchDB(`${local}/reestr`)
 axios.interceptors.response.use(undefined, function (err) {
   const {status, statusText} = err.response
   return new Promise(function () {
-    if (status === 401) store.dispatch('user/logout')
+    console.log(err);
+    
+    // if (status === 401) store.dispatch('user/logout')
   })
 })
 
 const  query = (action, url, params) => {
-  const { date } = store.getters
-  return axios[action](url, { ...params, date })
+  // const { date } = store.getters
+  return axios[action](url, params)
     .then(res => res.data)
-      .catch(err => {
-        throw err.response.data
-  })
+      .catch(err => { throw err.response.data })
 }
 
-const setHeaders = (name, token) => {
-  const headers = axios.defaults.headers.common
-  if (token) headers[name] = token
-  else delete headers[name]
-}
+// const setHeaders = (name, token) => {
+//   const headers = axios.defaults.headers.common
+//   if (token) headers[name] = token
+//   else delete headers[name]
+// }
 
-const getToken = (name) => {
-  const token = localStorage.getItem(name)
-  setHeaders(name, token)
-}
+// const getToken = (name) => {
+//   const token = localStorage.getItem(name)
+//   setHeaders(name, token)
+// }
 
 const db = (name = '') => {
  const getUrl = () => 'http://localhost:8080/lombard'  + name
@@ -62,9 +66,12 @@ const db = (name = '') => {
   }
 }
 
+const post = (url, v) => query('post', url, v)
+
 export {
   db,
-  getToken,
+  post,
+  jwtDecode,
   user,
   klient,
   company,

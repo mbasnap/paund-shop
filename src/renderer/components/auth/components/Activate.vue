@@ -15,10 +15,10 @@
 </template>
 
 <script>
-import {mapActions} from 'vuex'
-import {ValidInput} from '@/widgets/valid-input'
+import { mapActions } from 'vuex'
+import { ValidInput } from '@/widgets/valid-input'
 export default {
-    components: {ValidInput},
+    components: { ValidInput },
 
     data() {
         return {

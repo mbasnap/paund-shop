@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 import { Bilet } from './components'
 import mix from '@/components/mix/vidacha-vozvrat'
 import { getProcent, proc, toNumber, toDouble, mult, diff, pDiff, moment } from '@/functions'
@@ -36,12 +37,18 @@ import draggable from 'vuedraggable'
 export default {
 components: { Bilet, draggable },
 mixins: [ mix ],
+created() {
+    if(!this.user) this.logOut()
+},
 data() {
     return {
         target: false,
     }
 },
 computed: {
+    ...mapGetters({
+        user: 'user'
+    }),
     model() {
         const { _id: klient, passport } = this.klient
         const obespechenie = this.obespechenie.filter(v => toNumber(v.ocenca))
@@ -51,7 +58,11 @@ computed: {
         return !klient.isValid
     }
 },
-// methods: {}
+methods: {
+    ...mapActions({
+        logOut: 'logOut'
+    })
+}
 }
 </script>
 
