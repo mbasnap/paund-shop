@@ -1,94 +1,72 @@
-import { company, user, jwtDecode, post } from '@/db'
+import { get, jwtDecode, login, loginAdmin } from '@/db'
 import { router } from '@/setup'
 const state = {
     date: new Date(),
     company: {},
-    user: false
+    users: []
 }
 
 const getters = {
     company ({ company }) {
-        const rows = company.rows || []
-        return {...rows[0]}.doc || {}
+        return company
+    },
+    users({ users }) {
+        return users.filter(({ _id }) => _id.includes('org.couchdb.user'))
     },
     settings ({}, { company }) {
         return { ...company.settings }
     },
-    user({ user }, { 'klient/docs': klients}) {
-        if (user === 'admin') return { email: user }
-        return klients.find(({ email }) => email === user )
-    },
-    users({}, { company }) {
-        return company.users || []
+    user({}, { company }) {
+        return {...company.user }
     },
     date ({ date }) {
         return date
-    },
-    menu ({}, { company }) {
-        return company.menu || []
-    },
-    isActive() {
-        const settings = JSON.parse(localStorage.getItem('settings'))
-        return !!settings
     }
 }
 const mutations = {
     date (state, v) {
         state.date = v
     },
-    company (state, v) {        
+    company (state, v) {    
         state.company = v
     },
-    user (state, v) {        
-        state.user = v
+    users (state, v) { 
+        state.users = v
     }
 }
 const actions = {
-    async activate({ dispatch }, token) {
-        const { url } = jwtDecode(token)
-        const settings = await post(url + '/activate', { token })
-        localStorage.setItem('settings', JSON.stringify(settings))
-        dispatch('update')
+    async activate({}, { password, token }) {
+        loginAdmin(password)
+        localStorage.setItem('settings', JSON.stringify(jwtDecode(token)))
+        window.location.reload()
     },
-    save({ dispatch, getters }, v) {
-        return company.post({ ...getters['company'], ...v })
-            .then(v => dispatch('update'))
+    changeAccount({}) {
+        localStorage.removeItem('settings')
+        window.location.reload()
     },
-    addUser({ dispatch, getters }, { email, _id }) {
-        const users = [ ...getters['users'], _id]
-        return user.signUp(email, '1234', { roles: ['user']})
-            .then(() => dispatch('save', { users }))
-                .catch(({ docId }) => dispatch('removeUser', { docId, _id }))
-    },
-    removeUser({ dispatch, getters }, { docId, _id }) {
-        const users = getters['users'].filter(v => v !== _id)
-        return user.get(docId).then(v => user.put({ ...v, _deleted: true }))
-            .then(() => dispatch('save', { users }))
+    async register({ dispatch }, { name, password, email }) {
+        const metadata  = { email }
+        await  company.signUp(name, password, { metadata })
+        dispatch('update', 'login')
     },
     async logIn({ dispatch }, { email, password }) {
-        console.log(email, password);
-        
-        await user.logIn(email, password)
-        localStorage.setItem('user', email)
-        dispatch('update')
-        router.push('/vidacha')
+        const user = await login(email, password)
+        localStorage.setItem('user', JSON.stringify(user))
+        dispatch('update', 'vidacha')
     },
     async logOut({ dispatch }) {
-        console.log('logOut');
-        
-        // await user.logOut()
-        // localStorage.removeItem('user')
-        dispatch('update')      
+        localStorage.removeItem('user')
+        dispatch('update', 'login')
     },
     setDate  ({ commit }, v) {
         commit('date', v)
     },
-    async update  ({ commit }, v) {
-        const allDocs = () => company.allDocs({ include_docs: true })
-        commit('company', v || await allDocs())
-        // commit('user', user)
-        // commit('company', await company.allDocs({include_docs: true}))
-        // router.push(user ? '/vidacha' : '/login')
+    async update ({ commit }, path) {
+        const { lombard } = JSON.parse(localStorage.getItem('settings')) || {}
+        const user = JSON.parse(localStorage.getItem('user'))
+        commit('company', { ...await get('company', lombard) , lombard, user })
+        commit('users', await get('users'))
+        if (path) router.push(path)
     }
 }
 

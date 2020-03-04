@@ -20,12 +20,12 @@
 
 <button class="btn btn-primary mb-3" type="button"
     :disabled="formInputs.some(({value, error}) => !value || error)"
-    @click="register(userData).then(res => $router.push('login'))"
+    @click="register(userData)"
     > {{$t('auth.register')}}
 </button>
 
 <div> {{$t('auth.have_account')}} ?
-    <a href="/#/login"> {{$t('auth.login')}}</a>
+    <a href="#" @click="$router.push('login')"> {{$t('auth.login')}}</a>
 </div>
 
 </div>
@@ -82,7 +82,9 @@ export default {
         }
     },
     methods: {
-        ...mapActions('user', ['register']), getValues, setErrors,
+        ...mapActions({
+            register: 'register'
+        }), getValues, setErrors,
 
         // onRegister(info) {
         //     this.register(this.userData).then(res => {

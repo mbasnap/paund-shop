@@ -71,9 +71,10 @@ export default {
     },
     methods: {
         getTitle({ dt, ct }) {
+            const acc = k => this.accounts[k] || []
             return Object.entries({ dt, ct })
                 .filter(([k,v]) => v !== '301')
-                    .map(([k,v]) => this.accounts[k][v])[0]
+                    .map(([k,v]) => acc(k)[v])[0]
         },
         removeValue(model) {
         if (!this.used[model._id]) 

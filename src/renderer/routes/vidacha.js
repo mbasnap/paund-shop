@@ -6,7 +6,7 @@ export default {
   name: 'vidacha',
   component: Vidacha,
   // beforeEnter: async (to, from, next) => {
-  //   !store.getters['isAuth'] ? next('/login') 
-  //   : next()
+  //   if (!localStorage.getItem('user'))  next('/login')
+  //   else next()
   // }
 }

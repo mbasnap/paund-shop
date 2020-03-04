@@ -23,10 +23,10 @@
     > {{$t('auth.login')}}
 </button>
 
-<!-- <div>
+<div>
     {{$t('auth.no_account')}} ?
-    <a href="/#/register"> {{$t('auth.register')}} </a>
-</div> -->
+    <a href="#" @click="$router.push('/register')"> {{$t('auth.register')}} </a>
+</div>
 
 </div>
 </template>
@@ -40,8 +40,8 @@ import decode from 'jwt-decode'
 export default {
     components: {ValidInput},
     created() {
-        let {email} = this.decoded
-        if (email) this.email.value = email
+        // let {email} = this.decoded
+        // if (email) this.email.value = email
     },
     data() {
         return {

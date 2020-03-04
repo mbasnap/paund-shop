@@ -1,13 +1,18 @@
 <template>
 <div class="col">
-<form>
-    <valid-input type="text" label="token" placeholder="token" autofocus
-       v-model="token" > 
-    </valid-input>
-</form>
+<div>
+    <valid-input type="text" label="token" placeholder="token" 
+    :isValid="true" v-model="token"/>
+    <div v-if="!auth" class="row mb-2">
+    <!-- <valid-input class="form-control col-5 mr-1" v-model="username" :isValid="true"/> -->
+    <valid-input class="col-5" type="password" 
+    placeholder="Password" label="admin"
+    v-model="password" :isValid="true"/>
+    </div>
+</div>
 
 <button class="btn btn-primary mb-3" type="button" 
-     @click="activate(token)"
+     @click="activate({ password, token })"
     > activate
 </button>
 
@@ -22,12 +27,20 @@ export default {
 
     data() {
         return {
-            token: ''
+            token: '',
+            password: ''
         }
     },
-
+    computed: {
+        auth({ password }) {
+            return !!localStorage.getItem('admin')
+        }
+    },
     methods: {
-        ...mapActions(['activate'])
+        ...mapActions(['activate']),
+        // reload() {
+        //     window.location.reload()
+        // }
     }
 
 }

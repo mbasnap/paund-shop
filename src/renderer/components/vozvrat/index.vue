@@ -37,7 +37,7 @@
     </div>
 </template>
 <script>
-
+import { mapGetters, mapActions } from 'vuex'
 import { Number, Bilet, StatmentRow } from './components'
 import mix from '@/components/mix/vidacha-vozvrat'
 import { toNumber } from '@/functions'
@@ -46,6 +46,9 @@ import Editor from './components/Editor.vue'
 export default {
 components: { Number, Bilet, StatmentRow, SvgCalculator },
 mixins: [ mix ],
+created() {
+    // this.updateCompany()
+},
 computed: {
     model() {
         const { _id: klient, passport } = this.klient
@@ -56,6 +59,9 @@ computed: {
     }
 },
 methods: {
+    ...mapActions({
+        // updateCompany: 'update'
+    }),
     showModal (value) {
         const title = `Билет № ${value.number}`
         this.$modal.show(Editor, { title, value, save: async (vozvrat, vidacha) => {

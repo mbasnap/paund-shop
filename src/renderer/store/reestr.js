@@ -1,7 +1,7 @@
-import { reestr } from '@/db'
+import { get, post } from '@/db'
 // const { get, post } = db('/reestr')
 const state = {
-    reestr: {}
+    reestr: []
 }
 const getters = {
 
@@ -9,8 +9,8 @@ const getters = {
     //     return  common.date
     // },
     docs({ reestr }) {        
-        const rows = reestr.rows || []
-        return  rows.map(v => v.doc)
+        // const rows = reestr.rows || []
+        return  reestr || []
     },
     map({}, { docs }) {
         return docs.reduce((obj, v) => ({ ...obj, [v._id]: v }), {})
@@ -72,25 +72,22 @@ const actions = {
         console.log({ used: err });
     },
     save ({ dispatch }, v) {
-        const { date, user } = this.getters
-        console.log(date, user);
-        
-        return reestr.post({ ...v, date, user: user._id })
+        const {  date } = this.getters
+        return post('reestr', {...v, date })
             .then(v => dispatch('update', v))
     },
     updateValue ({ dispatch }, v) {
-        return reestr.post(v)
+        return post('reestr', v)
             .then(v => dispatch('update', v))
     },
     remove ({ dispatch }, { _id }) {     
-        return reestr.get(_id)
-            .then(v => dispatch('updateValue', { ...v, _deleted: true }))
+        return get('reestr', _id)
+            .then(v => dispatch('save', { ...v, _deleted: true }))
                 .then(v => dispatch('update', v))
     },
 
     async update({ commit, getters }, v) {
-        // console.log(v);
-        commit('reestr', await reestr.allDocs({ include_docs: true }))
+        commit('reestr', await get('reestr'))
         return getters.map[{ ...v}.id]
     }
 }

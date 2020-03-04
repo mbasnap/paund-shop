@@ -38,7 +38,7 @@ export default {
 components: { Bilet, draggable },
 mixins: [ mix ],
 created() {
-    if(!this.user) this.logOut()
+    // this.updateCompany()
 },
 data() {
     return {
@@ -60,7 +60,8 @@ computed: {
 },
 methods: {
     ...mapActions({
-        logOut: 'logOut'
+        logOut: 'logOut',
+        // updateCompany: 'update'
     })
 }
 }

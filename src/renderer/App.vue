@@ -18,7 +18,7 @@
     components: { AppHeader, AppFooter } ,
     async created () {
 
-      this.$store.dispatch('update')
+      this.$store.dispatch('update', 'login')
       ipcRenderer.on('show-zvit', (e, name) => {
           this.$modal.show(zvit[name], { }, { height: '550px', width: '800px'})
       })
