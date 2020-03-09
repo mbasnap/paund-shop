@@ -53,23 +53,27 @@ data() {
 },
 computed: {
     ...mapGetters({
-        settings: 'settings',
+        company: 'company',
         numbers: 'reestr/numbers'
     }),
     number({ value, numbers }) {
         return value.number || numbers[0]
     },   
-    discounts({ settings }) {
-        return settings.discounts || []
+    discounts({ company }) {
+       return (company.discount || '').split(',')
+        .filter(v => !!v).map(v => v.trim())
     },
-    days({ value, settings }) {
-        return value.days || settings.maxDays
+    days({ value, company }) {
+        const { max } = {...company.days }
+        return value.days || max
     },
-    xProc({ type, settings }) {
-        return { ...settings.procent}[type ]
+    xProc({ type, company }) {
+        const procent = {...company.procent}
+        return procent[type ]
     },
-    xPen({ type, settings }) {
-        return { ...settings.penalty}[type]
+    xPen({ type, company }) {
+        const penalty = {...company.penalty}
+        return penalty[type ]
     },
     xDisc({ value, discounts  }) {
         return value.xDisc || discounts[0]
@@ -79,9 +83,9 @@ computed: {
         return from ==='ssuda' ? ssuda 
             : toDouble(toNumber(this.ocenca) - toNumber(this.procent))
     },
-    minProcent({ value,  settings }) {
-        const minProcent = settings.minProcent || 0
-        return value.procent < minProcent ? minProcent : 0
+    minProcent({ value,  company }) {
+        const { min } = {...company.procent}
+        return value.procent < min ? minProcent : 0
     },
     procent({ value, discount, minProcent, from }) {
         const procent = toNumber(this[from]) ? minProcent || value.procent - discount : 0
@@ -97,7 +101,7 @@ computed: {
             : toDouble(toNumber(this.ssuda) + toNumber(this.procent))
     },
     model({ number, type, days, xProc, xPen, xDisc, ssuda, procent, discount, ocenca }) {
-        return { number, type, days, xProc, xPen, xDisc, ssuda, procent, discount, ocenca, 
+        return { number, zalog: type, days, xProc, xPen, xDisc, ssuda, procent, discount, ocenca, 
         values: [
             { dt: '377', ct: '301', summ: ocenca },
             { dt: '301', ct: '703', summ: procent }

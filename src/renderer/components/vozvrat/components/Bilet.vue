@@ -50,10 +50,8 @@
 
 <script>
 import mix from '@/widgets/named-input/mix.js'
-// import StatmentRow from './StatmentRow.vue'
 import { mapGetters, mapActions } from 'vuex'
 import { proc, daysDiff, toNumber, toDouble, mult, diff, moment } from '@/functions'
-// import { settings } from 'cluster'
 export default {
     props: {
       value: { type: Object,
@@ -68,8 +66,11 @@ export default {
     computed: {
       ...mapGetters({
           date: 'date',
-          settings: 'settings'
+          company: 'company'
       }),
+      type({ value }) {
+        return value.zalog
+      },
       days({ value, date }) {
           return daysDiff(date, value.date) || 1
       },
@@ -110,10 +111,10 @@ export default {
         const { ocenca, discount, xPen } = value
         return toDouble((toNumber(ocenca) + toNumber(discount)) * xPen / 100)
       },
-      minProcent({ value, xProc, daysBefore, settings }) {
-        const minProcent = settings.minProcent || 0
+      minProcent({ value, xProc, daysBefore, company }) {
+        const { min } = {...company.procent }
         const procent = toNumber(value.procent) - (xProc * daysBefore)
-        return procent < minProcent ? toDouble(minProcent) : 0
+        return procent < min ? toDouble(min) : 0
       },
       procent({ xProc: value, daysBefore: count, minProcent }) {
         const procent = !minProcent ? value * count
@@ -133,9 +134,9 @@ export default {
       number({ value }) {
         return value.number
       },
-      model({ value, type, ocenca, procent, penalty, statment, total }) {
+      model({ value, type: zalog, ocenca, procent, penalty, statment, total }) {
         const { _id: ref, number } = value
-        return { ref, number, type, ocenca, procent, penalty, statment, total,
+        return { ref, number, zalog, ocenca, procent, penalty, statment, total,
           values: [
             { dt: '301', ct: '377', summ: ocenca },
             { dt: '301', ct: '703', ...statment }, // ct 301 if return procent statment

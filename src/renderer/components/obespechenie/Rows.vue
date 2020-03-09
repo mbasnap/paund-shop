@@ -3,7 +3,7 @@
     <td class="index" style="width: 10px; text-align: center;">{{ $vnode.key + 1 }}</td>
     <td><named-input name="title" :value="model" style="width: 250px;"/></td>
     <td><named-select name="proba" style="width: 50px;"
-    :value="model" :options="options" @change="change"/></td>
+    :value="model" :options="Object.keys(price)" @change="change"/></td>
     <td><named-input name="ves" :value="model"/></td>
     <td><named-input name="derty" :value="model"/></td>
     <td><named-input name="ocenca" :value="model" style="width: 100px;"/></td>
@@ -19,13 +19,17 @@ components: { NamedInput, NamedSelect },
 mixins: [ { provide: mix.provide, methods: mix.methods } ],
 props: { value: Object, editable: Boolean, type: Boolean },
 computed: {
-    ...mapGetters(['settings']),
-    price({ settings }) {
-        return { ...settings.price }
+    ...mapGetters(['company']),
+    price({ company }) {
+        const { gold, silver } = {...company.price}
+        // console.log(gold);
+        
+        return (gold || []).reduce((cur, { proba, price }) =>
+            ({...cur, [proba]: price }), {})
     },
-    options({ price }) {
-        return Object.keys(price)
-    },
+    // options({ price }) {
+    //     return Object.keys(price)
+    // },
     ves({ value }) {
         return toDouble(value.ves)
     },

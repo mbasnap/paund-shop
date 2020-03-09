@@ -41,19 +41,24 @@ export default {
             map: 'reestr/map',
             klients: 'klient/map',
             company: 'company',
-            settings: 'settings',
+            users: 'users',
             used: 'reestr/used'
         }),
-        accounts({ settings }) {
-            return {...settings.accounts }
+        accounts({ company }) {
+            const reduce = key => ({...company.accounts}[key] || [])
+                .reduce((cur, { acc, title }) => ({...cur, [acc]: title }), {})
+            return { dt: reduce('dt'), ct: reduce('ct')}
         },
         bilet({ value, map }) {
             return { ...map[value] }
         },
-        klient({ bilet, klients}) {
-            return {...klients[bilet.klient]}
+        klient({ bilet, klients, users}) {
+            const { klient } = bilet
+            const usersFio = users.reduce((cur, { _id, fio }) => ({...cur, [_id]: fio }), {})
+            return {...klients[klient], ...usersFio[klient]}
         },
         from({ klient }) {
+            
             const { family, name, sername } = klient
             return `${family} ${name} ${sername}`
         },

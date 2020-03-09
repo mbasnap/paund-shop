@@ -9,14 +9,8 @@
         </div> 
         <div class="form-row mb-2">
             <named-select class="form-control col" name="klient" :placeholder="t('from')"
-            :value="model" :options="users" @change="change"
+            :value="model" :options="users.filter(v => v.active)" @change="change"
             :tostring="toStringKlient" :tovalue="toValueKlient"/>
-            <div class="col-1" style="text-align: right; line-height: 30px;">
-                <svg-address-card width="25px;" @click="showModal('edit')"/>
-            </div>            
-            <!-- <named-select class="form-control col" name="passport" placeholder="Passport"
-            :tostring="toStringPassport" :tovalue="(v, i) => i"
-            :value="model" :options="passports"/> -->
         </div> 
         <div class="form-row mb-2">
             <named-textarea class="form-control col" name="title"
@@ -28,12 +22,10 @@
 import { mapGetters, mapActions } from 'vuex'
 import { toDouble } from '@/functions'
 import ModalEditor from '@/widgets/Modal.vue'
-import { Editor } from '@/components/klient/editor/index.js'
-import { SvgAddressCard } from '@/svg'
 import mix from '@/widgets/named-input/mix.js'
 export default {
     mixins: [ mix ],
-    components: { ModalEditor, SvgAddressCard },
+    components: { ModalEditor },
     props: { type: String, save: Function },
     data() {
         return {
@@ -42,18 +34,20 @@ export default {
     },
     computed: {
         ...mapGetters({
-            map: 'klient/map',
+            users: 'users',
             company: 'company',
-            settings: 'settings'
         }),
-        accounts({ settings }) {
-            return {...settings.accounts }
+        accounts({ company }) {
+            const reduce = key => ({...company.accounts}[key] || [])
+                .reduce((cur, { acc, title }) => ({...cur, [acc]: title }), {})
+            return { dt: reduce('dt'), ct: reduce('ct') }
         },
         account({ type }) {
             return type === 'dt' ? 'ct' : 'dt'
         },
         passports({ value }) { return []},
         model({ value }) {
+
             return { ...value, summ: toDouble(value.summ) }
         },
         values({ model, account, type }) {
@@ -61,38 +55,29 @@ export default {
                 { [type]: '301', [account]: model[account], summ: model.summ },
             ]}
         },
-        options({ accounts, account }) {
-            const excludes = v => !(accounts.excludes || []).includes(v)
+        options({ accounts, account, company }) {
+            const excludes = v => !(company.excludes || []).includes(v)
             return Object.keys({...accounts[account] }).filter(excludes)
-        },
-        users({ company, map }) {
-            return (company.users || []).map(v => map[v]).filter(v => v)
         }
     },
     methods: {
-        ...mapActions({
-          saveKlient: 'klient/save',
-        //   remove: 'klient/remove'
-        }),
-        showModal (title) {        
-            const value = {...this.map[{...this.value}.klient] }
-            this.$modal.show(Editor, { title, value, save: this.saveKlient }, { height: 'auto' })
-        },
+        ...mapActions({}),
         readonly() {
             return this.disabled
         },
         change({ name, value }) {
             this.value = { ...this.value, [name]: value }
         },
-        toStringKlient({ family, name, sername }) {
+        toStringKlient({ fio }) {
+            const { family, name, sername } = {...fio }
             return `${family} ${name} ${sername}`
         },
         toValueKlient(v) {
             return {...v}._id
         },
-        toStringPassport({ seria, number }) {
-            return `${seria} ${number}`
-        },
+        // toStringPassport({ seria, number }) {
+        //     return `${seria} ${number}`
+        // },
         toStringAccount(v) {
             const { accounts, account } = this
             const title = accounts[account][v]

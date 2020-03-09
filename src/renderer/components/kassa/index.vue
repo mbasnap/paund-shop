@@ -42,22 +42,26 @@ export default {
         ...mapGetters({
             dt: 'reestr/dt301',
             ct: 'reestr/ct301',
-            settings: 'settings',
+            company: 'company',
             date: 'date',
-            accounts: 'accounts',
             order: 'reestr/nextOrder'
         }),
-
-        ok({ settings, dt, ct, date }) {
+        accounts({ company }) {
+            const reduce = key => ({...company.accounts}[key] || [])
+                .reduce((cur, v) => ({...cur, [v.acc]: v }), {})
+            return { dt: reduce('dt'), ct: reduce('ct') }
+        },
+        ok({ accounts, dt, ct, date }) {
+            const ok = {...accounts.dt['301']}.summ
             const isBefore = v => moment(v.date).isBefore(date, 'date')
             const debet = summ(...dt.filter(isBefore).map(v => v.summ))
             const credit = summ(...ct.filter(isBefore).map(v => v.summ))
-            return summ(settings['ok'], debet, mult(credit, -1))
+            return summ(ok, debet, mult(credit, -1))
         },
-        rows({ dt, ct, settings }) {
-            const min = settings['minRows'] || 0
-            const grope = v => this.grope(v.filter(this.isSame))                      
-            return Math.max( min, grope(dt).length, grope(ct).length )
+        rows({ dt, ct, company }) {
+            const { kassa } = {...company.rows}
+            const grope = v => this.grope(v.filter(this.isSame))                
+            return Math.max( kassa || 0, grope(dt).length, grope(ct).length ) 
         },
 
         total({ ok, dt, ct, isSame }) {

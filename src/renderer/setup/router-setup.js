@@ -2,7 +2,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 // import { store } from '@/setup'
-import { login, activate, register } from '@/routes/auth'
+import { login, activate } from '@/routes/auth'
 // import profile from '@/routes/profile'
 import vidacha from '@/routes/vidacha'
 import vozvrat from '@/routes/vozvrat'
@@ -19,7 +19,7 @@ const router = new Router({
     sklad,
     login,
     activate,
-    register,
+    // register,
     {
       path: '*',
       redirect: '/login'

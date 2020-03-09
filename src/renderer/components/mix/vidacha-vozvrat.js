@@ -36,6 +36,7 @@ methods: {
         return this.$refs['klient'].save(v)
     },
     saveBilet(v) {
+
         return this.$refs['kassa'].save(v)
     },
     select(v) {
@@ -43,7 +44,7 @@ methods: {
         return this.update({})
     },
     update(v) {
-        const { klient, passport, obespechenie, type } = this.bilet = { ...v }        
+        const { klient, passport, obespechenie, zalog: type } = this.bilet = { ...v }        
         this.klient = { ...this.klientMap[klient], passport }
         this.type = type || 'gold'
         this.obespechenie = obespechenie || [ {} ]
@@ -54,7 +55,7 @@ methods: {
     onCopy(id) {
         const  bilet = { ...this.reestrMap[id] }
         const ref = this.reestrMap[bilet.ref]
-        const { klient, passport, obespechenie, ocenca, days, discount, type } = ref || bilet
+        const { klient, passport, obespechenie, ocenca, days, discount, zalog: type } = ref || bilet
         this.update({ klient, passport, obespechenie, ocenca, days, discount, type })
     },
     t(v) {

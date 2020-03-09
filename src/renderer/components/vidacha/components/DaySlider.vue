@@ -5,7 +5,7 @@
         calendar_class="day-slider-left"/> 
         <vertical-slider :height="130" :offset="-15" v-model="model" :editable="!readonly"
         @change="v => $emit('change', v)"
-        :min="settings.minDays" :max="settings.maxDays"/>       
+        :min="days.min" :max="days.max"/>       
     </div>
 </template>
 
@@ -18,7 +18,10 @@ export default {
 components: { VerticalSlider, Datepicker },
 props: { value: Object, name: String, readonly: Boolean },
 computed: {
-     ...mapGetters([ "date", "settings" ]),
+     ...mapGetters([ "date", "company" ]),
+    days({ company }) {
+        return {...company.days }
+    },
     dateModel: {
         get({ date, value }) {
             return new Date(moment(date).add(value.days, 'd'))

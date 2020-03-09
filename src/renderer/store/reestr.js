@@ -1,15 +1,9 @@
 import { get, post } from '@/db'
-// const { get, post } = db('/reestr')
 const state = {
     reestr: []
 }
 const getters = {
-
-    // date({}, {}, { common }) {        
-    //     return  common.date
-    // },
     docs({ reestr }) {        
-        // const rows = reestr.rows || []
         return  reestr || []
     },
     map({}, { docs }) {
@@ -43,11 +37,11 @@ const getters = {
         const ct = ct301.map(v => map[v._id]).map(v=> ({...v.order}.ct || 0))
         return { dt: number(dt) , ct: number(ct) }
     },
-    numbers({}, { dt377, map }, {}, { settings }) {      
+    numbers({}, { dt377, map }, {}, { company }) {      
         const fin = v => Number.isFinite(v) ? v : 0
         const arr = dt377.map(v => ({...map[v._id]}))
             .map(v => Number(v.number)).filter(v => !!v)
-        const min = settings.minNumber || 1
+        const min = Number(company.number) || 1
         const max = fin(Math.max(...arr))
         const count = max - min > 0 ? max - min : 1
         const res = Array.from(Array(count), (v,i) => i + min)
@@ -72,12 +66,10 @@ const actions = {
         console.log({ used: err });
     },
     save ({ dispatch }, v) {
-        const {  date } = this.getters
-        return post('reestr', {...v, date })
-            .then(v => dispatch('update', v))
-    },
-    updateValue ({ dispatch }, v) {
-        return post('reestr', v)
+        console.log(v);
+        
+        const {  date, lombard } = this.getters
+        return post('reestr', { date, ...v, lombard, type: 'reestr'  })
             .then(v => dispatch('update', v))
     },
     remove ({ dispatch }, { _id }) {     

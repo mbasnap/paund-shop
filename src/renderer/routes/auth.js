@@ -13,17 +13,17 @@ export const login = {
     else next()
   }
 }
-export const register = {
-  path: '/register',
-  name: 'register',
-  component: Register,
-  beforeEnter: (to, from, next) => {
-    // console.log('activate');
+// export const register = {
+//   path: '/register',
+//   name: 'register',
+//   component: Register,
+//   beforeEnter: (to, from, next) => {
+//     console.log('activate');
     
-    // if(!store.getters['isActive']) next('/activate')
-    next()
-  }
-}
+//     if(!store.getters['isActive']) next('/activate')
+//     next()
+//   }
+// }
 
 export const activate = {
   path: '/activate',

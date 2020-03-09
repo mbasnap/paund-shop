@@ -8,7 +8,7 @@
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
       <b-collapse id="nav-collapse" is-nav >
-        <b-navbar-nav v-for="(item, index) in company.menu" :key="index" >
+        <b-navbar-nav v-for="(item, index) in menu" :key="index" >
           <b-link  class="nav-link mr-2" :to="'/' + item">{{ $t(`menu.${item}`)}}</b-link>     
         </b-navbar-nav>
       <b-navbar-nav class="ml-auto nav-right">
@@ -25,8 +25,8 @@
 </div>
 </template>
 <script>
-  import {mapGetters, mapActions} from 'vuex'
-  import {Datepicker} from '@/widgets';
+  import { mapGetters, mapActions } from 'vuex'
+  import { Datepicker } from '@/widgets';
   import User from './User';
 export default {
   components: { Datepicker, User},
@@ -41,7 +41,11 @@ export default {
   },
   computed: {
      ...mapGetters(['date', 'company', 'logo']),
-     isAuth({ company }) {
+     menu({ company }) {
+       return (company.menu || '').split(',')
+        .filter(v => !!v).map(v => v.trim())
+     },
+     isAuth({ company, menu }) {
        return !!company.user
      }
   },

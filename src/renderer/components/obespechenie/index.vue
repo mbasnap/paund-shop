@@ -51,7 +51,7 @@ export default {
     },
     computed: {
         ...mapGetters({
-            settings: 'settings',
+            company: 'company',
         }),
         model({ value, type }) {
             return value || []
@@ -68,9 +68,9 @@ export default {
         rows({ value }) {
             return value.length
         },
-        disabledAdd({ rows, settings }){
-            // const { maxRows } = {...{ ...settings}.obespeshenie }
-            return rows >= 5
+        disabledAdd({ rows, company }){
+            const { obespechenie } = {...company.rows }
+            return rows >= obespechenie
         }
     },
     methods: {

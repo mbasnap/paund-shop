@@ -23,10 +23,10 @@
     > {{$t('auth.login')}}
 </button>
 
-<div>
+<!-- <div>
     {{$t('auth.no_account')}} ?
     <a href="#" @click="$router.push('/register')"> {{$t('auth.register')}} </a>
-</div>
+</div> -->
 
 </div>
 </template>

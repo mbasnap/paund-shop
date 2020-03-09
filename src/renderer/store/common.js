@@ -12,9 +12,10 @@ const getters = {
     },
     users({ users }) {
         return users.filter(({ _id }) => _id.includes('org.couchdb.user'))
+            
     },
-    settings ({}, { company }) {
-        return { ...company.settings }
+    lombard({}, { company }) {
+        return {...company.lombard }
     },
     user({}, { company }) {
         return {...company.user }
@@ -44,19 +45,24 @@ const actions = {
         localStorage.removeItem('settings')
         window.location.reload()
     },
-    async register({ dispatch }, { name, password, email }) {
-        const metadata  = { email }
-        await  company.signUp(name, password, { metadata })
-        dispatch('update', 'login')
-    },
+    // async register({ dispatch }, { name, password, email }) {
+    //     const metadata  = { email }
+    //     await  company.signUp(name, password, { metadata })
+    //     dispatch('update', 'login')
+    // },
     async logIn({ dispatch }, { email, password }) {
-        const user = await login(email, password)
-        localStorage.setItem('user', JSON.stringify(user))
-        dispatch('update', 'vidacha')
+        return login(email, password)
+            .then(v => {
+                localStorage.setItem('user', JSON.stringify(v))
+                window.location.reload()
+                // dispatch('update', 'vidacha')
+            }).catch(err => console.log(err))
     },
     async logOut({ dispatch }) {
+        if (localStorage.getItem('user'))
         localStorage.removeItem('user')
-        dispatch('update', 'login')
+        window.location.reload()
+        // dispatch('update', 'login')
     },
     setDate  ({ commit }, v) {
         commit('date', v)

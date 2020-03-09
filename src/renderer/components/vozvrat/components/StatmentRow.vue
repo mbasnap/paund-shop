@@ -52,7 +52,7 @@ export default {
     },
     methods: { moment,
       ...mapActions({
-        save: 'reestr/updateValue'
+        save: 'reestr/save'
       }),
       async addStatment({ value: days }, bool) {
         let statment = bool ? { days, date: this.date } : false
