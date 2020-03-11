@@ -16,7 +16,8 @@
             <input class="form-control" :value="procent"/>
             <div class="input-group-append">
             <named-select class="form-control" name="xDisc"
-             @change="calculate()" :value="{xDisc}" :options="discounts"/>
+             @change="$nextTick(() => calculate())"
+             :value="{ xDisc }" :options="discounts"/>
             </div>
         </div>   
         <input class='form-control mb-2' name="ocenca" :value="ocenca"
@@ -85,7 +86,7 @@ computed: {
     },
     minProcent({ value,  company }) {
         const { min } = {...company.procent}
-        return value.procent < min ? minProcent : 0
+        return value.procent < min ? min : 0
     },
     procent({ value, discount, minProcent, from }) {
         const procent = toNumber(this[from]) ? minProcent || value.procent - discount : 0
@@ -125,7 +126,7 @@ methods: { toDouble, toNumber,
         const procent = toNumber(ocenca) * xProc / 100 * days
         this.update({ ocenca: toDouble(ocenca), procent })
     },
-    getOcenca(value, xProc = 0, xDisc = 0) {    
+    getOcenca(value, xProc = 0) {    
         const getProcent = v => toNumber(v) * xProc / 100
         const isAfter = v => toNumber(v) - getProcent(v) >= toNumber(value)
         let ocenca = getOcenca(toNumber(value),  isAfter, xProc)
@@ -138,8 +139,6 @@ methods: { toDouble, toNumber,
     },
     input({ name, value }) {
         if (['ssuda', 'ocenca'].includes(name)) this.from = name
-        // console.log(name, value);
-        
         this.update({ [name]: value })
     },
     update(v) {

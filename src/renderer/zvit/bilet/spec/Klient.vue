@@ -2,7 +2,7 @@
     <div>
         <div class="row" style="margin-top: -11px;">
           <div class="col " style="font-size: 18px;">
-                <strong>{{company.name}}</strong>
+                <strong>{{company.logo}}</strong>
             </div>
         </div>
         <div class="row border-left border-bottom">

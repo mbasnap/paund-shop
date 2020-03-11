@@ -1,5 +1,6 @@
 import { get, jwtDecode, login, loginAdmin } from '@/db'
 import { router } from '@/setup'
+const reduceBy = (key, arr) => arr.reduce((cur, v) => ({...cur, [v[key]]: v }), {})
 const state = {
     date: new Date(),
     company: {},
@@ -12,7 +13,9 @@ const getters = {
     },
     users({ users }) {
         return users.filter(({ _id }) => _id.includes('org.couchdb.user'))
-            
+    },
+    usersMap({}, { users }) {
+        return reduceBy('name', users)
     },
     lombard({}, { company }) {
         return {...company.lombard }

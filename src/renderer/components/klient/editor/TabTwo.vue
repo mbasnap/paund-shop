@@ -13,7 +13,7 @@ export default {
     mixins: [ mix ],
     props: { value: Object, editable: { type: Boolean, default: true } },
     components: { AddressInput, BithDay, KlientPhone },
-    inject: [ 'update' ],
+    inject: [ 'update', 'save' ],
     methods: {
       readonly() {
           return !this.editable

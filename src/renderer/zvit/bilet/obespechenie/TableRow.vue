@@ -1,16 +1,16 @@
 <template>
-    <tr style="height: 30px; font-size: 14px;">
-        <td>{{ value ? index : '' }}</td>
-        <td>
-            <div style="overflow: hidden; max-width: 300px; text-overflow: ellipsis; white-space: nowrap;">
+    <tr style="height: 30px; ">
+        <td style="font-size: 10px;">{{ value ? index : '' }}</td>
+        <td style="font-size: 10px;">
+            <div style=" overflow: hidden; max-width: 300px; text-overflow: ellipsis; white-space: nowrap;">
                 {{ model.title }}
             </div>
         </td>
-        <td>{{ model.proba }}</td>
-        <td>{{ toDouble(model.ves) }}</td>
-        <td>{{ toDouble(model.derty) }}</td>
-        <td>{{ toDouble(model.total) }}</td>
-        <td>{{ toDouble(model.ocenca) }}</td>
+        <td style="font-size: 10px;">{{ model.proba }}</td>
+        <td style="text-align: right; font-size: 10px;">{{ toDouble(model.ves) }}</td>
+        <td style="text-align: right; font-size: 10px;">{{ toDouble(model.derty) }}</td>
+        <td style="text-align: right; font-size: 10px;">{{ toDouble(model.total) }}</td>
+        <td style="text-align: right; font-size: 10px;">{{ toDouble(model.ocenca) }}</td>
     </tr>
 </template>
 

@@ -97,7 +97,7 @@ export default {
       kassir_sign: 'кассир',
       prinal_kassir: 'Принял на ответственное хранение',
       'text-aggree': 'С условиями договора займа ознакомлен, с описанием залога и суммой оценки согласен',
-      klient_sign: 'подпись клиента',
+      klient_sign: 'подпись',
       // total: 'Total',
       'summa-na-ruki': 'Сумма на руки',
       'podlejit-vozvratu': 'Полежит возврату в срок',

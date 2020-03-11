@@ -1,12 +1,12 @@
 <template>
 <div class="row">
-    <div class="col-8">
+    <div class="col">
         <header-row label="Приложение 2" :value="{ kod: company.kod,
                 idn: company.idn, title: 'идентификационный код юр.лица'
             }">
             <div class="row">
                 <div class="col" style="text-align: center;">
-                    <strong class="border-bottom">{{ company.name }}</strong>
+                    <strong class="border-bottom">{{ company.logo }}</strong>
                 </div>
             </div>
             <div class="row" style="font-size: 10px;" >
@@ -85,18 +85,18 @@
             value: docToString
         }"/>
 
-        <div class="row mt-2" style="font-size: 14px;">
+        <div class="row mt-2" style="font-size: 14px; text-align: right;">
             <div class="col">{{ date }}</div>
-            <div class="col">
+            <div class="col" >
                 {{ type === 'dt' ? 'Подпись плательщика' : 'Подпись получателя' }}
             </div>
-            <div class="col-1"></div>
+            <!-- <div class="col-1"></div> -->
             <div class="col border-bottom">
                 <div class="row m-0 p-0"></div>
             </div>
         </div>
     </div>
-    <div class="ml-2 border-left" style="width: 10px;"></div>
+    <!-- <div class="ml-2 border-left" style="width: 10px;"></div> -->
     <!-- <div v-if="type === 'dt'" class="col">
         <div class="row border-bottom" style="height: 40px;"></div>
         <div class="row border-bottom" style="height: 40px;"></div>
@@ -122,7 +122,8 @@ export default {
     ...mapGetters({
         company: 'company',
         map: 'klient/map',
-        accounts: 'accounts'
+        accounts: 'accounts',
+        usersMap: 'usersMap'
     }),
     company({ value }) {
         return { ...value.company }
@@ -130,8 +131,9 @@ export default {
     klient({ value }) {
         return { ...value.klient }
     },
-    kassir({ value, map }) {
-        const { family, name, sername } = {...map[value.user]}
+    kassir({ value, usersMap }) {
+        const { fio } = {...usersMap[value.user]}
+        const { family, name, sername } = {...fio}
         return `${family} ${name.charAt(0)}.${sername.charAt(0)}.`
     },
     acc301() {

@@ -3,11 +3,16 @@
     <div class="form-row mb-2">
         <named-input class="form-control col-3 mr-1" name="seria" :placeholder="t('seria')" :value="model" />
         
-        <suggest v-if="!value._id || !passports.length || full" class="form-control col" name="number"
-        :placeholder="t('number')"
-        :suggest="suggest" :value="model" :options="options" @select="update"/>
-
-        <custom-select v-else class="form-control col" name="number" :placeholder="t('number')"
+        <suggest ref="pasport" class="form-control col" name="number" :placeholder="t('number')"
+        :suggest="({ seria, number }) => `${seria} ${number}`" :disabled="disabled"
+        :value="model" :options="options" @selectIndex="select">
+            <svg-row-down v-show="!disabled && options.length > 0" class="reset"
+            @click="$refs['pasport'].highlight(0, true)"/>
+        </suggest>
+        <div v-show="!disabled" class="col-1">
+            <svg-plus-circle  width="13px;" @click="select(passports.length)"/>
+        </div>
+        <!-- <custom-select v-else class="form-control col" name="number" :placeholder="t('number')"
         :suggest="tostring" :selected="passport" :options="passports">
                 <li v-for="(item, i) in passports" :key="i" @click="select(i)">
                     <div class="row m-0">
@@ -24,7 +29,7 @@
                         </div>
                     </div>
                 </li>
-        </custom-select>
+        </custom-select> -->
   
     </div> 
     <div v-if="full" class="form-row mb-2">
@@ -35,12 +40,12 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { SvgTrash, SvgPlusCircle} from '@/svg'
+import { SvgTrash, SvgPlusCircle, SvgRowDown} from '@/svg'
 import mix from '@/widgets/named-input/mix.js'
 export default {
     mixins: [ mix ],
-    components: { SvgTrash, SvgPlusCircle },
-    props: { value: Object, disabled: Boolean, full: Boolean, options: Array },
+    components: { SvgTrash, SvgPlusCircle, SvgRowDown },
+    props: { value: Object, disabled: Boolean, full: Boolean },
     inject: [ 'update', 'save' ],
     computed: {
         ...mapGetters({
@@ -55,22 +60,23 @@ export default {
         model({ passports, passport }) {
             return { ...passports[passport]} 
         },
-        // options({ model, passports, tostring }) {
-        //     const value = tostring(model)
-        //         return passports.filter(v => tostring(v).includes(value))
-        // }
+        options({ passports, passport }) {
+           return passports
+        //    .filter((v, i) => i !== passport)
+        }
     },
     methods: {
         select(passport) {
-            return  this.update({ ...this.value, passport })
+           this.update({ ...this.value, passport })
+           this.$emit('change', { name: 'passport', value: passport })  
         },
-        remove(index) {
-            const passports = this.passports.filter((v, i) => i !== index)
-            return this.save({ ...this.value, passports, passport: 0 })
-        },
-        tostring({ seria, number }) {
-            return `${seria || ''} ${number || ''}`
-        },
+        // remove(index) {
+        //     const passports = this.passports.filter((v, i) => i !== index)
+        //     return this.save({ ...this.value, passports, passport: 0 })
+        // },
+        // tostring({ seria, number }) {
+        //     return `${seria || ''} ${number || ''}`
+        // },
         readonly() {
             return this.disabled
         },
@@ -79,9 +85,8 @@ export default {
             passports[this.passport ] = { ...this.model, [name]: value }
             this.update({ ...this.value, passports })
         },
-        suggest({passports, passport}) {
-            const value = (passports || [])[passport]
-            return this.tostring({ ...value })
+        change({ name, value }) {
+            this.$emit('change' , { name, value })         
         },
         t(v) {
             return this.$t(`klient.${v}`)

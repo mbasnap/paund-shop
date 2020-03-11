@@ -1,8 +1,10 @@
 <template>
   <div class="klient">
-    <tab-one class="col" :value="model" :disabled="disabled" @reset="$emit('reset')"/>
-    <div class="col">
-      <svg-address-card width="30px;" @click="showModal('edit')"/>
+    <tab-one class="col" :value="model" :disabled="disabled "
+    @change="$nextTick(() => save(model))"
+    @reset="$emit('reset')"/>
+    <div v-show="!disabled" class="col">
+      <svg-address-card width="30px;" :disabled="!value._id" @click="showModal('edit')"/>
     </div>
   </div>
 </template>
@@ -34,21 +36,26 @@ export default {
     methods: {
         ...mapActions({
           saveKlient: 'klient/save',
-          // remove: 'klient/remove',
+          removeKlient: 'klient/remove',
           klientUpdate: 'klient/update'
         }),
+      remove(v) {
+        return this.removeKlient({ ...v })
+          .then(this.reset)
+      },
       save(v) {
         return this.saveKlient({ ...v })
           .then(v => this.update(v))
       },
       showModal(title) {        
-        const { model: value, update, save } = this
-        this.$modal.show(Editor, { title, value, save }, { height: 'auto' })
+        const { model: value, update, save, remove } = this
+        this.$modal.show(Editor, { title, value, save, remove }, { height: 'auto' })
       },
       update(v) {
         this.$emit('input', { ...this.model, ...v })
         return v
       },
+
       reset() {
         this.$emit('reset')
       }

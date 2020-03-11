@@ -1,5 +1,8 @@
 <template>
-    <div :style="style" class="border-top" > {{ name }} </div>
+    <div class="row" :style="style" >
+        <div class="col p-0 border-top"  > {{ name }} </div>
+        <slot></slot>
+    </div>
 </template>
 
 <script>

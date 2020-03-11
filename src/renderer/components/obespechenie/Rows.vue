@@ -3,7 +3,7 @@
     <td class="index" style="width: 10px; text-align: center;">{{ $vnode.key + 1 }}</td>
     <td><named-input name="title" :value="model" style="width: 250px;"/></td>
     <td><named-select name="proba" style="width: 50px;"
-    :value="model" :options="Object.keys(price)" @change="change"/></td>
+    :value="model" :options="options" @change="change"/></td>
     <td><named-input name="ves" :value="model"/></td>
     <td><named-input name="derty" :value="model"/></td>
     <td><named-input name="ocenca" :value="model" style="width: 100px;"/></td>
@@ -20,30 +20,31 @@ mixins: [ { provide: mix.provide, methods: mix.methods } ],
 props: { value: Object, editable: Boolean, type: Boolean },
 computed: {
     ...mapGetters(['company']),
-    price({ company }) {
+    companyPrice({ company }) {
         const { gold, silver } = {...company.price}
-        // console.log(gold);
-        
-        return (gold || []).reduce((cur, { proba, price }) =>
-            ({...cur, [proba]: price }), {})
+        return gold || []
     },
-    // options({ price }) {
-    //     return Object.keys(price)
-    // },
+    priceMap({ companyPrice, type }) {
+        return !type ? companyPrice.reduce((cur, { proba, price }) =>
+            ({...cur, [proba]: price }), {}) : {}
+    },
+    options({ companyPrice }) {
+        return companyPrice.map(v => v.proba)
+    },
     ves({ value }) {
         return toDouble(value.ves)
     },
     derty({ value }) {
         return toDouble(value.derty)
     },
-    total({ value }) {
-        return toDouble(value.total)
-    },
     ocenca({ value }) {
         return toDouble(value.ocenca)
     },
+    total({ value }) {
+        return toDouble(value.total)
+    },
     model({ value, ves, derty, ocenca }) {
-        return { ...value, ves, derty, ocenca }
+        return {...value, ves, derty, ocenca }
     }
 },
 methods: {
@@ -51,12 +52,13 @@ methods: {
         return !this.editable
     },
     change({ name, value }) {
-        this.update({ ...this.model, [name]: value })
+        this.update({ ...this.value, [name]: value })
     },
-    update(value) {
-        const total = pDiff(value.ves, value.derty)
-        const ocenca = !this.type ? mult(total, this.price[value.proba]): value.ocenca
-        this.$emit('input', { ...value, total: toDouble(total), ocenca: toDouble(ocenca) })
+    update(v) {
+        const { ves, derty, proba, ocenca } = v
+        const total = toDouble(pDiff(ves, derty))
+        const price = toDouble(this.priceMap[proba])
+        this.$emit('input', {...v, total, price, ocenca: toDouble(mult(total, price) || ocenca)})
     },
     t(v) {
         return this.$t(`obespechenie.${v}`)

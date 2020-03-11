@@ -1,6 +1,6 @@
 <template>
     <div class="address-card">
-        <span @click="$emit('click')">
+        <span @click="onClick">
             <svg :style="'width:'+ width"
             aria-hidden="true" focusable="false" data-prefix="fas" data-icon="address-card"
             class="svg-inline--fa fa-address-card fa-w-18" role="img" 
@@ -15,7 +15,14 @@
 <script>
 export default {
 props: {
-    width: String
+    width: String,
+    disabled: Boolean
+},
+methods: {
+    onClick() {
+        if(!this.disabled) 
+        return this.$emit('click')
+    }
 }
 }
 </script>

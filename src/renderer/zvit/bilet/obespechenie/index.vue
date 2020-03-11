@@ -4,12 +4,12 @@
         <thead>
             <tr style="font-size: 10px; text-align: center;">
                 <th scope="col" style="width: 2%; font-size: 15px; font-weight: initial;">9</th>
-                <th scope="col" style="width: 60%">{{t('title')}}</th>
-                <th scope="col" style="width: 5%">{{t('proba')}}</th>
-                <th scope="col" style="width: 9%">{{t('comon-ves')}}</th>
-                <th scope="col" style="width: 5%">{{t('derty')}}</th>
-                <th scope="col" style="width: 9%">{{t('clear-ves')}}</th>
-                <th scope="col" style="width: 10%">{{t('ocenca')}}</th>
+                <th scope="col" style="width: 52%;">{{t('title')}}</th>
+                <th scope="col" style="width: 5%;">{{t('proba')}}</th>
+                <th scope="col" style="width: 9%;">{{t('comon-ves')}}</th>
+                <th scope="col" style="width: 5%;">{{t('derty')}}</th>
+                <th scope="col" style="width: 9%;">{{t('clear-ves')}}</th>
+                <th scope="col" style="width: 18%;">{{t('ocenca')}}</th>
             </tr>
         </thead>
         <tbody>
@@ -29,9 +29,11 @@ export default {
     inject: ['t'],
     computed: {
         ...mapGetters({
-            settings: 'settings',
-            // user: 'user/user'
+            company: 'company',
         }),
+        // header() {
+        //     return []
+        // },
         bilet({ value }) {
             return { ...value }
         },
@@ -39,8 +41,9 @@ export default {
         model({ bilet }) {
             return bilet.obespechenie || []
         },
-        rows({ settings }) {
-            return settings.minRows
+        rows({ company }) {
+            const { obespechenie } = {...company.rows }
+            return Number(obespechenie)
         }
     },
     methods: {}

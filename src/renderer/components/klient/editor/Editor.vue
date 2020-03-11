@@ -20,7 +20,7 @@ import { TabOne, TabTwo, TabThree } from './index.js'
 import ModalEditor from '@/widgets/Modal.vue'
 export default {
     components: { ModalEditor, TabOne, TabTwo, TabThree },
-    props: { title: String, value: Object, save: Function },
+    props: { title: String, value: Object, save: Function, remove: Function },
     provide() {
         return { update: this.update, save: this.save, close: this.close }
     },
@@ -53,18 +53,20 @@ export default {
         //     const emails = klients.map(v => v.email).filter(v => !!v)
         //     return emails.includes(data.email)
         // },
-        disabled ({ data }) {
-            return !Object.entries(data)
-            .some(([ key, value ]) => this.value[key] !== value ? value : undefined)
+        disabled ({ data, model }) {
+            const fields = ['family', 'name', 'sername', 'passports']
+            return fields.some(v => !model[v])
+            // return !Object.entries(data)
+            // .some(([ key, value ]) => this.value[key] !== value ? value : undefined)
         },
         editor() {
             return this.$refs['modal-editor']
         }
     },
     methods: {
-        ...mapActions({
-          remove: 'klient/remove',
-        }),
+        // ...mapActions({
+        //   remove: 'klient/remove',
+        // }),
         update(v) {
             this.data = { ...v }
         },

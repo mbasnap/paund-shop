@@ -1,13 +1,15 @@
 <template>
     <div class="suggest dropdown" :readonly="readonly()" tabindex="0"
-        @blur="highlight(-1)" @keydown.esc.prevent="highlight(-1)">
+    @mouseleave="highlight(-1)"
+    @keydown.esc.prevent="highlight(-1)">
         
         <div class="named-input editor" ref="editor" 
         :name="name" :placeholder="placeholder" :readonly="readonly()">
         {{ model[name] || placeholder }}
         <row-down @click="switchClose(index)"/>
         </div>
-        <ul :class="['options', 'dropdown-menu', { 'show': show }]">
+        <ul :class="['options m-0', 'dropdown-menu', { 'show': show }]"
+        style="border-top: 1px solid #00000000;">
             <slot></slot>
         </ul>
         

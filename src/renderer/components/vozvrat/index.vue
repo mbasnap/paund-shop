@@ -2,7 +2,7 @@
     <div class="row flex-fill vidacha">
         <div class="col-8 pt-3">
             <div class="row " style="height: 250px;">
-                <klient ref="klient" class="col p-0" :value="klient"/>
+                <klient ref="klient" class="col p-0" :value="klient" :disabled="true"/>
                 <div class="col p-0 border-left">
                     <div class="row m-0 pr-3">
                         <div class="col"></div>

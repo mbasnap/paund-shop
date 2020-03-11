@@ -1,7 +1,8 @@
 <template>
-    <div class="suggest dropdown" >
+    <div :class="['suggest dropdown', { readonly: disabled }]"  @mouseleave="highlight(-1)">
         <slot></slot>
         <textarea class="named-input editor" ref="editor"
+        :readonly="disabled"
         :name="name"
         :value="value[name]"
         :placeholder="placeholder"
@@ -9,12 +10,14 @@
         @change="change($event.target)"
         @keydown.up.prevent="highlight(index > 0 ? index - 1 : 0)"
         @keydown.down.prevent="highlight(index < 0 ? 0 : index + 1)"
-        @keydown.enter.prevent="select(options[index])"
+        @keydown.enter.prevent="select(options[index], index)"
         @keydown.esc.prevent="highlight(-1)"/>
         
-        <ul :class="[ 'options dropdown-menu', { 'show': show }]">
-            <li v-for="(item, key) in options" :key="key" :class="{ 'highlight': key === index}"
-            @click="select(item)"> {{ suggest(item) }} </li>
+        <ul 
+        :class="[ 'options dropdown-menu m-0', { 'show': show }]" style="border-top: 1px solid transparent;">
+            <li v-for="(item, key) in options" :key="key" :class="['pl-1', { highlight: key === index}]"
+            
+            @click="select(item, key)"> {{ suggest(item) }} </li>
         </ul>         
     </div>
 </template>
@@ -31,6 +34,7 @@ export default {
                 return item[this.name] || ''
             }
         },
+        disabled: Boolean
     },
     inject: [ "input", "change" ],
     data() {
@@ -45,15 +49,21 @@ export default {
         }
     },
     methods: {
-        select(v) {
+        select(v, index) {
             this.$emit('select', v)
+            this.$emit('selectIndex', index)
             this.highlight(-1)
         },
         highlight(index, bool) {
             if(bool && this.index >= 0) return this.index = -1
             const length = this.options.length - 1
             if (index <= length)  this.index = index
-        }
+        },
+        // close({ toElement }) {
+        //     const { name, className, tagName } = toElement || {}
+        //     if ((className || '').includes('dropdown-menu')) return
+        //     else this.highlight(-1)
+        // }
     }
 }
 </script>
@@ -73,6 +83,10 @@ export default {
     resize: none;
     border: none;
     white-space: nowrap;
+}
+.suggest .readonly{
+    background-color: #e9ecef;
+    opacity: 1;
 }
 .suggest .options li {
     cursor: pointer;

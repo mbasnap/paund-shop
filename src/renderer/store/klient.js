@@ -19,8 +19,9 @@ const mutations = {
 const actions = {
     async save ({ dispatch }, v) {
         const {  lombard } = this.getters
-        return post('klients', { lombard, type: 'klient', ...v})
-            .then(v => dispatch('update', v))
+        const { family, name, sername } = v
+        return ![family, name, sername].some(v => !v) ? post('klients', { lombard, type: 'klient', ...v})
+            .then(v => dispatch('update', v)) : false
     },
     async remove ({ dispatch }, v) {
         return get('klients', v._id)

@@ -1,12 +1,6 @@
-import { app, BrowserWindow, Menu, ipcMain, shell} from "electron"
-// import PouchDB from 'pouchdb-browser'
-// const db = new PouchDB('http://localhost:5984/ps')
-// db.info().then(console.log).catch(console.error)
+import { app, BrowserWindow, Menu, ipcMain, shell} from "electron"    
 
-
-    
-
-const menuTemplate = require('./menuTemplate');
+// const menuTemplate = require('./menuTemplate');
 // const os = require("os")
 // const fs = require("fs")
 // const path = require("path")
@@ -46,19 +40,15 @@ function createWindow ( ddd ) {
     protocol: 'file',
     parent:mainWindow
   })
-  workerWindow.webContents.openDevTools()
+  // workerWindow.webContents.openDevTools()
   workerWindow.loadURL(workURL)
   // workerWindow.on("closed", () => {
   //   workerWindow = undefined;
   // })
 }
 app.on('ready', async () => {
-
-    
-
-
   createWindow()
-  Menu.setApplicationMenu( Menu.buildFromTemplate( menuTemplate() ))
+  // Menu.setApplicationMenu( Menu.buildFromTemplate( menuTemplate() ))
   mainWindow.webContents.openDevTools();
 })
 
@@ -76,9 +66,9 @@ app.on('activate', () => {
   }
 })
 
-ipcMain.on("show-zvit", (v) => {
-  mainWindow.webContents.send('show-zvit', v)
-})
+// ipcMain.on("show-zvit", (v) => {
+//   mainWindow.webContents.send('show-zvit', v)
+// })
 
 ipcMain.on('print', (e, v) => {
   

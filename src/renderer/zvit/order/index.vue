@@ -2,8 +2,6 @@
     <modal-editor :title="t(type)" @print="print" >
         <div :style="{ zoom }">
             <div ref="printer-content">
-                <!-- <dt-order v-if="type === 'dt'" :date="date" :value="model"/>
-                <ct-order v-if="type === 'ct'" :date="date" :value="model"/> -->
                 <order :title="t(type)" :type="type" :date="date" :value="model"/>
             </div>
         </div>
