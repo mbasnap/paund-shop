@@ -53,7 +53,7 @@ const actions = {
     //     await  company.signUp(name, password, { metadata })
     //     dispatch('update', 'login')
     // },
-    async logIn({ dispatch }, { email, password }) {
+    async logIn({}, { email, password }) {
         return login(email, password)
             .then(v => {
                 localStorage.setItem('user', JSON.stringify(v))
@@ -61,7 +61,7 @@ const actions = {
                 // dispatch('update', 'vidacha')
             }).catch(err => console.log(err))
     },
-    async logOut({ dispatch }) {
+    async logOut({}) {
         if (localStorage.getItem('user'))
         localStorage.removeItem('user')
         window.location.reload()
@@ -71,6 +71,8 @@ const actions = {
         commit('date', v)
     },
     async update ({ commit }, path) {
+        console.log('update');
+        
         const { lombard } = JSON.parse(localStorage.getItem('settings')) || {}
         const user = JSON.parse(localStorage.getItem('user'))
         commit('company', { ...await get('company', lombard) , lombard, user })

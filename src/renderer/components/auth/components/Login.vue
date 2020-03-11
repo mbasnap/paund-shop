@@ -23,10 +23,10 @@
     > {{$t('auth.login')}}
 </button>
 
-<!-- <div>
-    {{$t('auth.no_account')}} ?
-    <a href="#" @click="$router.push('/register')"> {{$t('auth.register')}} </a>
-</div> -->
+<div>
+    <!-- {{$t('auth.no_account')}} ? -->
+    <a href="#" @click="changeAccount()"> Change account </a>
+</div>
 
 </div>
 </template>
@@ -79,7 +79,7 @@ export default {
         }
     },
     methods: {
-        ...mapActions(['logIn']), setErrors,
+        ...mapActions(['logIn', 'changeAccount']), setErrors,
     }
 
 }
