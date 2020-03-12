@@ -1,4 +1,4 @@
-import { get, jwtDecode, login, loginAdmin } from '@/db'
+import { get, jwtDecode, login, loginAdmin,users } from '@/db'
 import { router } from '@/setup'
 const reduceBy = (key, arr) => arr.reduce((cur, v) => ({...cur, [v[key]]: v }), {})
 const state = {
@@ -20,8 +20,9 @@ const getters = {
     lombard({}, { company }) {
         return {...company.lombard }
     },
-    user({}, { company }) {
-        return {...company.user }
+    user({ }, { company, usersMap }) {
+        const { name } = {...company.user }
+        return {...usersMap[name] }
     },
     date ({ date }) {
         return date
@@ -48,24 +49,21 @@ const actions = {
         localStorage.removeItem('settings')
         window.location.reload()
     },
-    // async register({ dispatch }, { name, password, email }) {
-    //     const metadata  = { email }
-    //     await  company.signUp(name, password, { metadata })
-    //     dispatch('update', 'login')
-    // },
+    async updateUser({ dispatch }, { user, metadata, password } ) {
+        return password ? users.changePassword(user, password) 
+            : users.putUser(user, { metadata })
+    },
     async logIn({}, { email, password }) {
         return login(email, password)
             .then(v => {
                 localStorage.setItem('user', JSON.stringify(v))
                 window.location.reload()
-                // dispatch('update', 'vidacha')
             }).catch(err => console.log(err))
     },
     async logOut({}) {
         if (localStorage.getItem('user'))
         localStorage.removeItem('user')
         window.location.reload()
-        // dispatch('update', 'login')
     },
     setDate  ({ commit }, v) {
         commit('date', v)
