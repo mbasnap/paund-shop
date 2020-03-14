@@ -1,85 +1,54 @@
 <template>
 <div>
 <form>
-    <valid-input type="email" :label="$t('auth.email_address')" :placeholder="$t('auth.enter_email')"
-       autocomplete="email" autofocus
-       v-model="email.value" :isValid="!email.error"
-       > {{$t('auth.' + email.error)}}
-    </valid-input>
-    <valid-input type="password" :label="$t('auth.password')" :placeholder="$t('auth.enter_password')" 
-       autocomplete="new-password"
-       v-model="password.value" :isValid="!password.error"
-       > {{$t('auth.' + password.error)}}
-        <a href="#" @click="passwordRecovery(email.value)"
-            v-show="password.error === 'incorrect_password'"
-            >{{$t('auth.remind_me_password')}}
-        </a> 
-    </valid-input>
+    <valid-input type="email" :label="$t('auth.email_address')" :isValid="true"
+    v-model="username" > </valid-input>
+    <valid-input type="password" :label="$t('auth.password')" :isValid="true"
+    v-model="password" > </valid-input>
+    <valid-input v-show="user.active && !user.password" type="password" label="confirm" :isValid="true"
+    v-model="confirm" > </valid-input>
 </form>
 
-<button class="btn btn-primary mb-3" type="button" 
-    :disabled="formInputs.some(({value, error}) => !value || error)"
-     @click="logIn(userData)"
-    > {{$t('auth.login')}}
-</button>
-
-<div>
-    <!-- {{$t('auth.no_account')}} ? -->
-    <a href="#" @click="changeAccount()"> Change account </a>
-</div>
+<button class="btn btn-primary mb-3" type="button" :disabled="disabled"
+@click="onLogin(user, password)"> {{$t('auth.login')}}</button>
 
 </div>
 </template>
 
 <script>
-import {mapActions} from 'vuex'
-import { isEmail, isLength} from 'validator'
-import {ValidInput, Input} from '@/widgets/valid-input'
-import {getValues, setErrors} from './functions'
-import decode from 'jwt-decode'
+import { mapActions, mapGetters } from 'vuex'
+import { isEmail, isLength } from 'validator'
+import { ValidInput } from '@/widgets/valid-input'
 export default {
-    components: {ValidInput},
-    created() {
-        // let {email} = this.decoded
-        // if (email) this.email.value = email
-    },
+    components: { ValidInput },
     data() {
         return {
-            email: new Input({
-                name: 'email',
-                onInput: (val) => {
-                    // let error = !val ? 'field_required' : !isEmail(val) ? 'incorrect_email' : false
-                    let error = !val ? 'field_required' : false
-                    this.email.error = error
-                }
-            }),
-            password: new Input({
-                name: 'password',
-                onInput: (val) => {
-                    let error = !val ? 'field_required' : false
-                    this.password.error = error
-                }
-            })
+            username: '',
+            password: '',
+            confirm: ''
         }
     },
     computed: {
-        decoded () {
-            let token = this.token
-            return token ? decode(token) : {}
+        ...mapGetters(['usersMap']),
+        user({ usersMap, username }) {
+            return {...usersMap[username] }
         },
-        token () {
-            return this.$route.query.token
+        active({ user }) {
+            return user.active
         },
-        formInputs () {        
-            return [this.email, this.password]
+        mached({ user, password, confirm }) {
+            return user.password || password === confirm
         },
-        userData () {
-            let result = (obj, { name, value }) => ({ ...obj, [name]: value })
-             return   this.formInputs.reduce(result, {token: this.token})             
+        disabled({ active, mached, password }) {
+            return [active, mached, password.length ].some(v => !v)
         }
     },
     methods: {
-        ...mapActions(['logIn', 'changeAccount']), setErrors,
+        ...mapActions(['logIn', 'updateUser' ]),
+        onLogin(user, password) {
+            return !user.password ? this.updateUser({ user, password })
+            : this.logIn({ user, password })
+        }
     }
 
 }

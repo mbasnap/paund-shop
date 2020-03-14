@@ -1,5 +1,5 @@
 <template> 
-    <modal-editor ref="modal-editor" :title="t(title)">
+    <modal-editor ref="modal-editor" :title="t(title)" @save="save(model, userPassword).then(close)">
     <div class="tabs" >
         <a v-for="(item, key) in tabs" :key="key" :class="{ active: activetab === key }"
         @click="activetab=key" > {{ t(item) }} </a>
@@ -10,12 +10,12 @@
             class="form-group row m-0 mt-2">
             <label class="col-sm-4 col-form-label" >{{ name }}</label>
             <input type="text" class="col form-control" :value="fio[name]"
-            @change="({ target }) => onChange('fio', { name, value: target.value })">
+            @change="({ target }) => update('fio', Object.assign(fio, {[name]: target.value}))">
             </div>
             <div class="form-group row m-0 mt-2">
                 <label class="col-sm-4 col-form-label" >e-mail</label>
-                <input type="text" class="col form-control" :value="value.email"
-                @change="({ target }) => save('email', target.value)">
+                <input type="text" class="col form-control" :value="model.email"
+                @change="({ target }) => update('email', target.value)">
             </div>
         </div>
         <div class="tabcontent" v-if="activetab === 1" >
@@ -23,7 +23,7 @@
             class="form-group row m-0 mt-2">
             <label class="col-sm-4 col-form-label" >{{ name }}</label>
             <input type="text" class="col form-control" :value="passport[name]"
-            @change="({ target }) => onChange('passport', { name, value: target.value })">
+            @change="({ target }) => update('passport', Object.assign(passport, {[name]: target.value}))">
             </div>
         </div>
         <div class="tabcontent" v-if="activetab === 2" >
@@ -31,14 +31,17 @@
             class="form-group row m-0 mt-2">
             <label class="col-sm-4 col-form-label" >{{ name }}</label>
             <input type="text" class="col form-control" :value="address[name]"
-            @change="({ target }) => onChange('address', { name, value: target.value })">
+            @change="({ target }) => update('address', Object.assign(address, {[name]: target.value}))">
             </div>
         </div>
         <div class="tabcontent" v-if="activetab === 3" >
             <div class="form-group row m-0 mt-2">
                 <label class="col-sm-4 col-form-label" >password</label>
-                <input type="text" class="col form-control" :value="value.password"
-                @change="({ target }) => save('password', target.value)">
+                <input type="text" class="col form-control" v-model="password">
+            </div>
+            <div class="form-group row m-0 mt-2">
+                <label class="col-sm-4 col-form-label" >confirm</label>
+                <input type="text" class="col form-control" v-model="confirm">
             </div>
         </div>
         <!-- <tab-one class="tabcontent" v-if="activetab === 0" 
@@ -58,30 +61,38 @@ export default {
         return {
             tabs: [ 'tab_1', 'tab_2', 'tab_3', 'tab_3' ],
             activetab: 0,
-            data: {}
+            data: {},
+            password: '',
+            confirm: ''
         }
     },
     computed: {
-        fio({ value }) {
-            return { ...value.fio }
+        model({ data, value }) {
+            return {...value, ...data }
         },
-        passport({ value }) {
-            return { ...value.passport }
+        userPassword({ password, confirm }) {
+            return password === confirm ? password : false
         },
-        address({ value }) {
-            return { ...value.address }
+        fio({ model }) {
+            return { ...model.fio }
+        },
+        passport({ model }) {
+            return { ...model.passport }
+        },
+        address({ model }) {
+            return { ...model.address }
         },
         editor() {
             return this.$refs['modal-editor']
         }
     },
     methods: {
-        onChange(key, { name, value }) {
-            this.save(key, {...this[key], [name]: value })           
+        update(name, value) {
+            this.data = {...this.data, [name]: value }        
         },
-        // close() {
-        //     return this.editor.close()
-        // },
+        close() {
+            return this.editor.close()
+        },
         t(v) {
           return v
         }

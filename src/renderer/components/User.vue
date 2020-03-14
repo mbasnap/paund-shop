@@ -2,6 +2,7 @@
     <b-nav-item-dropdown :text="user.name" right >
      <b-link class="dropdown-item" @click="editProfile">Profile</b-link>
      <b-link class="dropdown-item" @click="logOut">{{ $t('auth.logout') }}</b-link>
+     <b-link v-if="isAdmin" class="dropdown-item" @click="changeAccount">Change Account</b-link>
     </b-nav-item-dropdown>
 </template>
 
@@ -11,19 +12,15 @@ import Editor from './UserEditor'
 export default {
 
 computed: {
-    ...mapGetters(['user'])
+    ...mapGetters(['user', 'isAdmin']),
 },
 methods: {
-    ...mapActions(['logOut', 'updateUser', 'changePassword']),
+    ...mapActions(['logOut', 'updateUser', 'changeAccount' ]),
     editProfile() {
-        const { fio, passport, address } = this.user
-        this.showModal('edit profile', { fio, passport, address })
+        this.showModal('edit profile', this.user)
     },
-    save(name, value) {
-        const { name: user } = this.user
-        const metadata = { [name]: value }
-        const password = name === 'password' ? value : false
-        this.updateUser({ user, metadata, password })      
+    async save(user, password) {
+        return this.updateUser({ user, password })      
     },
     showModal(title, value) {        
     this.$modal.show(Editor, { title, value, save: this.save }, { height: 'auto' })

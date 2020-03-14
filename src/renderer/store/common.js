@@ -1,4 +1,4 @@
-import { get, jwtDecode, login, loginAdmin,users } from '@/db'
+import { get, post, jwtDecode, login, loginAdmin, bcrypt } from '@/db'
 import { router } from '@/setup'
 const reduceBy = (key, arr) => arr.reduce((cur, v) => ({...cur, [v[key]]: v }), {})
 const state = {
@@ -12,7 +12,8 @@ const getters = {
         return company
     },
     users({ users }) {
-        return users.filter(({ _id }) => _id.includes('org.couchdb.user'))
+        return users
+        // .filter(({ _id }) => _id.includes('org.couchdb.user'))
     },
     usersMap({}, { users }) {
         return reduceBy('name', users)
@@ -20,9 +21,12 @@ const getters = {
     lombard({}, { company }) {
         return {...company.lombard }
     },
-    user({ }, { company, usersMap }) {
+    user({}, { company, usersMap }) {
         const { name } = {...company.user }
         return {...usersMap[name] }
+    },
+    isAdmin({}, { user }) {
+        return (user.roles || []).includes('admin')
     },
     date ({ date }) {
         return date
@@ -49,21 +53,23 @@ const actions = {
         localStorage.removeItem('settings')
         window.location.reload()
     },
-    async updateUser({ dispatch }, { user, metadata, password } ) {
-        return password ? users.changePassword(user, password) 
-            : users.putUser(user, { metadata })
+    async updateUser({ dispatch }, { user, password } ) {
+        if (password) user.password = await bcrypt.hash(password, 10)
+        return post('users', user).then(() => dispatch('update'))
     },
-    async logIn({}, { email, password }) {
-        return login(email, password)
-            .then(v => {
-                localStorage.setItem('user', JSON.stringify(v))
-                window.location.reload()
-            }).catch(err => console.log(err))
+
+    async logIn({ dispatch }, { user, password }) {
+        const mached = await bcrypt.compare(password, user.password)
+        if (!mached)  throw 'invalid_password'
+        else dispatch('setUser', user)
     },
-    async logOut({}) {
-        if (localStorage.getItem('user'))
+    setUser({ dispatch }, v) {
+        localStorage.setItem('user', JSON.stringify(v))
+        dispatch('update', 'vidacha')
+    },
+    async logOut({ dispatch }) {
         localStorage.removeItem('user')
-        window.location.reload()
+        dispatch('update', 'login')
     },
     setDate  ({ commit }, v) {
         commit('date', v)

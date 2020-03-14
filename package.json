@@ -27,10 +27,13 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "bcrypt": "^4.0.1",
+    "bcryptjs": "^2.4.3",
     "bootstrap-vue": "^2.0.0-rc.11",
     "electron-json-storage": "^4.1.4",
     "express": "^4.17.1",
     "express-pouchdb": "^4.2.0",
+    "jsonwebtoken": "^8.5.1",
     "jwt-decode": "^2.2.0",
     "lodash.groupby": "^4.6.0",
     "moment": "^2.24.0",
