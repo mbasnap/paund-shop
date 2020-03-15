@@ -1,11 +1,11 @@
 import { get, post } from '@/db'
 
 const state = {
-    klients: [],
+    // klients: [],
 }
 const getters = {
-    docs ({ klients }) {
-        return  klients || []
+    docs({}, {}, { common }) {
+        return  common.klients || []
     },
     map ({}, { docs }) {
         return  docs.reduce((obj, v) => ({ ...obj, [v._id]: v}), {})
@@ -20,7 +20,8 @@ const actions = {
     async save ({ dispatch }, v) {
         const {  lombard } = this.getters
         const { family, name, sername } = v
-        return ![family, name, sername].some(v => !v) ? post('klients', { lombard, type: 'klient', ...v})
+        return ![family, name, sername].some(v => !v) ? 
+            post('klients', { lombard, ...v, type: 'klient' })
             .then(v => dispatch('update', v)) : false
     },
     async remove ({ dispatch }, v) {
@@ -28,8 +29,9 @@ const actions = {
             .then(v => dispatch('save', {...v, _deleted: true }))
     },
     async update ({ commit, getters }, v) {       
-        commit('klients', await get('klients'))
-        return getters.map[{ ...v}.id]
+        // commit('klients', await get('klients'))
+        await this.dispatch('update')
+        return v
     }
 }
 

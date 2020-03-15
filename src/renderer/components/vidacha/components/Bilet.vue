@@ -111,7 +111,7 @@ computed: {
 },
 methods: { toDouble, toNumber,
     calculate(v = { [this.from]: this[this.from]}) {
-        const [from, value] = Object.entries(v)[0]        
+        const [from, value] = Object.entries(v)[0]
         this.from = from
         from === 'ssuda' ? this.fromSsuda(value) : this.fromOcenca(value)
     },

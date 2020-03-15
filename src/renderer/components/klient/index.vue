@@ -21,7 +21,7 @@ export default {
       return { update: this.update, save: this.save }
     },
     created() {
-      this.klientUpdate()
+      // this.klientUpdate()
     },
     computed: {
 
@@ -37,7 +37,7 @@ export default {
         ...mapActions({
           saveKlient: 'klient/save',
           removeKlient: 'klient/remove',
-          klientUpdate: 'klient/update'
+          // klientUpdate: 'klient/update'
         }),
       remove(v) {
         return this.removeKlient({ ...v })

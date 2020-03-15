@@ -1,10 +1,10 @@
 import { get, post } from '@/db'
 const state = {
-    reestr: []
+    // reestr: []
 }
 const getters = {
-    docs({ reestr }) {        
-        return  reestr || []
+    docs({}, {}, { common }) {
+        return  common.reestr || []
     },
     map({}, { docs }) {
         return docs.reduce((obj, v) => ({ ...obj, [v._id]: v }), {})
@@ -68,19 +68,20 @@ const actions = {
     save ({ dispatch }, v) {
         console.log(v);
         
-        const {  date, lombard } = this.getters
-        return post('reestr', { date, ...v, lombard, type: 'reestr'  })
+        const {  date, lombard, user } = this.getters
+        return post('reestr', { date, user: user._id, ...v, lombard, type: 'reestr'})
             .then(v => dispatch('update', v))
     },
     remove ({ dispatch }, { _id }) {     
         return get('reestr', _id)
             .then(v => dispatch('save', { ...v, _deleted: true }))
-                .then(v => dispatch('update', v))
+                // .then(v => dispatch('update', v))
     },
 
     async update({ commit, getters }, v) {
-        commit('reestr', await get('reestr'))
-        return getters.map[{ ...v}.id]
+        // commit('reestr', await get('reestr'))
+        await this.dispatch('update')
+        return v
     }
 }
 

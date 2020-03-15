@@ -30,6 +30,16 @@
   import User from './User';
 export default {
   components: { Datepicker, User},
+  watch: {
+    company({ user, active }) {
+      // console.log(v);
+      
+      if ( user && !active) this.logOut()   
+    },
+    isAuth(v) {
+      if (!v) this.logOut()     
+    }
+  },
   created() {
     window.addEventListener('online', () => this.conn = true)
     window.addEventListener('offline', () => this.conn = false)
@@ -40,17 +50,19 @@ export default {
     }
   },
   computed: {
-     ...mapGetters(['date', 'company', 'logo']),
+     ...mapGetters(['date', 'company', 'logo', 'user']),
      menu({ company }) {
        return (company.menu || '').split(',')
         .filter(v => !!v).map(v => v.trim())
      },
-     isAuth({ company, menu }) {
-       return !!company.user
+     isAuth({ user }) {
+      //  console.log(user);
+       
+       return user.active
      }
   },
   methods: {
-    // ...mapActions['logout']
+    ...mapActions(['logOut', 'changeAccount'])
   }
 }
 </script>

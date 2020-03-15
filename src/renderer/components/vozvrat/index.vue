@@ -23,7 +23,7 @@
                             </div>
                             <div class="col-6">
                                 <button class="btn btn-primary" :disabled="disabled"
-                                @click="saveKlient(klient).then(v => saveBilet(model)).then(v => select(v))">
+                                @click="saveBilet(model).then(() => update({}))">
                                     {{ t('save') }}
                                 </button>
                             </div>   
@@ -65,9 +65,9 @@ methods: {
     showModal (value) {
         const title = `Билет № ${value.number}`
         this.$modal.show(Editor, { title, value, save: async (vozvrat, vidacha) => {
-            const { _id: klient, passport } = await this.saveKlient(this.klient)
+            const { _id: klient, passport } = this.klient
             await this.saveBilet({...vozvrat, klient, passport })
-            return this.select(await this.saveBilet({ ...vidacha, klient, passport }))
+            return this.saveBilet({ ...vidacha, klient, passport }).then(() => this.update({}))
         } }, { height: 'auto' })
     }
 }

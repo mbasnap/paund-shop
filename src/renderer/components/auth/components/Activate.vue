@@ -1,21 +1,14 @@
 <template>
 <div class="col">
-<div>
-    <valid-input type="text" label="token" placeholder="token" 
-    :isValid="true" v-model="token"/>
-    <div v-if="!auth" class="row mb-2">
-    <!-- <valid-input class="form-control col-5 mr-1" v-model="username" :isValid="true"/> -->
-    <valid-input class="col-5" type="password" 
-    placeholder="Password" label="admin"
-    v-model="password" :isValid="true"/>
+    <valid-input type="text" placeholder="token" :isValid="!err.token"
+    :value="token" @input="v => onInput('token', v)">{{ err.token }}</valid-input>
+    <div class="row mb-2">
+        <valid-input class="col-5" type="password" placeholder="Password" label="admin"
+        :isValid="!err.password" :value="password"
+        @input="v => onInput('password', v)">{{ err.password }}</valid-input>
     </div>
-</div>
-
-<button class="btn btn-primary mb-3" type="button" 
-     @click="activate({ password, token })"
-    > activate
-</button>
-
+    <button class="btn btn-primary mb-3" type="button" :disabled="disabled"
+    @click="loginAdmin(password).then(() => activate(token)).catch(setErr)"> activate</button>
 </div>
 </template>
 
@@ -24,23 +17,34 @@ import { mapActions } from 'vuex'
 import { ValidInput } from '@/widgets/valid-input'
 export default {
     components: { ValidInput },
-
     data() {
         return {
             token: '',
-            password: ''
+            password: '',
+            err: {}
         }
     },
     computed: {
-        auth({ password }) {
-            return !!localStorage.getItem('admin')
+        // auth({ password }) {
+        //     return !!localStorage.getItem('admin')
+        // }
+        disabled({ token, password }) {
+            const  no_value = [token, password].some(v => !v)
+            return [no_value].some(v => v)
         }
     },
     methods: {
-        ...mapActions(['activate']),
-        // reload() {
-        //     window.location.reload()
-        // }
+        ...mapActions(['loginAdmin', 'activate']),
+        onInput(name, value) {
+            // window.location.reload()
+            this[name] = value
+            this.err = {}
+        },
+        setErr(v) {
+            console.log(v);
+            
+            this.err = v
+        }
     }
 
 }

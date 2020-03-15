@@ -1,10 +1,13 @@
-import { get, post, jwtDecode, login, loginAdmin, bcrypt } from '@/db'
+import { lombard, get, post, verify, sign, testAuth, hash, compare } from '@/db'
 import { router } from '@/setup'
+
 const reduceBy = (key, arr) => arr.reduce((cur, v) => ({...cur, [v[key]]: v }), {})
 const state = {
     date: new Date(),
     company: {},
-    users: []
+    users: [],
+    klients: [],
+    reestr: [],
 }
 
 const getters = {
@@ -13,7 +16,6 @@ const getters = {
     },
     users({ users }) {
         return users
-        // .filter(({ _id }) => _id.includes('org.couchdb.user'))
     },
     usersMap({}, { users }) {
         return reduceBy('name', users)
@@ -22,8 +24,7 @@ const getters = {
         return {...company.lombard }
     },
     user({}, { company, usersMap }) {
-        const { name } = {...company.user }
-        return {...usersMap[name] }
+        return {...usersMap[company.user] }
     },
     isAdmin({}, { user }) {
         return (user.roles || []).includes('admin')
@@ -41,33 +42,40 @@ const mutations = {
     },
     users (state, v) { 
         state.users = v
+    },
+    klients (state, v) { 
+        state.klients = v
+    },
+    reestr (state, v) { 
+        state.reestr = v
     }
 }
 const actions = {
-    async activate({}, { password, token }) {
-        loginAdmin(password)
-        localStorage.setItem('settings', JSON.stringify(jwtDecode(token)))
+    activate({}, token) {
+        localStorage.setItem('settings', sign(verify(token, false), '1y'))        
         window.location.reload()
     },
     changeAccount({}) {
         localStorage.removeItem('settings')
         window.location.reload()
     },
-    async updateUser({ dispatch }, { user, password } ) {
-        if (password) user.password = await bcrypt.hash(password, 10)
+    loginAdmin({}, password) {
+        return testAuth(password).then(() => {
+            localStorage.setItem('admin', password)
+        })
+    },
+    async updateUser({ dispatch }, { password, user } ) {
+        if (password) user.password = await hash(password)
         return post('users', user).then(() => dispatch('update'))
     },
 
-    async logIn({ dispatch }, { user, password }) {
-        const mached = await bcrypt.compare(password, user.password)
-        if (!mached)  throw 'invalid_password'
-        else dispatch('setUser', user)
-    },
-    setUser({ dispatch }, v) {
-        localStorage.setItem('user', JSON.stringify(v))
+    async logIn({ dispatch }, { password, user }) {
+        // await compare(password, user)
+        if (!await compare(password, user)) throw 'incorect_password'
+        localStorage.setItem('user', sign({ _id: user._id }, '1h'))
         dispatch('update', 'vidacha')
     },
-    async logOut({ dispatch }) {
+    logOut({ dispatch }) {
         localStorage.removeItem('user')
         dispatch('update', 'login')
     },
@@ -76,11 +84,11 @@ const actions = {
     },
     async update ({ commit }, path) {
         console.log('update');
-        
-        const { lombard } = JSON.parse(localStorage.getItem('settings')) || {}
-        const user = JSON.parse(localStorage.getItem('user'))
-        commit('company', { ...await get('company', lombard) , lombard, user })
+        const { _id: user } = verify(localStorage.getItem('user')) || {}
+        commit('company', { ...await get('company', lombard), user })
         commit('users', await get('users'))
+        commit('klients', await get('klients'))
+        commit('reestr', await get('reestr'))
         if (path) router.push(path)
     }
 }

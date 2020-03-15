@@ -21,7 +21,7 @@ import { Bilet, Order } from '@/zvit'
 export default {
     components: { KassaList, Context, History },
     created() {
-      this.reestrUpdate()
+    //   this.reestrUpdate()
     },
     provide() {
         const onStart = () => this.$emit('start')
@@ -74,12 +74,13 @@ export default {
         ...mapActions({
             removeReestr: 'reestr/remove',
             saveReestr: 'reestr/save',
-            reestrUpdate: 'reestr/update'
+            // reestrUpdate: 'reestr/update'
         }),
         async save(v) {
             const dt = v.values.map(v => v.dt === '301').includes(true) ? this.order['dt'] : false
             const ct = v.values.map(v => v.ct === '301').includes(true) ? this.order['ct'] : false
-            return this.saveReestr({...v, order: { dt, ct } })
+            return this.saveReestr({...v, order: { dt, ct } }).then( v => this.select(v.id))
+
         },
         async remove(v) {
             await this.removeReestr(v)
@@ -107,8 +108,10 @@ export default {
         printBilet(props) {      
             this.$modal.show(Bilet, props, { width: '800', height: '550'})
         },
-        select(id) {       
-            this.selected = id
+        select(id) {      
+            // console.log(id);
+             
+            return this.selected = id
         }
     }
 }

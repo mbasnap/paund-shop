@@ -32,7 +32,7 @@ export default {
         save: Function
     },
     provide() {
-        return { update: this.update, save: this.save }
+        return { update: this.update }
     },
     data() {
         return {
@@ -62,7 +62,7 @@ export default {
             return this.$refs['modal-editor']
         },
         type({ bilet }) {
-            return bilet.type
+            return bilet.zalog
         }
     },
     methods: {

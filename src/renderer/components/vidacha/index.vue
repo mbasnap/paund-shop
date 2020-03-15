@@ -14,7 +14,7 @@
                         </div>
                         <div class="col-6">
                             <button class="btn btn-primary" :disabled="disabled"
-                                @click="saveKlient(klient).then(v => saveBilet(model)).then(v => select(v))">
+                                @click="saveBilet(model).then(() => update({}))">
                                 {{ t('save') }}
                             </button>
                         </div>
@@ -38,7 +38,7 @@ export default {
 components: { Bilet, draggable },
 mixins: [ mix ],
 created() {
-    // this.updateCompany()
+    this.updateCompany()
 },
 data() {
     return {
@@ -47,7 +47,7 @@ data() {
 },
 computed: {
     ...mapGetters({
-        user: 'user'
+        // user: 'user'
     }),
     model() {
         const { _id: klient, passport } = this.klient
@@ -61,7 +61,7 @@ computed: {
 methods: {
     ...mapActions({
         logOut: 'logOut',
-        // updateCompany: 'update'
+        updateCompany: 'update'
     })
 }
 }
