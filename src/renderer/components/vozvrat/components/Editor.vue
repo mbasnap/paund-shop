@@ -1,15 +1,17 @@
 <template> 
     <modal-editor ref="modal-editor" :title="title" 
     @save="onsave().then(v => editor.close())" >
-        <div class="row mb-3 border-bottom" style="height: 160px;">
-            <div class="col" v-html="vozvrat">
+        <div class="row mb-3" >
+            <div class="col mt-3">
+                <strong>{{ `Билет № ${value.number}` }}</strong>
+                <div class="mt-2" v-html="vozvrat"> </div>
             </div>
-            <div class="col-5">
-                <named-input class="form-control col mb-2" name="pay" placeholder="pay"
-                :value="{ pay }"/>
+            <div class="col">
+                <vidacha-bilet ref="vidacha" class="row" :editMode="true" :errors="errors"
+                :disabled="true" @change="onChange" v-model="model" :type="type"/>
             </div>
         </div>
-        <vidacha-bilet ref="vidacha" class="row" v-model="model" :type="type"/>
+        <obespechenie ref="obespechenie" v-model="obespechenie" :type="type"></obespechenie>
     </modal-editor>
 </template>
 <script>
@@ -17,11 +19,10 @@ import { mapGetters, mapActions } from 'vuex'
 
 import ModalEditor from '@/widgets/Modal.vue'
 import VidachaBilet from '@/components/vidacha/components/Bilet.vue'
-import { getOcenca, rorrect, toNumber, mult, toDouble, diff } from '@/functions'
-import mix from '@/widgets/named-input/mix.js'
+import Obespechenie from '@/components/obespechenie'
+import { summ, getOcenca, rorrect, toNumber, mult, toDouble, diff } from '@/functions'
 export default {
-    mixins: [ mix ],
-    components: { ModalEditor, VidachaBilet },
+    components: { ModalEditor, VidachaBilet, Obespechenie },
     props: {
         title: String,
         value: { type: Object,
@@ -31,59 +32,81 @@ export default {
         },
         save: Function
     },
-    provide() {
-        return { update: this.update }
+    created() {
+        this.calculate()        
     },
     data() {
         return {
-            data: {}
+            data: {},
+            // pay: 0
         }
     },
     computed: {
         vozvrat({ value }) {
             return value.$el.outerHTML
         },
-        pay({ data }) {
-            return toDouble(data.pay)
+        vidacha() {
+            return this.$refs['vidacha']
         },
         bilet({ value }) {
             return {...value.value}
         },
         model: {
             get({ data, bilet }) {
-                const { days, xDisc } = { ...bilet, ...data }
-                return { ...data, days, xDisc }
+                const { days, xDisc, obespechenie } = bilet
+                return {  days, xDisc, obespechenie, ...data }
             },
             set(v) {
                 this.data = { ...this.data, ...v }
             }
+        },
+        obespechenie: {
+            get({ model }) {
+                return model.obespechenie || []
+            },
+            set(obespechenie) {
+                this.data = { ...this.data, obespechenie }
+            }
+        },
+        // ocenca({ model }) {
+        //     const { ssuda, procent } = model
+        //     return toNumber(ssuda) + toNumber(procent)
+        // },
+        total({ obespechenie }) {
+            return summ( ...obespechenie.map(v => v.ocenca))
+        },
+        errors({ model, total }) {
+            const { ssuda, procent } = model
+            const ocenca = summ(ssuda, procent) >= total ? "over_total" : false
+            return { ocenca }
         },
         editor() {
             return this.$refs['modal-editor']
         },
         type({ bilet }) {
             return bilet.zalog
-        }
+        },
+
     },
-    methods: {
-        calculate(v) {
-            const { total, ocenca } = this.value
-            const ssuda = toNumber(total) - toNumber(v)
-            return this.$refs['vidacha'].calculate({ ssuda })  
+    methods: { 
+        onChange({ name, value }) {
+                this.data = {...this.data, [name]: toDouble(value)}
+                if (name === 'pay') this.calculate(value)
+        },
+        calculate(pay = 0) {
+            const { total } = this.value
+            this.$nextTick(() => {
+                const { calculate } = this.vidacha
+                calculate({ ssuda: toNumber(total) - toNumber(pay) })
+            })
         },
         onsave() {
             const vozvrat = this.value.model
             const vidacha = this.$refs['vidacha'].model
-            return  this.save(vozvrat, vidacha)
-        },
-        update(v) {
-            this.data = { ...v }
-        },
-        change({ name, value }) {
-            this.data = { ...this.data, [name]: value }      
-            this.$nextTick(() => {
-                this.calculate(this.pay)
-            })
+            const obespechenie = this.$refs['obespechenie'].model
+            // console.log(vidacha, obespechenie);
+            
+            return  this.save(vozvrat, {...vidacha, obespechenie })
         }
     }
 }

@@ -20,11 +20,10 @@ export default {
     provide() {
       return { update: this.update, save: this.save }
     },
-    created() {
-      // this.klientUpdate()
-    },
     computed: {
-
+      ...mapGetters({
+        map: 'klient/map'
+      }),
       model({ value, isValid }) {
         return { ...value, isValid }
       },
@@ -37,7 +36,6 @@ export default {
         ...mapActions({
           saveKlient: 'klient/save',
           removeKlient: 'klient/remove',
-          // klientUpdate: 'klient/update'
         }),
       remove(v) {
         return this.removeKlient({ ...v })
@@ -45,15 +43,14 @@ export default {
       },
       save(v) {
         return this.saveKlient({ ...v })
-          .then(v => this.update(v))
+          .then(({ id }) => this.update(this.map[id]))
       },
       showModal(title) {        
-        const { model: value, update, save, remove } = this
+        const { value, update, save, remove } = this
         this.$modal.show(Editor, { title, value, save, remove }, { height: 'auto' })
       },
       update(v) {
         this.$emit('input', { ...this.model, ...v })
-        return v
       },
 
       reset() {

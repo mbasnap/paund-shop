@@ -1,20 +1,19 @@
 <template> 
-    <modal-editor ref="modal-editor" :title="t(title)" :disabled="disabled"
+    <modal-editor ref="modal-editor" :title="t(title)" 
     @save="save(model).then(() => close())" >
     <div class="tabs" >
         <a v-for="(item, key) in tabs" :key="key" :class="{ active: activetab === key }"
         @click="activetab=key" > {{ t(item) }} </a>
     </div>
     <div class="content">
-        <tab-one class="tabcontent" v-if="activetab === 0" :value="model" :full="true"
-        @reset="$emit('reset')" @remove="remove(model).then(close)" />
+        <tab-one class="tabcontent" v-if="activetab === 0" :value="model" :editMode="true"
+        @remove="remove(model).then(close)" />
         <tab-two class="tabcontent" v-if="activetab === 1" :value="model" />
         <!-- <tab-three class="tabcontent" v-if="activetab === 2" :value="model" :errors="errors" /> -->
     </div>
     </modal-editor>
 </template>
 <script>
-import { mapGetters, mapActions } from 'vuex'
 import { TabOne, TabTwo, TabThree } from './index.js'
 
 import ModalEditor from '@/widgets/Modal.vue'
@@ -32,43 +31,16 @@ export default {
         }
     },
     computed: {
-        ...mapGetters({
-            docs: 'klient/docs'
-        }),
-        model({ data, value, notUnicEmail }) {
+        model({ data, value }) {
             return { ...value, ...data }
-        },
-        errors() {
-            const email = ['notUnicEmail'].filter(v => this[v])
-            return { email }
-        },
-        klients({ docs, value }) {
-            return docs.filter(({ _id }) => value._id !== _id )
-        },
-        notUnicEmail({ data, klients }) {
-            const emails = klients.map(v => v.email).filter(v => !!v)
-            return emails.includes(data.email)
-        },
-        // notUnicPassport({ data, klients }) {
-        //     const emails = klients.map(v => v.email).filter(v => !!v)
-        //     return emails.includes(data.email)
-        // },
-        disabled ({ data, model }) {
-            const fields = ['family', 'name', 'sername', 'passports']
-            return fields.some(v => !model[v])
-            // return !Object.entries(data)
-            // .some(([ key, value ]) => this.value[key] !== value ? value : undefined)
         },
         editor() {
             return this.$refs['modal-editor']
         }
     },
     methods: {
-        // ...mapActions({
-        //   remove: 'klient/remove',
-        // }),
         update(v) {
-            this.data = { ...v }
+            this.data = v
         },
         close() {
             return this.editor.close()

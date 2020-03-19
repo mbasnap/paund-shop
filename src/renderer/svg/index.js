@@ -5,6 +5,7 @@ import SvgRowDown from './row-down'
 import SvgTrash from './trash'
 import SvgPlusCircle from './plus-circle'
 import SvgCalculator from './calculator'
+import SvgExclamation from './exclamation'
 
 
 export {
@@ -14,5 +15,6 @@ export {
     SvgRowDown,
     SvgTrash,
     SvgPlusCircle,
-    SvgCalculator
+    SvgCalculator,
+    SvgExclamation
 }

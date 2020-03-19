@@ -21,7 +21,7 @@
                     </div>
                 </div>                                 
             </div>        
-            <obespechenie v-model="obespechenie" :type="type"
+            <obespechenie ref="obespechenie" v-model="obespechenie" :type="type"
             @changeType="v => type = v" @change=" ocenca => $refs['bilet'].calculate({ocenca})"/>
         </div>
         <kassa ref="kassa" class="col-4" @start="target = true" @end="target = false"/>
@@ -38,7 +38,7 @@ export default {
 components: { Bilet, draggable },
 mixins: [ mix ],
 created() {
-    this.updateCompany()
+    // this.updateCompany()
 },
 data() {
     return {
@@ -47,12 +47,12 @@ data() {
 },
 computed: {
     ...mapGetters({
-        // user: 'user'
     }),
+
     model() {
-        const { _id: klient, passport } = this.klient
+        const { _id: klient } = this.klient
         const obespechenie = this.obespechenie.filter(v => toNumber(v.ocenca))
-        return { ...this.$refs['bilet'].model, klient, passport, obespechenie }
+        return { ...this.$refs['bilet'].model, klient, obespechenie }
     },
     disabled({ bilet, klient }) {
         return !klient.isValid
@@ -61,7 +61,7 @@ computed: {
 methods: {
     ...mapActions({
         logOut: 'logOut',
-        updateCompany: 'update'
+        // updateCompany: 'update'
     })
 }
 }

@@ -66,7 +66,7 @@ const actions = {
         console.log({ used: err });
     },
     save ({ dispatch }, v) {
-        console.log(v);
+        // console.log(v);
         
         const {  date, lombard, user } = this.getters
         return post('reestr', { date, user: user._id, ...v, lombard, type: 'reestr'})

@@ -9,22 +9,39 @@
                 :value="{ number }" :options="numbers"/>
             </div>
         </div>
-        <input class='form-control mb-2' name="ssuda" :value="ssuda"
-        @input="({ target }) => input(target)"
-        @change="calculate({ssuda})"/>
+
+
+        <div class="input-group mb-2">
+            <input class='form-control' name="ssuda" :disabled="disabled"
+            :value="ssuda" @input="({ target }) => input(target)"
+            @change="({target}) => onChange(target, { ssuda })"/>
+            <input v-if="editMode" name="pay" :value="pay" style="font-weight: 500;"
+            :class="['input-group-append form-control col-4', { red: !positive(pay ) }]"            
+            @input="({ target }) => input(target)"
+            @change="({target}) => onChange(target)"/>
+        </div>
+
+
         <div class=" input-group mb-2">
-            <input class="form-control" :value="procent"/>
-            <div class="input-group-append">
-            <named-select class="form-control" name="xDisc"
-             @change="$nextTick(() => calculate())"
-             :value="{ xDisc }" :options="discounts"/>
-            </div>
-        </div>   
-        <input class='form-control mb-2' name="ocenca" :value="ocenca"
-        @input="({ target }) => input(target)" @change="calculate({ocenca})"/> 
+            <input class="form-control" :value="procent" :disabled="disabled"/>
+            <named-select class="input-group-append form-control col-4" name="xDisc"
+             :value="{ xDisc }" :options="discounts"
+             @change="$nextTick(() => calculate())"/>
+        </div>
+        <div :class="['input-group', { err: !!errors.ocenca }]">
+            <input :class="['form-control ']"
+            name="ocenca" :value="ocenca" :disabled="disabled"
+            @input="({ target }) => input(target)" @change="calculate({ocenca})"/> 
+            <div v-show="errors.ocenca" id="tooltip-err"
+            class="input-group-append form-control col-1"
+            ><svg-exclamation  width="8px;"/></div>
+        </div>
+        <b-tooltip target="tooltip-err" variant="danger" triggers="hover">
+            {{ errors.ocenca }}
+        </b-tooltip>
     </div>
     <day-slider class="col-3" :value="{ days }"
-    @input="input" @change="$nextTick(() => calculate({ocenca}))"/>
+    @input="input" @change="$nextTick(() => calculate())"/>
 </div>
 
 </template>
@@ -34,25 +51,32 @@
 import { mapGetters } from 'vuex'
 import mix from '@/widgets/named-input/mix.js'
 import DaySlider from './DaySlider'
+import { SvgExclamation } from '@/svg'
 import { getOcenca, rorrect, toNumber, mult, toDouble, diff } from '@/functions'
 export default {
 mixins: [ mix ],
-components: { DaySlider },
+components: { DaySlider, SvgExclamation },
 props: {
     value: { type: Object,
         default() {
             return {}
         }
     },
+    errors: { type: Object,
+        default() {
+            return {}
+        }
+    },
     disabled: Boolean,
-    type: String
+    type: String,
+    editMode: Boolean
 },
 data() {
     return {
         from: 'ocenca'
     }
 },
-computed: {
+computed: { 
     ...mapGetters({
         company: 'company',
         numbers: 'reestr/numbers'
@@ -84,6 +108,9 @@ computed: {
         return from ==='ssuda' ? ssuda 
             : toDouble(toNumber(this.ocenca) - toNumber(this.procent))
     },
+    pay({ value }) {
+        return value.pay !== undefined ? value.pay : '0.00'
+    },
     minProcent({ value,  company }) {
         const { min } = {...company.procent}
         return value.procent < min ? min : 0
@@ -110,21 +137,29 @@ computed: {
     }
 },
 methods: { toDouble, toNumber,
+    positive(v) {
+        return toNumber(v) >= 0
+    },
+    onChange(target, v) {
+        if (v) this.calculate(v)
+        this.$emit('change', target)
+    },
     calculate(v = { [this.from]: this[this.from]}) {
         const [from, value] = Object.entries(v)[0]
         this.from = from
-        from === 'ssuda' ? this.fromSsuda(value) : this.fromOcenca(value)
+        return from === 'ssuda' ? this.fromSsuda(value) : this.fromOcenca(value)
     },
     fromSsuda(ssuda) {
         const { days, xProc } = this
+        // const ssuda = toNumber(value) - toNumber(pay)
         const ocenca = this.getOcenca(ssuda, xProc * toNumber(days))
         const procent = ocenca - toNumber(ssuda)
-        this.update({ procent, ssuda: toDouble(ssuda) })
+        return this.update({ procent, ssuda: toDouble(ssuda) })
     },
     fromOcenca(ocenca) {
         const { days, xProc } = this
         const procent = toNumber(ocenca) * xProc / 100 * days
-        this.update({ ocenca: toDouble(ocenca), procent })
+        return this.update({ ocenca: toDouble(ocenca), procent })
     },
     getOcenca(value, xProc = 0) {    
         const getProcent = v => toNumber(v) * xProc / 100
@@ -134,16 +169,19 @@ methods: { toDouble, toNumber,
         ocenca = getOcenca(ocenca, isAfter, xProc * 0.01)
         return getOcenca(ocenca, isAfter, xProc * 0.001)
     },
-    readonly() {
-        return this.disabled
-    },
+    // readonly() {
+    //     return this.disabled
+    // },
     input({ name, value }) {
         if (['ssuda', 'ocenca'].includes(name)) this.from = name
         this.update({ [name]: value })
     },
     update(v) {
-        this.$emit('input', { ...this.value, ...v })
-    }
+        const value = { ...this.value, ...v }
+        this.$emit('input', value)
+        return value
+    },
+
 }
 }
 </script>
@@ -154,5 +192,25 @@ methods: { toDouble, toNumber,
 border-color: rgba(56, 61, 65, 0.22);
 box-shadow: none;
 }
+.bilet input[disabled] {
+    background-color: initial;
+}
+.bilet .red {
+    /* border-color: red; */
+    color: #7d2525;
+}
+.bilet .err {
+    border: 1px solid;
+    border-color: red;
+}
+.bilet .err input, .bilet .err div {
+    color: red;
+    border: none;
+}
+.bilet .danger {
+    color: red;
+    background-color: white;
+}
+
 
 </style>

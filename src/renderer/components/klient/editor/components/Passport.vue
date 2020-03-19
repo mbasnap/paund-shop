@@ -3,36 +3,27 @@
     <div class="form-row mb-2">
         <named-input class="form-control col-3 mr-1" name="seria" :placeholder="t('seria')" :value="model" />
         
-        <suggest ref="pasport" class="form-control col" name="number" :placeholder="t('number')"
+        <suggest ref="passport" class="form-control col" name="number" :placeholder="t('number')"
         :suggest="({ seria, number }) => `${seria} ${number}`" :disabled="disabled"
+        :show="(key) => key !== passport"
         :value="model" :options="options" @selectIndex="select">
-            <svg-row-down v-show="!disabled && options.length > 0" class="reset"
-            @click="$refs['pasport'].highlight(0, true)"/>
+            <svg-row-down v-show="options.length > 0" class="reset"
+            @click="$refs['passport'].highlight(0, true)"/>
         </suggest>
-        <div v-show="!disabled" class="col-1">
-            <svg-plus-circle  width="13px;" @click="select(passports.length)"/>
+        <div v-if="editMode"  class="col-1" style="text-align: right; line-height: 30px;">
+            <svg-trash width="13px;" @click="remove(passport)"/>
+        </div>  
+        <div v-else-if="value._id && isValid" class="col-1">
+            <svg-plus-circle  width="13px;" @click="add"/>
         </div>
-        <!-- <custom-select v-else class="form-control col" name="number" :placeholder="t('number')"
-        :suggest="tostring" :selected="passport" :options="passports">
-                <li v-for="(item, i) in passports" :key="i" @click="select(i)">
-                    <div class="row m-0">
-                        <div class="col hover">{{ tostring(item) }}</div>
-                        <div class="col-2">
-                            <svg-trash width="13px;" @click="remove(i)"/>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="row m-0">
-                        <div class="col">
-                            <svg-plus-circle width="13px;" @click="select(passports.length)"/>
-                        </div>
-                    </div>
-                </li>
-        </custom-select> -->
-  
+        <div v-show="err" class="col-1" id="tooltip-err">
+            <svg-exclamation  width="8px;" @click="selectKlient"/>
+        </div>
+        <b-tooltip target="tooltip-err" variant="danger" triggers="hover">
+            Klient exist {{ klient }}
+        </b-tooltip>
     </div> 
-    <div v-if="full" class="form-row mb-2">
+    <div v-if="editMode" class="form-row mb-2">
         <named-textarea class="form-control col" name="issued" :placeholder="t('issued')" :value="model"/>
     </div>
 </div>
@@ -40,53 +31,90 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { SvgTrash, SvgPlusCircle, SvgRowDown} from '@/svg'
+import { SvgTrash, SvgPlusCircle, SvgRowDown, SvgExclamation } from '@/svg'
 import mix from '@/widgets/named-input/mix.js'
 export default {
     mixins: [ mix ],
-    components: { SvgTrash, SvgPlusCircle, SvgRowDown },
-    props: { value: Object, disabled: Boolean, full: Boolean },
-    inject: [ 'update', 'save' ],
+    components: { SvgTrash, SvgPlusCircle, SvgRowDown, SvgExclamation },
+    props: { value: Object, disabled: Boolean, editMode: Boolean },
+    // inject: [ 'update' ],
     computed: {
         ...mapGetters({
-            klients: 'klient/klients'
+            map: 'klient/map',
+            passportsMap: 'klient/passportsMap'
         }),
+        klient({ map, err }) {
+            const { family, name, sername } = {...map[err]}
+            return `${family} ${name} ${sername}`
+        },
         passports({ value }) {
             return (value.passports || [])
         },
-        passport({ value }) {
-            return value.passport || 0
+        err({ passportsMap, model, value }) {
+            const lowerCase = v => (v || '').toLowerCase()
+            const { seria, number, _id } = model
+            const err = passportsMap[lowerCase(seria) + lowerCase(number)]
+            return value._id === err ? false : err
+        },
+        isFields({ model }) {
+            return ['seria', 'number'].every(v => {
+                return model[v]
+            })
+        },
+        isValid({ isFields, err }) {      
+            return [!err, isFields].every(v => v)
+        },
+        options({ passports }) {
+            console.log(passports);
+            
+           return passports
+        },
+        passport({ passports }) {
+            return passports.passport || 0
         },
         model({ passports, passport }) {
             return { ...passports[passport]} 
-        },
-        options({ passports, passport }) {
-           return passports
-        //    .filter((v, i) => i !== passport)
         }
     },
     methods: {
-        select(passport) {
-           this.update({ ...this.value, passport })
-           this.$emit('change', { name: 'passport', value: passport })  
+        select(passport, silent) {
+            console.log(passport);
+            
+           this.update({ passport })
+           if (!silent) this.change() 
         },
-        // remove(index) {
-        //     const passports = this.passports.filter((v, i) => i !== index)
-        //     return this.save({ ...this.value, passports, passport: 0 })
-        // },
-        // tostring({ seria, number }) {
-        //     return `${seria || ''} ${number || ''}`
-        // },
+        selectKlient() {
+           console.log(this.err);
+           
+        },
+        remove(index) {
+            const passports = this.passports.filter((v, i) => i !== index)
+            const passport = passports.length - 1 || 0
+            this.update({ passports, passport })
+        },
         readonly() {
             return this.disabled
         },
         input({ name, value }) {
             const passports = [ ...this.passports ]
             passports[this.passport ] = { ...this.model, [name]: value }
-            this.update({ ...this.value, passports })
+            this.update({ passports })
         },
-        change({ name, value }) {
-            this.$emit('change' , { name, value })         
+        update(v) {
+            this.$emit('input', { ...this.value, ...v })
+        },
+        add() {
+            const passports = [...this.passports, {}]
+            const passport = passports.length - 1
+            this.update({ passports, passport })
+            // this.select(passports.length - 1, true)
+        },
+        change() {            
+            this.$nextTick(() => {
+                console.log(this.isValid);
+                
+                // if (this.isValid) this.$emit('change' )  
+            })
         },
         t(v) {
             return this.$t(`klient.${v}`)

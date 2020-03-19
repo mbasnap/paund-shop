@@ -1,15 +1,16 @@
 <template>
-<div class="sklad row">
-    <list-to class="col-6" :value="values" :actions="{ toSklad: toSklad }" name="list-from">
-        <div class="row m-0 p-2 form-check" style="text-align: left; height: 40px;">
+<div class="sklad row ">
+    <list-to class="col p-0" :value="listTo" :actions="{ toSklad: toSklad }" name="list-from">
+        <div class="row p-2 form-check" style="text-align: left; height: 40px;">
             <input type="checkbox" class="form-check-input m-0" id="dropdownCheck2"
             :checked="showOver" @change="showOver = !showOver"
             style="position: unset;">
             <label class="form-check-label" for="dropdownCheck2"> Просроченные </label>
-        </div>        
+        </div>
     </list-to>
-    <list-to class="col-6" :value="sklad" :actions="{ fromSklad: remove }" name="list-to">
-        <div class="row m-0 p-2 form-check" style="text-align: left; height: 40px;">
+    <div style="width: 10px;"></div>
+    <list-to class="col p-0" :value="listFrom" :actions="{ fromSklad: remove }" name="list-to">
+        <div class="row p-2 form-check" style="text-align: left; height: 40px;">
             <div class="col"> На складе </div>
         </div> 
     </list-to>
@@ -23,7 +24,7 @@ export default {
     components: { ListTo },
     data() {
         return {
-            showOver: true
+            showOver: false,
         }
     },
     computed: {
@@ -35,9 +36,13 @@ export default {
         }),
         values({ empty, map, isOver }) {
             return Object.values(empty)
-                .map(v => ({...map[v._id]})).filter(isOver)
+                .map(v => ({...map[v._id]}))
         },
-        sklad({ dt200, map }) {
+        listTo({ showOver, values }) {
+            return !showOver ? values
+                : values.filter(this.isOver)
+        },
+        listFrom({ dt200, map }) {
             return dt200.map(v => ({...map[v._id]}))
                 .map(v => ({ ...map[v.ref], ...v }))
         }
@@ -48,7 +53,6 @@ export default {
             save: 'reestr/save',
         }),
         isOver({ date, days, statment }) {
-            if(!this.showOver) return true
             const plan = moment(date).add(days, 'd').add({ ...statment}.days, 'd')                       
             return daysDiff(plan, moment(this.date)) + 1 < 0
         },

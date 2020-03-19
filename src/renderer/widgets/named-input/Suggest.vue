@@ -1,23 +1,25 @@
 <template>
-    <div :class="['suggest dropdown', { readonly: disabled }]"  @mouseleave="highlight(-1)">
+    <div :class="['suggest dropdown', { readonly: disabled }]"
+    @mouseleave="highlight(-1)">
+    <!-- <div :class="['suggest dropdown', { readonly: disabled }]"> -->
         <slot></slot>
         <textarea class="named-input editor" ref="editor"
         :readonly="disabled"
         :name="name"
         :value="value[name]"
         :placeholder="placeholder"
-        @input="input($event.target)"
+        @input="oninput($event.target)"
         @change="change($event.target)"
         @keydown.up.prevent="highlight(index > 0 ? index - 1 : 0)"
         @keydown.down.prevent="highlight(index < 0 ? 0 : index + 1)"
         @keydown.enter.prevent="select(options[index], index)"
         @keydown.esc.prevent="highlight(-1)"/>
         
-        <ul 
-        :class="[ 'options dropdown-menu m-0', { 'show': show }]" style="border-top: 1px solid transparent;">
-            <li v-for="(item, key) in options" :key="key" :class="['pl-1', { highlight: key === index}]"
-            
-            @click="select(item, key)"> {{ suggest(item) }} </li>
+        <ul :class="[ 'options dropdown-menu m-0', { 'show': options.length && index >= 0 }]">
+            <li v-for="(item, key) in options" :key="key" v-show="show(key)" :class="['pl-1', { highlight: key === index}]"            
+            @click="select(item, key)">
+            <div class="pl-3">{{ suggest(item) }}</div>
+            </li>
         </ul>         
     </div>
 </template>
@@ -34,6 +36,11 @@ export default {
                 return item[this.name] || ''
             }
         },
+        show: { type: Function,
+            default() {
+                return true
+            }
+        },
         disabled: Boolean
     },
     inject: [ "input", "change" ],
@@ -43,10 +50,10 @@ export default {
         }
     },
     computed: {
-        show() {
-            const { options, index } = this
-            return options.length && index >= 0
-        }
+        // show() {
+        //     const { options, index } = this
+        //     return options.length && index >= 0
+        // }
     },
     methods: {
         select(v, index) {
@@ -59,6 +66,10 @@ export default {
             const length = this.options.length - 1
             if (index <= length)  this.index = index
         },
+        oninput(target) {
+            if (this.input) this.input(target)
+            this.$emit('input', target)
+        }
         // close({ toElement }) {
         //     const { name, className, tagName } = toElement || {}
         //     if ((className || '').includes('dropdown-menu')) return
@@ -88,10 +99,20 @@ export default {
     background-color: #e9ecef;
     opacity: 1;
 }
+
 .suggest .options li {
+    max-width: 250px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     cursor: pointer;
 } 
-.suggest .options .highlight {
+.suggest .options li:hover {
     background-color: rgba(176, 176, 199, 0.438);
+} 
+.suggest .options li.highlight {
+background-image: url(../../svg/angle-right-solid.svg);
+  background-position: 0 5px;
+  background-size: 15px 15px;
+  background-repeat: no-repeat;
 }
 </style>

@@ -1,50 +1,14 @@
 <template>
 <div :class="['bilet', { disabled }]" style="font-size: 14px; text-align: right;">
-      <div class=" form-row mb-2" >
-        <span class="col-2"> {{ t('ocenca') }} </span>
-        <div class="value col">
-          {{ moment(value.date).format('L') }} x {{ value.days }}дн
-        </div>
-        <div class="value col-4 border-left">{{ ocenca }}</div>
-      </div>
-
-      <div class=" form-row mb-2" style="text-align: left">
-        <div class="col-5">
-          <div class="row m-0">
-            <div class="col p-0">Процент {{ value.xProc }} %</div>
-            <div class="col-3 p-0">{{ value.procent }}</div>
-          </div>
-        </div>
-        <div v-show="toNumber(value.discount)" class="col-5">
-          <div class="row m-0">
-            <div class="col p-0">Скидка {{ value.xDisc }} %</div>
-            <div class="col-3 p-0">{{ value.discount }}</div>
-          </div>
-        </div>
-      </div>
-      <div v-show="daysBefore && toNumber(procent.summ)" class="form-row mb-2" style="color: #860d0d;">
-        <div class="col-2"> {{ t('pereraschet') }} </div>
-        <div v-if="!minProcent" class="value col">{{ xProc }} x {{ daysBefore }} дн</div>
-        <div v-else class="value col">{{ minProcent }} min%</div>
-        <div class="col-4 border-left">{{ procent.summ }}</div>
-      </div>
-      <div v-show="statmentDays" class="form-row mb-2">
-        <div class="col-4" style="text-align: left"> {{ t('statment') }} {{ value.xProc}} % </div>
-        <div class="value col">{{statment.value}} x {{statment.count}} дн</div>
-        <div class="col-4 border-left">{{statment.summ}}</div>
-      </div>
-      <div v-show="daysAfter" class="form-row mb-2">
-        <div class="col-3" style="text-align: left"> {{ t('penalty') }} {{ value.xPen }} % </div>
-        <div class="value col">{{xPen}} x {{daysAfter}} дн</div>
-        <div class="col-4 border-left">{{penalty.summ}}</div>
-      </div>
-      <div class=" form-row mb-2">
-        <div class="col-2" style="text-align: left"> <strong>{{ t('total') }}</strong> </div>
-        <div class="value col">
-          {{ moment(value.date).add(value.days, 'd').add(statment.days, 'd').format('L') }} {{ days }} дн
-        </div>
-        <div class="value col-4 border-left" style="font-weight: 500;">{{ total }}</div>
-      </div>
+  <table class="table table-sm table-bordered table-hover" style="text-align:center;">
+  <tbody>
+    <tr v-for="({ title, count, summ }, i) in items" :key="i">
+      <td style="text-align: left;">{{ title }}</td>
+      <td>{{ count }}</td>
+      <td style="text-align: right;">{{ summ }}</td>
+    </tr>
+  </tbody>
+</table>
 </div>
 </template>
 
@@ -130,6 +94,18 @@ export default {
       total({ ocenca, procent, penalty, statment }) {
         const total = toNumber(ocenca) - toNumber(procent.summ)
         return toDouble(total + toNumber(statment.summ) + toNumber(penalty.summ))
+      },
+      items({ value, statment, ocenca, procent, days, daysBefore, daysAfter, total, t }) {
+        return [
+          { title: moment(value.date).format('L'), count: '', summ: ocenca },
+          { title: `${t('procent')} ${value.xProc}%`, count: `${value.days}дн.`, summ: value.procent },
+          { title: `${t('discount')}`, count: `${value.xDisc}%`, summ: value.discount },
+          { title: `${t('statment')} ${value.xProc}`, count: `${statment.count}дн.`, summ: statment.summ },
+          { title: `${t('penalty')} ${value.xPen}%`, count: `${daysAfter}дн.`, summ: statment.summ },
+          { title: `${t('pereraschet')} ${value.xProc}%`, count: `${daysBefore}дн.`, summ: procent.summ },
+          { title: `${t('total')}`, count: `${days}дн.`, summ: total },
+      ]
+      .filter(v => toNumber(v.summ))
       },
       number({ value }) {
         return value.number

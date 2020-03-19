@@ -2,11 +2,13 @@
     <div class="row flex-fill vidacha">
         <div class="col-8 pt-3">
             <div class="row " style="height: 250px;">
-                <klient ref="klient" class="col p-0" :value="klient" :disabled="true"/>
-                <div class="col p-0 border-left">
-                    <div class="row m-0 pr-3">
-                        <div class="col"></div>
-                        <number class="col-9" v-model="bilet" @select="update"/>
+                <klient ref="klient" class="col p-0" v-model="klient" :disabled="true"/>
+                <div class="col">
+                    <div class="row p-0 m-0">
+                        <number class="col" v-model="bilet" @select="update"/>
+                        <div class="col-2" style="text-align: right; line-height: 50px;">
+                            <svg-reset  width="8px;" @click="update({})"/>
+                        </div>  
                     </div>
                     <div class="col mb-2" style="min-height: 140px; line-height: 15px;">
                         <div v-if="bilet._id">
@@ -41,18 +43,18 @@ import { mapGetters, mapActions } from 'vuex'
 import { Number, Bilet, StatmentRow } from './components'
 import mix from '@/components/mix/vidacha-vozvrat'
 import { toNumber } from '@/functions'
-import { SvgCalculator } from '@/svg'
+import { SvgCalculator, SvgReset } from '@/svg'
 import Editor from './components/Editor.vue'
 export default {
-components: { Number, Bilet, StatmentRow, SvgCalculator },
+components: { Number, Bilet, StatmentRow, SvgCalculator, SvgReset },
 mixins: [ mix ],
 created() {
     // this.updateCompany()
 },
 computed: {
     model() {
-        const { _id: klient, passport } = this.klient
-        return { ...this.$refs['bilet'].model, klient, passport }
+        const { _id: klient } = this.klient
+        return { ...this.$refs['bilet'].model, klient }
     },
     disabled({ bilet }) {
         return !{ ...bilet }._id
@@ -63,12 +65,12 @@ methods: {
         // updateCompany: 'update'
     }),
     showModal (value) {
-        const title = `Билет № ${value.number}`
+        const title = 'Perezalog'
         this.$modal.show(Editor, { title, value, save: async (vozvrat, vidacha) => {
-            const { _id: klient, passport } = this.klient
-            await this.saveBilet({...vozvrat, klient, passport })
-            return this.saveBilet({ ...vidacha, klient, passport }).then(() => this.update({}))
-        } }, { height: 'auto' })
+            const { _id: klient } = this.klient
+            await this.saveBilet({...vozvrat, klient })
+            return this.saveBilet({ ...vidacha, klient }).then(() => this.update({}))
+        } }, { width: '800px', height: 'auto' })
     }
 }
 }

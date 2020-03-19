@@ -1,4 +1,4 @@
-import { lombard, get, post, verify, sign, testAuth, hash, compare } from '@/db'
+import { lombard, get, post, setCompany, testAuth, hash, setUser } from '@/db'
 import { router } from '@/setup'
 
 const reduceBy = (key, arr) => arr.reduce((cur, v) => ({...cur, [v[key]]: v }), {})
@@ -52,7 +52,7 @@ const mutations = {
 }
 const actions = {
     activate({}, token) {
-        localStorage.setItem('settings', sign(verify(token, false), '1y'))        
+        setCompany(token)       
         window.location.reload()
     },
     changeAccount({}) {
@@ -68,11 +68,8 @@ const actions = {
         if (password) user.password = await hash(password)
         return post('users', user).then(() => dispatch('update'))
     },
-
     async logIn({ dispatch }, { password, user }) {
-        // await compare(password, user)
-        if (!await compare(password, user)) throw 'incorect_password'
-        localStorage.setItem('user', sign({ _id: user._id }, '1h'))
+        await setUser(user, password)
         dispatch('update', 'vidacha')
     },
     logOut({ dispatch }) {
@@ -84,7 +81,7 @@ const actions = {
     },
     async update ({ commit }, path) {
         console.log('update');
-        const { _id: user } = verify(localStorage.getItem('user')) || {}
+        const { _id: user } = await setUser(localStorage.getItem('user'))
         commit('company', { ...await get('company', lombard), user })
         commit('users', await get('users'))
         commit('klients', await get('klients'))

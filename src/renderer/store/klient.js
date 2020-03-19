@@ -9,6 +9,12 @@ const getters = {
     },
     map ({}, { docs }) {
         return  docs.reduce((obj, v) => ({ ...obj, [v._id]: v}), {})
+    },
+    group({}, { docs }) {
+        return docs.reduce((cur, v) => {
+            const id =  ('' + v.family + v.name + v.sername).toLowerCase()
+            return {...cur, [id]: [...(cur[id] || []), v]}
+        }, {})
     }
 }
 const mutations = {
@@ -19,10 +25,8 @@ const mutations = {
 const actions = {
     async save ({ dispatch }, v) {
         const {  lombard } = this.getters
-        const { family, name, sername } = v
-        return ![family, name, sername].some(v => !v) ? 
-            post('klients', { lombard, ...v, type: 'klient' })
-            .then(v => dispatch('update', v)) : false
+        return post('klients', { lombard, ...v, type: 'klient' })
+            .then(v => dispatch('update', v))
     },
     async remove ({ dispatch }, v) {
         return get('klients', v._id)

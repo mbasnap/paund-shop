@@ -32,19 +32,13 @@ computed: {
     })
 },
 methods: {
-    saveKlient(v) {
-        return this.$refs['klient'].save(v)
-    },
+ 
     saveBilet(v) {
         return this.$refs['kassa'].save(v)
     },
-    // select(v) {
-    //     this.$refs['kassa'].select(v._id)
-    //     return this.update({})
-    // },
     update(v) {
-        const { klient, passport, obespechenie, zalog: type } = this.bilet = { ...v }        
-        this.klient = { ...this.klientMap[klient], passport }
+        const { klient, obespechenie, zalog: type } = this.bilet = { ...v }        
+        this.klient = { ...this.klientMap[klient] }
         this.type = type || 'gold'
         this.obespechenie = obespechenie || [ {} ]
     },

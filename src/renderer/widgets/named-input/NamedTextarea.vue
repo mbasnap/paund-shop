@@ -4,7 +4,7 @@
     :value="value[name]"
     :placeholder="placeholder"
     :readonly="readonly()"
-    @input="input($event.target)"
+    @input="oninput($event.target)"
     @change="change($event.target)"
     />
 </template>
@@ -17,6 +17,12 @@ export default {
         placeholder: String,
     },
     inject: [ "input", "change", "readonly" ],
+    methods: {
+        oninput(target) {
+            if (this.input) this.input(target)
+            this.$emit('input', target)
+        }
+    }    
 }
 </script>
 

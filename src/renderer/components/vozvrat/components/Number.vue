@@ -6,7 +6,7 @@
         </suggest>
         <div v-show="!!model._id" class="col">
             <strong class="col border-bottom">Билет № {{ model.number }}</strong>
-            <span class="col" @click="update({})" style="cursor: pointer;">x</span>
+            
         </div>    
     </div>    
 </template>

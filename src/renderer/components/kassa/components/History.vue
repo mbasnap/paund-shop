@@ -6,7 +6,7 @@
                         <div class="row m-0 print-lincks">
                             <div  class="col">
                                 <span v-if=" model.number" class="badge badge-pill badge-light" 
-                                @click="$emit('printBilet', {value: model})">
+                                @click="$emit('printBilet', model)">
                                     Билет № {{ model.number }}
                                 </span>
                             </div>
@@ -58,14 +58,11 @@ export default {
             return {...klients[klient], ...usersFio[klient]}
         },
         from({ klient }) {
-            
             const { family, name, sername } = klient
             return `${family} ${name} ${sername}`
         },
-        doc({ bilet, klient }) {
-            const passports = klient.passports || []
-            const passport = bilet.passport || 0
-            return { ...passports[passport]}
+        doc({ klient }) {
+            return { ...klient.passport}
         },
         model({ bilet, klient, doc, from, company }) {
             const date = moment(bilet.date).format('L')

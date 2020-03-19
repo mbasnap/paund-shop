@@ -16,11 +16,12 @@
         <div class="item row m-0" v-for="(i, index) in item.obespechenie" :key="index"
         style="font-size: 12px; text-align: left;">
           <div style="width: 15px;">{{index + 1}}</div>
-          <div class="col p-0 ellipsis" >{{i.title}}</div>
-          <div v-if="item.type === 'gold'" class="col-2 p-0" style=" text-align: right;">
+          <div class="col-6 pl-0 ellipsis" >{{i.title}}</div>
+          <div v-if="item.type !== 'things'" class="col-3 p-0" style=" text-align: right;">
               <div class="row">
-                <div class="col p-0">{{i.proba}}</div>
-                <div class="col p-0">{{i.total}}</div>
+                <div class="col p-0" style="max-width: 20px;">{{ i.proba }}</div>
+                <div class="col-5 p-0" >{{ i.price }}</div>
+                <div class="col p-0" style="max-width: 30px;">{{ i.total }}</div>
               </div>
           </div>
           <div class="col-2 p-0" style="text-align: right;">{{i.ocenca}}</div>

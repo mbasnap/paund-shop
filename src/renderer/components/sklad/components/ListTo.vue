@@ -2,8 +2,14 @@
     <!-- <draggable teg="ul" class="kassa-list small p-0 m-0" :value="model" group="sklad"> -->
         <context  :actions="actions">
             <div class="list">
-                <div class="header">
-                    <slot></slot>
+                <div class="row p-0 m-0 header">
+                <div class="col"><slot></slot></div>
+                <div class="col">
+                    <select class="form-control" v-model="type">
+                        <option v-for="(item, index) in types" :key="index"
+                        :value="index">{{ item }}</option>
+                    </select>
+                </div>
                 </div>
                 <items :name="name" :value="items"/>
             </div>
@@ -20,18 +26,35 @@ import { mapGetters } from 'vuex'
 export default {
     components: { Context, draggable, Items },
     props: { value: Array, actions: Object, name: String },
+    data() {
+        return {
+            type: 0,
+            types: ['all', 'things', 'gold', 'silver']
+        }
+    },
     computed: {
         ...mapGetters({
             map: 'klient/map'
         }),
-        items({ value, map }) {   
-            const compareNumbers = (a, b) => a.number > b.number       
-            return (value || [])
-                .sort(compareNumbers)
-                    .map(v => ({...v, klient: map[v.klient]}))
+        values({ value, byType, byNumber }) {
+            return (value || []).filter(byType).sort(byNumber)
+        },
+        items({ values, map }) {   
+            return values.map(v => ({...v, klient: map[v.klient]}))
+        },
+        typeValue({ types, type }) {
+            return types[type]
         }
     },
-    methods: {}
+    methods: {
+        byType({ zalog }) {
+            const { types, type } = this
+            return this.type ? zalog === this.typeValue : true
+        },
+        byNumber(a, b) {
+            return a.number - b.number
+        }
+    }
 }
 </script>
 

@@ -21,8 +21,6 @@ const  verify =  (token, verify = true) => {
     })
 }
 
-const sign = (v, expiresIn = '1d') => jwt.sign(v, SECRET_OR_KEY, { expiresIn })
-
 const localDb = (name, password = localStorage.getItem('admin')) => {
   const local = 'http://localhost:5984'
   return new PouchDB(`${local}/${name}`, { auth: { username: 'admin', password } } )
@@ -31,10 +29,10 @@ const localDb = (name, password = localStorage.getItem('admin')) => {
 const { remote, lombard } = verify(localStorage.getItem('settings')) || {}
 
 const sync = (db, params) => {
-    if (remote) db.sync(new PouchDB(remote), { live: true, retry: true, ...params })
-    .on('change', async () => store.dispatch('update'))
-    .on('error', err => console.log(err))
-    return db
+  if (remote) db.sync(new PouchDB(remote), { live: true, retry: true, ...params })
+  .on('change', async () => store.dispatch('update'))
+  .on('error', err => console.log(err))
+  return db
 }
 
 const  company = sync(localDb('companys'), { doc_ids: [lombard] })
@@ -47,11 +45,13 @@ const post = (name, v) => {
   const { put, post } = db[name]
   const value = {...v, lombard }
   return v._id ? put(value) : post(value)
+    .catch(err => console.log(err))
 }
 
 const get = (name, id) => id ? db[name].get(id)
   : db[name].allDocs({ include_docs: true })
     .then(({ rows }) => rows.map(v => v.doc))
+      .catch(err => console.log(err))
 
 const testAuth = (password) => {
   const db = localDb('users', password)
@@ -62,15 +62,28 @@ const testAuth = (password) => {
 }
 const hash = v => bcrypt.hash(v, 10)
 
-const compare = (plain, { password }) => bcrypt.compare(plain, password)
+// const compare = (plain, { password }) => bcrypt.compare(plain, password)
+const sign = (v, expiresIn = '1d') => jwt.sign(v, SECRET_OR_KEY, { expiresIn })
+
+const setUser = async (user, password) => {
+  if (!password) user = await verify(localStorage.getItem('user'))
+  else if (!await bcrypt.compare(password, user.password)) throw 'incorect_password'
+  if (user) localStorage.setItem('user', sign({ _id: user._id }, '1h'))
+  return user || {}
+}
+
+const setCompany = async (token) => {
+  const settings = verify(token, false) 
+  localStorage.setItem('settings', sign(settings, '1y')) 
+}
   
 export {
   hash,
-  compare,
-  sign,
+  setUser,
+  // sign,
   testAuth,
   post,
-  verify,
+  setCompany,
   lombard,
   get,
 }
