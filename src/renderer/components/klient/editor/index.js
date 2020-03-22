@@ -1,13 +1,11 @@
-import TabOne from './TabOne'
-import TabTwo from './TabTwo'
-import TabThree from './TabThree'
+
 import Editor from './Editor'
+import PostCity from './PostCity'
 import { mix} from './components'
 
 export {
         Editor,
+        PostCity,
         mix,
-        TabOne,
-        TabTwo,
-        TabThree
+
      }

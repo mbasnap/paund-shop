@@ -3,12 +3,21 @@
 export default {
 
   ru: {
+    sklad: {
+      "all": "Все",
+      "things": "Вещи",
+      "gold": "Золото",
+    },
+    title: {
+      "klient-report": "Карточка клиента"
+    },
     tabs: {
       "fio": "Ф.И.О",
       "passport": "Паспорт",
       "address": "Адрес",
       "password": "Пароль",
       "edit profile": "Редактировать профиль",
+      "edit klient": "Редактировать клиента",
       "profile": "Профиль",
       "logout": "Выйти"
     },
@@ -16,16 +25,19 @@ export default {
       "family": "Фамилия",
       "name": "Имя",
       "sername": "Отчество",
+      "city": "Место рождения",
+      "bithday": "Дата рождения"
     },
     passport: {
       "seria": "Серия",
       "number": "Номер",
       "issued": "Выдан",
+      "date-issue": "Дата выдачи",
       "idn": "Идн",
     },
     address: {
       "post": "Индекс",
-      "sity": "Город",
+      "city": "Город",
       "street": "Улица",
       "home": "Дом/квартира", 
       "phone": "Телефон", 

@@ -40,9 +40,10 @@
         </div>
         <div class="form-row mb-2">
             <div class="col-2" style="line-height: 35px;">
-                <svg-address-card width="30px;" :disabled="!value._id" @click="showModal('edit')"/>
+                <svg-address-card width="30px;" :disabled="!value._id"
+                @click="showModal('edit klient')"/>
             </div>            
-            <named-input class="form-control col" name="idn" :placeholder="t('idn')" v-model="model"/>   
+            <named-input class="form-control col" name="idn" :placeholder="t('idn')" v-model="passport"/>   
         </div>
         <b-tooltip target="tooltip-err" variant="danger" triggers="hover">
             Klient {{ fio(err.klient_exist) }} exist
@@ -115,32 +116,44 @@ export default {
     },
     methods: {
         ...mapActions({
-          save: 'klient/save',
-          remove: 'klient/remove',
+            saveKlient: 'klient/save',
+            removeKlient: 'klient/remove',
         }),
-      passportId({ seria, number }) {
-          return ('' + seria + number).toLowerCase()
-      },
-      fio({ family, name, sername } = {}) {
-          return `${family} ${name} ${sername}`
-      },
-      showModal(title) {        
-        const { value, update, save, remove } = this
-        this.$modal.show(Editor, { title, value, save, remove }, { height: 'auto' })
-      },
-      update(v) {
-        this.$emit('input', { ...this.model, ...v })
-      },
-      select(v) {
-        this.$emit('input', {...v })
-      },
-      change() {
-        if (!Object.values(this.err).some(v => v))
-        this.save(this.model).then(this.select)
-      },
-      t(v) {
-          return this.$t(`klient.${v}`)
-      }
+        readonly() {
+            return this.disabled
+        },
+        passportId({ seria, number }) {
+            return ('' + seria + number).toLowerCase()
+        },
+        fio({ family, name, sername } = {}) {
+            return `${family} ${name} ${sername}`
+        },
+        showModal(title) {        
+            const { value, add, save, remove } = this
+            this.$modal.show(Editor, { title, value, add, save, remove }, { height: 'auto' })
+        },
+        async add({ family, name, sername, city, bithday }) {
+            this.select({ family, name, sername, city, bithday })
+        },
+        save(v) {
+            return this.saveKlient(v).then(this.select)
+        },
+        remove(v) {
+            return this.removeKlient(v).then(this.select)
+        },
+        update(v) {
+            this.$emit('input', { ...this.model, ...v })
+        },
+        select(v) {
+            this.$emit('input', {...v })
+        },
+        change() {
+            if (!Object.values(this.err).some(v => v))
+            this.save(this.model)
+        },
+        t(v) {
+            return this.$t(`klient.${v}`)
+        }
     }
 }
 </script>

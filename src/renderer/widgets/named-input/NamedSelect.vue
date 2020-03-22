@@ -37,4 +37,8 @@ export default {
 
 <style>
 
+.named-input.form-control[readonly]{
+    background-color: initial;
+}
+
 </style>

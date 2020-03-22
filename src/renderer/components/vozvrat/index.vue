@@ -60,16 +60,23 @@ components: { BiletNumber, Bilet, Editor, SvgCalculator, SvgReset },
 mixins: [ mix ],
 data() {
     return {
-        selectedId: false
+        biletId: false,
+        klientId: false,
+
     }
 },
 computed: {
-    bilet({ selectedId, reestrMap }) {
-        return {...reestrMap[selectedId]}
+    bilet({ biletId, reestrMap }) {
+        return {...reestrMap[biletId]}
     },
-    klient({bilet, klientMap}) {
-        const { klient } = bilet
-        return {...klientMap[klient]}
+    klient: {
+        get({ bilet, klientId }) {
+            const id = klientId || bilet.klient
+            return {...this.klientMap[id]}
+        },
+        set(v) {
+            this.klientId = v._id
+        }
     },
     obespechenie({ bilet }) {
         const { obespechenie } = bilet
@@ -86,13 +93,13 @@ computed: {
     statment({ bilet }) {
         return {...bilet.statment}
     },
-    disabled({ selectedId, used }) {
-        return !selectedId || !!used[selectedId]
+    disabled({ biletId, used }) {
+        return !biletId || !!used[biletId]
     }
 },
 methods: {
     select(id = false) {
-        this.selectedId = id
+        this.biletId = id
     },
     addStatment(days) {
         const statment = days ? { date: this.date, days } : false

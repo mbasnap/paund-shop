@@ -27,18 +27,7 @@ export default {
 </script>
 
 <style>
-/* .named-input {
-    width: 100%;
-    border: none;
-    background-color: transparent;
+.named-textarea.form-control[readonly]{
+    background-color: initial;
 }
-.named-input {
-    width: 100%;
-    border: none;
-    background-color: transparent;
-    color: #495057;
-}
-.named-input:focus {
-    outline: none;
-} */
 </style>

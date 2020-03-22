@@ -47,7 +47,6 @@ export default {
         },
         passports({ value }) { return []},
         model({ value }) {
-
             return { ...value, summ: toDouble(value.summ) }
         },
         values({ model, account, type }) {
@@ -75,9 +74,6 @@ export default {
         toValueKlient(v) {
             return {...v}._id
         },
-        // toStringPassport({ seria, number }) {
-        //     return `${seria} ${number}`
-        // },
         toStringAccount(v) {
             const { accounts, account } = this
             const title = accounts[account][v]

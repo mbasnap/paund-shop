@@ -7,7 +7,7 @@
                 <div class="col">
                     <select class="form-control" v-model="type">
                         <option v-for="(item, index) in types" :key="index"
-                        :value="index">{{ item }}</option>
+                        :value="index">{{ t(item) }}</option>
                     </select>
                 </div>
                 </div>
@@ -29,7 +29,7 @@ export default {
     data() {
         return {
             type: 0,
-            types: ['all', 'things', 'gold', 'silver']
+            types: ['all', 'things', 'gold' ]
         }
     },
     computed: {
@@ -53,6 +53,9 @@ export default {
         },
         byNumber(a, b) {
             return a.number - b.number
+        },
+        t(name) {
+            return this.$t(`sklad.${name}`)
         }
     }
 }

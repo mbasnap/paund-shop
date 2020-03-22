@@ -39,9 +39,9 @@ export default {
     background-color: transparent;
     color: #495057;
 }
-/* .named-input.err {
-    border: 1px solid red !important;
-} */
+.named-input.form-control[readonly]{
+    background-color: initial;
+}
 .named-input:focus {
     outline: none;
 }

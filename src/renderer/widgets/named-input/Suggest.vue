@@ -1,11 +1,8 @@
 <template>
-    <div :class="['suggest dropdown', { readonly: disabled }]"
-    @mouseleave="close"
-    >
-    <!-- <div :class="['suggest dropdown', { readonly: disabled }]"> -->
+    <div class="suggest dropdown" @mouseleave="close">
         <slot></slot>
         <textarea class="named-input editor" ref="editor"
-        :readonly="disabled"
+        :readonly="readonly()"
         :name="name"
         :value="value[name]"
         :placeholder="placeholder"
@@ -44,18 +41,13 @@ export default {
         },
         disabled: Boolean
     },
-    inject: [ "input", "change" ],
+    inject: [ "input", "change", 'readonly' ],
     data() {
         return {
             index: -1
         }
     },
-    computed: {
-        // show() {
-        //     const { options, index } = this
-        //     return options.length && index >= 0
-        // }
-    },
+    computed: {},
     methods: {
         select(v, index) {
             this.$emit('select', v)
@@ -97,8 +89,8 @@ export default {
     white-space: nowrap;
 }
 .suggest .readonly{
-    background-color: #e9ecef;
-    opacity: 1;
+    /* background-color: #e9ecef;
+    opacity: 1; */
 }
 
 .suggest .options li {

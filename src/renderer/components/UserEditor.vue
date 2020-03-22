@@ -30,7 +30,7 @@ export default {
             tabs: { 
                 'fio': ['family', 'name', 'sername'], 
                 'passport': ['seria', 'number', { name: 'issued', teg: 'textarea'}, 'idn'],
-                'address': ['post', 'sity', 'street', 'home', 'phone', 'email'],
+                'address': ['post', 'city', 'street', 'home', 'phone', 'email'],
                 'password': [{ name: 'password', type: 'password'}, { name: 'confirm', type: 'password'}]
             },
             activetab: 'fio',
@@ -46,7 +46,6 @@ export default {
             if (password && password === confirm ) return password
         },
         err() {
-            // const { password, confirm } = this.model.password
             const confirm = this.notmached(this.data.password || {})
             return { confirm }
         }
@@ -98,7 +97,7 @@ export default {
     padding: 12px 24px;
     transition: background-color 0.2s;
     border: 1px solid #ccc;
-    border-right: none;
+    /* border-right: none; */
     background-color: #f1f1f1;
     border-radius: 10px 10px 0 0;
     font-weight: bold;
