@@ -1,6 +1,7 @@
 <template>
     <div :class="['suggest dropdown', { readonly: disabled }]"
-    @mouseleave="highlight(-1)">
+    @mouseleave="close"
+    >
     <!-- <div :class="['suggest dropdown', { readonly: disabled }]"> -->
         <slot></slot>
         <textarea class="named-input editor" ref="editor"
@@ -69,12 +70,12 @@ export default {
         oninput(target) {
             if (this.input) this.input(target)
             this.$emit('input', target)
+        },
+        close({ toElement }) {
+            const { name, className, tagName } = toElement || {}
+            if ((className || '').includes('dropdown-menu')) return
+            else this.highlight(-1)
         }
-        // close({ toElement }) {
-        //     const { name, className, tagName } = toElement || {}
-        //     if ((className || '').includes('dropdown-menu')) return
-        //     else this.highlight(-1)
-        // }
     }
 }
 </script>

@@ -1,12 +1,14 @@
 <template>
-<div :class="['bilet', { disabled }]" style="font-size: 14px; text-align: right;">
-  <table class="table table-sm table-bordered table-hover" style="text-align:center;">
+<div :class="['bilet', { disabled }]" style="font-size: 14px;">
+  <table class="table table-sm table-bordered table-hover mt-2"
+  style="text-align:center;">
   <tbody>
     <tr v-for="({ title, count, summ }, i) in items" :key="i">
       <td style="text-align: left;">{{ title }}</td>
       <td>{{ count }}</td>
       <td style="text-align: right;">{{ summ }}</td>
     </tr>
+    <slot></slot>
   </tbody>
 </table>
 </div>
@@ -122,6 +124,10 @@ export default {
       }
     },
     methods: { moment, toNumber,
+      addStatment({ value: days }) {
+        const statment = days > 0 ? { days, date: this.date } : false
+        this.$emit('change', {...this.value, statment })
+      },
       t(v) {
         return this.$t(`vozvrat.${v}`)
       }
@@ -131,6 +137,6 @@ export default {
 
 <style>
 .bilet.disabled {
-  background-color: #e9ecef;
+  /* background-color: #e9ecef; */
 }
 </style>

@@ -1,11 +1,17 @@
 <template>
-    <div class="row p-2" @mouseleave="$refs['numbers'].highlight(-1)">
-        <suggest v-show="!model._id" ref="numbers" class="col form-control" name="number" :placeholder="t('number')"
+    <div class="form-row">
+            <suggest v-show="!model._id" ref="numbers" class="form-control col" name="number"
+            :placeholder="t('number')"
+            v-model="model" :options="options" @select="update">
+                <svg-row-down  class="reset" @click="$refs['numbers'].highlight(0, true)"/>
+            </suggest>        
+        <!-- <suggest v-show="!model._id" ref="numbers" class="col form-control"
+        name="number" :placeholder="t('number')"
             :value="model" :options="options" @select="update">
             <svg-row-down class="reset" @click="$refs['numbers'].highlight(0, true)"/>
-        </suggest>
-        <div v-show="!!model._id" class="col">
-            <strong class="col border-bottom">Билет № {{ model.number }}</strong>
+        </suggest> -->
+        <div v-if="!!model._id" class="col">
+            <strong class="col">Билет № {{ model.number }}</strong>
             
         </div>    
     </div>    

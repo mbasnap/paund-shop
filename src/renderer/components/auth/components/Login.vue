@@ -3,14 +3,18 @@
 <form>
     <valid-input type="email" label="name" :isValid="!userErr"
     :value="username" @input="v => onInput('username', v)">{{ userErr }}</valid-input>
-    <valid-input type="password" :label="$t('auth.password')" :isValid="userErr || !passwordErr"
-    :value="password" @input="v => onInput('password', v)">{{ passwordErr }}</valid-input>
+    <valid-input type="password" :label="$t('auth.password')" :isValid="!err.password"
+    :value="password" @input="v => onInput('password', v)">{{ err.password }}</valid-input>
     <valid-input v-show="user.active && !user.password" type="password" label="confirm" :isValid="!confirmErr"
     v-model="confirm" >{{ confirmErr }}</valid-input>
 </form>
 
 <button class="btn btn-primary mt-3" type="button" :disabled="disabled"
-@click="onLogin(user, password)"> {{$t('auth.login')}}</button>
+@click="onLogin(user, password).catch(setErr)"> {{$t('auth.login')}}</button>
+
+<div class="mt-3">
+    <a href="#" @click="$router.push('activate')"> {{$t('auth.change_account')}}</a>
+</div>
 
 </div>
 </template>
@@ -26,7 +30,8 @@ export default {
             username: '',
             password: '',
             confirm: '',
-            passwordErr: ''
+            passwordErr: '',
+            err: {}
         }
     },
     computed: {
@@ -57,12 +62,14 @@ export default {
         }
     },
     methods: {
-        ...mapActions(['logIn', 'updateUser', 'update' ]),
-        async onLogin(user, password) {
-            if (!user.password) await this.updateUser({ user, password })
-            return this.logIn({ user, password })
-                // .then(() => this.update('login'))
-                    .catch(err => this.passwordErr = err)
+        ...mapActions(['logIn', 'updatePassword' ]),
+        onLogin(user, password) {
+            return !user.password ?  this.updatePassword({ user, password })
+                : this.logIn({ user, password })                   
+        },
+        setErr(err) {
+            this.err = err
+            
         },
         onInput(name, value) {
             this[name] = value

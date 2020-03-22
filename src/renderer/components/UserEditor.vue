@@ -1,57 +1,25 @@
 <template> 
-    <modal-editor ref="modal-editor" :title="t(title)" @save="save(model, userPassword).then(close)">
+    <modal-editor ref="modal-editor" :title="t('tabs', title)" @save="onsave">
     <div class="tabs" >
-        <a v-for="(item, key) in tabs" :key="key" :class="{ active: activetab === key }"
-        @click="activetab=key" > {{ t(item) }} </a>
+        <a v-for="(item) in Object.keys(tabs)" :key="item" :class="{ active: activetab === item }"
+        @click="activetab = item" > {{ t('tabs', item) }} </a>
     </div>
     <div class="content">
-        <div class="tabcontent" v-if="activetab === 0" >
-            <div v-for="name in ['family', 'name', 'sername']" :key="name"
-            class="form-group row m-0 mt-2">
-            <label class="col-sm-4 col-form-label" >{{ name }}</label>
-            <input type="text" class="col form-control" :value="fio[name]"
-            @change="({ target }) => update('fio', Object.assign(fio, {[name]: target.value}))">
-            </div>
-            <div class="form-group row m-0 mt-2">
-                <label class="col-sm-4 col-form-label" >e-mail</label>
-                <input type="text" class="col form-control" :value="model.email"
-                @change="({ target }) => update('email', target.value)">
+        <div v-for="([key, item]) in Object.entries(tabs)" :key="key" class="tabcontent" v-show="activetab === key" >
+            <div v-for="({ name, teg, type }) in fields(item)" :key="name" class="form-group row m-0 mt-2">
+                <label class="col-sm-4 col-form-label">{{ t(key, name) }}</label>
+                <div class="col">
+                <component :is="teg || 'input'" :type="type || 'text'"
+                :class="['form-control', { 'is-invalid': err[name] }]" :value="(model[key] || {})[name]" :name="name"
+                @input="({target}) => update(key, target)">{{ (model[key] || {})[name] }}</component>
+                <div v-if="err[name]" class="invalid-feedback">{{ t('err', err[name]) }}</div>
+                </div>
             </div>
         </div>
-        <div class="tabcontent" v-if="activetab === 1" >
-            <div v-for="name in ['seria', 'number', 'issued', 'idn']" :key="name"
-            class="form-group row m-0 mt-2">
-            <label class="col-sm-4 col-form-label" >{{ name }}</label>
-            <input type="text" class="col form-control" :value="passport[name]"
-            @change="({ target }) => update('passport', Object.assign(passport, {[name]: target.value}))">
-            </div>
-        </div>
-        <div class="tabcontent" v-if="activetab === 2" >
-            <div v-for="name in ['post', 'sity', 'street', 'home']" :key="name"
-            class="form-group row m-0 mt-2">
-            <label class="col-sm-4 col-form-label" >{{ name }}</label>
-            <input type="text" class="col form-control" :value="address[name]"
-            @change="({ target }) => update('address', Object.assign(address, {[name]: target.value}))">
-            </div>
-        </div>
-        <div class="tabcontent" v-if="activetab === 3" >
-            <div class="form-group row m-0 mt-2">
-                <label class="col-sm-4 col-form-label" >password</label>
-                <input type="text" class="col form-control" v-model="password">
-            </div>
-            <div class="form-group row m-0 mt-2">
-                <label class="col-sm-4 col-form-label" >confirm</label>
-                <input type="text" class="col form-control" v-model="confirm">
-            </div>
-        </div>
-        <!-- <tab-one class="tabcontent" v-if="activetab === 0" 
-        @reset="$emit('reset')" @remove="remove(model).then(close)" /> -->
-        <!-- <tab-two class="tabcontent" v-if="activetab === 1" :value="model" /> -->
     </div>
     </modal-editor>
 </template>
 <script>
-// import { mapGetters, mapActions } from 'vuex'
 
 import ModalEditor from '@/widgets/Modal.vue'
 export default {
@@ -59,42 +27,51 @@ export default {
     props: { title: String, value: Object, save: Function },
     data() {
         return {
-            tabs: [ 'tab_1', 'tab_2', 'tab_3', 'tab_3' ],
-            activetab: 0,
-            data: {},
-            password: '',
-            confirm: ''
+            tabs: { 
+                'fio': ['family', 'name', 'sername'], 
+                'passport': ['seria', 'number', { name: 'issued', teg: 'textarea'}, 'idn'],
+                'address': ['post', 'sity', 'street', 'home', 'phone', 'email'],
+                'password': [{ name: 'password', type: 'password'}, { name: 'confirm', type: 'password'}]
+            },
+            activetab: 'fio',
+            data: {}
         }
     },
     computed: {
         model({ data, value }) {
             return {...value, ...data }
         },
-        userPassword({ password, confirm }) {
-            return password === confirm ? password : false
+        password({ data }){
+            const { password, confirm } = data
+            if (password && password === confirm ) return password
         },
-        fio({ model }) {
-            return { ...model.fio }
-        },
-        passport({ model }) {
-            return { ...model.passport }
-        },
-        address({ model }) {
-            return { ...model.address }
-        },
-        editor() {
-            return this.$refs['modal-editor']
+        err() {
+            // const { password, confirm } = this.model.password
+            const confirm = this.notmached(this.data.password || {})
+            return { confirm }
         }
     },
     methods: {
-        update(name, value) {
-            this.data = {...this.data, [name]: value }        
+        notmached({ password, confirm }) {
+            if (password && password  !== confirm) return "not_mached"
         },
-        close() {
-            return this.editor.close()
+        fields(v) {
+            return v.map(v => {
+                const { name, teg, type } = v
+                return { name: name || v, teg, type }
+            })
         },
-        t(v) {
-          return v
+        update(key, { name, value }) {
+            const data = {...this.model[key], [name]: value}
+            this.data = {...this.data, [key]: data }        
+        },
+        async onsave() {
+            const { fio, passport, address, password } = this.model
+            await this.save({ fio, passport, address }, password )
+            return this.$refs['modal-editor'].close()
+        },
+        t(name, value) {
+          return this.$t(`${name}.${value}`)
         }
     }
 }

@@ -1,12 +1,6 @@
 <template>
     <div class="obespechenie" >
-        <div class="row m-0 ml-2" v-show="type"> 
-            <div class="col">
-                <input type="checkbox" :checked="type !== 'gold'"
-                class="form-check-input" id="dropdownCheck2" @change="changeType">
-                <label class="form-check-label" for="dropdownCheck2">{{ t('things') }}</label>
-            </div>
-        </div>
+
         <table  :class="[ 'table', 'table-sm', { readonly: disabled } ]">
         <thead >
             <tr style="font-size: 12px;">
@@ -17,7 +11,7 @@
             </tr>
         </thead>
         <tbody style="font-size: 14px;">
-            <row  v-for="(item, index) in value" :key="index" class="items" :type="type !=='gold'"
+            <row  v-for="(item, index) in value" :key="index" class="items"
             :value="item" @input="value => input(index, value)" :editable="!disabled"/>
             <tr class="add">
                 <td>
@@ -42,7 +36,7 @@ import { SvgPlusCircle } from '@/svg'
 import Row from './Rows'
 export default {
     components: { Row, SvgPlusCircle },
-    props: { value: Array, disabled: Boolean, type: String },
+    props: { value: Array, disabled: Boolean },
     watch: {
         ocenca(v) {
             if(!toNumber(v)) return
@@ -58,7 +52,7 @@ export default {
         ...mapGetters({
             company: 'company',
         }),
-        model({ value, type }) {
+        model({ value }) {
             return value || []
         },
         ves({ model }) {
@@ -79,10 +73,6 @@ export default {
         }
     },
     methods: {
-        changeType() {
-            const type = this.type === 'gold'
-            this.$emit('changeType', type ? 'things': 'gold')
-        },
         input(index, value) {
             this.value[index] = value
             this.$emit('input', [ ...this.value] )

@@ -32,8 +32,6 @@ export default {
   components: { Datepicker, User},
   watch: {
     company({ user, active }) {
-      // console.log(v);
-      
       if ( user && !active) this.logOut()   
     },
     isAuth(v) {
@@ -52,12 +50,11 @@ export default {
   computed: {
      ...mapGetters(['date', 'company', 'logo', 'user']),
      menu({ company }) {
-       return (company.menu || '').split(',')
+      const { menu = '' } = company       
+       return menu.map ? menu : menu.split(',')
         .filter(v => !!v).map(v => v.trim())
      },
      isAuth({ user }) {
-      //  console.log(user);
-       
        return user.active
      }
   },

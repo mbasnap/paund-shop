@@ -38,7 +38,7 @@ const sync = (db, params) => {
 const  company = sync(localDb('companys'), { doc_ids: [lombard] })
 const  users = sync(localDb('users'), { filter: ({ type }) => type === 'user' })
 const  klients = sync(localDb('klients'), { filter: ({ type }) => type === 'klient' })
-const  reestr = sync(localDb(lombard), { filter: ({ type }) => type === 'reestr' })
+const  reestr = sync(localDb(lombard), { filter: doc => doc.type === 'reestr' && doc.lombard === lombard })
 const db = { company, users, klients, reestr }
 
 const post = (name, v) => {
@@ -67,7 +67,7 @@ const sign = (v, expiresIn = '1d') => jwt.sign(v, SECRET_OR_KEY, { expiresIn })
 
 const setUser = async (user, password) => {
   if (!password) user = await verify(localStorage.getItem('user'))
-  else if (!await bcrypt.compare(password, user.password)) throw 'incorect_password'
+  else if (!await bcrypt.compare(password, user.password)) throw { password: 'incorect_password'}
   if (user) localStorage.setItem('user', sign({ _id: user._id }, '1h'))
   return user || {}
 }

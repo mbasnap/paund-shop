@@ -9,11 +9,18 @@
     </div>
     <button class="btn btn-primary mb-3" type="button" :disabled="disabled"
     @click="loginAdmin(password).then(() => activate(token)).catch(setErr)"> activate</button>
+    
+    <div v-if="company.active" class="mt-3">
+        <a href="#" @click="$router.push('login')" :disabled="true"
+        > {{$t('auth.login')}}</a>
+    </div>
+
 </div>
 </template>
 
+
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import { ValidInput } from '@/widgets/valid-input'
 export default {
     components: { ValidInput },
@@ -25,9 +32,9 @@ export default {
         }
     },
     computed: {
-        // auth({ password }) {
-        //     return !!localStorage.getItem('admin')
-        // }
+        ...mapGetters({
+            company: 'company'
+        }),
         disabled({ token, password }) {
             const  no_value = [token, password].some(v => !v)
             return [no_value].some(v => v)
@@ -36,18 +43,18 @@ export default {
     methods: {
         ...mapActions(['loginAdmin', 'activate']),
         onInput(name, value) {
-            // window.location.reload()
             this[name] = value
             this.err = {}
         },
         setErr(v) {
-            console.log(v);
-            
             this.err = v
         }
     }
 
 }
 </script>
+
+<style>
+</style>
 
 

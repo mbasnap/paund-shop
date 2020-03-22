@@ -1,7 +1,44 @@
 
 // Ready translated locale messages
 export default {
+
   ru: {
+    tabs: {
+      "fio": "Ф.И.О",
+      "passport": "Паспорт",
+      "address": "Адрес",
+      "password": "Пароль",
+      "edit profile": "Редактировать профиль",
+      "profile": "Профиль",
+      "logout": "Выйти"
+    },
+    fio: {
+      "family": "Фамилия",
+      "name": "Имя",
+      "sername": "Отчество",
+    },
+    passport: {
+      "seria": "Серия",
+      "number": "Номер",
+      "issued": "Выдан",
+      "idn": "Идн",
+    },
+    address: {
+      "post": "Индекс",
+      "sity": "Город",
+      "street": "Улица",
+      "home": "Дом/квартира", 
+      "phone": "Телефон", 
+      "email": "Емайл", 
+    },
+    password: {
+      "password": "Пароль",
+      "confirm": "Повторите",
+    },
+    btn: {
+      "save": "Сохранить",
+      "reset": "Очистить",
+    },
     'print-btn': 'Print',
     'reset': 'Очистить',
     'save': 'Сохранить',
@@ -18,6 +55,9 @@ export default {
       'from': 'Пользователь',
       'discription': 'Описание',
       'summ': 'Сумма',
+    },
+    err: {
+      'not_mached': 'Не совпадают'
     },
     menu: {
       'vidacha': 'Выдача',
@@ -64,6 +104,7 @@ export default {
       'ocenca': 'Оценка',
       'statment': 'Заявление',
       'number': 'Номер билета',
+      "discount": "Скидка"
     },
     zvit: {
       'curency': 'рос.руб.',
@@ -142,7 +183,8 @@ export default {
       incorrect_length: 'Не верная длинна',
       field_required: 'Обязательное поле',
       user_not_found: 'Пользователь не найден',
-      have_account: 'Есть аккаунт'
+      have_account: 'Есть аккаунт',
+      "change_account": "Активировать"
     }
   }
 }

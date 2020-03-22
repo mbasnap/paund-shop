@@ -32,10 +32,9 @@ const actions = {
         return get('klients', v._id)
             .then(v => dispatch('save', {...v, _deleted: true }))
     },
-    async update ({ commit, getters }, v) {       
-        // commit('klients', await get('klients'))
+    async update ({ getters }, {id}) {       
         await this.dispatch('update')
-        return v
+        return getters.map[id]
     }
 }
 

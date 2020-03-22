@@ -1,6 +1,5 @@
 import { get, post } from '@/db'
 const state = {
-    // reestr: []
 }
 const getters = {
     docs({}, {}, { common }) {
@@ -66,8 +65,6 @@ const actions = {
         console.log({ used: err });
     },
     save ({ dispatch }, v) {
-        // console.log(v);
-        
         const {  date, lombard, user } = this.getters
         return post('reestr', { date, user: user._id, ...v, lombard, type: 'reestr'})
             .then(v => dispatch('update', v))
@@ -75,13 +72,11 @@ const actions = {
     remove ({ dispatch }, { _id }) {     
         return get('reestr', _id)
             .then(v => dispatch('save', { ...v, _deleted: true }))
-                // .then(v => dispatch('update', v))
     },
 
-    async update({ commit, getters }, v) {
-        // commit('reestr', await get('reestr'))
+    async update({ getters }, { id }) {
         await this.dispatch('update')
-        return v
+        return getters.map[id]
     }
 }
 

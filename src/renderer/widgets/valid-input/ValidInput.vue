@@ -13,7 +13,7 @@
 
         <div class="invalid-feedback" >
             <slot></slot>
-         </div>
+        </div>
     </div>    
 </template>
 

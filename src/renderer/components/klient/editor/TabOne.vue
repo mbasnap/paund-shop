@@ -1,7 +1,8 @@
 <template>
     <div>
         <div class="form-row mb-2">
-            <suggest ref="klients" class="form-control col" name="family" :placeholder="t('family')"
+            <suggest ref="klients" class="form-control col" name="family"
+            :placeholder="t('family')"
             :suggest="({ family, name, sername }) => `${family} ${name} ${sername}`"       
             v-model="model" :options="options" @select="update">
                 <svg-row-down v-show="!value._id && !disabled" class="reset" @click="$refs['klients'].highlight(0, true)"/>
@@ -18,25 +19,36 @@
             <named-input class="form-control col" name="sername" :placeholder="t('sername')" v-model="model"/>
         </div>
         <div class="form-row mb-2">
+            <named-input class="form-control col mr-1" name="city" :placeholder="t('city')" v-model="model"/>           
+            <!-- <named-input class="form-control col" name="bithday" :placeholder="t('bithday')" v-model="bithday"/>    -->
+            <input :class="['form-control col', { 'is-invalid': err.bithday }]"
+            :placeholder="t('bithday')" @change="change" v-model="bithday">
+
+        </div>
+        <div class="form-row mb-2">
             <named-input class="form-control col-3" :placeholder="t('seria')" name="seria" v-model="passport"/>
             <div class="col">
                 <div class="row m-0">
-                    <suggest class="form-control col" name="number" :placeholder="t('number')"
+                    <suggest ref="passport" class="form-control col" name="number" :placeholder="t('number')"
                     :suggest="({ passport }) => `${passport.seria} ${passport.number}`"
-                    v-model="passport" :options="passports" @select="update"/>            
+                    v-model="passport" :options="passports" @select="update">
+                    <svg-row-down v-show="passports.length > 0" class="reset"
+                    @click="$refs['passport'].highlight(0, true)"/>
+                    </suggest>          
                     <div v-show="err" id="tooltip-err" class="border-0 form-control col-1">
                         <svg-exclamation  width="8px;" @click="update(err)"/>
                     </div>
-                    <div v-if="!editMode" class="border-0 form-control col-1">
+                    <!-- <div v-if="value._id && !err && !editMode" class="border-0 form-control col-1">
                         <svg-plus-circle  width="13px;" @click="add(model)"/>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
-        <div v-if="editMode" class="form-row mb-2">
-            <named-textarea class="form-control col" name="issued" :placeholder="t('issued')" v-model="passport"/>
-        </div>
+        <slot></slot>
         <div class="form-row mb-2">
+            <div v-show="!editMode" class="col-2" style="line-height: 35px;">
+                <svg-address-card width="30px;" :disabled="!value._id" @click="$emit('edit')"/>
+            </div>            
             <named-input class="form-control col" name="idn" :placeholder="t('idn')" v-model="model"/>   
         </div>
         <b-tooltip target="tooltip-err" variant="danger" triggers="hover">
@@ -48,11 +60,12 @@
 <script>
 import { mapGetters } from 'vuex'
 import { mix} from './components'
-import { SvgRowDown, SvgTrash, SvgReset, SvgExclamation, SvgPlusCircle } from '@/svg'
+import { moment } from '@/functions'
+import { SvgRowDown, SvgTrash, SvgReset, SvgExclamation, SvgPlusCircle, SvgAddressCard } from '@/svg'
 export default {
     mixins: [ mix ],
     props: { value: Object, disabled: Boolean, editMode: Boolean },
-    components: { SvgRowDown, SvgTrash, SvgReset, SvgExclamation, SvgPlusCircle },
+    components: { SvgRowDown, SvgTrash, SvgReset, SvgExclamation, SvgPlusCircle, SvgAddressCard },
     inject: [ 'update' ],
     computed: {
         ...mapGetters({
@@ -75,6 +88,14 @@ export default {
                 if(name === 'family')  this.$refs['klients'].highlight(0)              
             }
         },
+        bithday: {
+            get({ model }) {
+                return model.bithday
+            },
+            set(bithday) {
+                this.update({ ...this.value, bithday }) 
+            }
+        },
         passport: {
             get() {
                 return {...this.model.passport}
@@ -89,7 +110,8 @@ export default {
                 .reduce((cur, v) => ({...cur, [this.passportId(v)]: v }), {})
         },
         err({ passportsMap, model }) {
-            return passportsMap[this.passportId(model)]
+            // return passportsMap[this.passportId(model)]
+            return {}
         },
         fio({ err }) {
             const { family, name, sername } = {...err}

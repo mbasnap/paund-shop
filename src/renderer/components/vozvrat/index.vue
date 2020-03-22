@@ -2,75 +2,106 @@
     <div class="row flex-fill vidacha">
         <div class="col-8 pt-3">
             <div class="row " style="height: 250px;">
-                <klient ref="klient" class="col p-0" v-model="klient" :disabled="true"/>
+                <klient ref="klient" class="col" v-model="klient" :disabled="true"/>
                 <div class="col">
                     <div class="row p-0 m-0">
-                        <number class="col" v-model="bilet" @select="update"/>
-                        <div class="col-2" style="text-align: right; line-height: 50px;">
-                            <svg-reset  width="8px;" @click="update({})"/>
+                        <bilet-number class="col" v-model="bilet"
+                        @select="({ _id }) => select(_id)"/>
+                        <div class="col-2" style="text-align: right;">
+                            <svg-reset  width="8px;" @click="select()"/>
                         </div>  
                     </div>
-                    <div class="col mb-2" style="min-height: 140px; line-height: 15px;">
+                    <div class="col mb-2" style="min-height: 140px; line-height: 15px;">                        
                         <div v-if="bilet._id">
-                            <bilet  ref="bilet"  v-model="bilet"/>
-                            <statment-row class="form-row" style="text-align: left;" v-model="bilet">
-                                <svg-calculator width="18px" @click="showModal($refs['bilet'])"/>
-                            </statment-row>
+                            <bilet  ref="bilet"  v-model="bilet" :disabled="disabled">
+                            <tr>
+                            <td style="text-align: left; line-height: 20px;">
+                                {{ t('vozvrat','statment') }}
+                            </td>
+                            <td>
+                                <select style="border: none; width: 100%"
+                                :value="statment.days || 0" :disabled="disabled"
+                                @change="({ target }) => addStatment(target.value)">
+                                <option v-for="(v, i) in statmentOptions" :key="i">{{ v }}</option>
+                                </select>
+                            </td>
+                            <td>
+                                <svg-calculator width="20px" :disabled="disabled" @click="showModal(bilet)"/>
+                            </td>      
+                            </tr>                                                                
+                            </bilet>
                         </div>
                     </div>
                     <div class="col">
                         <div class="row">
-                            <div class="col-6 ">
-                                <button class="btn btn-primary" @click="update({})">{{ t('reset') }}</button>
+                            <div class="col">
                             </div>
-                            <div class="col-6">
-                                <button class="btn btn-primary" :disabled="disabled"
-                                @click="saveBilet(model).then(() => update({}))">
-                                    {{ t('save') }}
-                                </button>
+                            <div class="col">
+                                <div class="row">
+                                    <button class="col btn btn-primary" :disabled="disabled"
+                                    @click="saveBilet(model)">{{ t('btn','save') }}
+                                    </button>
+                                </div>
                             </div>   
                         </div>
                     </div>
                 </div>                                 
             </div>        
-            <obespechenie :value="obespechenie" :type="bilet.type"/>
+            <obespechenie :value="obespechenie"/>
         </div>
         <kassa ref="kassa" class="col-4"></kassa> 
     </div>
 </template>
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import { Number, Bilet, StatmentRow } from './components'
-import mix from '@/components/mix/vidacha-vozvrat'
-import { toNumber } from '@/functions'
+import { BiletNumber, Bilet, Editor, mix } from './components'
 import { SvgCalculator, SvgReset } from '@/svg'
-import Editor from './components/Editor.vue'
 export default {
-components: { Number, Bilet, StatmentRow, SvgCalculator, SvgReset },
+components: { BiletNumber, Bilet, Editor, SvgCalculator, SvgReset },
 mixins: [ mix ],
-created() {
-    // this.updateCompany()
+data() {
+    return {
+        selectedId: false
+    }
 },
 computed: {
-    model() {
+    bilet({ selectedId, reestrMap }) {
+        return {...reestrMap[selectedId]}
+    },
+    klient({bilet, klientMap}) {
+        const { klient } = bilet
+        return {...klientMap[klient]}
+    },
+    obespechenie({ bilet }) {
+        const { obespechenie } = bilet
+        return obespechenie || []
+    },
+    model() {        
         const { _id: klient } = this.klient
         return { ...this.$refs['bilet'].model, klient }
     },
-    disabled({ bilet }) {
-        return !{ ...bilet }._id
+    statmentOptions({ company }) {
+        const { statment = '' } = {...company}
+        return [0, ...statment.split(',').filter(v => v > 0).map(v => Number(v))]
+    },
+    statment({ bilet }) {
+        return {...bilet.statment}
+    },
+    disabled({ selectedId, used }) {
+        return !selectedId || !!used[selectedId]
     }
 },
 methods: {
-    ...mapActions({
-        // updateCompany: 'update'
-    }),
-    showModal (value) {
+    select(id = false) {
+        this.selectedId = id
+    },
+    addStatment(days) {
+        const statment = days ? { date: this.date, days } : false
+        return this.save({...this.bilet, statment})
+    },
+    showModal(value) {
         const title = 'Perezalog'
-        this.$modal.show(Editor, { title, value, save: async (vozvrat, vidacha) => {
-            const { _id: klient } = this.klient
-            await this.saveBilet({...vozvrat, klient })
-            return this.saveBilet({ ...vidacha, klient }).then(() => this.update({}))
-        } }, { width: '800px', height: 'auto' })
+        const { bilet, model: vozvrat, saveBilet: save } = this
+        this.$modal.show(Editor, { title, value: { bilet, vozvrat }, save }, { width: '800px', height: 'auto' })
     }
 }
 }

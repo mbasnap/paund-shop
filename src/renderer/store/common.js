@@ -64,9 +64,13 @@ const actions = {
             localStorage.setItem('admin', password)
         })
     },
-    async updateUser({ dispatch }, { password, user } ) {
-        if (password) user.password = await hash(password)
-        return post('users', user).then(() => dispatch('update'))
+    async updatePassword({ dispatch }, { user, password } ) {
+        return post('users', {...user, password: await hash(password) })
+            .then(() => dispatch('logOut'))
+    },
+    async updateUser({}, user ) {
+        const { id, rev } = await post('users', user)
+        return {...user, _id: id, _rev: rev }
     },
     async logIn({ dispatch }, { password, user }) {
         await setUser(user, password)

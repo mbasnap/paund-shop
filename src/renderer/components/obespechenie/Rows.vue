@@ -17,16 +17,16 @@ import { NamedInput, NamedSelect, mix } from '@/widgets/named-input/index.js'
 export default {
 components: { NamedInput, NamedSelect },
 mixins: [ { provide: mix.provide, methods: mix.methods } ],
-props: { value: Object, editable: Boolean, type: Boolean },
+props: { value: Object, editable: Boolean },
 computed: {
     ...mapGetters(['company']),
     companyPrice({ company }) {
         const { gold, silver } = {...company.price}
         return gold || []
     },
-    priceMap({ companyPrice, type }) {
-        return !type ? companyPrice.reduce((cur, { proba, price }) =>
-            ({...cur, [proba]: price }), {}) : {}
+    priceMap({ companyPrice }) {
+        return companyPrice.reduce((cur, { proba, price }) =>
+            ({...cur, [proba]: price }), {})
     },
     options({ companyPrice }) {
         return companyPrice.map(v => v.proba)

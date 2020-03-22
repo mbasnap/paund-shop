@@ -7,9 +7,13 @@
     </div>
     <div class="content">
         <tab-one class="tabcontent" v-if="activetab === 0" :value="model" :editMode="true"
-        @remove="remove(model).then(close)" />
+        @remove="remove(model).then(close)" >
+            <div class="form-row mb-2">
+                <textarea class="form-control col" :placeholder="t('issued')"
+                v-model="issued"></textarea>
+            </div>
+        </tab-one>
         <tab-two class="tabcontent" v-if="activetab === 1" :value="model" />
-        <!-- <tab-three class="tabcontent" v-if="activetab === 2" :value="model" :errors="errors" /> -->
     </div>
     </modal-editor>
 </template>
@@ -33,6 +37,22 @@ export default {
     computed: {
         model({ data, value }) {
             return { ...value, ...data }
+        },
+        passport: {
+            get({ model }) {
+                return {...model.passport}
+            },
+            set(passport) {
+                this.update({...this.model, passport})
+            }
+        },
+        issued: {
+            get({ passport }) {
+                return passport.issued
+            },
+            set(issued) {
+                this.passport = {...this.passport, issued }
+            }
         },
         editor() {
             return this.$refs['modal-editor']
