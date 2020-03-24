@@ -9,12 +9,6 @@ const getters = {
     },
     map ({}, { docs }) {
         return  docs.reduce((obj, v) => ({ ...obj, [v._id]: v}), {})
-    },
-    group({}, { docs }) {
-        return docs.reduce((cur, v) => {
-            const id =  ('' + v.family + v.name + v.sername).toLowerCase()
-            return {...cur, [id]: [...(cur[id] || []), v]}
-        }, {})
     }
 }
 const mutations = {

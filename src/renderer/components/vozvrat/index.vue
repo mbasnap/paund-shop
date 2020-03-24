@@ -47,7 +47,7 @@
                     </div>
                 </div>                                 
             </div>        
-            <obespechenie :value="obespechenie"/>
+            <obespechenie :value="bilet.obespechenie || []"/>
         </div>
         <kassa ref="kassa" class="col-4"></kassa> 
     </div>
@@ -62,7 +62,6 @@ data() {
     return {
         biletId: false,
         klientId: false,
-
     }
 },
 computed: {
@@ -71,19 +70,13 @@ computed: {
     },
     klient: {
         get({ bilet, klientId }) {
-            const id = klientId || bilet.klient
-            return {...this.klientMap[id]}
+            return klientId || bilet.klient
         },
         set(v) {
-            this.klientId = v._id
+            this.klientId = v
         }
     },
-    obespechenie({ bilet }) {
-        const { obespechenie } = bilet
-        return obespechenie || []
-    },
-    model() {        
-        const { _id: klient } = this.klient
+    model({ klient }) {        
         return { ...this.$refs['bilet'].model, klient }
     },
     statmentOptions({ company }) {

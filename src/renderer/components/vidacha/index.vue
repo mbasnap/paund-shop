@@ -13,7 +13,7 @@
                         </div>
                         <div class="col-6">
                             <button class="btn btn-primary" :disabled="disabled"
-                                @click="saveBilet(model).then(() => update())">
+                                @click="saveBilet(model).then(update())">
                                 {{ t('btn', 'save') }}
                             </button>
                         </div>
@@ -42,8 +42,7 @@ data() {
 computed: {
     obespechenie: {
         get({ bilet }) {
-            const { obespechenie } = bilet
-            return obespechenie || [{}]
+            return bilet.obespechenie || [{}]
         },
         set(obespechenie) {
             this.bilet = {...this.bilet, obespechenie }
@@ -51,7 +50,7 @@ computed: {
     },
     klient: {
         get({ bilet }) {
-            return {...bilet.klient }
+            return bilet.klient
         },
         set(klient) {
             this.bilet = {...this.bilet, klient }
@@ -59,7 +58,7 @@ computed: {
     },
     model({ klient }) {
         const obespechenie = this.obespechenie.filter(v => toNumber(v.ocenca))
-        return { ...this.$refs['bilet'].model, klient: klient._id, obespechenie }
+        return { ...this.$refs['bilet'].model, klient, obespechenie }
     },
     ocenca({ obespechenie }) {
         const ocenca = obespechenie.map(v => v.ocenca)
@@ -68,7 +67,7 @@ computed: {
     err({ bilet, klient, ocenca }) {
         return { 
             ocenca: !(toNumber(ocenca) > 0),
-            klient: !klient._id,
+            klient: !klient,
             ocenca_over: toNumber(bilet.ocenca) > ocenca
         }
     },
@@ -85,8 +84,7 @@ methods: {
         const { _id, number } = {}
         const  bilet = {...this.reestrMap[id] }
         const ref = this.reestrMap[bilet.ref]
-        const klient = {...this.klientMap[bilet.klient] }
-        this.update({ ...(ref || bilet), klient, _id, number })
+        this.update({ ...(ref || bilet), _id, number })
     }
 }
 }

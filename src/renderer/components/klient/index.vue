@@ -5,7 +5,7 @@
             :placeholder="t('family')"
             :suggest="({ family, name, sername }) => `${family} ${name} ${sername}`"       
             v-model="model" :options="options" @select="select">
-                <svg-row-down v-show="!value._id && !disabled" class="reset" @click="$refs['klients'].highlight(0, true)"/>
+                <svg-row-down v-show="!model._id && !disabled" class="reset" @click="$refs['klients'].highlight(0, true)"/>
             </suggest>
             <div v-if="!disabled" class="col-1" style="text-align: right; line-height: 30px;">
                 <svg-reset  width="8px;" @click="select()"/>
@@ -17,9 +17,8 @@
         </div>
         <div class="form-row mb-2">
             <named-input class="form-control col mr-1" name="city" :placeholder="t('city')" v-model="model"/>           
-            <input :class="['form-control col', { 'is-invalid': err.bithday }]"
-            :placeholder="t('bithday')" @change="change" v-model="bithday">
-
+            <named-input :class="['form-control col', { 'is-invalid': err.bithday }]" name="bithday"
+            v-model="model" :placeholder="t('bithday')"/>
         </div>
         <div class="form-row mb-2">
             <named-input class="form-control col-3" :placeholder="t('seria')" name="seria" v-model="passport"/>
@@ -40,13 +39,13 @@
         </div>
         <div class="form-row mb-2">
             <div class="col-2" style="line-height: 35px;">
-                <svg-address-card width="30px;" :disabled="!value._id"
+                <svg-address-card width="30px;" :disabled="!value"
                 @click="showModal('edit klient')"/>
             </div>            
             <named-input class="form-control col" name="idn" :placeholder="t('idn')" v-model="passport"/>   
         </div>
         <b-tooltip target="tooltip-err" variant="danger" triggers="hover">
-            Klient {{ fio(err.klient_exist) }} exist
+            Klient {{ getFio(err.klient_exist) }} exist
         </b-tooltip>
   </div>
 </template>
@@ -59,38 +58,40 @@ import { SvgRowDown, SvgReset, SvgExclamation, SvgAddressCard } from '@/svg'
 export default {
     mixins: [ mix ],
     components: { SvgRowDown, SvgReset, SvgExclamation, SvgAddressCard },
-    props: { value: Object, disabled: Boolean },
+    props: { value: String, disabled: Boolean },
     provide() {
-      return { update: this.update, change: this.change }
+      return { change: this.change }
+    },
+    data() {
+        return {
+            data: {}
+        }
     },
     computed: {
-      ...mapGetters({
-        map: 'klient/map',
-        docs: 'klient/docs',
-        group: 'klient/group',
-      }),
-      options({ value, group }) {
-          return Object.entries(group).map(([key, [v]]) => ({...v, key}))
-              .filter(({ family }) => family.includes(value.family || ''))
-      },
+      ...mapGetters('klient', ['map', 'docs']),
+        group({docs}) {
+            return docs.reduce((cur, v) => {
+                const id =  this.getKey(v)
+                return {...cur, [id]: [...(cur[id] || []), v]}
+            }, {})
+        },
+        options({ model, group }) {
+            return Object.keys(group)
+                .filter(key => key.includes((model.family || '').toLowerCase()))
+                    .map(key => group[key][0])
+        },
+
       passports({ group, model }) {
-          return (group[model.key] || []).filter(v => v._id !== model._id)
+          const passports = group[this.getKey(model)] || []
+          return passports.filter(v => v._id !== model._id)
       },
       model: {
-          get() {
-              return {...this.value}
+          get({ value: id, data }) {
+              return {...this.map[id], ...data }
           },
           set({ name, value }) {
-              this.update({ ...this.value, [name]: value })
-              if(name === 'family')  this.$refs['klients'].highlight(0)              
-          }
-      },
-      bithday: {
-          get({ model }) {
-              return model.bithday
-          },
-          set(bithday) {
-              this.update({ ...this.value, bithday }) 
+              this.data = {...this.data, [name]: value }
+              if (name === 'family')  this.$refs['klients'].highlight(0)         
           }
       },
       passport: {
@@ -99,7 +100,7 @@ export default {
           },
           set({ name, value }) {
               const passport = { ...this.passport, [name]: value }
-              this.update({ ...this.value, passport }) 
+               this.data = {...this.data, passport }
           }
       },
       passportsMap({ model, docs }) {
@@ -107,49 +108,37 @@ export default {
               .reduce((cur, v) => ({...cur, [this.passportId(v.passport)]: v }), {})
       },
       err({ model, passport }) {
-          return {
+        return {
             klient_exist: this.passportsMap[this.passportId(passport)],
             fio: ['family', 'name', 'sername'].some(v => !model[v]),
             passport: ['seria', 'number'].some(v => !passport[v])
-          }
+        }
       }
     },
     methods: {
-        ...mapActions({
-            saveKlient: 'klient/save',
-            removeKlient: 'klient/remove',
-        }),
+        ...mapActions('klient', ['save']),
+        getKey({ family, name, sername }) {
+            return [family, name, sername].join('').toLowerCase()
+        },
         readonly() {
             return this.disabled
         },
         passportId({ seria, number }) {
             return ('' + seria + number).toLowerCase()
         },
-        fio({ family, name, sername } = {}) {
+        getFio({ family, name, sername } = {}) {
             return `${family} ${name} ${sername}`
         },
         showModal(title) {        
-            const { value, add, save, remove } = this
-            this.$modal.show(Editor, { title, value, add, save, remove }, { height: 'auto' })
+            this.$modal.show(Editor, { title, value: this.model }, { height: 'auto' })
         },
-        async add({ family, name, sername, city, bithday }) {
-            this.select({ family, name, sername, city, bithday })
+        select({ _id } = {}) {
+            this.data = {}
+            this.$emit('input', _id)
         },
-        save(v) {
-            return this.saveKlient(v).then(this.select)
-        },
-        remove(v) {
-            return this.removeKlient(v).then(this.select)
-        },
-        update(v) {
-            this.$emit('input', { ...this.model, ...v })
-        },
-        select(v) {
-            this.$emit('input', {...v })
-        },
-        change() {
+        async change() {
             if (!Object.values(this.err).some(v => v))
-            this.save(this.model)
+            this.select(await this.save(this.model))
         },
         t(v) {
             return this.$t(`klient.${v}`)
