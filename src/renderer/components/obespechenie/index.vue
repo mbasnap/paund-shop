@@ -43,11 +43,6 @@ export default {
             this.$emit('change', v)       
         }
     },
-    // data() {
-    //     return {
-
-    //     }
-    // },
     computed: {
         ...mapGetters({
             company: 'company',

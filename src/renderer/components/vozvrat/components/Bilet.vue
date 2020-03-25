@@ -28,7 +28,6 @@ export default {
       disabled: Boolean
     },
     mixins: [ mix ],
-    // components: { StatmentRow },
     computed: {
       ...mapGetters({
           date: 'date',
@@ -135,8 +134,4 @@ export default {
 }
 </script>
 
-<style>
-.bilet.disabled {
-  /* background-color: #e9ecef; */
-}
-</style>
+<style></style>

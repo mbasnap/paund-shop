@@ -77,14 +77,16 @@ export default {
 
     },
     methods: { 
-        onChange({ name, value }) {
+        onChange({ name, value }, silent) {
             this.data = {...this.data, [name]: toDouble(value)}
-            this.calculate(value)
+            if (!silent) this.calculate(value)
         },
         calculate(pay = 0) {
-            this.$nextTick(() => {
-                this.vidacha.calculate({ ssuda: toNumber(this.vozvrat.total) - toNumber(pay) })
-            })
+            const value = toNumber(this.vozvrat.total) - toNumber(pay)
+            this.onChange({ name: 'ssuda', value}, true)
+            // this.$nextTick(() => {
+            //     this.vidacha.calculate(toNumber(this.vozvrat.total) - toNumber(pay))
+            // })
         },
         async onsave() {
             const { vozvrat, vidacha, obespechenie } = this

@@ -11,9 +11,9 @@
         </div>
 
         <div class="input-group mb-2">
-            <input class='form-control' name="ssuda" :disabled="disabled"
-            :value="ssuda" @input="({ target }) => input(target)"
-            @change="calculate({ssuda})"/>
+            <input class='form-control' name="ssuda" :disabled="disabled" :value="ssuda"
+            @input="({ target }) => input(target)"
+            @change="input({name: 'ssuda', value: toDouble(ssuda)})"/>
             <input v-if="editMode"
             class="input-group-append form-control col-5"
             style="color: green; font-weight: bold; margin-left: 1px;" 
@@ -24,15 +24,13 @@
         <div class=" input-group mb-2">
             <input class="form-control" :value="procent" :disabled="disabled"/>
             <named-select class="input-group-append form-control col-4" name="xDisc"
-             :value="{ xDisc }" :options="discounts"
-             @change="$nextTick(() => calculate())"/>
+             :value="{ xDisc }" :options="discounts"/>
         </div>
 
         <div class="input-group mb-2">
             <input :class="['form-control col', { 'is-invalid': err.ocenca_over }]"
-            name="ocenca" :disabled="disabled"
-            :value="ocenca" @input="({ target }) => input(target)"
-            @change="calculate({ocenca})"/>
+            :disabled="disabled" :value="ocenca"
+            @change="({ target }) => calculate(target.value)"/>
             <input v-if="editMode" class="input-group-append form-control col-5 mr-1"
             style="color: red; font-weight: bold; margin-left: 1px;" 
             @change="({target}) => this.$emit('change', { name: 'pay', value: toNumber(target.value) * -1 })"
@@ -40,8 +38,7 @@
         </div>
 
     </div>
-    <day-slider class="col-3" :value="{ days }"
-    @input="input" @change="$nextTick(() => calculate())"/>
+    <day-slider class="col-3" :value="{ days }" @input="input" />
 </div>
 
 </template>
@@ -52,7 +49,7 @@ import { mapGetters } from 'vuex'
 import mix from '@/widgets/named-input/mix.js'
 import DaySlider from './DaySlider'
 import { SvgExclamation } from '@/svg'
-import { getOcenca, rorrect, toNumber, mult, toDouble, diff } from '@/functions'
+import { toNumber, proc, toDouble, summ } from '@/functions'
 export default {
 mixins: [ mix ],
 components: { DaySlider, SvgExclamation },
@@ -62,19 +59,11 @@ props: {
     disabled: Boolean,
     editMode: Boolean
 },
-data() {
-    return {
-        from: 'ocenca'
-    }
-},
+
 computed: { 
-    ...mapGetters({
-        company: 'company',
-        numbers: 'reestr/numbers'
-    }),
+    ...mapGetters({ company: 'company', numbers: 'reestr/numbers' }),
     type({ value }) {
-        const { obespechenie } = value
-        return obespechenie.some(({ proba }) => proba) ? 'gold' : 'things'
+        return (value.obespechenie || []).some(({ proba }) => proba) ? 'gold' : 'things'
     },
     number({ value, numbers }) {
         return value.number || numbers[0]
@@ -84,43 +73,35 @@ computed: {
         .filter(v => !!v).map(v => v.trim())
     },
     days({ value, company }) {
-        const { max } = {...company.days }
-        return value.days || max
+        return value.days || {...company.days }.max
     },
     xProc({ type, company }) {
-        const procent = {...company.procent}
-        return procent[type ]
+        return {...company.procent}[type ]
     },
     xPen({ type, company }) {
-        const penalty = {...company.penalty}
-        return penalty[type ]
+        return {...company.penalty}[type ]
     },
     xDisc({ value, discounts  }) {
-        return value.xDisc || discounts[0]
+        return toNumber(value.xDisc || discounts[0])
     },
-    ssuda({ value, from }) {
-        const ssuda =  value.ssuda !== undefined ? value.ssuda : '0.00'
-        return from ==='ssuda' ? ssuda 
-            : toDouble(toNumber(this.ocenca) - toNumber(this.procent))
+    ssuda({ value }) {
+        return value.ssuda  || value.ssuda === '' ? value.ssuda : '0.00'
     },
     minProcent({ value,  company }) {
-        const { min } = {...company.procent}
-        return value.procent < min ? min : 0
+        return {...company.procent}.min
     },
-    procent({ value, discount, minProcent, from }) {
-        const procent = toNumber(this[from]) ? minProcent || value.procent - discount : 0
-        return toDouble(procent)
+    procent({ ssuda, ocenca}) {
+        return toDouble(toNumber(ocenca) - toNumber(ssuda))
     },
-    discount({ value, xDisc, minProcent }) {
-        const discount = !minProcent ? value.procent * xDisc / 100 : 0
-        return toDouble(discount)
+    ocenca({ ssuda, minProcent }) {
+        const k = (100 - this.getProcent(100)) / 100
+        const ocenca = toNumber(ssuda) / k
+         return ocenca && (ocenca - ssuda) < minProcent ? summ(ssuda, minProcent)
+            : toDouble(ocenca)
     },
-    ocenca({ value, from }) {    
-        const ocenca =  value.ocenca !== undefined ? value.ocenca : '0.00'
-        return from ==='ocenca' ? ocenca
-            : toDouble(toNumber(this.ssuda) + toNumber(this.procent))
-    },
-    model({ number, type, days, xProc, xPen, xDisc, ssuda, procent, discount, ocenca }) {
+    model({ number, type, days, xProc, xPen, ssuda, procent, ocenca }) {
+        const xDisc = toNumber(procent) > this.minProcent ? this.xDisc : 0
+        const discount = xDisc ? toDouble(proc(proc(ocenca, xProc), xDisc) * days) : '0.00'
         return { number, zalog: type, days, xProc, xPen, xDisc, ssuda, procent, discount, ocenca, 
         values: [
             { dt: '377', ct: '301', summ: ocenca },
@@ -129,42 +110,18 @@ computed: {
     }
 },
 methods: { toDouble, toNumber,
-    positive(v) {
-        return toNumber(v) >= 0
+    getProcent(value) {
+        const procent = proc(value, this.xProc) * this.days
+        return procent - proc(procent, this.xDisc)
     },
-    calculate(v = { [this.from]: this[this.from]}) {
-        const [from, value] = Object.entries(v)[0]
-        this.from = from
-        return from === 'ssuda' ? this.fromSsuda(value) : this.fromOcenca(value)
-    },
-    fromSsuda(ssuda) {
-        const { days, xProc } = this
-        const ocenca = this.getOcenca(ssuda, xProc * toNumber(days))
-        const procent = ocenca - toNumber(ssuda)
-        return this.update({ procent, ssuda: toDouble(ssuda) })
-    },
-    fromOcenca(ocenca) {
-        const { days, xProc } = this
-        const procent = toNumber(ocenca) * xProc / 100 * days
-        return this.update({ ocenca: toDouble(ocenca), procent })
-    },
-    getOcenca(value, xProc = 0) {    
-        const getProcent = v => toNumber(v) * xProc / 100
-        const isAfter = v => toNumber(v) - getProcent(v) >= toNumber(value)
-        let ocenca = getOcenca(toNumber(value),  isAfter, xProc)
-        ocenca = getOcenca(ocenca, isAfter, xProc * 0.1)
-        ocenca = getOcenca(ocenca, isAfter, xProc * 0.01)
-        return getOcenca(ocenca, isAfter, xProc * 0.001)
+    calculate(ocenca) {
+        const procent = this.getProcent(ocenca)
+        const value = summ(ocenca, procent * -1)
+        this.input({ name: 'ssuda', value })
     },
     input({ name, value }) {
-        if (['ssuda', 'ocenca'].includes(name)) this.from = name
-        this.update({ [name]: value })
-    },
-    update(v) {
-        const value = { ...this.value, ...v }
-        this.$emit('input', value)
-        return value
-    },
+        this.$emit('input', {...this.value, [name]: value})
+    }
 
 }
 }
@@ -179,6 +136,5 @@ box-shadow: none;
 .bilet input[disabled] {
     background-color: initial;
 }
-
 
 </style>

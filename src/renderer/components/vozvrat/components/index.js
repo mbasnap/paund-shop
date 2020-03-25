@@ -3,7 +3,7 @@ import Klient from '@/components/klient'
 import Obespechenie from '@/components/obespechenie'
 import Bilet from './Bilet'
 import BiletNumber from './Number'
-import StatmentRow from './StatmentRow'
+// import StatmentRow from './StatmentRow'
 import Editor from './Editor'
 import mix from '@/components/mix/vidacha-vozvrat'
 
@@ -13,7 +13,7 @@ export {
     Obespechenie,
     Bilet,
     BiletNumber,
-    StatmentRow,
+    // StatmentRow,
     Editor,
     mix
 }

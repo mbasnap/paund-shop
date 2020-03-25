@@ -21,7 +21,7 @@
                 </div>                                 
             </div>        
             <obespechenie ref="obespechenie" v-model="obespechenie"
-            @change=" ocenca => $refs['bilet'].calculate({ocenca})"/>
+            @change="v => $refs['bilet'].calculate(v)"/>
         </div>
         <kassa ref="kassa" class="col-4" @start="target = true" @end="target = false"/>
     </div>
