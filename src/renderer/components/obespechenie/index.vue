@@ -38,9 +38,9 @@ export default {
     components: { Row, SvgPlusCircle },
     props: { value: Array, disabled: Boolean },
     watch: {
-        ocenca(v) {
-            if(!toNumber(v)) return
-            this.$emit('change', v)       
+        ocenca(value) {
+            if (!toNumber(value)) return
+            this.$emit('change', { name: 'ocenca', value })       
         }
     },
     computed: {

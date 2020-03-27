@@ -23,10 +23,10 @@
                 <obespechenie class="col-9" :value="value" style="font-size: 10px;"/>
                 <div class="col-3" style="border-top: 1px dashed; border-left: 1px dashed;">
                     <control-tiket  :value="value" :klient="klient" />
-                    <sign class="m-0 p-0"  style="position: absolute; bottom: -35px; width: 100%;" 
+                    <!-- <sign class="m-0 p-0"  style="position: absolute; bottom: -35px; width: 100%;" 
                     :name="t('klient_sign')">
                     <div class="col p-0" style="margin-top: -10px; text-align: left;">{{ fio }}</div>
-                    </sign>
+                    </sign> -->
                 </div>
             </div>
             <div class="row m-0" style="font-style: italic;">
@@ -78,15 +78,15 @@ export default {
         },
         kassir({ value, usersMap }) {
             const { fio } = {...usersMap[value.user]}
-            const { family, name, sername } = {...fio }
+            const { family = '', name = '', sername = '' } = {...fio }
             return `${family} ${name.charAt(0)}.${sername.charAt(0)}.`
         },
         klient({ value, map }) {
             return { ...value.klient }
         },
         fio({ klient }) {
-            const { family, name, sername } = klient
-            return `${family} ${(name || '').charAt(0)}. ${(sername || '').charAt(0)}`
+            const { family = '', name = '', sername = '' } = klient
+            return `${family} ${name.charAt(0)}. ${sername.charAt(0)}`
         },
         printContent({ $refs }) {
             return $refs['print-content']

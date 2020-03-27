@@ -65,8 +65,8 @@ const actions = {
         console.log({ used: err });
     },
     save ({ dispatch }, v) {
-        const {  date, lombard, user } = this.getters
-        return post('reestr', { date, user: user._id, ...v, lombard, type: 'reestr'})
+        const {  date, user } = this.getters
+        return post('reestr', { date, ...v, user: user._id, type: 'reestr' })
             .then(v => dispatch('update', v))
     },
     remove ({ dispatch }, { _id }) {     

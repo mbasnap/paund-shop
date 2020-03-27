@@ -14,13 +14,13 @@
                 </div>
             </div>
             <div class="col">
-                <div class="row pl-3 mb-1" style="margin-top: -20px; " >
+                <!-- <div class="row pl-3 mb-1" style="margin-top: -20px; " > -->
                     <!-- <div class="col-3 p-0 pl-1" style="font-style: italic; font-size: 12px;">
                         {{ t('vikup-oplachen')}}
                     </div> -->
-                    <dater class="col" style="text-align: left;"/>
-                </div>
-                <div class="row">
+                    <!-- <dater class="col" style="text-align: left;"/> -->
+                <!-- </div> -->
+                <div class="row mt-2" >
                     <div class="col" style="font-style: italic; line-height: 14px; font-size: 11px; text-align: right;">
                         {{ t('poluchil')}}
                     </div>

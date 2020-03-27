@@ -34,9 +34,7 @@ export default {
         }
     },
     computed: {
-        vidacha() {
-            return this.$refs['vidacha']
-        },
+
         bilet({ value }) {
             return {...value.bilet}
         },
@@ -77,21 +75,21 @@ export default {
 
     },
     methods: { 
-        onChange({ name, value }, silent) {
+        onChange({ name, value }) {
             this.data = {...this.data, [name]: toDouble(value)}
-            if (!silent) this.calculate(value)
+            this.calculate()
         },
-        calculate(pay = 0) {
+        calculate(pay = this.data.pay) {
             const value = toNumber(this.vozvrat.total) - toNumber(pay)
-            this.onChange({ name: 'ssuda', value}, true)
-            // this.$nextTick(() => {
-            //     this.vidacha.calculate(toNumber(this.vozvrat.total) - toNumber(pay))
-            // })
+            this.$nextTick(() => {
+                this.$refs['vidacha'].calculate(value)
+            })
         },
         async onsave() {
-            const { vozvrat, vidacha, obespechenie } = this
+            const { vozvrat, obespechenie } = this
+            const { model } = this.$refs['vidacha']
             await this.save(vozvrat, true)
-            return  this.save({...vidacha.model, klient: vozvrat.klient, obespechenie })
+            return  this.save({...model, klient: vozvrat.klient, obespechenie })
         }
     }
 }

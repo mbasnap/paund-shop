@@ -21,7 +21,7 @@
                 </div>                                 
             </div>        
             <obespechenie ref="obespechenie" v-model="obespechenie"
-            @change="v => $refs['bilet'].calculate(v)"/>
+            @change="onChange"/>
         </div>
         <kassa ref="kassa" class="col-4" @start="target = true" @end="target = false"/>
     </div>
@@ -68,7 +68,7 @@ computed: {
         return { 
             ocenca: !(toNumber(ocenca) > 0),
             klient: !klient,
-            ocenca_over: toNumber(bilet.ocenca) > ocenca
+            ocenca_over: toNumber(bilet.ocenca) > toNumber(ocenca)
         }
     },
     disabled({ bilet, err }) {
@@ -77,6 +77,9 @@ computed: {
     }
 },
 methods: {
+    onChange({name, value}) {
+        this.update({ ...this.bilet, [name]: value })
+    },
     update(v) {
         this.bilet = {...v}
     },

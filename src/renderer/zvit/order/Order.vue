@@ -52,7 +52,7 @@
             </div>
         </div>
         <header-row :value="{ kod: company.kod,
-                idn: klient.idn, title: 'идентификационный код юр.лица'
+                idn: passport.idn, title: 'идентификационный код юридического лица/индивидуальный налоговый номер'
             }">
             <div class="row pl-2" style="font-size: 14px;">
                 <div class="col-4 pr-0" >
@@ -90,18 +90,11 @@
             <div class="col" >
                 {{ type === 'dt' ? 'Подпись плательщика' : 'Подпись получателя' }}
             </div>
-            <!-- <div class="col-1"></div> -->
             <div class="col border-bottom">
                 <div class="row m-0 p-0"></div>
             </div>
         </div>
     </div>
-    <!-- <div class="ml-2 border-left" style="width: 10px;"></div> -->
-    <!-- <div v-if="type === 'dt'" class="col">
-        <div class="row border-bottom" style="height: 40px;"></div>
-        <div class="row border-bottom" style="height: 40px;"></div>
-        <div class="row border-bottom" style="height: 40px;"></div>
-    </div> -->
 </div>
 </template>
 
@@ -133,7 +126,7 @@ export default {
     },
     kassir({ value, usersMap }) {
         const { fio } = {...usersMap[value.user]}
-        const { family, name, sername } = {...fio}
+        const { family = '', name = '', sername = '' } = {...fio}
         return `${family} ${name.charAt(0)}.${sername.charAt(0)}.`
     },
     acc301() {
@@ -169,8 +162,11 @@ export default {
     order({ value }) {
       return value.order
     },
-    docToString({ value, t }) {
-      const { seria, number, issued } = { ...value.doc }
+    passport({ value }) {
+        return { ...value.doc }
+    },
+    docToString({ passport, t }) {
+      const { seria, number, issued } = passport
       return `${seria} ${number} ${t('issued')}: ${issued}`
     }
   },

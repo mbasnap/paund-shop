@@ -7,9 +7,9 @@
                 <th scope="col" style="width: 52%;">{{t('title')}}</th>
                 <th scope="col" style="width: 5%;">{{t('proba')}}</th>
                 <th scope="col" style="width: 9%;">{{t('comon-ves')}}</th>
-                <th scope="col" style="width: 5%;">{{t('derty')}}</th>
+                <!-- <th scope="col" style="width: 5%;">{{t('derty')}}</th> -->
                 <th scope="col" style="width: 9%;">{{t('clear-ves')}}</th>
-                <th scope="col" style="width: 18%;">{{t('ocenca')}}</th>
+                <th scope="col" style="width: 23%;">{{t('ocenca')}}</th>
             </tr>
         </thead>
         <tbody>

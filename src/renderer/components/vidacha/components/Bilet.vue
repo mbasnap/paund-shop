@@ -12,10 +12,8 @@
 
         <div class="input-group mb-2">
             <input class='form-control' name="ssuda" :disabled="disabled" :value="ssuda"
-            @input="({ target }) => input(target)"
-            @change="input({name: 'ssuda', value: toDouble(ssuda)})"/>
-            <input v-if="editMode"
-            class="input-group-append form-control col-5"
+            @change="({target}) => calculate(target.value)"/>
+            <input v-if="editMode" class="input-group-append form-control col-5"
             style="color: green; font-weight: bold; margin-left: 1px;" 
             @change="({target}) => this.$emit('change', { name: 'pay', value: toNumber(target.value) })"
             :value="toNumber(value.pay) > 0 ? value.pay : '0.00 '"/>
@@ -29,8 +27,9 @@
 
         <div class="input-group mb-2">
             <input :class="['form-control col', { 'is-invalid': err.ocenca_over }]"
-            :disabled="disabled" :value="ocenca"
-            @change="({ target }) => calculate(target.value)"/>
+            :disabled="disabled" :value="ocenca" name="ocenca" @input="({ target }) => input(target)"
+            @change="input({name: 'ocenca', value: toDouble(ocenca)})"
+            />
             <input v-if="editMode" class="input-group-append form-control col-5 mr-1"
             style="color: red; font-weight: bold; margin-left: 1px;" 
             @change="({target}) => this.$emit('change', { name: 'pay', value: toNumber(target.value) * -1 })"
@@ -59,7 +58,11 @@ props: {
     disabled: Boolean,
     editMode: Boolean
 },
-
+data() {
+    return {
+        from: 'ocenca'
+    }
+},
 computed: { 
     ...mapGetters({ company: 'company', numbers: 'reestr/numbers' }),
     type({ value }) {
@@ -84,20 +87,19 @@ computed: {
     xDisc({ value, discounts  }) {
         return toNumber(value.xDisc || discounts[0])
     },
-    ssuda({ value }) {
-        return value.ssuda  || value.ssuda === '' ? value.ssuda : '0.00'
-    },
     minProcent({ value,  company }) {
-        return {...company.procent}.min
+        return toNumber(value.ocenca) ? {...company.procent}.min : 0
     },
-    procent({ ssuda, ocenca}) {
-        return toDouble(toNumber(ocenca) - toNumber(ssuda))
+    ssuda({ ocenca, procent }) {
+        const ssuda = toNumber(ocenca) - toNumber(procent)
+        return toDouble(ssuda > 0 ? ssuda : 0)
     },
-    ocenca({ ssuda, minProcent }) {
-        const k = (100 - this.getProcent(100)) / 100
-        const ocenca = toNumber(ssuda) / k
-         return ocenca && (ocenca - ssuda) < minProcent ? summ(ssuda, minProcent)
-            : toDouble(ocenca)
+    procent({ minProcent, ocenca}) {
+        const procent = this.getProcent(ocenca)
+        return toDouble(procent > minProcent ? procent : minProcent)
+    },
+    ocenca({ value }) {
+        return value.ocenca || value.ocenca === '' ? value.ocenca : '0.00'
     },
     model({ number, type, days, xProc, xPen, ssuda, procent, ocenca }) {
         const xDisc = toNumber(procent) > this.minProcent ? this.xDisc : 0
@@ -110,19 +112,27 @@ computed: {
     }
 },
 methods: { toDouble, toNumber,
+
     getProcent(value) {
         const procent = proc(value, this.xProc) * this.days
         return procent - proc(procent, this.xDisc)
     },
-    calculate(ocenca) {
-        const procent = this.getProcent(ocenca)
-        const value = summ(ocenca, procent * -1)
-        this.input({ name: 'ssuda', value })
+    calculate(v) { 
+        this.from = 'ssuda'    
+        const k = (100 - this.getProcent(100)) / 100
+        let ocenca = toNumber(v) / k
+        ocenca = (ocenca - toNumber(v)) > this.minProcent ? toDouble(ocenca)
+            : summ(v, this.minProcent)
+        this.$emit('input', {...this.value, ocenca })
     },
     input({ name, value }) {
-        this.$emit('input', {...this.value, [name]: value})
+        const ssuda = this.ssuda
+        if(name === 'ocenca') this.from = 'ocenca'
+        this.$emit('input', {...this.value, [name]: value })
+        if (this.from === 'ssuda') this.$nextTick(() => {
+            this.calculate(ssuda)
+        })
     }
-
 }
 }
 </script>

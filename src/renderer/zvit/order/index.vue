@@ -51,7 +51,8 @@ export default {
         },
         print({ send }) {
             const { outerHTML: content } = this.printContent
-            send("print", { content, size: 'landscape' })
+            send("print", { content, zoom: '115%', silent: true})
+            // send("print", { content, zoom: '150%', silent: true, size: 'landscape' })
         }
     }
 }

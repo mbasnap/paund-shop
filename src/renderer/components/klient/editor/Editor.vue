@@ -1,31 +1,27 @@
 <template> 
 <modal-editor class="klient"
-    ref="modal-editor" :title="t('tabs', title)" @save="save(data).then(close)">
+    ref="modal-editor" :title="t(title)" @save="save(data).then(close)">
     <div class="tabs" >
-        <a v-for="(item) in Object.keys(tabs)" :key="item" :class="{ active: activetab === item }"
-        @click="activetab = item" > {{ t('tabs', item) }} </a>
+        <a v-for="(item) in tabs" :key="item" :class="{ active: activetab === item }"
+        @click="activetab = item"> {{ t(item) }} </a>
         <div class="row">
             <div class="col"><svg-print width="25px;" style="text-align: right;"
             @click="print"/> </div>
-        </div>
+        </div> 
     </div>
     <div class="content">
-        <div v-for="([key, item]) in Object.entries(tabs)" :key="key" class="tabcontent" v-show="activetab === key" >
-            <div v-for="({ name, teg, type }) in fields(item)" :key="name" class="form-group row m-0 mt-2">
-                <label class="col-sm-4 col-form-label">{{ t(key, name) }}</label>
-                <div class="col">
-                    <component :is="teg || 'input'" :type="type || 'text'"
-                    :class="['form-control', { 'is-invalid': err[name] }]"
-                    :value="get(key, name)" 
-                    @input="({target}) => set(key, { name, value: target.value })">{{ get(key, name) }}</component>
-                    <div v-if="err[name]" class="invalid-feedback">{{ t('err', err[name]) }}</div>
-                </div>
-            </div>
-            <div class="col mt-3" style="text-align: right;" v-if="action[key]">
-                <component :is="action[key].teg" :width="action[key].width"
-                @click="action[key].click"/>            
-            </div>
-        </div>
+        <tab-content v-model="fio" v-show="activetab === 'fio'" tabname="fio"
+        :items="['family', 'name', 'sername', 'city', 'bithday']">
+            <svg-trash class="mt-3" width="20px" style="text-align: right;" @click="removeKlient"/>          
+        </tab-content>
+        <tab-content v-model="passport"  v-show="activetab === 'passport'" tabname="passport"
+        :items="['nationality', 'seria', 'number', { name: 'issued', teg: 'textarea'}, 'date-issue', 'idn']">
+            <svg-address-card width="25px" @click="addPassport"/>          
+        </tab-content>
+        <tab-content v-model="address"  v-show="activetab === 'address'" tabname="address"
+        :items="['city', 'street', 'home', 'phone']">
+        </tab-content>
+        <questionn-aire v-model="questionnaire"  v-show="activetab === 'questionnaire'"/>
     </div>
 </modal-editor>
 </template>
@@ -34,33 +30,32 @@
 import { mapGetters, mapActions } from 'vuex'
 import { SvgTrash, SvgPrint, SvgAddressCard } from '@/svg'
 import ModalEditor from '@/widgets/Modal.vue'
-import { PostCity } from './index'
+// import { PostCity } from './index'
 import KlientReport from '@/zvit/klient'
+import TabContent from './TabContent'
+import QuestionnAire from './QuestionnAire'
 export default {
-    components: { ModalEditor, SvgAddressCard, SvgTrash, SvgPrint },
+    components: { ModalEditor, SvgAddressCard, SvgTrash, SvgPrint, TabContent, QuestionnAire },
     props: { title: String, value: Object },
     created() {
-        this.data = {...this.value}
+        this.data = {...this.data, ...this.value}
     },
     data() {
         return {
-            tabs: { 
-                'fio': ['family', 'name', 'sername', 'city', 'bithday'], 
-                'passport': ['seria', 'number', { name: 'issued', teg: 'textarea'}, 'date-issue', 'idn'],
-                'address': ['post', 'city', 'street', 'home', 'phone' ],
-            },
+            tabs: ['fio', 'passport', 'address', 'questionnaire'],
             activetab: 'fio',
-            data: {},
-            action: {
-                fio: {
-                    teg: 'SvgTrash',
-                    width: '20px',
-                    click: () => this.remove(this.data).then(this.close)
-                },
-                passport: {
-                    teg: 'SvgAddressCard',
-                    width: '30px',
-                    click: () => this.addPassport()
+            data: {
+                questionnaire: {
+                    "objective of referral": "receive financial credit",
+                    "source of money": "salary",
+                    "average monthly income": "income2",    
+                    "financial status type": "movable and immovable property",    
+                    "business reputation": "positive",
+                    "beneficial": "do not have third-party benefits",
+                    "public official": "not public official",
+                    "information about representative": "have",
+                    "information about representative": "have",
+                    "level risk": "low",
                 }
             }
         }
@@ -93,27 +88,27 @@ export default {
                 this.data = {...this.data, address } 
             }
         },
+        questionnaire: {
+            get() {
+                return {...this.data.questionnaire}
+            },
+            set({ name, value }) {
+                const questionnaire = {...this.questionnaire, [name]: value }
+                this.data = {...this.data, questionnaire } 
+            }
+        },
         err() {
             return {  }
         }
     },
     methods: {
         ...mapActions('klient', ['save', 'remove']),
-        get(key, name) {
-            return this[key][name]
-        },
-        set(key, { name, value }) {
-            this[key] = { name, value }  
-        },
         addPassport() {
             const { _id, passport, address } = {}
             this.data = {...this.data, _id, passport, address }
         },
-        fields(v) {
-            return v.map(v => {
-                const { name = v, teg, type } = v
-                return { name, teg, type }
-            })
+        removeKlient() {
+            this.remove(this.data).then(this.close)
         },
         close() {
             this.$refs['modal-editor'].close()
@@ -122,18 +117,24 @@ export default {
             const value = this.data
             this.$modal.show(KlientReport, { value }, { width: '850', height: '500'})            
         },
-        t(name, value) {
-          return this.$t(`${name}.${value}`)
+        t(v) {
+          return this.$t(`tabs.${v}`)
         }
     }
 }
 </script>
 <style>
 .klient .tabcontent {
-    height: 315px;
+    /* height: 315px; */
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 10px;
     box-shadow: 3px 3px 6px #e1e1e1;
+}
+.klient label {
+    padding: 0;
+    padding-top: 5px;
+    line-height: 15px;
+    font-size: 14px;
 }
 </style>

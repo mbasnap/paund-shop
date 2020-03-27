@@ -2,17 +2,14 @@
   <div >
         <div style="font-weight: bold;">
             <div class="col border-bottom">
-               <div class="row" >
-                    {{ t('bilet') }}
-                    <div class="col">{{ bilet.number }}</div>
-                </div>
+               <div class="row">{{ fio }}</div>
             </div>
         </div>
 
-        <div class="row border-bottom" style="font-size: 12px; line-height: 25px;">
+        <!-- <div class="row border-bottom" style="font-size: 12px; line-height: 25px;">
             <div class="col">{{ bilet.date}}</div>
             <div class="col"><span>{{ ssuda.summ }}</span></div>
-        </div>
+        </div> -->
         <div class="col p-0">
             <div v-for="(item, index) in obespechenie" :key="index">
                 <div class="row p-0" style="font-size: 10px; line-height: 25px;">
@@ -20,8 +17,9 @@
                         <strong>{{ item.title}}</strong>
                     </div>
                     <div class="col p-0"  style="font-size: 8px; display: flex; text-align: right;">
-                        <span class="pr-2">{{ item.total}}</span>
-                        <span>{{ item.ocenca}}</span>
+                        <span class="pr-2">{{ item.proba}}</span>
+                        <span class="pr-2">{{ item.ves}}</span>
+                        <span >{{ item.total}}</span>
                     </div>
                 </div>
             </div>
@@ -35,10 +33,17 @@ export default {
     inject: ['t'],
     computed: {
         bilet({ value }) {
+            // console.log(value);
+            
             return {...value}
         },
-        ssuda({ bilet }) {
-            return { ...bilet.ssuda }
+
+        klient({ bilet }) {
+            return { ...bilet.klient }
+        },
+        fio({ klient }) {
+            const { family = '', name = '', sername = '' } = klient
+            return `${family} ${name.charAt(0)}.${sername.charAt(0)}.`
         },
         obespechenie({ bilet }) {
             return bilet.obespechenie || []

@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="row" style="margin-top: 3px; font-size: 20px; text-align: right;">
-            <div class="col">
+            <div class="col" style="font-size: 15px;">
                 <span class="pr-1"><strong >{{ t('dogovor-zaima') }}</strong></span>
                 <span style="border: 2px solid;"><strong class="pl-1 pr-1"> № {{ bilet.number }}</strong></span>
             
@@ -68,29 +68,16 @@
                 <span style="font-size: 11px; font-style: italic;">{{ t('curency') }}</span>
             </div>
         </div>
-        <!-- <div class="row mt-1"> -->
-            <!-- <div class="col-4">
-                <sign class="mt-5" :name="t('kassir_sign')"/>
-            </div>
-            <div class="col" style="height: 28px; font-size: 12px; ">
-                <div class="row border-bottom mb-1" style="line-height: 18px;">
-                    {{ t('pogasheno') }}
-                </div>
-                <div class="row border-bottom" style="line-height: 18px;">
-                    {{ t('procent')  }} / {{ t('penalty')}}
-                </div>
-            </div> -->
-        <!-- </div> -->
     </div>
 </template>
 
 <script>
-import Sign from '../Sign'
+// import Sign from '../Sign'
 import { mapGetters, mapActions } from 'vuex'
 import { toDouble, toNumber } from '@/functions'
 export default {
 props: { value: Object },
-components: {Sign},
+// components: {Sign},
 inject: ['t'],
 computed: {
     bilet({ value }) {

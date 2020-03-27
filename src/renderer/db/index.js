@@ -43,7 +43,7 @@ const db = { company, users, klients, reestr }
 
 const post = (name, v) => {
   const { put, post } = db[name]
-  const value = {...v, lombard }
+  const value = { lombard, ...v }
   return v._id ? put(value) : post(value)
     .catch(err => console.log(err))
 }
