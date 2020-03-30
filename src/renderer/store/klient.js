@@ -24,7 +24,7 @@ const actions = {
     },
     async remove ({ dispatch }, v) {
         return get('klients', v._id)
-            .then(v => dispatch('save', {...v, _deleted: true }))
+            .then(v => dispatch('save', {...v, deleted: true }))
     },
     async update ({ getters }, {id}) {       
         await this.dispatch('update')

@@ -115,7 +115,7 @@ export default {
     ...mapGetters({
         company: 'company',
         map: 'klient/map',
-        accounts: 'accounts',
+        // accounts: 'accounts',
         usersMap: 'usersMap'
     }),
     company({ value }) {
@@ -144,11 +144,20 @@ export default {
     toWordsRu({ values }) {
       return numberToWordsRu.convert(this.summ)
     },
-    purposeOfPayment({ value, values }) {
-        let str = values.reduce((cur, { title, summ }) => cur + `${title} ${this.short(summ)}, `, '')
-        str = str.replace(/,\s*$/, "") // remove last comma
+    iType({ type }) {
+        return type === 'dt' ? 'ct' : 'dt'
+    },
+    accounts({ company, iType }) {
+        return company.accounts[iType].reduce((cur, {acc, title}) => {
+            return {...cur, [acc]: title }
+        }, {})
+    },
+    acc({ value, iType, accounts  }) {
+        return accounts[value[iType]]
+    },
+    purposeOfPayment({ value, acc }) {
         const number = value.number ? `по залоговому билету № ${value.number}` : ''
-        return `${str} ${number}`
+        return `${value.title || acc} ${number}`
     },
     from2({ type, value }) {
       return type === 'dt' ? 'Плательщик' : 'Получил' 
@@ -159,14 +168,14 @@ export default {
     fullName({ value }) {
       return value.from
     },
-    order({ value }) {
-      return value.order
+    order({ value, type }) {
+      return value.order[type]
     },
     passport({ value }) {
         return { ...value.doc }
     },
     docToString({ passport, t }) {
-      const { seria, number, issued } = passport
+      const { seria = '', number = '', issued = '' } = passport
       return `${seria} ${number} ${t('issued')}: ${issued}`
     }
   },

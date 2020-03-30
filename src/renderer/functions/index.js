@@ -48,6 +48,13 @@ const daysDiff = (d1, d2) => {
     d2 = moment(d2).startOf('day')
   return moment.duration(d1.diff(d2)).asDays()
 }
+const toTitleCase = (txt = '') => {
+    return txt.charAt(0).toUpperCase() + txt.substr(1)
+}
+const toDots = (txt = '') => {
+    return txt.split(/[,-/\\]/).join('.')
+}
+const isDateFormat = v => !v || moment(v, 'DD.MM.YYYY', true).isValid()
 export  {
     numberFormat,
     toDouble,
@@ -64,5 +71,8 @@ export  {
     rorrect,
     round,
     firstChar,
-    daysDiff
+    daysDiff,
+    toTitleCase,
+    isDateFormat,
+    toDots
 }

@@ -43,7 +43,7 @@
 
         <div class="row border-bottom border-left" style="height: 20px; line-height: 22px;">
             <span class="pl-1 pr-1" style="font-size: 12px;" >
-                {{ t('passport') }}: {{ passport }}, выдан: {{ issued }}, инн: {{ idn }}
+                {{ t('passport') }}: {{ passport }} {{ issued }} {{ idn }} {{ nationality }}
             </span>
         </div>
         <div class="row border-bottom border-left" style="height: 20px;"> </div>
@@ -54,7 +54,7 @@
         </div>
         <div class="row border-bottom border-left" style="height: 20px; line-height: 22px;">
             <span class="pl-1 pr-1" style="font-size: 12px;" >
-                {{ t('bithday') }}: {{ bithday }}
+                {{ t('bithday') }}: {{ bithday }} {{ klient.city }}
             </span>
         </div>
         <div class="row border-bottom border-left" style="height: 20px; line-height: 22px;">
@@ -83,30 +83,36 @@ computed: {
         return bilet.from
     },
     passport({ bilet }) {
-        const { seria, number, issued, inn } = { ...bilet.doc}
+        const { seria, number } = { ...bilet.doc}
         return `${seria || ''} ${number || ''}`
     },
     issued({ bilet }) {
-        return { ...bilet.doc}.issued || ''
+        const { issued } = { ...bilet.doc}
+        return issued ? `, выдан: ${issued}` : ''
     },
     klient({ bilet }) {
         return { ...bilet.klient}
     },
     idn({ klient }) {
-        return klient.idn || ''
+        const { idn } = klient
+        return idn ? `, инн: ${idn}` : ''
     },
     address({ klient }) {
-        const { post, city, street, home  } = { ...klient.address }
+        const { post = '', city = '', street = '', home = ''  } = { ...klient.address }
         if ([post, city, street, home].every(v => !v)) return ''
-        return `${post || ''} г.${city || ''} ул.${street || ''} д.${home || ''}`
+        return `${post} ${city} ${street} ${home}`
+    },
+    nationality({ klient }) {
+        const { nationality } = {...klient.passport}
+        return nationality ? `, ${this.t('nationality')} ${nationality}` : ''
     },
     bithday({ klient }) {
-        const { bithday, cityBith } = klient
-        return `${bithday || ''} ${cityBith || ''}`
+        const { bithday = '', cityBith = '' } = klient
+        return `${bithday} ${cityBith}`
     },
     phone({ klient }) {
         const { phone } = klient
-        return `тел: ${phone || ''}`
+        return phone ? `тел: ${phone}` : ''
     }
 },
 

@@ -1,11 +1,11 @@
 <template> 
-    <modal-editor :title="t(type)" @print="print" >
-        <div :style="{ zoom }">
+    <!-- <modal-editor :title="t(type)" @print="print" >
+        <div :style="{ zoom }"> -->
             <div ref="printer-content">
                 <order :title="t(type)" :type="type" :date="date" :value="model"/>
             </div>
-        </div>
-    </modal-editor>
+        <!-- </div>
+    </modal-editor> -->
 </template>
 <script>
 import { mapGetters } from 'vuex'
@@ -24,7 +24,7 @@ export default {
     },
     computed: {
         model({ value }) {
-            return {...value}
+            return {...value }
         },
         date({ model }) {
             const date = moment(model.date, 'L')
@@ -39,8 +39,7 @@ export default {
         },
         printContent({ $refs }) {
             return $refs['printer-content']
-        },
-        disabled({ }) {}
+        }
     },
     methods: {
         t(v) {

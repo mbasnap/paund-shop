@@ -219,7 +219,7 @@
             </div>
             <div class="row border-bottom"> <!--public official -->
                 <div class="col-1 border-right">13</div>
-                <div class="col-3" style="text-align: left">{{ t('public official') }}: </div>
+                <div class="col-3" style="text-align: left">{{ t('public official info') }}: </div>
                 <div class="col border-left" style="text-align: left">
                     <div class="row">
                         <div class="col">
@@ -302,14 +302,14 @@
           </div>
       </div>
           <div class="row mt-5"> <!--user sign date -->
-              <div class="col">
+              <div class="col-7">
                   <div class="row">
                       <div class="col">{{ user.post }}</div>
                       <div class="col">{{ userFio }}</div>
                       <div class="col border-bottom"></div>
                   </div>
               </div>
-              <div class="col-4">{{ t('date') }} {{ date }} г.  </div>
+              <div class="col">{{ t('date1') }} {{ date }} г.  </div>
           </div>
   </div>
 </template>

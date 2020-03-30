@@ -1,6 +1,5 @@
 <template> 
-<modal-editor class="klient"
-    ref="modal-editor" :title="t(title)" @save="save(data).then(close)">
+<modal-editor class="klient" :title="t(title)" :footer="false">
     <div class="tabs" >
         <a v-for="(item) in tabs" :key="item" :class="{ active: activetab === item }"
         @click="activetab = item"> {{ t(item) }} </a>
@@ -10,111 +9,122 @@
         </div> 
     </div>
     <div class="content">
-        <tab-content v-model="fio" v-show="activetab === 'fio'" tabname="fio"
-        :items="['family', 'name', 'sername', 'city', 'bithday']">
-            <svg-trash class="mt-3" width="20px" style="text-align: right;" @click="removeKlient"/>          
+        <tab-content v-model="fio" v-show="activetab === 'fio'" tabname="fio" :err="err.fio"
+        :items="fioItems">
+            <!-- <svg-trash class="mt-3" width="20px" style="text-align: right;" @click="removeKlient"/>           -->
         </tab-content>
-        <tab-content v-model="passport"  v-show="activetab === 'passport'" tabname="passport"
-        :items="['nationality', 'seria', 'number', { name: 'issued', teg: 'textarea'}, 'date-issue', 'idn']">
-            <svg-address-card width="25px" @click="addPassport"/>          
+        <tab-content v-model="passport"  v-show="activetab === 'passport'" tabname="passport" :err="err.passport"
+        :items="passportItems">
+            <!-- <svg-address-card width="25px" @click="addPassport"/>      -->
         </tab-content>
-        <tab-content v-model="address"  v-show="activetab === 'address'" tabname="address"
-        :items="['city', 'street', 'home', 'phone']">
+        <tab-content v-model="address"  v-show="activetab === 'address'" tabname="address" :err="err.address"
+        :items="addressItems">
         </tab-content>
-        <questionn-aire v-model="questionnaire"  v-show="activetab === 'questionnaire'"/>
+        <questionn-aire ref="questionn-aire" v-model="questionnaire"  v-show="activetab === 'questionnaire'"/>
     </div>
 </modal-editor>
 </template>
 <script>
 
 import { mapGetters, mapActions } from 'vuex'
-import { SvgTrash, SvgPrint, SvgAddressCard } from '@/svg'
+import { SvgPrint } from '@/svg'
 import ModalEditor from '@/widgets/Modal.vue'
-// import { PostCity } from './index'
+import { toTitleCase, toDots, isDateFormat } from '@/functions'
 import KlientReport from '@/zvit/klient'
 import TabContent from './TabContent'
 import QuestionnAire from './QuestionnAire'
 export default {
-    components: { ModalEditor, SvgAddressCard, SvgTrash, SvgPrint, TabContent, QuestionnAire },
-    props: { title: String, value: Object },
-    created() {
-        this.data = {...this.data, ...this.value}
+    components: { ModalEditor, SvgPrint, TabContent, QuestionnAire },
+    props: { title: String, value: String },
+    provide() {
+        return { onChange: this.onChange }
     },
     data() {
         return {
             tabs: ['fio', 'passport', 'address', 'questionnaire'],
             activetab: 'fio',
-            data: {
-                questionnaire: {
-                    "objective of referral": "receive financial credit",
-                    "source of money": "salary",
-                    "average monthly income": "income2",    
-                    "financial status type": "movable and immovable property",    
-                    "business reputation": "positive",
-                    "beneficial": "do not have third-party benefits",
-                    "public official": "not public official",
-                    "information about representative": "have",
-                    "information about representative": "have",
-                    "level risk": "low",
-                }
-            }
+            data: {}
         }
     },
     computed: {
       ...mapGetters('klient', ['map', 'docs', 'group']),
         fio: {
-            get() {
-                return this.data
+            get({ value: id }) {
+                return {...this.map[id]}
             },
             set({ name, value }) {
                 this.data = {...this.data, [name]: value } 
             }
         },
+        fioItems() {
+            return [
+                { name: 'family', format: toTitleCase },
+                { name: 'name', format: toTitleCase },
+                { name: 'sername', format: toTitleCase },
+                'city',
+                { name: 'bithday', format: toDots }]
+        },
         passport: {
-            get() {
-                return {...this.data.passport}
+            get({ fio }) {
+                const passport = {...fio.passport}
+                const nationality = passport.nationality || "Украина"
+                return {...passport, nationality, ...this.data.passport}
             },
             set({ name, value }) {
                 const passport = {...this.passport, [name]: value }
                 this.data = {...this.data, passport } 
-            }
+            },
+        },
+        passportItems() {
+            return [
+                { name: 'nationality', format: toTitleCase },
+                { name: 'seria', format: (v = '') => v.toUpperCase() },
+                'number',
+                { name: 'issued', teg: 'textarea', format: toTitleCase },
+                { name: 'date-issue', format: toDots },
+                'idn'
+            ]
         },
         address: {
-            get() {
-                return {...this.data.address}
+            get({ fio }) {
+                return {...fio.address, ...this.data.address}
             },
             set({ name, value }) {
                 const address = {...this.address, [name]: value }
                 this.data = {...this.data, address } 
             }
         },
+        addressItems() {
+            return ['city', 'street', 'home', 'phone', 'email']
+        },
         questionnaire: {
-            get() {
-                return {...this.data.questionnaire}
+            get({ fio }) {
+                return {...fio.questionnaire, ...this.data.questionnaire}
             },
-            set({ name, value }) {
-                const questionnaire = {...this.questionnaire, [name]: value }
+            set(questionnaire) {
                 this.data = {...this.data, questionnaire } 
             }
         },
-        err() {
-            return {  }
+        err({ data, value }) {
+            // console.log(value);
+            
+            const fio = { bithday: !isDateFormat(this.fio.bithday) }
+            const passport = { "date-issue": !isDateFormat(this.passport['date-issue'])}
+            const address = {}
+            return { fio, passport, address }
         }
     },
-    methods: {
+    methods: { toTitleCase, toDots,
         ...mapActions('klient', ['save', 'remove']),
-        addPassport() {
-            const { _id, passport, address } = {}
-            this.data = {...this.data, _id, passport, address }
-        },
-        removeKlient() {
-            this.remove(this.data).then(this.close)
-        },
-        close() {
-            this.$refs['modal-editor'].close()
+        onChange() {
+            const { fio, passport, address, questionnaire } = this
+            this.$nextTick(() => {
+                this.save({ ...fio, passport, address, questionnaire })
+            })           
         },
         print() {
-            const value = this.data
+            const { model: questionnaire } = this.$refs['questionn-aire']
+            const value = {...this.fio, questionnaire }
             this.$modal.show(KlientReport, { value }, { width: '850', height: '500'})            
         },
         t(v) {

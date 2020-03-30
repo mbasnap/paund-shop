@@ -1,10 +1,12 @@
 <template>
-    <div class="suggest dropdown" @mouseleave="close">
+    <div class="suggest dropdown"
+    @mouseleave="close"
+    >
         <slot></slot>
         <textarea class="named-input editor" ref="editor"
         :readonly="readonly()"
         :name="name"
-        :value="value[name]"
+        :value="format(value[name])"
         :placeholder="placeholder"
         @input="oninput($event.target)"
         @change="change($event.target)"
@@ -29,17 +31,14 @@ export default {
         value: Object,
         placeholder: String,
         options: Array,
+        disabled: Boolean,
         suggest: { type: Function,
             default(item) {
                 return item[this.name] || ''
             }
         },
-        show: { type: Function,
-            default() {
-                return true
-            }
-        },
-        disabled: Boolean
+        show: { type: Function, default: ()  => true },
+        format: { type: Function, default: (v) => v }
     },
     inject: [ "input", "change", 'readonly' ],
     data() {
@@ -64,8 +63,8 @@ export default {
             this.$emit('input', target)
         },
         close({ toElement }) {
-            const { name, className, tagName } = toElement || {}
-            if ((className || '').includes('dropdown-menu')) return
+            const { className = '' } = {...toElement}
+            if (className.includes('dropdown-menu')) return
             else this.highlight(-1)
         }
     }
@@ -88,9 +87,9 @@ export default {
     border: none;
     white-space: nowrap;
 }
-.suggest .readonly{
-    /* background-color: #e9ecef;
-    opacity: 1; */
+.suggest .dropdown-menu{
+    max-height: 400px;
+    overflow: auto;
 }
 
 .suggest .options li {

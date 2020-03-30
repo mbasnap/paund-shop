@@ -2,7 +2,7 @@
   <div class="klient">
         <div class="form-row mb-2">
             <suggest ref="klients" class="form-control col" name="family"
-            :placeholder="t('family')"
+            :placeholder="t('family')" :format="toTitleCase"
             :suggest="({ family, name, sername }) => `${family} ${name} ${sername}`"       
             v-model="model" :options="options" @select="select">
                 <svg-row-down v-show="!model._id && !disabled" class="reset" @click="$refs['klients'].highlight(0, true)"/>
@@ -12,20 +12,23 @@
             </div>  
         </div>
         <div class="form-row mb-2">
-            <named-input class="form-control col-5 mr-1" name="name" :placeholder="t('name')" v-model="model"/>
-            <named-input class="form-control col" name="sername" :placeholder="t('sername')" v-model="model"/>
+            <named-input class="form-control col-5 mr-1" name="name" :placeholder="t('name')"
+            v-model="model" :format="toTitleCase"/>
+            <named-input class="form-control col" name="sername" :placeholder="t('sername')"
+            :format="toTitleCase" v-model="model"/>
         </div>
         <div class="form-row mb-2">
-            <named-input class="form-control col mr-1" name="city" :placeholder="t('city')" v-model="model"/>           
+            <named-input class="form-control col mr-1" name="city" :placeholder="t('city')"
+            v-model="model"/>           
             <named-input :class="['form-control col', { 'is-invalid': err.bithday }]" name="bithday"
-            v-model="model" :placeholder="t('bithday')"/>
+            v-model="model" :placeholder="t('bithday')" :format="toDots"/>
         </div>
         <div class="form-row mb-2">
-            <named-input class="form-control col-3" :placeholder="t('seria')" name="seria" v-model="passport"/>
+            <named-input class="form-control col-3" :placeholder="t('seria')" name="seria"
+            :format="v => (v || '').toUpperCase()" v-model="passport"/>
             <div class="col">
                 <div class="row m-0">
-                    <suggest ref="passport" class="form-control col" name="number"
-                    :placeholder="t('number')"
+                    <suggest ref="passport" class="form-control col" name="number" :placeholder="t('number')"
                     :suggest="({ passport }) => `${passport.seria} ${passport.number}`"
                     v-model="passport" :options="passports" @select="select">
                     <svg-row-down v-show="passports.length > 0" class="reset"
@@ -38,11 +41,16 @@
             </div>
         </div>
         <div class="form-row mb-2">
-            <div class="col-2" style="line-height: 35px;">
-                <svg-address-card width="30px;" :disabled="!value"
-                @click="showModal('edit klient')"/>
-            </div>            
-            <named-input class="form-control col" name="idn" :placeholder="t('idn')" v-model="passport"/>   
+        <named-input class="form-control col" name="idn" :placeholder="t('idn')" v-model="passport"/>   
+
+        <svg-address-card class="col-2 p-0" style="line-height: 35px; text-align: right;" 
+        width="35px;" :disabled="!model._id" @click="showModal('edit klient')"/>
+        <b-dropdown class="klient-dropdown col-1 p-0 m-0"  variant="link" :disabled="!model._id" >
+            <b-dropdown-item href="#" @click="copy"
+            >copy</b-dropdown-item>
+            <b-dropdown-item href="#" @click="onRemove"
+            >remove</b-dropdown-item>
+        </b-dropdown>
         </div>
         <b-tooltip target="tooltip-err" variant="danger" triggers="hover">
             Klient {{ getFio(err.klient_exist) }} exist
@@ -53,8 +61,9 @@
 <script>
 
 import { mapGetters, mapActions } from 'vuex'
-import { Editor, mix } from './editor/index.js'
+import { Editor, Confirm, mix } from './editor/index.js'
 import { SvgRowDown, SvgReset, SvgExclamation, SvgAddressCard } from '@/svg'
+import { toTitleCase, toDots, isDateFormat } from '@/functions'
 export default {
     mixins: [ mix ],
     components: { SvgRowDown, SvgReset, SvgExclamation, SvgAddressCard },
@@ -69,14 +78,15 @@ export default {
     },
     computed: {
       ...mapGetters('klient', ['map', 'docs']),
-        group({docs}) {
-            return docs.reduce((cur, v) => {
+        group({ docs }) {
+            return docs.filter(({ deleted }) => !deleted)
+            .reduce((cur, v) => {
                 const id =  this.getKey(v)
                 return {...cur, [id]: [...(cur[id] || []), v]}
             }, {})
         },
         options({ model, group }) {
-            return Object.keys(group)
+            return Object.keys(group).sort()
                 .filter(key => key.includes((model.family || '').toLowerCase()))
                     .map(key => group[key][0])
         },
@@ -109,16 +119,19 @@ export default {
       },
       err({ model, passport }) {
         return {
+            bithday: !isDateFormat(model.bithday),
             klient_exist: this.passportsMap[this.passportId(passport)],
             fio: ['family', 'name', 'sername'].some(v => !model[v]),
             passport: ['seria', 'number'].some(v => !passport[v])
         }
       }
     },
-    methods: {
-        ...mapActions('klient', ['save']),
+    methods: { toTitleCase, toDots,
+        ...mapActions('klient', ['save', 'remove']),
         getKey({ family, name, sername }) {
-            return [family, name, sername].join('').toLowerCase()
+            return [family, name, sername]
+                .map((v = '') => v.trim())
+                    .join('').toLowerCase()
         },
         readonly() {
             return this.disabled
@@ -130,7 +143,22 @@ export default {
             return `${family} ${name} ${sername}`
         },
         showModal(title) {        
-            this.$modal.show(Editor, { title, value: this.model }, { height: 'auto' })
+            this.$nextTick(() => {
+                this.$modal.show(Editor, { title, value: this.model._id }, { height: 'auto' })
+            })
+        },
+        copy() {
+            const { _id, passport } = {}
+            this.data = {...this.data, _id, passport }
+        },
+        onRemove() {
+            const { family, deleted: description } = this.model
+            const t = v => this.$t(`confirm.${v}`)
+            const html = `<p>${t('enter')} <strong style='color: red;'>${family}</strong> ${t('to confirm')}</p>`
+            const action = (description, title) => this.remove({...this.model, description, title}).then(() => this.select())
+            const validate = (v) => family === v
+            const value = { title: 'remove', html, description }
+            this.$modal.show(Confirm, { value, action, validate })
         },
         select({ _id } = {}) {
             this.data = {}
@@ -152,5 +180,8 @@ export default {
     display: flex;
     justify-content: flex-end;
     cursor: pointer;
+}
+.klient .klient-dropdown .dropdown-menu {
+    left: -130px !important;
 }
 </style>

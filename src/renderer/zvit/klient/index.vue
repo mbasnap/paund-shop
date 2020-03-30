@@ -1,14 +1,5 @@
 <template> 
     <modal-editor :title="t('title', 'klient-report')" @print="print" >
-        <!-- <div ref="printer-content" class="border p-5" style="font-size: 20px;">
-            <div v-for="([key, items]) in Object.entries(tabs)" :key="key" 
-            class="">
-                <div v-for="name in items" :key="name" class="row p-3 ">
-                    <div class="col-5 ">{{ t(key, name) }}</div>
-                    <div class="col border-bottom">{{ get(key, name) }}</div>
-                </div>
-            </div>
-        </div> -->
     <div class="tabs" >
         <a v-for="(item) in tabs" :key="item" :class="{ active: activetab === item }"
         @click="activetab = item" > {{ t('tabs', item) }} </a>

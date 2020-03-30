@@ -11,9 +11,9 @@
     <slot></slot>
 
     </div>
-    <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" @click="close">{{ $t('cansel') }}</button>
-    <button type="button" class="btn btn-primary" @click="save" :disabled="disabled">{{ $t('save') }}</button>
+    <div class="modal-footer" v-if="footer">
+    <button type="button" class="btn btn-secondary" @click="close">{{ t('cansel') }}</button>
+    <button type="button" class="btn btn-primary" @click="save" :disabled="disabled">{{ t('save') }}</button>
     </div>
 </div>
 </template>
@@ -21,7 +21,9 @@
 <script>
 
 export default {
-props: { title: String, disabled: Boolean },
+props: { title: String, disabled: Boolean,
+    footer: { type: Boolean, default: true } 
+},
 
 created() {
     this.$on('close', () => {
@@ -31,6 +33,9 @@ created() {
 computed: {},
 
 methods: {
+    t(name) {
+        return this.$t(`btn.${name}`)
+    },
     save () {
         this.$emit('save', this)
     },

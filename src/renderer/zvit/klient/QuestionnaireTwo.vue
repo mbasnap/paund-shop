@@ -23,11 +23,7 @@
             </div>
             <div class="row border-bottom"> <!--Цель обращения -->
                 <div class="col-1 border-right">4</div>
-                <div class="col" style="text-align: left">{{ t('objective of referral') }}: {{ get('objective of referral', 'receive financial credit') }}</div>
-                <!-- <div class="col-1 border-left" style="text-align: left">{{ get('objective of referral', 'receive financial credit') }}</div>
-                <div class="col border-left" style="text-align: left">{{ t('receive financial credit') }}</div>
-                <div class="col-1 border-left" style="text-align: left">{{ get('objective of referral', 'another') }}</div>
-                <div class="col border-left" style="text-align: left">{{ t('another') }}</div> -->
+                <div class="col" style="text-align: left">{{ t('objective of referral') }}: {{ t(questionnaire['objective of referral']) }}</div>
             </div>
             <div class="row border-bottom"> <!--Информация относительна источника поступления денежных -->
                 <div class="col-1 border-right">5</div>
@@ -207,7 +203,7 @@
             </div>
             <div class="row border-bottom"> <!--public official -->
                 <div class="col-1 border-right">9</div>
-                <div class="col-3" style="text-align: left">{{ t('public official') }}: </div>
+                <div class="col-3" style="text-align: left">{{ t('public official info') }}: </div>
                 <div class="col border-left" style="text-align: left">
                     <div class="row">
                         <div class="col">
@@ -235,15 +231,22 @@
             </div>
           </div>
       </div>
-          <div class="row mt-5"> <!--user sign date -->
-              <!-- <div class="col">
+          <div class="row mt-2"> <!--footer3 -->
+              <div class="col" style="text-align: left;">{{ t('footer3') }}.</div>
+          </div>
+          <div class="row mt-4"> <!--user sign date -->
+              <div class="col">
                   <div class="row">
-                      <div class="col">{{ user.post }}</div>
-                      <div class="col">{{ userFio }}</div>
+                      <div class="col">{{ t('klient post') }}</div>
+                      <div class="col">{{ klientFio }}</div>
                       <div class="col border-bottom"></div>
                   </div>
               </div>
-              <div class="col-4">{{ t('date') }} {{ date }} г.  </div> -->
+              <div class="col-1"></div>
+              <div class="col-4" style="text-align: left;">
+                  <div>{{ t('date1') }} {{ date }} г.</div>
+                  <div>{{ t('date2') }} {{ date }} г.</div>
+              </div>
           </div>
   </div>
 </template>
@@ -286,6 +289,10 @@ export default {
         },
         userFio({ user }) {
             const { family = '', name = '', sername = '' } = {...user.fio}
+            return `${family} ${name.charAt(0)}. ${sername.charAt(0)}`
+        },
+        klientFio({ value }) {
+            const { family = '', name = '', sername = '' } = {...value}
             return `${family} ${name.charAt(0)}. ${sername.charAt(0)}`
         },
     },

@@ -1,6 +1,6 @@
 <template> 
-    <modal-editor :title="title" :disabled="disabled" style="width: 718px;"
-    :zoom="zoom" @zoom="onZoom" @print="print">
+    <!-- <modal-editor :title="title" :disabled="disabled" style="width: 718px;"
+    :zoom="zoom" @zoom="onZoom" @print="print"> -->
     <div ref="print-content" :style="{ zoom: zoom + '%' }">
         <div class="mt-1">
             <spec :value="value"/>
@@ -42,7 +42,7 @@
             </div>
         </div>
     </div>
-    </modal-editor>
+    <!-- </modal-editor> -->
 </template>
 <script>
 import { mapGetters } from 'vuex'

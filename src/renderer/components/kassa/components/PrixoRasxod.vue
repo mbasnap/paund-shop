@@ -9,8 +9,8 @@
         </div> 
         <div class="form-row mb-2">
             <named-select class="form-control col" name="klient" :placeholder="t('from')"
-            :value="model" :options="users.filter(v => v.active)" @change="change"
-            :tostring="toStringKlient" :tovalue="toValueKlient"/>
+            :value="model" :options="usersOptions" @change="change"
+            :tostring="fio" :tovalue="toValueKlient"/>
         </div> 
         <div class="form-row mb-2">
             <named-textarea class="form-control col" name="title"
@@ -54,22 +54,31 @@ export default {
                 { [type]: '301', [account]: model[account], summ: model.summ },
             ]}
         },
+        excludesUsers({ company }) {
+            const excludes = (company['excludes-users'] || '').split(',')
+            return excludes.map(v => v.trim())
+        },
+        usersOptions({ users, excludesUsers, fio }) {
+            return users
+                .filter(({ name }) => !excludesUsers.includes(name))
+                    .filter(v => v.active && fio(v))
+        },
         options({ accounts, account, company }) {
             const excludes = v => !(company.excludes || []).includes(v)
             return Object.keys({...accounts[account] }).filter(excludes)
         }
     },
     methods: {
-        ...mapActions({}),
+        // ...mapActions({}),
         readonly() {
             return this.disabled
         },
         change({ name, value }) {
             this.value = { ...this.value, [name]: value }
         },
-        toStringKlient({ fio }) {
-            const { family, name, sername } = {...fio }
-            return `${family} ${name} ${sername}`
+        fio(v) {
+            const { family = '', name = '', sername = '' } = {...v.fio }
+            return `${family} ${name} ${sername}`.trim()
         },
         toValueKlient(v) {
             return {...v}._id

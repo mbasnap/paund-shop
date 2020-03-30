@@ -10,8 +10,8 @@ const getters = {
     },
     values({}, { docs }) { 
         return  docs.filter(({ values }) => values && values.map)
-            .reduce((arr, { values, _id, date }) => {
-                const items = (values || []).map(v => ({ ...v, _id, date }))
+            .reduce((arr, { values, _id, date, deleted }) => {
+                const items = (values || []).map(v => ({ ...v, _id, date, deleted }))
                 return [ ...arr, ...items ]
             }, [])
     },
@@ -69,9 +69,9 @@ const actions = {
         return post('reestr', { date, ...v, user: user._id, type: 'reestr' })
             .then(v => dispatch('update', v))
     },
-    remove ({ dispatch }, { _id }) {     
-        return get('reestr', _id)
-            .then(v => dispatch('save', { ...v, _deleted: true }))
+    remove ({ dispatch }, { _id, description: deleted, title }) {
+        const _deleted = this.getters.isAdmin && !deleted ? title === 'remove' : false
+        return get('reestr', _id).then(v => dispatch('save', { ...v, deleted, _deleted }))
     },
 
     async update({ getters }, { id }) {

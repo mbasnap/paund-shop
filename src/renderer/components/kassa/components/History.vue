@@ -10,8 +10,8 @@
                                     Билет № {{ model.number }}
                                 </span>
                             </div>
-                            <div class="col-1 mr-2" style="text-align: right;">
-                                <svg-trash width="13px;" @click="removeValue(model)"></svg-trash>
+                            <div class="col-2 " style="text-align: center;">
+                                <svg-print width="20px;" @click="print"/>
                             </div>
                         </div>
                     </li>
@@ -21,7 +21,9 @@
                 </div>
                     <li class="row" v-for="(v, i) in model.values" :key="i">
                         <div class="row">
-                            <span class="col">{{ getTitle(v) }}</span>
+                            <span class="col" style="white-space: nowrap; overflow: hidden;">
+                                {{ getTitle(v) }}
+                            </span>
                             <span class="col-4 p-0">{{ v.summ }}</span>
                         </div>
                     </li>
@@ -32,9 +34,10 @@
 <script>
 import { mapGetters } from 'vuex'
 import { toNumber, moment } from '@/functions'
-import { SvgTrash } from '@/svg'
+import { BiletOrder } from '@/zvit'
+import { SvgPrint } from '@/svg'
 export default {
-    components: { SvgTrash },
+    components: { SvgPrint },
     props: { value: String },
     computed: {
         ...mapGetters({
@@ -58,8 +61,11 @@ export default {
             return {...klients[klient], ...usersFio[klient]}
         },
         from({ klient }) {
-            const { family, name, sername } = klient
+            const { family = '', name = '', sername = '' } = klient
             return `${family} ${name} ${sername}`
+        },
+        order({ bilet }) {
+            return {...bilet.order}
         },
         doc({ klient }) {
             return { ...klient.passport}
@@ -72,15 +78,27 @@ export default {
         }
     },
     methods: {
-        getTitle({ dt, ct }) {
-            const acc = k => this.accounts[k] || []
-            return Object.entries({ dt, ct })
-                .filter(([k,v]) => v !== '301')
-                    .map(([k,v]) => acc(k)[v])[0]
+        getTitle(value) {
+            const [k] = ['dt', 'ct'].filter(k => value[k] !== '301')
+            const acc = this.accounts[k]
+            return `${this.getOrder(k == 'dt' ? 'ct' : 'dt')} ${acc[value[k]]}`
         },
-        removeValue(model) {
-        if (!this.used[model._id]) 
-        return this.$emit('remove', model)  
+        getOrder(k) {
+            return `${this.t('order', k + '-short')} №${this.order[k]}`
+        },
+        printOrder(props) {
+            this.$modal.show(Order, props, { width: '850', height: '500'})
+        },
+        print() {
+            // console.log(this.model);
+            // const print = [...model.values]
+            this.$modal.show(BiletOrder, { value: this.model }, { width: '850', height: '500'})
+            
+            // if (!this.used[model._id]) 
+            // return this.$emit('remove', model)  
+        },
+        t(name, value) {
+            return this.$t(`${name}.${value}`)
         }
     }
 }

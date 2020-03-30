@@ -2,7 +2,7 @@
     <draggable teg="ul" class="kassa-list small p-0 m-0" :value="value"
     @start="onStart" @end="onEnd" :sort="false"
      :group="{ name: 'bilet', pull: 'clone', put: 'false' }">
-      <li v-for="index in rows" :key="index-1"
+      <li v-for="index in rows" :key="index-1" :class="{deleted: isDeleted(...value[index-1])}"
       :selected="isSelected(...value[index-1])"
       @contextmenu.prevent="context($event, ...value[index-1])"
       @mouseleave="({ toElement }) => close(toElement)"
@@ -19,8 +19,16 @@ export default {
   props: { value: Array, selected: String, type: String, rows: Number },
   components: { draggable },
   inject: ['open', 'close', 'select', 'onStart', 'onEnd'],
-  computed: { },
+  computed: {
+    ...mapGetters({
+      map: 'reestr/map'
+    })
+   },
   methods: {
+    isDeleted(id) {
+      const { deleted } = {...this.map[id]}
+      return !!deleted
+    },
     isSelected(id) {
       return !!id && id === this.selected
     },
@@ -44,6 +52,9 @@ export default {
   font-size: 14px;
   text-align: center;
   border: 1px solid rgba(0, 0, 0, 0.125);
+}
+.kassa-list li.deleted {
+  color: #ad0a0afa;
 }
 .kassa-list li[selected] {
   background-color: rgba(128, 128, 128, 0.11);

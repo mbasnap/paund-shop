@@ -19,7 +19,8 @@ export default {
     },
     inject: [ "input", "change", "readonly" ],
     methods: {
-        oninput(target) {
+        oninput({ name, value }) {
+            const target = { name, value: this.format(value) }
             if (this.input) this.input(target)
             this.$emit('input', target)
         }

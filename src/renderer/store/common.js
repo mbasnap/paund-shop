@@ -31,6 +31,14 @@ const getters = {
     },
     date ({ date }) {
         return date
+    },
+    settings() {
+        const order = JSON.parse(localStorage.getItem('order'))
+        const bilet = JSON.parse(localStorage.getItem('bilet'))
+        return {
+            order: { zoom: "115%", silent: true, ...order },
+            bilet: { zoom: "150%", silent: true, ...bilet }
+        }
     }
 }
 const mutations = {

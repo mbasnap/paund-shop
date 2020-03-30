@@ -46,19 +46,32 @@
             <div class="col border-right" style="text-align: right;">
                 <div class="row">
                     <div class="col-1 border-right">7</div>
-                    <div class="col" style="font-size: 14px;">{{ t('procent-po-zaimu') }}</div>
+                    <div class="col" >{{ t('procent-po-zaimu') }}</div>
                 </div>
             </div>
             <div class="col">
+                <div class="row">
+                    <div class="col p-0">
+                        {{ procent }}
+                        <span style="font-size: 11px; font-style: italic;">{{ t('curency') }}</span>
+                    </div>
+                    <div v-if="discount"
+                    class="col-4 p-0" style="font-size: 10px; font-style: italic;">
+                        <div class=" border-bottom">{{ value.fullProcent }}</div>
+                        <div class="">{{ `${discount}% ${t('discount')}` }}</div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="col">
                 {{ procent }}
                 <span style="font-size: 11px; font-style: italic;">{{ t('curency') }}</span>
-            </div>
+            </div> -->
         </div>
         <div class="row border-bottom">
             <div class="col border-right" style="text-align: right;">
                 <div class="row">
                     <div class="col-1 border-right">8</div>
-                    <div class="col p-0 pr-1" style="font-size: 12px; line-height: 24px;">
+                    <div class="col p-0 pr-1" style="line-height: 24px;">
                         {{ t('podlejit-vozvratu') }}
                     </div>
                 </div>
@@ -88,6 +101,9 @@ computed: {
     },
     procent({ bilet }) {
         return bilet.procent
+    },
+    discount({ bilet }) {
+        return bilet.xDisc
     },
     total({ bilet, procent }) {
         const total = toNumber(bilet.ocenca) - toNumber(procent)

@@ -103,8 +103,9 @@ computed: {
     },
     model({ number, type, days, xProc, xPen, ssuda, procent, ocenca }) {
         const xDisc = toNumber(procent) > this.minProcent ? this.xDisc : 0
-        const discount = xDisc ? toDouble(proc(proc(ocenca, xProc), xDisc) * days) : '0.00'
-        return { number, zalog: type, days, xProc, xPen, xDisc, ssuda, procent, discount, ocenca, 
+        const fullProcent = toDouble(proc(ocenca, xProc) * days)
+        const discount = xDisc ? toDouble(proc(fullProcent, xDisc)) : '0.00'
+        return { number, zalog: type, days, xProc, xPen, xDisc, ssuda, procent, fullProcent, discount, ocenca, 
         values: [
             { dt: '377', ct: '301', summ: ocenca },
             { dt: '301', ct: '703', summ: procent }
