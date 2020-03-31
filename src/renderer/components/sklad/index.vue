@@ -9,7 +9,7 @@
         </div>
     </list-to>
     <div style="width: 10px;"></div>
-    <list-to class="col p-0" :value="listFrom" :actions="{ fromSklad: remove }" name="list-to">
+    <list-to class="col p-0" :value="listFrom" :actions="{ fromSklad: fromSklad }" name="list-to">
         <div class="row p-2 form-check" style="text-align: left; height: 40px;">
             <div class="col"> На складе </div>
         </div> 
@@ -49,14 +49,15 @@ export default {
     },
     methods: {
         ...mapActions({
-            remove: 'reestr/remove',
+            fromSklad: 'reestr/fromSklad',
             save: 'reestr/save',
         }),
         isOver({ date, days, statment }) {
             const plan = moment(date).add(days, 'd').add({ ...statment}.days, 'd')                       
             return daysDiff(plan, moment(this.date)) + 1 < 0
         },
-        toSklad({ _id: ref, klient, ocenca }) {
+        toSklad({ _id: ref, klient, ocenca, deleted }) {
+            if (deleted) return
             const values = {ref, klient: klient._id, values: [
                 { dt: '200', ct: '377', summ: ocenca }
             ]}

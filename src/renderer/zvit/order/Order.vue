@@ -42,7 +42,7 @@
                     <div class="col border-bottom border-left border-right">{{ acc301}}</div>
                 </div>
                 <div class="row" style="height: 30px;">
-                    <div class="col border-bottom border-left border-right">{{ short(summ) }}</div>
+                    <div class="col border-bottom border-left border-right">{{ short(value.summ) }}</div>
                 </div>
                 <div class="row" style="height: 30px; text-align: left; font-size: 14px;">
                     <div class="col p-0 border-left border-right" style="line-height: 16px;">
@@ -100,7 +100,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { summ, numberFormat, moment } from '@/functions'
+import { numberFormat, moment } from '@/functions'
 import numberToWordsRu from 'number-to-words-ru'
 import { HeaderRow, Sign, BodysRow } from './components'
 export default {
@@ -138,11 +138,8 @@ export default {
     values({value}) {
       return value.values || []
     },
-    summ({ values }) {
-      return summ( ...values.map(v => v.summ))
-    },
-    toWordsRu({ values }) {
-      return numberToWordsRu.convert(this.summ)
+    toWordsRu({ value }) {
+      return numberToWordsRu.convert(value.summ)
     },
     iType({ type }) {
         return type === 'dt' ? 'ct' : 'dt'

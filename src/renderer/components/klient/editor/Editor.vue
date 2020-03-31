@@ -50,7 +50,7 @@ export default {
       ...mapGetters('klient', ['map', 'docs', 'group']),
         fio: {
             get({ value: id }) {
-                return {...this.map[id]}
+                return {...this.map[id], ...this.data}
             },
             set({ name, value }) {
                 this.data = {...this.data, [name]: value } 
@@ -106,8 +106,6 @@ export default {
             }
         },
         err({ data, value }) {
-            // console.log(value);
-            
             const fio = { bithday: !isDateFormat(this.fio.bithday) }
             const passport = { "date-issue": !isDateFormat(this.passport['date-issue'])}
             const address = {}

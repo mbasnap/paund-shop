@@ -33,10 +33,11 @@ export default {
             map: 'reestr/map',
             date: 'date'
             }),
-        numbers({ empty, date, map }) {   
+        numbers({ empty, date, map, deleted }) {   
             return Object.values(empty)
                 .filter(v => moment(v.date).isSameOrBefore(date, 'date'))
-                    .map(v => map[v._id])
+                    .filter(deleted)
+                        .map(v => map[v._id])
         },
         options({ value, numbers }) {
             const includes = v => (v.number + '').includes(value.number || '')
@@ -47,6 +48,9 @@ export default {
         }
     },
     methods: {
+        deleted({ deleted }) {
+            return !deleted
+        },
         update(v) {
             this.$emit('select', v)
         },

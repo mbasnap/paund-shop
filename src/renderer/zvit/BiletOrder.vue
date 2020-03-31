@@ -48,10 +48,10 @@ export default {
 
     },
     methods: {
-        getProps({ dt, ct }) {
+        getProps({ dt, ct, summ }) {
             const { order } = this.model
             const type = dt === '301' ? 'dt' : 'ct'
-            const value = {...this.model, type, dt, ct }
+            const value = {...this.model, type, dt, ct, summ }
             return { value, tag:'Order', name: `${this.t(type + '-short')} № ${order[type]}` }
         },
         t(v) {

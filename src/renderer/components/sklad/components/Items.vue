@@ -3,7 +3,7 @@
     <b-card no-body class="mb-1" v-for="(item, key) in items" :key="key"
     @contextmenu.prevent="open($event, item)"
     @mouseleave="({ toElement }) => close(toElement)" >
-      <b-card-header header-tag="header" class="p-1" role="tab">
+      <b-card-header header-tag="header" :class="['p-1', { danger: !!item.deleted }]" role="tab">
         <div block class="row m-0" href="#" v-b-toggle="name + key + ''" variant="info"
         style="font-size: 14px;">
             <div class="col-2 p-0">{{ item.number }}</div>
@@ -60,6 +60,9 @@ props: { name: String, value: Array },
 </script>
 
 <style>
+.card-header.danger {
+  color: brown;
+}
 .sklad-item header {
   text-align: left;
   cursor: pointer;

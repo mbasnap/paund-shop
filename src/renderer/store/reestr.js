@@ -73,6 +73,9 @@ const actions = {
         const _deleted = this.getters.isAdmin && !deleted ? title === 'remove' : false
         return get('reestr', _id).then(v => dispatch('save', { ...v, deleted, _deleted }))
     },
+    fromSklad ({ dispatch }, { _id }) {
+        return get('reestr', _id).then(v => dispatch('save', { ...v, _deleted: true }))
+    },
 
     async update({ getters }, { id }) {
         await this.dispatch('update')
