@@ -3,7 +3,7 @@
     <slot ></slot>
     <vue-context ref="context"  class="vue-context" >
         <div class="pl-4" slot-scope="{data}" @mouseleave="close()">
-            <li v-for="(action, name) in actions" :key="name" 
+            <li v-for="([name, action]) in model" :key="name" 
                 @click="action(data)">
                 <span>{{ $t(`context.${name}`) }}</span>
             </li>
@@ -22,6 +22,9 @@ provide () {
     return { open: this.open, close: this.close }
 },
 computed: {
+    model({ actions }) {
+      return Object.entries(actions).filter(([k, v]) => v)
+    },
     context () {
         return this.$refs['context']
     }

@@ -47,9 +47,9 @@
         width="35px;" :disabled="!model._id" @click="showModal('edit klient')"/>
         <b-dropdown class="klient-dropdown col-1 p-0 m-0"  variant="link" :disabled="!model._id" >
             <b-dropdown-item href="#" @click="copy"
-            >copy</b-dropdown-item>
+            >{{ $t('btn.copy') }}</b-dropdown-item>
             <b-dropdown-item href="#" @click="onRemove"
-            >remove</b-dropdown-item>
+            >{{ $t('btn.remove') }}</b-dropdown-item>
         </b-dropdown>
         </div>
         <b-tooltip target="tooltip-err" variant="danger" triggers="hover">

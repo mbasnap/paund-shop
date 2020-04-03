@@ -55,10 +55,13 @@ methods: {
         this.update({ ...this.value, [name]: value })
     },
     update(v) {
-        const { ves, derty, proba, ocenca } = v
+        // const { ves, derty, proba, ocenca } = v
+        const ves = toDouble(v.ves)
+        const derty = toDouble(v.derty)
         const total = toDouble(pDiff(ves, derty))
-        const price = toDouble(this.priceMap[proba])
-        this.$emit('input', {...v, total, price, ocenca: toDouble(mult(total, price) || ocenca)})
+        const price = toDouble(this.priceMap[v.proba])
+        const ocenca = toDouble(mult(total, price) || v.ocenca)
+        this.$emit('input', {...v, ves, derty, total, price, ocenca })
     },
     t(v) {
         return this.$t(`obespechenie.${v}`)

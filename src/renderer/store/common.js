@@ -27,6 +27,7 @@ const getters = {
         return {...usersMap[company.user] }
     },
     isAdmin({}, { user }) {
+        // return false
         return (user.roles || []).includes('admin')
     },
     date ({ date }) {

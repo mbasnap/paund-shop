@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="row" style="margin-top: -11px;">
-          <div class="col " style="font-size: 18px;">
+          <div class="col " style="font-size: 14px;">
                 <strong>{{company.logo}}</strong>
             </div>
         </div>

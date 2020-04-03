@@ -1,6 +1,7 @@
 <template>
 <div class="sklad row ">
-    <list-to class="col p-0" :value="listTo" :actions="{ toSklad: toSklad }" name="list-from">
+    <list-to class="col p-0" :value="listTo" 
+    :actions="{ toSklad, remove: isAdmin ? remove : false }" name="list-from">
         <div class="row p-2 form-check" style="text-align: left; height: 40px;">
             <input type="checkbox" class="form-check-input m-0" id="dropdownCheck2"
             :checked="showOver" @change="showOver = !showOver"
@@ -9,7 +10,7 @@
         </div>
     </list-to>
     <div style="width: 10px;"></div>
-    <list-to class="col p-0" :value="listFrom" :actions="{ fromSklad: fromSklad }" name="list-to">
+    <list-to class="col p-0" :value="listFrom" :actions="{ fromSklad }" name="list-to">
         <div class="row p-2 form-check" style="text-align: left; height: 40px;">
             <div class="col"> На складе </div>
         </div> 
@@ -20,6 +21,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import { moment, daysDiff } from '@/functions'
 import ListTo from "./components/ListTo"
+import { Confirm } from '@/widgets'
 export default {
     components: { ListTo },
     data() {
@@ -32,7 +34,8 @@ export default {
             map: 'reestr/map',
             empty: 'reestr/empty',
             dt200: 'reestr/dt200',
-            date: 'date'
+            date: 'date',
+            isAdmin: 'isAdmin'
         }),
         values({ empty, map, isOver }) {
             return Object.values(empty)
@@ -51,6 +54,7 @@ export default {
         ...mapActions({
             fromSklad: 'reestr/fromSklad',
             save: 'reestr/save',
+            removeReestr: 'reestr/remove'
         }),
         isOver({ date, days, statment }) {
             const plan = moment(date).add(days, 'd').add({ ...statment}.days, 'd')                       
@@ -62,6 +66,15 @@ export default {
                 { dt: '200', ct: '377', summ: ocenca }
             ]}
             return this.save(values)
+        },
+        async remove(v) {
+            const { number, deleted: description } = {...this.map[v._id]}
+            const t = v => this.$t(`confirm.${v}`)
+            const html = `<p>${t('enter')} <strong style='color: red;'>${number}</strong> ${t('to confirm')}</p>`
+            const action = (description, title) => this.removeReestr({...v, description, title})
+            const validate = v => number == v
+            const value = { title: 'remove', html, description }
+            this.$modal.show(Confirm, { value, action, validate })
         },
         tostring({ date, number, ocenca, klient }) {
             const { family } = { ...this.klients[klient]}
