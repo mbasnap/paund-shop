@@ -1,6 +1,6 @@
 <template>
-    <div class="row flex-fill vidacha">
-        <div  class="col-8 pt-3">
+    <div class="row vidacha  pt-3">
+        <div  class="col-8">
             <div class="row" style="height: 250px;">
                 <klient ref="klient" class="col" v-model="klient"/>
                 <div class="col pl-2 border-left">
@@ -94,6 +94,10 @@ methods: {
 </script>
 
 <style>
+.vidacha{
+    overflow: auto;
+    height: 100%;
+}
 .target {
     height: 200px;
     position: absolute;

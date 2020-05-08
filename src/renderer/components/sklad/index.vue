@@ -1,6 +1,6 @@
 <template>
-<div class="sklad row ">
-    <list-to class="col p-0" :value="listTo" 
+<div class="sklad row pt-3 pb-3 m-0 ">
+    <list-to class="content col p-0" :value="listTo" 
     :actions="{ toSklad, remove: isAdmin ? remove : false }" name="list-from">
         <div class="row p-2 form-check" style="text-align: left; height: 40px;">
             <input type="checkbox" class="form-check-input m-0" id="dropdownCheck2"
@@ -10,7 +10,7 @@
         </div>
     </list-to>
     <div style="width: 10px;"></div>
-    <list-to class="col p-0" :value="listFrom" :actions="{ fromSklad }" name="list-to">
+    <list-to class="content col p-0" :value="listFrom" :actions="{ fromSklad }" name="list-to">
         <div class="row p-2 form-check" style="text-align: left; height: 40px;">
             <div class="col"> На складе </div>
         </div> 
@@ -83,15 +83,13 @@ export default {
     }
 }
 </script>
-<style>
+<style >
 .sklad {
     width: 100%;
-    padding: 10px;
+    height: 100%;
 }
-  .sklad .list .header {
-        text-align: center;
-        background-color: rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(0, 0, 0, 0.1);
-    }
-
+.sklad .content{
+    height: 100%;
+    padding-top: 45px;
+}
 </style>

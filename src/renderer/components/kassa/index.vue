@@ -1,6 +1,6 @@
 <template>
     <div class="kassa">
-        <b-card class="m-2" header-tag="header" footer-tag="footer" body-class="scroll-auto"
+        <b-card class="" header-tag="header" footer-tag="footer" body-class="scroll-auto"
         :header="ok" :footer="total">
         <context class="row " :actions="{ addOrder, remove }">
             <kassa-list :selected="selected" class="col-6" :rows="rows"
@@ -117,8 +117,8 @@ export default {
 
 <style>
 .kassa {
-    padding: 0px;
-    border: 1px solid rgba(0, 0, 0, 0.3);
+    /* padding: 0px; */
+    /* border: 1px solid rgba(0, 0, 0, 0.3); */
 }
 .kassa .card {
     max-height: 330px;

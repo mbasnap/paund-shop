@@ -2,7 +2,7 @@
     <!-- <draggable teg="ul" class="kassa-list small p-0 m-0" :value="model" group="sklad"> -->
         <context  :actions="actions">
             <div class="list">
-                <div class="row p-0 m-0 header">
+                <div class="header row">
                 <div class="col"><slot></slot></div>
                 <div class="col">
                     <select class="form-control" v-model="type">
@@ -11,7 +11,7 @@
                     </select>
                 </div>
                 </div>
-                <items :name="name" :value="items"/>
+                <items class="content" :name="name" :value="items"/>
             </div>
         </context>
     <!-- </draggable> -->
@@ -61,7 +61,29 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+.list, .content{
+    height: 100%;
+}
+.content{
+    overflow: auto;
+}
+.list .header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    height: 45px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    /* text-align: center; */
+    background-color: rgb(214, 213, 213);
+    z-index: 1;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
 .item li {
     display: block;
     padding: 0;

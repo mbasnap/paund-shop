@@ -35,7 +35,7 @@ function createWindow ( ddd ) {
   })
   // mainWindow.custom = { db: ddd }
   workerWindow = new BrowserWindow({ 
-    // show: false,
+    show: false,
     webPreferences: { webSecurity: false, nodeIntegration: true },
     protocol: 'file',
     parent:mainWindow

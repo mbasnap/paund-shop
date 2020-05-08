@@ -63,7 +63,13 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
+.main-menu{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
 .main-menu .nav-right {
   width: 35%;
 }

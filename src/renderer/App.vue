@@ -1,8 +1,8 @@
 <template>
   <div id="app">
         <app-header></app-header>
-        <div class="container-fluid d-flex" style="height: 500px;">
-          <router-view ></router-view>   
+        <div class="container-body">
+          <router-view ></router-view>
         </div>
         <app-footer></app-footer>
   </div>
@@ -34,8 +34,18 @@
   margin: 0;
   padding: 0;
 }
+html, body, #app{
+  height: 100%;
+  overflow: hidden;
+}
 body { 
   font-family: 'Source Sans Pro', sans-serif;
+}
+.container-body{
+  margin-top: 60px;
+  /* padding-bottom: 115px; */
+  height: 100%;
+  padding: 0 20px 115px;
 }
 .readonly {
     background-color: #e9ecef !important;

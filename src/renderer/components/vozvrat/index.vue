@@ -1,6 +1,6 @@
 <template>
-    <div class="row flex-fill vidacha">
-        <div class="col-8 pt-3">
+    <div class="row flex-fill vozvrat  pt-3">
+        <div class="col-8">
             <div class="row " style="height: 250px;">
                 <klient ref="klient" class="col" v-model="klient" :disabled="true"/>
                 <div class="col">
@@ -108,6 +108,10 @@ methods: {
 </script>
 
 <style>
+.vozvrat{
+    overflow: auto;
+    height: 100%;
+}
 .klient .btn.edit {
     display: flex;
     justify-content: flex-end;
