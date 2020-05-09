@@ -49,7 +49,7 @@ function createWindow ( ddd ) {
 app.on('ready', async () => {
   createWindow()
   // Menu.setApplicationMenu( Menu.buildFromTemplate( menuTemplate() ))
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 })
 
 app.on('window-all-closed', () => {

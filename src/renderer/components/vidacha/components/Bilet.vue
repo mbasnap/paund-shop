@@ -2,9 +2,9 @@
 
 <div class="bilet">
     <div class="col-9">
-        <div class="row">
-            <div class="col-5" style="line-height: 40px; text-align: right;">Билет № </div>
-            <div class="col">
+        <div class="row number">
+            <div class="col-5 number__label" style="line-height: 40px; text-align: right;">Билет № </div>
+            <div class="col number__value">
                 <named-select class="form-control mb-2" name="number"
                 :value="{ number }" :options="numbers"/>
             </div>
@@ -138,7 +138,7 @@ methods: { toDouble, toNumber,
 }
 </script>
 
-<style>
+<style scoped>
 
 .bilet .form-control:focus  {
 border-color: rgba(56, 61, 65, 0.22);

@@ -46,7 +46,7 @@ const mutations = {
     date (state, v) {
         state.date = v
     },
-    company (state, v) {    
+    company (state, v) {
         state.company = v
     },
     users (state, v) { 
@@ -64,7 +64,7 @@ const actions = {
         setCompany(token)       
         window.location.reload()
     },
-    changeAccount({}) {
+    changeAccount() {
         localStorage.removeItem('settings')
         window.location.reload()
     },
@@ -92,15 +92,26 @@ const actions = {
     setDate  ({ commit }, v) {
         commit('date', v)
     },
-    async update ({ commit }, path) {
+    async update ({ commit, dispatch }, path) {
         console.log('update');
+        
         const { _id: user } = await setUser(localStorage.getItem('user'))
-        commit('company', { ...await get('company', lombard), user })
-        commit('users', await get('users'))
-        commit('klients', await get('klients'))
-        commit('reestr', await get('reestr'))
-        if (path) router.push(path)
-    }
+        try {           
+            commit('company', { ...await get('company', lombard), user })
+            commit('users', await get('users'))
+            commit('klients', await get('klients'))
+            commit('reestr', await get('reestr'))
+            if (path) router.push(path)
+        } catch({ message }) {
+            console.log(message);
+            
+            // if (message === 'Failed to fetch')
+            // dispatch('changeAccount')
+            // router.push('login')
+            // else dispatch('changeAccount')
+        }
+
+        }
 }
 
 export default {

@@ -51,7 +51,7 @@ const post = (name, v) => {
 const get = (name, id) => id ? db[name].get(id)
   : db[name].allDocs({ include_docs: true })
     .then(({ rows }) => rows.map(v => v.doc))
-      .catch(err => console.log(err))
+      // .catch(err => console.log(err))
 
 const testAuth = (password) => {
   const db = localDb('users', password)
