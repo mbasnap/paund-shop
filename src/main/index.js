@@ -1,13 +1,4 @@
-import { app, BrowserWindow, Menu, ipcMain, shell} from "electron"
-import { download, runFile } from './functions'
-var request = require('request');
-var fs = require('fs');
-// const DownloadManager = require("electron-download-manager")
-// DownloadManager.register();
-// const menuTemplate = require('./menuTemplate');
-// const os = require("os")
-// const path = require("path")
-
+import { app, BrowserWindow, Menu, ipcMain } from "electron"
 process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
 
 if (process.env.NODE_ENV !== 'development') {

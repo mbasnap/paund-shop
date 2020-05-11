@@ -2,8 +2,8 @@
   <div class="footer">
     <b-navbar type="dark" variant="info">
       <b-navbar-brand href="#" @click="reload"
-      >PShop-<span class="version">{{ version }}</span></b-navbar-brand>
-      <button class="btn" @click="update">update</button>
+      >PShop<span class="version">-{{ version }}</span></b-navbar-brand>
+      <button v-show="isOutdate" class="btn" @click="update">update</button>
     </b-navbar>
   </div>
 </template>
@@ -13,12 +13,18 @@ import { mapGetters, mapActions } from 'vuex'
 const { shell } = require('electron')
 export default {
   computed: {
-     ...mapGetters(['company', 'version'])
+     ...mapGetters(['company', 'version']),
+     program({ company }) {
+       return {...company.program }
+     },
+     isOutdate({ program, version }){
+       return !!program.version && Number(program.version) > Number(version)
+     }
   },
   methods: {
     ...mapActions(['reload']),
     update() {
-      shell.openExternal('https://yadi.sk/d/aO9fvQ4hGGwP_w')
+      shell.openExternal(this.program.link)
     }
   }
 }
@@ -31,11 +37,7 @@ export default {
     left: 0;
     width: 100%;
   }
-  .version{
-    font-size: 14px;
-    font-style: italic;
-    line-height: 10px;
-  }
+
 </style>
 
 
