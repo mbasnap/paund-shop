@@ -11,7 +11,7 @@
                             <svg-reset  width="8px;" @click="select()"/>
                         </div>  
                     </div>
-                    <div class="col mb-2" style="min-height: 140px; line-height: 15px;">                        
+                    <div class="col mb-2 p-0" style="min-height: 140px; line-height: 15px;">                        
                         <div v-if="bilet._id">
                             <bilet  ref="bilet"  v-model="bilet" :disabled="disabled">
                             <tr>

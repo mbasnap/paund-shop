@@ -1,7 +1,7 @@
 import { lombard, get, post, setCompany, testAuth, hash, setUser } from '@/db'
 import { router } from '@/setup'
 
-const reduceBy = (key, arr) => arr.reduce((cur, v) => ({...cur, [v[key]]: v }), {})
+const reduceBy = (key, arr = []) => arr.reduce((cur, v) => ({...cur, [v[key]]: v }), {})
 const state = {
     date: new Date(),
     company: {},
@@ -11,7 +11,10 @@ const state = {
 }
 
 const getters = {
-    company ({ company }) {
+    version() {
+        return 1.01
+    },
+    company({ company }) {
         return company
     },
     users({ users }) {
@@ -27,7 +30,6 @@ const getters = {
         return {...usersMap[company.user] }
     },
     isAdmin({}, { user }) {
-        // return false
         return (user.roles || []).includes('admin')
     },
     date ({ date }) {
@@ -60,13 +62,16 @@ const mutations = {
     }
 }
 const actions = {
+    reload() {
+        window.location.reload()
+    },
     activate({}, token) {
         setCompany(token)       
         window.location.reload()
     },
-    changeAccount() {
+    changeAccount({}, reload) {
         localStorage.removeItem('settings')
-        window.location.reload()
+        if (reload) window.location.reload()
     },
     loginAdmin({}, password) {
         return testAuth(password).then(() => {
@@ -83,34 +88,24 @@ const actions = {
     },
     async logIn({ dispatch }, { password, user }) {
         await setUser(user, password)
-        dispatch('update', 'vidacha')
+        dispatch('update').then(() => {
+            router.push('vidacha')
+        })
     },
-    logOut({ dispatch }) {
+    logOut() {
         localStorage.removeItem('user')
-        dispatch('update', 'login')
+        window.location.reload()
     },
     setDate  ({ commit }, v) {
         commit('date', v)
     },
-    async update ({ commit, dispatch }, path) {
+    async update ({ commit }) {
         console.log('update');
-        
-        const { _id: user } = await setUser(localStorage.getItem('user'))
-        try {           
+            const { _id: user } = await setUser(localStorage.getItem('user'))
             commit('company', { ...await get('company', lombard), user })
             commit('users', await get('users'))
             commit('klients', await get('klients'))
             commit('reestr', await get('reestr'))
-            if (path) router.push(path)
-        } catch({ message }) {
-            console.log(message);
-            
-            // if (message === 'Failed to fetch')
-            // dispatch('changeAccount')
-            // router.push('login')
-            // else dispatch('changeAccount')
-        }
-
         }
 }
 

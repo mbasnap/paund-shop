@@ -82,8 +82,10 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+    .obespechenie {
+        overflow: hidden !important;
+    }
     .obespechenie table{
         border: 1px solid rgba(0, 0, 0, 0.22);
     }

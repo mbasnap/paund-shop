@@ -138,8 +138,12 @@ methods: { toDouble, toNumber,
 }
 </script>
 
-<style scoped>
-
+<style >
+@media (max-width:950px){
+    .number__label{
+        display: none;
+    }
+}
 .bilet .form-control:focus  {
 border-color: rgba(56, 61, 65, 0.22);
 box-shadow: none;

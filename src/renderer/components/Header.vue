@@ -2,24 +2,17 @@
 <template>
 <div class="main-menu">
   <b-navbar toggleable="sm" type="dark" variant="info">
-    <b-navbar-brand href="#" :style="{color: conn ? 'green' : 'red'}">{{ company.logo }}</b-navbar-brand>
-
+    <b-navbar-brand class="company" href="#" :style="{color: conn ? 'green' : 'red'}">
+      {{ company.logo }}</b-navbar-brand>
     <div class="container-fluid" v-show="isAuth">
-    <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
-
-      <b-collapse id="nav-collapse" is-nav >
         <b-navbar-nav v-for="(item, index) in menu" :key="index" >
           <b-link  class="nav-link mr-2" :to="'/' + item">{{ $t(`menu.${item}`)}}</b-link>     
         </b-navbar-nav>
       <b-navbar-nav class="ml-auto nav-right">
-        <b-nav-form >
           <datepicker :value="date" input_class="form-control"
-          @input="v => $store.dispatch('setDate', v)"
-          /> 
-        </b-nav-form>
+          @input="v => $store.dispatch('setDate', v)"/> 
         <user v-show="isAuth" class="ml-auto right"></user>
       </b-navbar-nav>
-      </b-collapse>
     </div>
   </b-navbar>
 </div>
@@ -64,14 +57,19 @@ export default {
 }
 </script>
 <style scoped>
+@media (max-width:950px){
+    .company{
+        font-size: 15px;
+    }
+}
+.datepicker{
+  flex: 1 1;
+}
 .main-menu{
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-}
-.main-menu .nav-right {
-  width: 35%;
 }
 .main-menu .navbar {
   height: 60px;

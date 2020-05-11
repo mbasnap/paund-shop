@@ -17,10 +17,12 @@
     name: 'paund-shop',
     components: { AppHeader, AppFooter } ,
     async created () {
-      console.log(localStorage.getItem('settings'));
-      
+      this.$router.push('login')
       // if (localStorage.getItem('settings'))
-      // this.$store.dispatch('update', 'login')
+      // this.$store.dispatch('update').then(() =>{
+      //   this.$router.push('login')
+      // })
+      // else this.$router.push('activate')
       ipcRenderer.on('show-zvit', (e, name) => {
           this.$modal.show(zvit[name], { }, { height: '550px', width: '800px'})
       })

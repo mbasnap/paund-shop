@@ -2,7 +2,7 @@ const electron = require('electron');
 
 const {app, shell, ipcMain} = electron;
 
-let menuTemplate = function() {
+const menuTemplate = function() {
     return [
         {
             label: 'Отчёты',

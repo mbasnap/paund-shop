@@ -1,9 +1,6 @@
 import jwt  from 'jsonwebtoken'
 import bcrypt  from 'bcryptjs'
 import PouchDB from 'pouchdb-browser'
-
-// PouchDB.plugin(require('pouchdb-authentication'))
-
 import { store } from '@/setup'
 
 const SECRET_OR_KEY = 'xyz'
@@ -23,15 +20,17 @@ const  verify =  (token, verify = true) => {
 
 const localDb = (name, password = localStorage.getItem('admin')) => {
   const local = 'http://localhost:5984'
-  return new PouchDB(`${local}/${name}`, { auth: { username: 'admin', password } } )
+  return new PouchDB(`${local}/${name}`, { auth: { username: 'admin', password }})
 }
 
 const { remote, lombard } = verify(localStorage.getItem('settings')) || {}
 
 const sync = (db, params) => {
-  if (remote) db.sync(new PouchDB(remote), { live: true, retry: true, ...params })
-  .on('change', async () => store.dispatch('update'))
-  .on('error', err => console.log(err))
+  try {
+    db.sync(new PouchDB(remote), { live: true, retry: true, ...params })
+    .on('change', async () => store.dispatch('update'))
+    .on('error', err => console.log(err))
+  } catch (err) {}
   return db
 }
 
@@ -41,28 +40,32 @@ const  klients = sync(localDb('klients'), { filter: ({ type }) => type === 'klie
 const  reestr = sync(localDb(lombard), { filter: doc => doc.type === 'reestr' && doc.lombard === lombard })
 const db = { company, users, klients, reestr }
 
-const post = (name, v) => {
-  const { put, post } = db[name]
-  const value = { lombard, ...v }
-  return v._id ? put(value) : post(value)
-    .catch(err => console.log(err))
+const post = async (name, v) => {
+  return testAuth().then(() => {
+    const { put, post } = db[name]
+    const value = { lombard, ...v }
+    return v._id ? put(value) : post(value)
+  }).catch(() => store.dispatch('logOut'))
 }
 
-const get = (name, id) => id ? db[name].get(id)
-  : db[name].allDocs({ include_docs: true })
-    .then(({ rows }) => rows.map(v => v.doc))
-      // .catch(err => console.log(err))
+const get = async (name, id) => {
+  return testAuth().then(() => {
+    return id ? db[name].get(id)
+    : db[name].allDocs({ include_docs: true })
+      .then(({ rows }) => rows.map(v => v.doc))
+  }).catch(() => store.dispatch('logOut'))  
+}
 
-const testAuth = (password) => {
-  const db = localDb('users', password)
-  return db.allDocs().catch(({ status }) => {
-    const err = status === 401 ? 'unauthorized' : 'no_db_connection'
-    throw { password: err }
-  })
+const testAuth = (password = localStorage.getItem('admin')) => {
+  return localDb('users', password).info()
+  
+  // return db.allDocs().catch(({ status }) => {
+  //   const err = status === 401 ? 'unauthorized' : 'no_db_connection'
+  //   throw { password: err }
+  // })
 }
 const hash = v => bcrypt.hash(v, 10)
 
-// const compare = (plain, { password }) => bcrypt.compare(plain, password)
 const sign = (v, expiresIn = '1d') => jwt.sign(v, SECRET_OR_KEY, { expiresIn })
 
 const setUser = async (user, password) => {

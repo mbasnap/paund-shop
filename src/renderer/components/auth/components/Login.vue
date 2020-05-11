@@ -20,11 +20,20 @@
 </template>
 
 <script>
+import { testAuth } from '@/db'
 import { mapActions, mapGetters } from 'vuex'
 import { isEmail, isLength } from 'validator'
 import { ValidInput } from '@/widgets/valid-input'
 export default {
     components: { ValidInput },
+    created() {
+        testAuth().then(() => {
+            this.$store.dispatch('update')
+        }).catch(() => {
+            this.$router.push('activate')
+        })
+        // this.$store.dispatch('update')
+    },
     data() {
         return {
             username: '',

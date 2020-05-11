@@ -26,7 +26,7 @@ const actions = {
         return get('klients', v._id)
             .then(v => dispatch('save', {...v, deleted: true }))
     },
-    async update ({ getters }, {id}) {       
+    async update ({ getters }, {id} = {}) {       
         await this.dispatch('update')
         return getters.map[id]
     }

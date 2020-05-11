@@ -1,8 +1,11 @@
-import { app, BrowserWindow, Menu, ipcMain, shell} from "electron"    
-
+import { app, BrowserWindow, Menu, ipcMain, shell} from "electron"
+import { download, runFile } from './functions'
+var request = require('request');
+var fs = require('fs');
+// const DownloadManager = require("electron-download-manager")
+// DownloadManager.register();
 // const menuTemplate = require('./menuTemplate');
 // const os = require("os")
-// const fs = require("fs")
 // const path = require("path")
 
 process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
@@ -33,7 +36,6 @@ function createWindow ( ddd ) {
   mainWindow.on('closed', () => {
     mainWindow = null
   })
-  // mainWindow.custom = { db: ddd }
   workerWindow = new BrowserWindow({ 
     show: false,
     webPreferences: { webSecurity: false, nodeIntegration: true },
@@ -42,13 +44,11 @@ function createWindow ( ddd ) {
   })
   // workerWindow.webContents.openDevTools()
   workerWindow.loadURL(workURL)
-  // workerWindow.on("closed", () => {
-  //   workerWindow = undefined;
-  // })
 }
 app.on('ready', async () => {
   createWindow()
-  // Menu.setApplicationMenu( Menu.buildFromTemplate( menuTemplate() ))
+    // Menu.setApplicationMenu( Menu.buildFromTemplate( menuTemplate() ))
+    Menu.setApplicationMenu( null)
   // mainWindow.webContents.openDevTools();
 })
 
@@ -66,19 +66,12 @@ app.on('activate', () => {
   }
 })
 
-// ipcMain.on("show-zvit", (v) => {
-//   mainWindow.webContents.send('show-zvit', v)
-// })
-
-ipcMain.on('print', (e, v) => {
-  
+ipcMain.on('print', (e, v) => {  
   workerWindow.webContents.send('print', v)
 })
 
 ipcMain.on('readyToPrint', ({ sender }, v) => {
-  // console.log('print');
   const { size, zoom, silent } = v  
   workerWindow.webContents.insertCSS(`@media print { @page {size: ${ size }} }`)
   workerWindow.webContents.print({ silent, landscape: size === 'landscape' })
-  // sender.send('wrote-pdf', 'pdfPath')
 })
