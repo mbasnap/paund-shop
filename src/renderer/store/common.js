@@ -12,7 +12,7 @@ const state = {
 
 const getters = {
     version() {
-        return 1.01
+        return 1.03
     },
     company({ company }) {
         return company

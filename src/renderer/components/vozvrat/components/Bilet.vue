@@ -96,13 +96,13 @@ export default {
         const total = toNumber(ocenca) - toNumber(procent.summ)
         return toDouble(total + toNumber(statment.summ) + toNumber(penalty.summ))
       },
-      items({ value, statment, ocenca, procent, days, daysBefore, daysAfter, total, t }) {
+      items({ value, statment, penalty, ocenca, procent, days, daysBefore, daysAfter, total, t }) {
         return [
           { title: moment(value.date).format('L'), count: '', summ: ocenca },
           { title: `${t('procent')} ${value.xProc}%`, count: `${value.days}дн.`, summ: value.procent },
           { title: `${t('discount')}`, count: `${value.xDisc}%`, summ: value.discount },
           { title: `${t('statment')} ${value.xProc}`, count: `${statment.count}дн.`, summ: statment.summ },
-          { title: `${t('penalty')} ${value.xPen}%`, count: `${daysAfter}дн.`, summ: statment.summ },
+          { title: `${t('penalty')} ${value.xPen}%`, count: `${daysAfter}дн.`, summ: penalty.summ },
           { title: `${t('pereraschet')} ${value.xProc}%`, count: `${daysBefore}дн.`, summ: procent.summ },
           { title: `${t('total')}`, count: `${days}дн.`, summ: total },
       ]
