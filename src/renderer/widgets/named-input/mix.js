@@ -12,6 +12,6 @@ export default {
     methods: {
         input() {},
         change() {},
-        readonly() {}
+        readonly() {},
     }
     }

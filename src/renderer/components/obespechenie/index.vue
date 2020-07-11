@@ -89,8 +89,5 @@ export default {
     .obespechenie table{
         border: 1px solid rgba(0, 0, 0, 0.22);
     }
-    .obespechenie table tr.items td {
-        border-right: 1px solid rgba(0, 0, 0, 0.22);
-    }
 
 </style>

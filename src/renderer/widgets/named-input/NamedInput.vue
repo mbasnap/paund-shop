@@ -1,11 +1,12 @@
 <template>
-    <input  class="named-input" 
+    <input ref="input"  class="named-input" 
     :name="name"
     :value="format(value[name])"
     :placeholder="placeholder"
     :readonly="readonly()"
-    @input="oninput($event.target)"
+    @input="onInput($event.target)"
     @change="change($event.target)"
+    @keydown.enter.prevent="$emit('enter')"
     />
 </template>
 
@@ -19,10 +20,13 @@ export default {
     },
     inject: [ "input", "change", "readonly" ],
     methods: {
-        oninput({ name, value }) {
+        onInput({ name, value }) {
             const target = { name, value: this.format(value) }
             if (this.input) this.input(target)
             this.$emit('input', target)
+        },
+        focus() {
+            this.$refs['input'].select()
         }
     }
 }

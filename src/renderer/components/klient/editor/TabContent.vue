@@ -3,9 +3,9 @@
         <div v-for="({ name, teg, type, format }) in fields" :key="name" class="form-group row m-0 mt-2">
             <label class="col-sm-4 col-form-label">{{ t(name) }}</label>
             <div class="col">
-                <component :is="teg" :type="type" :class="['form-control', { 'is-invalid': err[name] }]" :name="name"
+                <component :ref="name" :is="teg" :type="type" :class="['form-control', { 'is-invalid': err[name] }]" :name="name"
                 :value="format(value[name])" @input="input($event.target, format)"
-                @change="onChange"
+                @change="onChange" @enter="focus(name)"
                 >{{ format(value[name]) }}</component>
                 <!-- <div v-show="err[name]" class="invalid-feedback">{{ t('err', err[name]) }}</div> -->
             </div>
@@ -29,6 +29,10 @@ export default {
         }
     },
     methods: {
+        focus(name) {
+            console.log(this.$refs[name]);
+            // if (name) this.$refs[name].focus()
+        },
         input({ name, value }, format) {
             // this.$nextTick(() => {
                 this.$emit('input', { name, value: format(value) })

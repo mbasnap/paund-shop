@@ -1,16 +1,17 @@
 <template>
-  <select :name="name" class="named-input" :placeholder="placeholder"
+  <select ref="input" :name="name" class="named-input" :placeholder="placeholder"
     :value="model"
     :disabled="disabled || readonly()"
-    @change="$emit('change', $event.target)"
-    @input="input($event.target)">
+    @change="onChange($event.target)">
     <option value="" disabled selected hidden>{{ placeholder }}</option>
-      <option v-for="(item, index) in options" :key="index" :value="tovalue(options[index], index) "
+      <option v-for="(item, index) in options" :key="index" 
+      :value="tovalue(options[index], index) "
        >{{ tostring(item) }}</option>
   </select>
 </template>
 
 <script>
+
 export default {
       props: {
         name: String,
@@ -25,13 +26,21 @@ export default {
           default: v => v
         }
     },
-    inject: [ "input", "readonly"],
+    inject: [ "input", "readonly" ],
     computed: {
       model({ value, name }) {
         return value[name]
       }
     },
-    methods: {}
+    methods: {
+      onChange(target) {
+        this.$emit('change', target)
+        this.$emit('enter')
+      },
+      focus() {
+        this.$refs['input'].focus()
+      }
+    }
 }
 </script>
 

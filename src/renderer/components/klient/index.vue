@@ -4,33 +4,33 @@
             <suggest ref="klients" class="form-control col" name="family"
             :placeholder="t('family')" :format="toTitleCase"
             :suggest="({ family, name, sername }) => `${family} ${name} ${sername}`"       
-            v-model="model" :options="options" @select="select">
+            v-model="model" :options="options" @select="select" @enter="focus('name')">
                 <svg-row-down v-show="!model._id && !disabled" class="reset" @click="$refs['klients'].highlight(0, true)"/>
             </suggest>
             <div v-if="!disabled" class="col-1" style="text-align: right; line-height: 30px;">
-                <svg-reset  width="8px;" @click="select()"/>
+                <svg-reset  width="8px;" style="cursor: pointer;" @click="clear"/>
             </div>  
         </div>
         <div class="form-row mb-2">
-            <named-input class="form-control col-5 mr-1" name="name" :placeholder="t('name')"
-            v-model="model" :format="toTitleCase"/>
-            <named-input class="form-control col" name="sername" :placeholder="t('sername')"
-            :format="toTitleCase" v-model="model"/>
+            <named-input ref="name" class="form-control col-5 mr-1" name="name" :placeholder="t('name')"
+            v-model="model" :format="toTitleCase" @enter="focus('sername')"/>
+            <named-input ref="sername" class="form-control col" name="sername" :placeholder="t('sername')"
+            :format="toTitleCase" v-model="model" @enter="focus('city')"/>
         </div>
         <div class="form-row mb-2">
-            <named-input class="form-control col mr-1" name="city" :placeholder="t('city')"
-            v-model="model"/>           
-            <named-input :class="['form-control col', { 'is-invalid': err.bithday }]" name="bithday"
-            v-model="model" :placeholder="t('bithday')" :format="toDots"/>
+            <named-input ref="city" class="form-control col mr-1" name="city" :placeholder="t('city')"
+            v-model="model" @enter="focus('bithday')"/>           
+            <named-input ref="bithday" :class="['form-control col', { 'is-invalid': err.bithday }]" name="bithday"
+            v-model="model" :placeholder="t('bithday')" :format="toDots" @enter="focus('seria')"/>
         </div>
         <div class="form-row mb-2">
-            <named-input class="form-control col-3" :placeholder="t('seria')" name="seria"
-            :format="v => (v || '').toUpperCase()" v-model="passport"/>
+            <named-input ref="seria" class="form-control col-3" :placeholder="t('seria')" name="seria"
+            :format="v => (v || '').toUpperCase()" v-model="passport" @enter="focus('passport')"/>
             <div class="col">
                 <div class="row m-0">
                     <suggest ref="passport" class="form-control col" name="number" :placeholder="t('number')"
                     :suggest="({ passport }) => `${passport.seria} ${passport.number}`"
-                    v-model="passport" :options="passports" @select="select">
+                    v-model="passport" :options="passports" @select="select" @enter="focus('idn')">
                     <svg-row-down v-show="passports.length > 0" class="reset"
                     @click="$refs['passport'].highlight(0, true)"/>
                     </suggest>          
@@ -41,7 +41,8 @@
             </div>
         </div>
         <div class="form-row mb-2">
-        <named-input class="form-control col" name="idn" :placeholder="t('idn')" v-model="passport"/>   
+        <named-input ref="idn" class="form-control col" name="idn" :placeholder="t('idn')" v-model="passport"
+        />   
 
         <svg-address-card class="col-2 p-0" style="line-height: 35px; text-align: right;" 
         width="35px;" :disabled="!model._id" @click="showModal('edit klient')"/>
@@ -128,6 +129,9 @@ export default {
     },
     methods: { toTitleCase, toDots,
         ...mapActions('klient', ['save', 'remove']),
+        focus(name) {
+            if (name) this.$refs[name].focus()
+        },
         getKey({ family, name, sername }) {
             return [family, name, sername]
                 .map((v = '') => v.trim())
@@ -161,8 +165,13 @@ export default {
             this.$modal.show(Confirm, { value, action, validate })
         },
         select({ _id } = {}) {
-            this.data = {}
+            if(!_id) return
+            // this.data = {}
             this.$emit('input', _id)
+        },
+        clear() {
+            this.data = {}
+            this.$emit('input', '')
         },
         async change() {
             if (!Object.values(this.err).some(v => v))

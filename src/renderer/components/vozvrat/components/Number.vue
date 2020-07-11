@@ -1,10 +1,10 @@
 <template>
     <div class="form-row">
-            <suggest v-show="!model._id" ref="numbers" class="form-control col" name="number"
-            :placeholder="t('number')"
-            v-model="model" :options="options" @select="update">
-                <svg-row-down  class="reset" @click="$refs['numbers'].highlight(0, true)"/>
-            </suggest>        
+        <suggest v-show="!model._id" ref="numbers" class="form-control col" name="number"
+        :placeholder="t('number')"
+        v-model="model" :options="options" @select="update">
+            <svg-row-down  class="reset" @click="$refs['numbers'].highlight(0, true)"/>
+        </suggest>        
         <!-- <suggest v-show="!model._id" ref="numbers" class="col form-control"
         name="number" :placeholder="t('number')"
             :value="model" :options="options" @select="update">
@@ -52,7 +52,7 @@ export default {
             return !deleted
         },
         update(v) {
-            this.$emit('select', v)
+            if(v) this.$emit('select', v)
         },
         input({ value: number }) {
             this.$emit('input', { ...this.value, number })

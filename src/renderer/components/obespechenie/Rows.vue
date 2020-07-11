@@ -1,12 +1,11 @@
 <template>
-<tr :class="{'err': value.err}">
+<tr :class="{ 'err': value.err }">
     <td class="index" style="width: 10px; text-align: center;">{{ $vnode.key + 1 }}</td>
-    <td><named-input name="title" :value="model" style="width: 250px;"/></td>
-    <td><named-select name="proba" style="width: 50px;"
-    :value="model" :options="options" @change="change"/></td>
-    <td><named-input name="ves" :value="model"/></td>
-    <td><named-input name="derty" :value="model"/></td>
-    <td><named-input name="ocenca" :value="model" style="width: 100px;"/></td>
+    <td v-for="(item, i) in fields" :key="i" class="fields">
+        <component :ref="item.name" :is="item.options ? 'named-select' : 'named-input'"
+        :style="{ width: item.width + 'px' }" :name="item.name" :value="model"
+        :options="item.options" @change="change" @enter="focus(fields[i + 1])"></component>
+    </td>
 </tr>
 </template>
 
@@ -31,6 +30,15 @@ computed: {
     options({ companyPrice }) {
         return companyPrice.map(v => v.proba)
     },
+    fields({ options }) {
+        return [
+            { name: 'title', width: 250 },
+            { name: 'proba', width: 50, options },
+            { name: 'ves' },
+            { name: 'derty' },
+            { name: 'ocenca', width: 50 }
+        ]
+    },
     ves({ value }) {
         return toDouble(value.ves)
     },
@@ -51,17 +59,19 @@ methods: {
     readonly() {
         return !this.editable
     },
-    change({ name, value }) {
+    change({ name, value }, fieldName) {
         this.update({ ...this.value, [name]: value })
     },
     update(v) {
-        // const { ves, derty, proba, ocenca } = v
         const ves = toDouble(v.ves)
         const derty = toDouble(v.derty)
         const total = toDouble(pDiff(ves, derty))
         const price = toDouble(this.priceMap[v.proba])
         const ocenca = toDouble(mult(total, price) || v.ocenca)
         this.$emit('input', {...v, ves, derty, total, price, ocenca })
+    },
+    focus({ name } = {}) {
+        if (name) this.$refs[name][0].focus()
     },
     t(v) {
         return this.$t(`obespechenie.${v}`)
@@ -70,8 +80,11 @@ methods: {
 }
 </script>
 
-<style>
+<style scoped>
     .obespechenie .items.err{
         background-color: rgba(249, 124, 124, 0.44);
+    }
+    .index, .fields {
+        border-right: 1px solid rgba(0, 0, 0, 0.103);
     }
 </style>

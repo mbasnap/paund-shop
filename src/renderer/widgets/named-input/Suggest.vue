@@ -51,6 +51,7 @@ export default {
         select(v, index) {
             this.$emit('select', v)
             this.$emit('selectIndex', index)
+            this.$emit('enter', index)
             this.highlight(-1)
         },
         highlight(index, bool) {
@@ -66,6 +67,9 @@ export default {
             const { className = '' } = {...toElement}
             if (className.includes('dropdown-menu')) return
             else this.highlight(-1)
+        },
+        focus() {
+            this.$refs['editor'].select()
         }
     }
 }

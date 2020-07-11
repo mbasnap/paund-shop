@@ -64,13 +64,12 @@ export default {
         return toDouble(value.ocenca)
       },
       xProc({ value }) {
-          const { procent, discount, days } = value
+          const { procent, days } = value
           return toDouble(toNumber(procent) / toNumber(days))
       },
       xStatment({ value }) {
-          const { ocenca, discount, xProc, days } = value
-          const res =  (toNumber(ocenca) + toNumber(discount)) * xProc * days / 100
-          return toDouble(res)
+          const { procent, discount, days } = value
+          return toDouble((toNumber(procent) + toNumber(discount)) / toNumber(days))
       },
       xPen({ value }) {
         const { ocenca, discount, xPen } = value
@@ -89,7 +88,7 @@ export default {
       penalty({ xPen: value, daysAfter: count }) {
         return { value, count, summ: toDouble(value * count)}
       },
-      statment({ xStatment: value, statmentDays: count }) {       
+      statment({ xStatment: value, statmentDays: count }) {
         return { ...this.value.statment, count, value, summ: toDouble(value * count) }
       },
       total({ ocenca, procent, penalty, statment }) {
