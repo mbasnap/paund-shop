@@ -1,34 +1,23 @@
 <template>
-    <div v-if="value" class="history border-top">
-            <ul  class="item">
-                <div >
-                    <li class="row ">
-                        <div class="row m-0 print-lincks">
-                            <div  class="col">
-                                <span v-if=" model.number" class="badge badge-pill badge-light" 
-                                @click="$emit('printBilet', model)">
-                                    Билет № {{ model.number }}
-                                </span>
-                            </div>
-                            <div class="col-2 " style="text-align: center;">
-                                <svg-print width="20px;" @click="print"/>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="row" style="white-space: nowrap; overflow: hidden;">
-                        <div class="col p-0">{{ model.from }}</div>
-                    </li>
-                </div>
-                    <li class="row" v-for="(v, i) in model.values" :key="i">
-                        <div class="row">
-                            <span class="col" style="white-space: nowrap; overflow: hidden;">
-                                {{ getTitle(v) }}
-                            </span>
-                            <span class="col-4 p-0">{{ v.summ }}</span>
-                        </div>
-                    </li>
-            </ul>
-    </div>
+  <div v-if="bilet._id" class="history">
+    <ul class="history__item">
+      <li class="row m-0">
+        <div  class="col p-0">
+          <strong v-if=" model.number">Билет № {{ model.number }}</strong>
+        </div>
+        <div class="col-1 p-0" style="text-align: center;">
+          <svg-print width="20px;" @click="print"/>
+        </div>
+      </li>
+      <li class="row m-0" >
+        <div class="col p-0">{{ model.from }}</div>
+      </li>
+      <li class="row m-0" v-for="(v, i) in model.values" :key="i">
+        <div class="col p-0"> {{ getTitle(v) }} </div>
+        <div class="col-4 p-0" style="text-align: right;">{{ v.summ }}</div>
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script>
@@ -53,7 +42,7 @@ export default {
             return { dt: reduce('dt'), ct: reduce('ct')}
         },
         bilet({ value, map }) {
-            return { ...map[value] }
+            return map[value] || {}
         },
         klient({ bilet, klients, users}) {
             const { klient } = bilet
@@ -90,12 +79,8 @@ export default {
             this.$modal.show(Order, props, { width: '850', height: '500'})
         },
         print() {
-            // console.log(this.model);
-            // const print = [...model.values]
+            console.log(this.model);
             this.$modal.show(BiletOrder, { value: this.model }, { width: '850', height: '500'})
-            
-            // if (!this.used[model._id]) 
-            // return this.$emit('remove', model)  
         },
         t(name, value) {
             return this.$t(`${name}.${value}`)
@@ -104,13 +89,8 @@ export default {
 }
 </script>
 
-<style>
-.history ul li {
-    text-align: left;
-    padding-left: 10px;
-}
-.print-lincks span:hover {
-    background-color: #ced0d2;
-    cursor: pointer;
+<style scoped>
+.history {
+  font-size: 14px !important;
 }
 </style>

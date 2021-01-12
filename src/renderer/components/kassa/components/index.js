@@ -1,11 +1,11 @@
-import Context from '@/components/Context.vue'
 import KassaList from "./KassaList"
-import PrixoRasxod from "./PrixoRasxod"
 import History from "./History"
-export { 
+import RemoveDialog from './RemoveDialog'
+import OrderDialog from './OrderDialog'
+export default { 
     KassaList,
-    Context,
-    PrixoRasxod,
-    History
+    History,
+    RemoveDialog,
+    OrderDialog
 }
 

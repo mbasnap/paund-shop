@@ -1,0 +1,12 @@
+1 - src/renderer/store/common - change version
+2 - build/setup/PSop.iss - change version
+3 - npm run build:win32
+4 - run PSop.iss (revial in exploer, open with inno-setup)
+5 - upload result file to yandex-disc (documents/PShop)
+6 - open admin panel https://ps-server-light.herokuapp.com/
+  - in program section change version, description and link from uploaded file
+  
+versions
+v-1.03  24.06.2020 fix penalty
+v-1.04  24.06.2020 fix statments
+v-1.05  04.11.2020 vpn connection

@@ -1,17 +1,19 @@
 <template>
   <div class="footer">
-    <b-navbar type="dark" variant="info">
-      <b-navbar-brand href="#" @click="reload"
-      >PShop<span class="version">-{{ version }}</span></b-navbar-brand>
-      <button v-show="isOutdate" class="btn" @click="update">update</button>
+    <b-navbar class="footer__navbar" type="dark" variant="info">
+      <brand-version v-if="company && company.name">
+        <button v-show="isOutdate" class="btn" @click="update">update</button>
+      </brand-version>
     </b-navbar>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
+import BrandVersion from './BpandVersion'
 const { shell } = require('electron')
 export default {
+  components: { BrandVersion },
   computed: {
      ...mapGetters(['company', 'version']),
      program({ company }) {
@@ -22,7 +24,6 @@ export default {
      }
   },
   methods: {
-    ...mapActions(['reload']),
     update() {
       shell.openExternal(this.program.link)
     }
@@ -30,12 +31,15 @@ export default {
 }
 </script>
 
-<style  scoped>
+<style scoped>
   .footer{
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
+  }
+  .footer__navbar {
+    height: 60px;
   }
 
 </style>

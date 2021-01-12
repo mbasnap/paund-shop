@@ -51,10 +51,12 @@ const daysDiff = (d1, d2) => {
 const toTitleCase = (txt = '') => {
     return txt.charAt(0).toUpperCase() + txt.substr(1)
 }
-const toDots = (txt = '') => {
+const dateFormat = (txt = '') => {
     return txt.split(/[,-/\\]/).join('.')
 }
-const isDateFormat = v => !v || moment(v, 'DD.MM.YYYY', true).isValid()
+const isDateValid = (v) => !v || moment(v, 'DD.MM.YYYY', true).isValid()
+
+const range = (start, end) => Array(end - start + 1).fill().map((_, idx) => start + idx)
 export  {
     numberFormat,
     toDouble,
@@ -73,6 +75,7 @@ export  {
     firstChar,
     daysDiff,
     toTitleCase,
-    isDateFormat,
-    toDots
+    isDateValid,
+    dateFormat,
+    range
 }

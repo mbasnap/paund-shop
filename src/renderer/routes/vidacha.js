@@ -5,8 +5,9 @@ export default {
   path: '/vidacha',
   name: 'vidacha',
   component: Vidacha,
-  // beforeEnter: async (to, from, next) => {
-  //   if (!localStorage.getItem('user'))  next('/login')
-  //   else next()
-  // }
+  beforeEnter: async (to, from, next) => {
+    ['user', 'lombard', 'company', 'remote', 'local']
+      .some(v => !localStorage.getItem(v)) ?  next('/login') 
+        : next()
+  }
 }

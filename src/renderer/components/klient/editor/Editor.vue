@@ -1,7 +1,8 @@
 <template> 
 <modal-editor class="klient" :title="t(title)" :footer="false">
     <div class="tabs" >
-        <a v-for="(item) in tabs" :key="item" :class="{ active: activetab === item }"
+        <a v-for="(item, i) in ['fio', 'passport', 'address', 'questionnaire']" :key="i"
+        :class="{ active: activetab === item }"
         @click="activetab = item"> {{ t(item) }} </a>
         <div class="row">
             <div class="col"><svg-print width="25px;" style="text-align: right;"
@@ -11,11 +12,9 @@
     <div class="content">
         <tab-content v-model="fio" v-show="activetab === 'fio'" tabname="fio" :err="err.fio"
         :items="fioItems">
-            <!-- <svg-trash class="mt-3" width="20px" style="text-align: right;" @click="removeKlient"/>           -->
         </tab-content>
         <tab-content v-model="passport"  v-show="activetab === 'passport'" tabname="passport" :err="err.passport"
         :items="passportItems">
-            <!-- <svg-address-card width="25px" @click="addPassport"/>      -->
         </tab-content>
         <tab-content v-model="address"  v-show="activetab === 'address'" tabname="address" :err="err.address"
         :items="addressItems">
@@ -29,7 +28,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import { SvgPrint } from '@/svg'
 import ModalEditor from '@/widgets/Modal.vue'
-import { toTitleCase, toDots, isDateFormat } from '@/functions'
+import { toTitleCase, dateFormat, isDateValid } from '@/functions'
 import KlientReport from '@/zvit/klient'
 import TabContent from './TabContent'
 import QuestionnAire from './QuestionnAire'
@@ -62,13 +61,11 @@ export default {
                 { name: 'name', format: toTitleCase },
                 { name: 'sername', format: toTitleCase },
                 'city',
-                { name: 'bithday', format: toDots }]
+                { name: 'bithday', format: dateFormat }]
         },
         passport: {
-            get({ fio }) {
-                const passport = {...fio.passport}
-                const nationality = passport.nationality || "Украина"
-                return {...passport, nationality, ...this.data.passport}
+            get({ fio, data }) {
+                return {...fio.passport, ...data.passport}
             },
             set({ name, value }) {
                 const passport = {...this.passport, [name]: value }
@@ -81,7 +78,7 @@ export default {
                 { name: 'seria', format: (v = '') => v.toUpperCase() },
                 'number',
                 { name: 'issued', teg: 'textarea', format: toTitleCase },
-                { name: 'date-issue', format: toDots },
+                { name: 'date-issue', format: dateFormat },
                 'idn'
             ]
         },
@@ -106,13 +103,13 @@ export default {
             }
         },
         err({ data, value }) {
-            const fio = { bithday: !isDateFormat(this.fio.bithday) }
-            const passport = { "date-issue": !isDateFormat(this.passport['date-issue'])}
-            const address = {}
-            return { fio, passport, address }
+            const fio = { bithday: !isDateValid(this.fio.bithday) }
+            const passport = { "date-issue": !isDateValid(this.passport['date-issue'])}
+            return { fio, passport }
         }
     },
-    methods: { toTitleCase, toDots,
+    methods: { 
+        toTitleCase, dateFormat,
         ...mapActions('klient', ['save', 'remove']),
         onChange() {
             const { fio, passport, address, questionnaire } = this

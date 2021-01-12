@@ -13,7 +13,8 @@
     </div>
     <div class="modal-footer">
     <button type="button" class="btn btn-secondary" @click="close">{{ t('cansel') }}</button>
-    <button type="button" :class="['btn btn-primary', {'btn-danger': isDanger }]" @click="action(description, title).then(close)" :disabled="disabled">{{ t(title) }}</button>
+    <button type="button" class="btn btn-primary" 
+    @click="action(description).then(close)" :disabled="disabled">{{ t(value.title) }}</button>
     </div>
 </div>
 </template>
@@ -25,12 +26,13 @@ export default {
 props: { validate: Function, action: Function, value: Object },
 data() {
     return {
-        data: {}
+        data: {},
+        resolve: null
     }
 },
 computed: {
     ...mapGetters({
-        isAdmin: 'isAdmin'
+        // isAdmin: 'isAdmin'
     }),
     description: {
         get({ data, value }) {
@@ -48,24 +50,24 @@ computed: {
             this.data = {...this.data, confirm}
         }
     },
-    html({ value }) {
-        return {...value}.html
+    html({ value = {} }) {
+        return value.html
     },
-    title({value }) {
-        const { description, title } = {...value}
-        return description ? 'save' : title
-    },
+    // title({value }) {
+    //     const { description, title } = {...value}
+    //     return description ? 'save' : title
+    // },
     isValid({ confirm = '' }) {
         return this.validate(confirm.trim())
     },
-    isDanger({ isValid, isAdmin, title, description = '' }) {
-        return [isValid, isAdmin, !description.length, title === 'remove']
-            .every(v => v)
-    },
-    disabled({ isValid, description = '', isAdmin }) {              
+    // isDanger({ isValid, isAdmin, title, description = '' }) {
+    //     return [isValid, isAdmin, !description.length, title === 'remove']
+    //         .every(v => v)
+    // },
+    disabled({ isValid, description = '' }) {              
         const noValid = !isValid
-        const noDescription = !isAdmin ? !description.length : false
-        return [noValid, noDescription].some(v => v)
+        // const noDescription = !isAdmin ? !description.length : false
+        return [noValid].some(v => v)
     }
 },
 

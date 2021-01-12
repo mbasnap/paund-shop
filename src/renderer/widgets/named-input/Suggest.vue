@@ -1,24 +1,24 @@
 <template>
-    <div class="suggest dropdown"
-    @mouseleave="close"
-    >
+    <!-- @mouseleave="close" -->
+        <!-- :value="format ? format(value[name]) : value[name]" -->
+    <div class="suggest dropdown" @mouseleave="close" >
         <slot></slot>
         <textarea class="named-input editor" ref="editor"
-        :readonly="readonly()"
+        :readonly="readonly() || disabled"
         :name="name"
-        :value="format(value[name])"
+        v-model="model"
         :placeholder="placeholder"
-        @input="oninput($event.target)"
         @change="change($event.target)"
         @keydown.up.prevent="highlight(index > 0 ? index - 1 : 0)"
         @keydown.down.prevent="highlight(index < 0 ? 0 : index + 1)"
         @keydown.enter.prevent="select(options[index], index)"
         @keydown.esc.prevent="highlight(-1)"/>
         
-        <ul :class="[ 'options dropdown-menu m-0', { 'show': options.length && index >= 0 }]">
-            <li v-for="(item, key) in options" :key="key" v-show="show(key)" :class="['pl-1', { highlight: key === index}]"            
+        <ul 
+        :class="[ 'options dropdown-menu m-0', { 'show': options.length && index >= 0 }]">
+            <li v-for="(item, key) in options" :key="key" v-show="!show || show(key)" :class="['pl-1', { highlight: key === index}]"            
             @click="select(item, key)">
-            <div class="pl-3">{{ suggest(item) }}</div>
+            <div class="pl-3">{{ getSuggest(item) }}</div>
             </li>
         </ul>         
     </div>
@@ -26,27 +26,27 @@
 
 <script>
 export default {
-    props: {
-        name: String,
-        value: Object,
-        placeholder: String,
-        options: Array,
-        disabled: Boolean,
-        suggest: { type: Function,
-            default(item) {
-                return item[this.name] || ''
-            }
-        },
-        show: { type: Function, default: ()  => true },
-        format: { type: Function, default: (v) => v }
-    },
-    inject: [ "input", "change", 'readonly' ],
+    props: ['name', 'value', 'placeholder', 'options', 'disabled', 'suggest', 'show', 'format'],
+
+    inject: [ 'input', 'change', 'readonly' ],
     data() {
         return {
             index: -1
         }
     },
-    computed: {},
+    computed: {
+        model: {
+            get({ format, value, name  }) {
+                const model = value[name] || ''
+                return format ? format(value[name]) : model
+            },
+            set(value) {
+                const target = { name: this.name, value }
+                if (this.input) this.input(target)
+                this.$emit('input', target)
+            }
+        }
+    },
     methods: {
         select(v, index) {
             this.$emit('select', v)
@@ -59,10 +59,10 @@ export default {
             const length = this.options.length - 1
             if (index <= length)  this.index = index
         },
-        oninput(target) {
-            if (this.input) this.input(target)
-            this.$emit('input', target)
-        },
+        // oninput(target) {
+        //     if (this.input) this.input(target)
+        //     this.$emit('input', target)
+        // },
         close({ toElement }) {
             const { className = '' } = {...toElement}
             if (className.includes('dropdown-menu')) return
@@ -70,6 +70,10 @@ export default {
         },
         focus() {
             this.$refs['editor'].select()
+        },
+        getSuggest(item) {
+            const suggest = item[this.name] || ''
+            return this.suggest ? this.suggest(item) : suggest
         }
     }
 }
@@ -90,6 +94,7 @@ export default {
     resize: none;
     border: none;
     white-space: nowrap;
+    overflow-x: hidden;
 }
 .suggest .dropdown-menu{
     max-height: 400px;

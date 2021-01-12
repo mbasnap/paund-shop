@@ -1,24 +1,31 @@
 <template>
-<tr :class="{ 'err': value.err }">
-    <td class="index" style="width: 10px; text-align: center;">{{ $vnode.key + 1 }}</td>
-    <td v-for="(item, i) in fields" :key="i" class="fields">
-        <component :ref="item.name" :is="item.options ? 'named-select' : 'named-input'"
-        :style="{ width: item.width + 'px' }" :name="item.name" :value="model"
-        :options="item.options" @change="change" @enter="focus(fields[i + 1])"></component>
-    </td>
-</tr>
+    <context ref="context" teg="tr" :class="{ err: value.err }"
+    @remove="$emit('remove')"
+    @context="v => $emit('context', v)" :disabled="disabled">
+        <td class="index" style="width: 10px; text-align: center;">{{ $vnode.key + 1 }}</td>
+        <td v-for="({ name, is = 'named-input' }, i) in fields" :key="i" class="fields">
+            <component :ref="name" :is="is" :name="name" :value="model"
+            :options="options" @change="change" @enter="focus(fields[i + 1])"></component>
+        </td>
+    </context>
 </template>
 
 <script>
+import Context from '@/components/Context'
 import { mapActions, mapGetters } from 'vuex'
 import { diff, pDiff, toDouble, mult } from '@/functions'
 import { NamedInput, NamedSelect, mix } from '@/widgets/named-input/index.js'
 export default {
-components: { NamedInput, NamedSelect },
+components: { NamedInput, NamedSelect, Context },
 mixins: [ { provide: mix.provide, methods: mix.methods } ],
-props: { value: Object, editable: Boolean },
+props: ['value', 'disabled'],
+  provide() {
+    const remove = () => {}
+    return { actions: { remove } }
+  },
 computed: {
     ...mapGetters(['company']),
+
     companyPrice({ company }) {
         const { gold, silver } = {...company.price}
         return gold || []
@@ -30,13 +37,14 @@ computed: {
     options({ companyPrice }) {
         return companyPrice.map(v => v.proba)
     },
-    fields({ options }) {
+    fields({ options, disabled }) {
+        const is = !disabled ? 'named-select' : 'named-input' 
         return [
-            { name: 'title', width: 250 },
-            { name: 'proba', width: 50, options },
+            { name: 'title' },
+            { name: 'proba', is },
             { name: 'ves' },
             { name: 'derty' },
-            { name: 'ocenca', width: 50 }
+            { name: 'ocenca' }
         ]
     },
     ves({ value }) {
@@ -53,11 +61,12 @@ computed: {
     },
     model({ value, ves, derty, ocenca }) {
         return {...value, ves, derty, ocenca }
-    }
+    },
+
 },
 methods: {
     readonly() {
-        return !this.editable
+        return this.disabled
     },
     change({ name, value }, fieldName) {
         this.update({ ...this.value, [name]: value })
@@ -86,5 +95,8 @@ methods: {
     }
     .index, .fields {
         border-right: 1px solid rgba(0, 0, 0, 0.103);
+    }
+    .fields:last-child {
+        border-right: none;
     }
 </style>

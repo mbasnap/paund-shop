@@ -26,10 +26,10 @@ const router = new Router({
     }
   ]
 })
-router.beforeEach( async ({ name }, from, next) => {
+// router.beforeEach( async ({ name }, from, next) => {
   // console.log(name, from);
-  next()
+  // next()
   // if (name !== 'activate') router.push('/activate')
   // else next()
-})
+// })
 export default router

@@ -1,62 +1,62 @@
 <template>  
-    <draggable teg="ul" class="kassa-list small p-0 m-0" :value="value"
-    @start="onStart" @end="onEnd" :sort="false"
-     :group="{ name: 'bilet', pull: 'clone', put: 'false' }">
-      <li v-for="index in rows" :key="index-1" :class="{deleted: isDeleted(...value[index-1])}"
-      :selected="isSelected(...value[index-1])"
-      @contextmenu.prevent="context($event, ...value[index-1])"
-      @mouseleave="({ toElement }) => close(toElement)"
-      @click="select(...value[index-1])"
-      >{{ summ(...value[index-1]) }}</li>
-    </draggable>
+  <ul class="kassa-list small p-0 m-0">
+    <context  teg="li" v-for="([id, v], i) in items" :key="i" class="kassa-list__item"
+    @remove="actions.remove(id)"
+    @addOrder="actions.addOrder(type)"
+    @click="select(id)">
+      <draggable :group="{ name: 'bilet', pull: false }"  @start="onStart" 
+        @end="onEnd([$event, map[id]])">
+        <div :class="{ deleted: map[id] && map[id].deleted }" 
+        style="text-align: center;">
+          {{ id && summ(v) }}
+        </div>
+      </draggable>
+     </context>
+  </ul>
 </template>
 
 <script>
+
+import Draggable from 'vuedraggable'
+import Context from '@/components/Context'
 import { summ } from '@/functions'
-import { mapGetters, mapActions } from 'vuex'
-import draggable from 'vuedraggable'
+import { mapGetters } from 'vuex'
 export default {
-  props: { value: Array, selected: String, type: String, rows: Number },
-  components: { draggable },
-  inject: ['open', 'close', 'select', 'onStart', 'onEnd'],
+  props: ['value', 'rows', 'type'],
+  components: { Draggable, Context },
+  inject: ['onStart', 'onEnd', 'grope', 'actions'],
   computed: {
-    ...mapGetters({
-      map: 'reestr/map'
-    })
+    ...mapGetters({ map: 'reestr/map' }),
+    items({type, rows }) {
+      const items = this.grope(type)
+      return [...Array(this.rows).keys()].map((v, i) => items[i] || [])
+    },
    },
   methods: {
-    isDeleted(id) {
-      const { deleted } = {...this.map[id]}
-      return !!deleted
+    summ(values) {
+      return summ( ...values.map(v => v.summ))
     },
-    isSelected(id) {
-      return !!id && id === this.selected
-    },
-    summ(_id, values) {
-      return _id ? summ( ...values.map(v => v.summ)) : ''
-    },
-    context(e, _id, values) {
-      this.select(_id, values)
-      this.open(e, { _id, values, type: this.type })
+    select(id = '') {
+      this.$emit('input', id)
     }
   }
 }
 </script>
-<style>
+<style scoped>
 
-.kassa-list li {
+.kassa-list__item {
   display: block;
   padding: 0;
   height: 30px;
   line-height: 30px;
   font-size: 14px;
-  text-align: center;
-  border: 1px solid rgba(0, 0, 0, 0.125);
+  
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
-.kassa-list li.deleted {
+.kassa-list__item .deleted {
   color: #ad0a0afa;
 }
-.kassa-list li[selected] {
+.kassa-list__item[selected] {
   background-color: rgba(128, 128, 128, 0.11);
 }
 </style>

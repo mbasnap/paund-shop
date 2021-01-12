@@ -2,14 +2,10 @@
 
 <div class="bilet">
     <div class="col-9">
-        <div class="row number">
-            <div class="col-5 number__label" style="line-height: 40px; text-align: right;">Билет № </div>
-            <div class="col number__value">
-                <named-select class="form-control mb-2" name="number"
-                :value="{ number }" :options="numbers"/>
-            </div>
-        </div>
-
+        <bilet-number class="mb-2" 
+        v-model="biletNumber"
+        @reset="$emit('input', {})"
+        :options="options"/>
         <div class="input-group mb-2">
             <input class='form-control' name="ssuda" :disabled="disabled" :value="ssuda"
             @change="({target}) => calculate(target.value)"/>
@@ -22,8 +18,10 @@
         <div class=" input-group mb-2">
             <input class="form-control" :value="procent" :disabled="disabled"/>
             <named-select class="input-group-append form-control col-4" name="xDisc"
+            @change="input"
              :value="{ xDisc }" :options="discounts"/>
         </div>
+
 
         <div class="input-group mb-2">
             <input :class="['form-control col', { 'is-invalid': err.ocenca_over }]"
@@ -35,42 +33,52 @@
             @change="({target}) => this.$emit('change', { name: 'pay', value: toNumber(target.value) * -1 })"
             :value="toNumber(value.pay) < 0 ? value.pay : '0.00 '"/>
         </div>
-
     </div>
-    <day-slider class="col-3" :value="{ days }" @input="input" />
+    <day-slider class="col-3" :value="{ days }" @input="input"/>
 </div>
 
 </template>
 
 <script>
 
+import BiletNumber from '@/components/Number'
 import { mapGetters } from 'vuex'
 import mix from '@/widgets/named-input/mix.js'
 import DaySlider from './DaySlider'
 import { SvgExclamation } from '@/svg'
-import { toNumber, proc, toDouble, summ } from '@/functions'
+import { toNumber, proc, toDouble, summ, range } from '@/functions'
 export default {
 mixins: [ mix ],
-components: { DaySlider, SvgExclamation },
-props: {
-    value: Object,
-    err: Object,
-    disabled: Boolean,
-    editMode: Boolean
-},
-data() {
-    return {
-        from: 'ocenca'
-    }
-},
+components: { DaySlider, SvgExclamation, BiletNumber },
+props: ['value', 'err', 'disabled', 'editMode'],
+data: () => ({
+  from: 'ocenca'
+}),
 computed: { 
     ...mapGetters({ company: 'company', numbers: 'reestr/numbers' }),
+    biletNumber: {
+        get({ number }) {
+            return { number }
+        },
+        set({ number: value }) {
+            this.input({ name: 'number', value })
+        }
+    },
+    emptyNumbers({ company, numbers }) {
+        if (!company.number) return []
+        const number = Number(company.number)
+        return range(number, number + numbers.length)
+            .filter(v => !numbers.includes(v))
+    },
+    options({ emptyNumbers }) {
+        return emptyNumbers.map(number => ({ number }))
+    },
     type({ value }) {
         return (value.obespechenie || []).some(({ proba }) => proba) ? 'gold' : 'things'
     },
-    number({ value, numbers }) {
-        return value.number || numbers[0]
-    },   
+    number({ value, emptyNumbers }) {
+        return value.number || emptyNumbers[0]
+    },
     discounts({ company }) {
        return (company.discount || '').split(',')
         .filter(v => !!v).map(v => v.trim())
@@ -133,17 +141,20 @@ methods: { toDouble, toNumber,
         if (this.from === 'ssuda') this.$nextTick(() => {
             this.calculate(ssuda)
         })
+    },
+    select(v) {
+        console.log(v);
     }
 }
 }
 </script>
 
 <style >
-@media (max-width:950px){
+/* @media (max-width:950px){
     .number__label{
         display: none;
     }
-}
+} */
 .bilet .form-control:focus  {
 border-color: rgba(56, 61, 65, 0.22);
 box-shadow: none;

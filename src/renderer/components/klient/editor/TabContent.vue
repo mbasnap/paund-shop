@@ -2,7 +2,7 @@
     <div class="tabcontent"  >
         <div v-for="({ name, teg, type, format }) in fields" :key="name" class="form-group row m-0 mt-2">
             <label class="col-sm-4 col-form-label">{{ t(name) }}</label>
-            <div class="col">
+            <div v-if="value" class="col">
                 <component :ref="name" :is="teg" :type="type" :class="['form-control', { 'is-invalid': err[name] }]" :name="name"
                 :value="format(value[name])" @input="input($event.target, format)"
                 @change="onChange" @enter="focus(name)"
@@ -30,7 +30,7 @@ export default {
     },
     methods: {
         focus(name) {
-            console.log(this.$refs[name]);
+            // console.log(this.$refs[name]);
             // if (name) this.$refs[name].focus()
         },
         input({ name, value }, format) {

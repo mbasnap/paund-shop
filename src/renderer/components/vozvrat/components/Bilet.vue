@@ -1,6 +1,6 @@
 <template>
 <div :class="['bilet', { disabled }]" style="font-size: 14px;">
-  <table class="table table-sm table-bordered table-hover mt-2"
+  <table class="table table-sm table-bordered table-hover my-2"
   style="text-align:center;">
   <tbody>
     <tr v-for="({ title, count, summ }, i) in items" :key="i">
@@ -54,10 +54,12 @@ export default {
         return res < 0 ? 0 
           : res <= toNumber(days) ? res : days
       },
-      daysAfter({ date, value, statmentDays = 0 }) {
-        if (!value.date) return
-        const plan = moment(value.date).add(value.days, 'd')
-        const res = daysDiff(date, plan) - statmentDays 
+      datePlan({ value }) {
+        return moment(value.date).add(value.days, 'd')
+      },
+      daysAfter({ date, datePlan, statmentDays = 0 }) {
+        // if (!value.date) return
+        const res = daysDiff(date, datePlan) - statmentDays 
         return res < 0 ? 0 :  res
       },
       ocenca({ value }) {
@@ -95,9 +97,9 @@ export default {
         const total = toNumber(ocenca) - toNumber(procent.summ)
         return toDouble(total + toNumber(statment.summ) + toNumber(penalty.summ))
       },
-      items({ value, statment, penalty, ocenca, procent, days, daysBefore, daysAfter, total, t }) {
+      items({ value, statment, penalty, ocenca, procent, days, daysBefore, daysAfter, datePlan, total, t }) {
         return [
-          { title: moment(value.date).format('L'), count: '', summ: ocenca },
+          { title: moment(value.date).format('L'), count: datePlan.format('L'), summ: ocenca },
           { title: `${t('procent')} ${value.xProc}%`, count: `${value.days}дн.`, summ: value.procent },
           { title: `${t('discount')}`, count: `${value.xDisc}%`, summ: value.discount },
           { title: `${t('statment')} ${value.xProc}`, count: `${statment.count}дн.`, summ: statment.summ },

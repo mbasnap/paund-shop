@@ -7,6 +7,7 @@ export default {
       "all": "Все",
       "things": "Вещи",
       "gold": "Золото",
+      "overdate": 'Просроченные'
     },
     title: {
       "klient-report": "Карточка клиента"
@@ -111,7 +112,8 @@ export default {
       "enter": "Введите",
       "to confirm": "для подтвержления операции",
       "remove": "Удалить",
-      "cansel": "Отменить"
+      "cansel": "Отменить",
+      "description": "Описание"
     },
     btn: {
       "description": "Описание",
@@ -119,7 +121,8 @@ export default {
       "reset": "Очистить",
       "remove": "Удалить",
       "copy": "Копировать",
-      "cansel": "Отменить"
+      "cansel": "Отменить",
+      "perezalog": "Перезалог"
     },
     'print-btn': 'Print',
     'reset': 'Очистить',
@@ -130,7 +133,7 @@ export default {
     //   'cansel': 'Отменить',
     //   'save': 'Сохранить',
     // },
-    'prixod-rasxod': {
+    'prixod_rasxod': {
       'dt': 'Приход',
       'ct': 'Расход',
       'account': 'Счёт',
@@ -239,7 +242,8 @@ export default {
       'print': 'Печать',
       'toSklad': 'На склад',
       'fromSklad': 'Со склада',
-      "remove": "Удалить"
+      'remove': "Удалить",
+      'statment': "Заявление",
     },
     order: {
       dt: 'Приходный кассовый ордер',
@@ -269,7 +273,7 @@ export default {
       field_required: 'Обязательное поле',
       user_not_found: 'Пользователь не найден',
       have_account: 'Есть аккаунт',
-      "change_account": "Активировать"
+      activate: "Активировать"
     }
   }
 }

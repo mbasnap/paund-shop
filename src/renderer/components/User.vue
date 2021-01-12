@@ -1,8 +1,7 @@
 <template>
     <b-nav-item-dropdown :text="user.name" right >
      <b-link class="dropdown-item" @click="editProfile">{{ t('tabs', 'profile')}}</b-link>
-     <b-link class="dropdown-item" @click="logOut">{{ t('tabs', 'logout') }}</b-link>
-     <!-- <b-link v-if="isAdmin" class="dropdown-item" @click="changeAccount">Change Account</b-link> -->
+     <b-link class="dropdown-item" @click="logOut()">{{ t('tabs', 'logout') }}</b-link>
     </b-nav-item-dropdown>
 </template>
 
@@ -10,10 +9,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import Editor from './UserEditor'
 export default {
-
-computed: {
-    ...mapGetters([ 'user' ]),
-},
+props: ['user'],
 methods: {
     ...mapActions(['logOut', 'updateUser', 'updatePassword' ]),
     editProfile() {

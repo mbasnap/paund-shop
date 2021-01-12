@@ -1,29 +1,19 @@
 
 // import { store } from '@/setup'
-import { Login, Activate, Register } from '@/components/auth'
+import { Login, Activate } from '@/components/auth'
 
 export const login = {
   path: '/login',
   name: 'login',
   component: Login,
-  beforeEnter: (to, from, next) => {
-    // console.log(to, from)
-    if (!localStorage.getItem('settings')) next('/activate')
-    else if (localStorage.getItem('user')) next('/vidacha')
-    else next()
+  beforeEnter: async (to, from, next) => {
+    ['lombard', 'company', 'remote', 'local']
+      .some(v => !localStorage.getItem(v)) ?  next('/activate') 
+        : localStorage.getItem('user') ? next('/vidacha')
+          : next()
   }
 }
-// export const register = {
-//   path: '/register',
-//   name: 'register',
-//   component: Register,
-//   beforeEnter: (to, from, next) => {
-//     console.log('activate');
-    
-//     if(!store.getters['isActive']) next('/activate')
-//     next()
-//   }
-// }
+
 
 export const activate = {
   path: '/activate',

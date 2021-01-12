@@ -1,5 +1,5 @@
 <template>
-    <div class="reset">
+    <div class="row mx-0 reset" @click="$emit('click')">
       <span  @click="click">
         <svg :style="'width:'+ width"
           aria-hidden="true" focusable="false" data-prefix="fas" data-icon="times"
@@ -18,15 +18,27 @@ export default {
 }
 </script>
 
-<style>
-.reset span {
+<style scoped>
+.reset {
+    height: 26px;
+    width: 26px;
+    margin-top: 6px;
+    justify-content: center;
+}
+.reset:hover {
+    border-radius: 15px;
+    transition: background-color 0.5s ease;
+    background-color: rgba(0, 0, 0, 0.075);
+    cursor: pointer;
+}
+.reset >>> span {
     color: rgba(4, 4, 4, 0.51);
 }
-.reset.disabled span {
+.reset.disabled >>> span {
     pointer-events: none;
     color: rgba(20, 20, 21, 0.24);
 }
-.reset span:hover {
+.reset >>> span:hover {
     color: rgba(27, 30, 33, 0.69);
 }
 </style>

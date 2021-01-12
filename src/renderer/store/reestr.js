@@ -1,6 +1,6 @@
-import { get, post } from '@/db'
-const state = {
-}
+import { get, post } from '@/functions/db'
+
+const state = {}
 const getters = {
     docs({}, {}, { common }) {
         return  common.reestr || []
@@ -36,57 +36,46 @@ const getters = {
         const ct = ct301.map(v => map[v._id]).map(v=> ({...v.order}.ct || 0))
         return { dt: number(dt) , ct: number(ct) }
     },
-    numbers({}, { dt377, map }, {}, { company }) {      
-        const fin = v => Number.isFinite(v) ? v : 0
-        const arr = dt377.map(v => ({...map[v._id]}))
-            .map(v => Number(v.number)).filter(v => !!v)
-        const min = Number(company.number) || 1
-        const max = fin(Math.max(...arr))
-        const count = max - min > 0 ? max - min : 1
-        const res = Array.from(Array(count), (v,i) => i + min)
-            .filter(i => !arr.includes(i))
-        return [...res, max + 1]
+    numbers({}, { dt377, map }) {
+      return  dt377.filter(v => !v.deleted)
+          .map(v => map[v._id].number)
     },
     used({}, { ct377, map }) {
-        return ct377.map(v => map[v._id]).reduce((obj, v) => ({...obj, [v.ref]: v }), {})
+      return ct377.map(v => map[v._id]).reduce((obj, v) => ({...obj, [v.ref]: v }), {})
     },
     empty({}, { dt377, used }) {
-        return dt377.filter(({ _id }) => !used[_id])
-            .reduce((cur, v) => ({ ...cur, [v._id]: v }), {})
+      return dt377.filter(({ _id }) => !used[_id])
+          .reduce((cur, v) => ({ ...cur, [v._id]: v }), {})
     }
 }
 const mutations = {
-    reestr (state, v) {
-        state.reestr = v
-    }
+  reestr (state, v) {
+    state.reestr = v
+  }
 }
 const actions = {
     err({}, err) {
-        console.log({ used: err });
+      console.log({ used: err });
     },
     save ({ dispatch }, v) {
-        const {  date, user } = this.getters
-        return post('reestr', { date, ...v, user: user._id, type: 'reestr' })
-            .then(v => dispatch('update', v))
+      const {  date, user } = this.getters
+      return post('reestr', { date, ...v, user: user._id, type: 'reestr' })
+        .then(v => dispatch('update', v))
     },
-    remove ({ dispatch }, { _id, description: deleted, title }) {
-        const _deleted = this.getters.isAdmin && !deleted ? title === 'remove' : false
-        return get('reestr', _id).then(v => dispatch('save', { ...v, deleted, _deleted }))
+    remove ({ dispatch }, { _id, deleted }) {
+      const _deleted =  !!deleted && this.getters.isAdmin
+      return get('reestr', _id).then(v => dispatch('save', { ...v, deleted, _deleted }))
     },
-    fromSklad ({ dispatch }, { _id }) {
-        return get('reestr', _id).then(v => dispatch('save', { ...v, _deleted: true }))
-    },
-
     async update({ getters }, { id }) {
-        await this.dispatch('update')
-        return getters.map[id]
+      await this.dispatch('update')
+      return getters.map[id]
     }
 }
 
 export default {
-    namespaced: true,
-    state,
-    getters,
-    mutations,
-    actions
+  namespaced: true,
+  state,
+  getters,
+  mutations,
+  actions
 }

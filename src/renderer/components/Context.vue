@@ -1,13 +1,13 @@
 <template>
-  <component :is="teg || 'div'" class="context">
+  <component :is="teg || 'div'" class="context"
+  @click="$emit('click')"
+  @contextmenu.prevent="onContext($event)" @mouseleave="close()">
     <slot ></slot>
     <vue-context ref="context"  class="vue-context" >
-        <div class="pl-4" slot-scope="{data}" @mouseleave="close()">
-            <li v-for="([name, action]) in model" :key="name" 
-                @click="action(data)">
-                <span>{{ $t(`context.${name}`) }}</span>
-            </li>
-        </div>
+       <!-- @mouseleave="close()" -->
+      <li v-for="action in model" :key="action" 
+      class="pl-2" @click="onAction(action)"> {{ $t(`context.${action}`) }}
+      </li>
     </vue-context>   
   </component>
 </template>
@@ -17,13 +17,14 @@
 import { VueContext } from 'vue-context'
 export default {
 components: { VueContext },
-props: { actions: Object, teg: String },
+props: ['teg', 'disabled'],
+inject: ['actions'],
 provide () {
     return { open: this.open, close: this.close }
 },
 computed: {
     model({ actions }) {
-      return Object.entries(actions).filter(([k, v]) => v)
+      return Object.keys(actions)
     },
     context () {
         return this.$refs['context']
@@ -31,11 +32,21 @@ computed: {
 },
 methods: {
     open(e, v) {
+      // console.log(v);
         this.context.open(e, v)
+        return this
     },
     close(toElement) {
         return toElement && toElement.className.includes('vue-context')
           || this.context.close()
+    },
+    onContext(e) {
+      if (!this.disabled)
+      this.$emit('context', this.open(e))
+    },
+    onAction(action) {
+      this.$emit('action', action)
+      this.$emit(action)
     }
 }
 }
@@ -46,7 +57,7 @@ methods: {
   background-color: #fff;
   background-clip: padding-box;
   border-radius: 0.25rem;
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  /* border: 1px solid rgba(0, 0, 0, 0.15); */
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
   display: block;
   margin: 0;

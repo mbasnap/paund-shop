@@ -40,7 +40,7 @@ app.on('ready', async () => {
   createWindow()
     // Menu.setApplicationMenu( Menu.buildFromTemplate( menuTemplate() ))
     Menu.setApplicationMenu( null)
-  // mainWindow.webContents.openDevTools();
+  //  mainWindow.webContents.openDevTools();
 })
 
 app.on('window-all-closed', () => {

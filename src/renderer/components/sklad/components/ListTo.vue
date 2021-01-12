@@ -1,97 +1,89 @@
 <template>
-    <!-- <draggable teg="ul" class="kassa-list small p-0 m-0" :value="model" group="sklad"> -->
-        <context  :actions="actions">
-            <div class="list">
-                <div class="header row">
-                <div class="col"><slot></slot></div>
-                <div class="col">
-                    <select class="form-control" v-model="type">
-                        <option v-for="(item, index) in types" :key="index"
-                        :value="index">{{ t(item) }}</option>
-                    </select>
-                </div>
-                </div>
-                <items class="content" :name="name" :value="items"/>
-            </div>
-        </context>
-    <!-- </draggable> -->
+  <div class="list_to">
+    <draggable v-if="target" class="target" group="sklad"/>
+    <div class="list">
+      <div class="list__header row m-0">
+      <div class="col">
+        <slot></slot>
+      </div>
+      <div class="col">
+        <select class="form-control" v-model="type">
+          <option v-for="(v, i) in filters" :key="i"
+          :value="i">{{ t(v) }}</option>
+        </select>
+      </div>
+      </div>
+      <items class="list__content" :value="items" @end="v => $emit('end', v)"/>
+    </div>
+  </div>
 </template>
 
 <script>
 
-import Context from '@/components/Context.vue'
-import Items from './Items.vue'
+import { isOver } from '@/functions/filters'
 import draggable from 'vuedraggable'
+import Items from './Items.vue'
 import { mapGetters } from 'vuex'
 export default {
-    components: { Context, draggable, Items },
-    props: { value: Array, actions: Object, name: String },
-    data() {
-        return {
-            type: 0,
-            types: ['all', 'things', 'gold' ]
-        }
+    components: { Items, draggable },
+    props: ['value', 'name', 'target', 'filters', 'actions'],
+    provide() {
+      const onStart = () => this.$emit('start')
+      const onEnd = ([{originalEvent}, v]) => {
+        const { target } = originalEvent || {}
+          this.$emit('end', [target.className === 'target', v])
+      }
+      return { onStart, onEnd, name: this.name, actions: this.actions }
     },
+    data: () => ({
+      type: 0,
+    }),
     computed: {
         ...mapGetters({
-            map: 'klient/map'
+          date: 'date'
         }),
-        values({ value, byType, byNumber }) {
-            return (value || []).filter(byType).sort(byNumber)
+        items({ value = [], filters, type }) {
+          return value.filter(this[filters[type]])
+            .sort((a, b) => a.number - b.number)
         },
-        items({ values, map }) {   
-            return values.map(v => ({...v, klient: map[v.klient]}))
-        },
-        typeValue({ types, type }) {
-            return types[type]
-        }
     },
     methods: {
-        byType({ zalog }) {
-            const { types, type } = this
-            return this.type ? zalog === this.typeValue : true
-        },
-        byNumber(a, b) {
-            return a.number - b.number
-        },
-        t(name) {
-            return this.$t(`sklad.${name}`)
-        }
+      all: () => true,
+      gold: ({ zalog }) => zalog === 'gold',
+      things: ({ zalog }) => zalog === 'things',
+      overdate(v){
+        return isOver(v, this.date)
+      },
+      t(v) {
+        return this.$t(`sklad.${v}`)
+      }
     }
 }
 </script>
 
 <style scoped>
-.list, .content{
-    height: 100%;
+.list {
+  height: 100%;
 }
-.content{
-    overflow: auto;
+.list_to {
+  height: calc(100% - 45px)
 }
-.list .header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-    margin: 0;
-    height: 45px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    /* text-align: center; */
-    background-color: rgb(214, 213, 213);
-    z-index: 1;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+.list_to >>> .target {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.14);
+  height: 100%;
+  width: 100%;
+  z-index: 1000;
 }
-.item li {
-    display: block;
-    padding: 0;
-    height: 30px;
-    line-height: 30px;
-    font-size: 14px;
-    text-align: center;
-    border: 1px solid rgba(0, 0, 0, 0.125);
-    border-top: none;
+.list__content{
+  overflow: auto;
 }
+
+.list__header {
+  height: 50px;
+  align-items: center;
+  background-color: rgb(214, 213, 213);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
 </style>

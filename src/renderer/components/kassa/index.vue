@@ -1,39 +1,37 @@
 <template>
-    <div class="kassa">
-        <b-card class="" header-tag="header" footer-tag="footer" body-class="scroll-auto"
-        :header="ok" :footer="total">
-        <context class="row " :actions="{ addOrder, remove }">
-            <kassa-list :selected="selected" class="col-6" :rows="rows"
-            :value="grope(dt.filter(isSame))" type="dt"/>
-            <kassa-list :selected="selected" class="col-6" :rows="rows"
-            :value="grope(ct.filter(isSame))" type='ct'/>
-        </context>
-        </b-card>
-        <!-- @remove="remove"  -->
-        <history ref="history" class="col" :value="selected"/>
-    </div>
+	<div class="kassa">
+		<b-card class="mb-1" header-tag="header" footer-tag="footer" body-class="scroll-auto"
+		:header="ok" :footer="total">
+		<div class="row">
+			<kassa-list v-model="selected" class="col" :rows="rows" type="dt"/>
+			<kassa-list v-model="selected"  class="col" :rows="rows" type="ct"/>
+		</div>
+		</b-card>
+		<history :value="selected"/>
+		<remove-dialog ref="remove-dialog"/>
+		<order-dialog ref="order-dialog" :accounts="accounts"/>        
+	</div>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { summ, mult, toNumber, moment } from '@/functions'
-import { KassaList, Context, PrixoRasxod, History } from './components'
-// import { Bilet, Order } from '@/zvit'
-import { Confirm } from '@/widgets'
+import { summ, mult, moment } from '@/functions'
+import components from './components'
+
 export default {
-    components: { KassaList, Context, History },
+    components,
     created() {
       this.update()
     },
     provide() {
-        const onStart = () => this.$emit('start')
-        const onEnd = () => this.$emit('end')
-        return { select: this.select, onStart, onEnd }
+			const { grope, addOrder, remove } = this
+			const onStart = () => this.$emit('start')
+			const onEnd = ([{ originalEvent }, v]) => 
+				this.$emit('end', [originalEvent, v.ref ? this.map[v.ref] : v])
+			return { grope, onStart, onEnd, actions: { addOrder, remove } }
     },
-    data() {
-        return {
-            selected: ''
-        }
-    },
+    data: () => ({
+        selected: ''
+    }),
     watch: {
         date() {
             this.selected = ''
@@ -41,17 +39,18 @@ export default {
     },
     computed: {
         ...mapGetters({
-            map: 'reestr/map',
-            dt: 'reestr/dt301',
-            ct: 'reestr/ct301',
-            company: 'company',
-            date: 'date',
-            order: 'reestr/nextOrder'
+					map: 'reestr/map',
+					dt: 'reestr/dt301',
+					ct: 'reestr/ct301',
+					company: 'company',
+					date: 'date',
+					order: 'reestr/nextOrder'
         }),
-        accounts({ company }) {
-            const reduce = key => ({...company.accounts}[key] || [])
-                .reduce((cur, v) => ({...cur, [v.acc]: v }), {})
-            return { dt: reduce('dt'), ct: reduce('ct') }
+        accounts({ company = {} }) {
+					const accounts = company.accounts || {} 
+					const account = (key) => (accounts[key] || [])
+						.reduce((cur, { acc, title }) => ({...cur, [acc]: title }), {})
+					return { dt: account('dt'), ct: account('ct') }
         },
         ok({ accounts, dt, ct, isBefore, deleted }) {
             const ok = {...accounts.dt['301']}.summ
@@ -59,10 +58,10 @@ export default {
             const credit = summ(...ct.filter(isBefore).filter(deleted).map(v => v.summ))
             return summ(ok, debet, mult(credit, -1))
         },
-        rows({ dt, ct, company }) {
-            const { kassa } = {...company.rows}
-            const grope = v => this.grope(v.filter(this.isSame))                
-            return Math.max( kassa || 0, grope(dt).length, grope(ct).length ) 
+        rows({ company }) {
+            const dt = this.grope('dt')
+            const ct = this.grope('ct')
+            return Math.max( 7, dt.length, ct.length ) 
         },
 
         total({ ok, dt, ct, isSame, deleted }) {
@@ -73,68 +72,64 @@ export default {
     },
     methods: {
         ...mapActions({
-            removeReestr: 'reestr/remove',
-            saveReestr: 'reestr/save',
-            update: 'update'
+					saveReestr: 'reestr/save',
+					update: 'update'
         }),
         async save(v) {
-            const dt = v.values.map(v => v.dt === '301').includes(true) ? this.order['dt'] : false
-            const ct = v.values.map(v => v.ct === '301').includes(true) ? this.order['ct'] : false
-            return this.saveReestr({...v, order: { dt, ct } }).then( v => this.select(v.id))
-        },
-        async remove(v) {
-            const { number, summ, deleted: description } = {...this.map[v._id]}
-            const t = v => this.$t(`confirm.${v}`)
-            const html = `<p>${t('enter')} <strong style='color: red;'>${number || summ}</strong> ${t('to confirm')}</p>`
-            const action = (description, title) => this.removeReestr({...v, description, title}).then(() => this.select())
-            const validate = v => (number || summ) == v
-            const value = { title: 'remove', html, description }
-            this.$modal.show(Confirm, { value, action, validate })
-        },
-        addOrder({ type }) {  
-            this.$modal.show(PrixoRasxod, { type, save: this.save })
-        },
-        grope(v) {
-            return [ ...v.reduce((cur, v) =>
-                cur.set(v._id, [ ...cur.get(v._id) || [], v]), new Map())]       
+					const dt = v.values.map(v => v.dt === '301').includes(true) ? this.order['dt'] : false
+					const ct = v.values.map(v => v.ct === '301').includes(true) ? this.order['ct'] : false
+					const { _id } = await this.saveReestr({...v, order: { dt, ct } })
+					return this.selected = _id
+				},
+				async addOrder(type) {
+					const { show, close } = this.$refs['order-dialog']
+					const order = await show(type)
+					this.save(order).then(close)
+				},
+				remove(id) {
+					return this.$refs['remove-dialog'].show(this.map[id])
+				},
+        grope(type) {
+					const value = this[type].filter(this.isSame)
+					return [ ...value.reduce((cur, v) =>
+							cur.set(v._id, [ ...cur.get(v._id) || [], v]), new Map())]       
         },    
         isBefore({ date }) {
-            return moment(date).isBefore(this.date, 'date')
-
+					return moment(date).isBefore(this.date, 'date')
         },
         isSame({ date }) {
-            return moment(date).isSame(this.date, 'date')
+					return moment(date).isSame(this.date, 'date')
         },
         deleted({ deleted }){
-            return !deleted
-        },
-        select(id) {      
-            return this.selected = id
+					return !deleted
         }
     }
 }
 </script>
 
-<style>
-.kassa {
-    /* padding: 0px; */
-    /* border: 1px solid rgba(0, 0, 0, 0.3); */
-}
-.kassa .card {
+<style scoped>
+
+.kassa >>> .card {
     max-height: 330px;
 }
-.kassa .card-body{
+.kassa >>> .card-body{
     flex: unset;
     padding: 0;
 }
-.scroll-auto {
+.kassa >>> .scroll-auto {
     overflow: auto;
     overflow-x:hidden;
     padding-top: 0 !important;
 }
-.card-header, .card-footer {
+.kassa >>> .card-header, .card-footer {
     background-color: #eef1f3;
     text-align: right;
+    border-top :none;
+    border-bottom :none;
+}
+.kassa >>> header, footer {
+    border-radius: 0;
+    padding: 8px;
 }
 </style>
 

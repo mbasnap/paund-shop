@@ -1,118 +1,129 @@
-import { lombard, get, post, setCompany, testAuth, hash, setUser } from '@/db'
+import { get, post, testAuth, clear } from '@/functions/db'
+import { compare, verify, decode, hash, sign } from '@/functions/jwt'
 import { router } from '@/setup'
 
 const reduceBy = (key, arr = []) => arr.reduce((cur, v) => ({...cur, [v[key]]: v }), {})
+
+
 const state = {
-    date: new Date(),
-    company: {},
-    users: [],
-    klients: [],
-    reestr: [],
+  date: new Date(),
+  user: {},
+  company: {},
+  users: [],
+  klients: [],
+  reestr: [],
 }
 
 const getters = {
-    version() {
-        return 1.04
-    },
-    company({ company }) {
-        return company
-    },
-    users({ users }) {
-        return users
-    },
-    usersMap({}, { users }) {
-        return reduceBy('name', users)
-    },
-    lombard({}, { company }) {
-        return {...company.lombard }
-    },
-    user({}, { company, usersMap }) {
-        return {...usersMap[company.user] }
-    },
-    isAdmin({}, { user }) {
-        return (user.roles || []).includes('admin')
-    },
-    date ({ date }) {
-        return date
-    },
-    settings() {
-        const order = JSON.parse(localStorage.getItem('order'))
-        const bilet = JSON.parse(localStorage.getItem('bilet'))
-        return {
-            order: { zoom: "115%", silent: true, ...order },
-            bilet: { zoom: "150%", silent: true, ...bilet }
-        }
+  brand() {
+    return 'PShop'
+  },
+  version() {
+    return 1.06
+  },
+  company({ company }) {
+    return company
+  },
+  user({ user }) {
+    return user
+  },
+  users({ users }) {
+    return users
+  },
+  usersMap({}, { users }) {
+    return reduceBy('name', users)
+  },
+  lombard({}, { company }) {
+    return {...company.lombard }
+  },
+  isAdmin({}, { user, usersMap }) {
+    const { roles = [] } = usersMap[user._id] || {}
+    return roles.includes('admin')
+  },
+  date ({ date }) {
+    return date
+  },
+  settings() {
+    const order = JSON.parse(localStorage.getItem('order'))
+    const bilet = JSON.parse(localStorage.getItem('bilet'))
+    return {
+      order: { zoom: "115%", silent: true, ...order },
+      bilet: { zoom: "150%", silent: true, ...bilet }
     }
+  }
 }
 const mutations = {
-    date (state, v) {
-        state.date = v
-    },
-    company (state, v) {
-        state.company = v
-    },
-    users (state, v) { 
-        state.users = v
-    },
-    klients (state, v) { 
-        state.klients = v
-    },
-    reestr (state, v) { 
-        state.reestr = v
-    }
+  date (state, v) {
+    state.date = v
+  },
+  company (state, v) {
+    state.company = v
+  },
+  user (state, v) { 
+    state.user = v
+  },
+  users (state, v) { 
+    state.users = v
+  },
+  klients (state, v) { 
+    state.klients = v
+  },
+  reestr (state, v) { 
+    state.reestr = v
+  }
 }
 const actions = {
-    reload() {
-        window.location.reload()
-    },
-    activate({}, token) {
-        setCompany(token)       
-        window.location.reload()
-    },
-    changeAccount({}, reload) {
-        localStorage.removeItem('settings')
-        if (reload) window.location.reload()
-    },
-    loginAdmin({}, password) {
-        return testAuth(password).then(() => {
-            localStorage.setItem('admin', password)
-        })
-    },
-    async updatePassword({ dispatch }, { user, password } ) {
-        return post('users', {...user, password: await hash(password) })
-            .then(() => dispatch('logOut'))
-    },
-    async updateUser({}, user ) {
-        const { id, rev } = await post('users', user)
-        return {...user, _id: id, _rev: rev }
-    },
-    async logIn({ dispatch }, { password, user }) {
-        await setUser(user, password)
-        dispatch('update').then(() => {
-            router.push('vidacha')
-        })
-    },
-    logOut() {
-        localStorage.removeItem('user')
-        window.location.reload()
-    },
-    setDate  ({ commit }, v) {
-        commit('date', v)
-    },
-    async update ({ commit }) {
-        console.log('update');
-            const { _id: user } = await setUser(localStorage.getItem('user'))
-            commit('company', { ...await get('company', lombard), user })
-            commit('users', await get('users'))
-            commit('klients', await get('klients'))
-            commit('reestr', await get('reestr'))
-        }
+  reload() {
+    window.location.reload()
+  },
+  async setUser({ dispatch }, v) {
+    const user = v || await verify(localStorage.getItem('user'))
+    if (!user) return dispatch('logOut', true) 
+    localStorage.setItem('user', sign({ _id: user._id, name: user.name}, '1h'))
+    return user
+  },
+
+  loginAdmin({}, password) {
+    return testAuth(password).then(() => {
+        localStorage.setItem('admin', password)
+    }).catch(err => {
+        console.error(err);
+    })
+  },
+  async updatePassword({ dispatch }, { user, password } ) {
+    return post('users', {...user, password: await hash(password) })
+      .then(() => dispatch('logOut'))
+  },
+  async updateUser({}, user ) {
+    const { id, rev } = await post('users', user)
+    return {...user, _id: id, _rev: rev }
+  },
+  async logIn({ dispatch }, { password, user }) {
+    if (!await compare(password, user.password)) return
+    await dispatch('setUser', user)
+    window.location.reload()
+  },
+  logOut({}, silent) {
+    localStorage.removeItem('user')
+    silent ? router.push('/login')
+    : window.location.reload()
+  },
+  setDate  ({ commit }, v) {
+    commit('date', v)
+  },
+  async update ({ commit, dispatch }, user) {
+    const lombard = localStorage.getItem('lombard')
+    commit('user', await dispatch('setUser', user))
+    commit('company', await get('company', lombard))
+    commit('users', await get('users'))
+    commit('klients', await get('klients'))
+    commit('reestr', await get('reestr'))
+  }
 }
 
 export default {
-    // namespaced: true,
-    state,
-    getters,
-    mutations,
-    actions
+  state,
+  getters,
+  mutations,
+  actions
 }

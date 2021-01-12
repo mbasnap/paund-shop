@@ -1,4 +1,4 @@
-import { get, post } from '@/db'
+import { get, post } from '@/functions/db'
 
 const state = {
     // klients: [],

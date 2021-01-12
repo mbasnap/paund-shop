@@ -1,5 +1,5 @@
 <template>
-<div>
+<div v-if="users && users.length">
 <form>
     <valid-input type="email" label="name" :isValid="!userErr"
     :value="username" @input="v => onInput('username', v)">{{ userErr }}</valid-input>
@@ -13,26 +13,21 @@
 @click="onLogin(user, password).catch(setErr)"> {{$t('auth.login')}}</button>
 
 <div class="mt-3">
-    <a href="#" @click="$router.push('activate')"> {{$t('auth.change_account')}}</a>
+    <a href="#" @click="$router.push('activate')"> {{$t('auth.activate')}}</a>
 </div>
 
 </div>
 </template>
 
 <script>
-import { testAuth } from '@/db'
+import { testAuth } from '@/functions/db'
 import { mapActions, mapGetters } from 'vuex'
 import { isEmail, isLength } from 'validator'
 import { ValidInput } from '@/widgets/valid-input'
 export default {
     components: { ValidInput },
     created() {
-        testAuth().then(() => {
-            this.$store.dispatch('update')
-        }).catch(() => {
-            this.$router.push('activate')
-        })
-        // this.$store.dispatch('update')
+        this.$store.dispatch('update')
     },
     data() {
         return {
@@ -44,14 +39,14 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['usersMap', 'company']),
+        ...mapGetters(['usersMap', 'company', 'users']),
         user({ usersMap, username }) {
             return {...usersMap[username] }
         },
-        active({ user }) {
+        active({ user = {} }) {
             return user.name && user.active
         },
-        userErr({ username, company, user, active }) {
+        userErr({ username, company = {}, user, active }) {
             const err = { company_not_active: !company.active, not_active: !user.active, no_found: !user.name }
             return username ? ['company_not_active', 'no_found', 'not_active']
                 .filter(v => err[v])[0] : false
@@ -65,7 +60,7 @@ export default {
             return user.password || password === confirm
         },
         disabled({ password, userErr, passwordErr, confirmErr }) {
-            const length = password.length > 0           
+            const length = password.length > 0
             return [ !length, userErr, passwordErr, confirmErr ]
                 .some(v => v)
         }
