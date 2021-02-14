@@ -1,9 +1,7 @@
-import { get, post, testAuth, clear } from '@/functions/db'
-import { compare, verify, decode, hash, sign } from '@/functions/jwt'
+import { reduceBy  } from '@/functions'
+import { get, post, testAuth } from '@/functions/db'
+import { compare, verify, hash, sign } from '@/functions/jwt'
 import { router } from '@/setup'
-
-const reduceBy = (key, arr = []) => arr.reduce((cur, v) => ({...cur, [v[key]]: v }), {})
-
 
 const state = {
   date: new Date(),
@@ -19,7 +17,7 @@ const getters = {
     return 'PShop'
   },
   version() {
-    return 1.06
+    return 1.09
   },
   company({ company }) {
     return company

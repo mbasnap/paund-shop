@@ -2,9 +2,9 @@
     <!-- <modal-editor :title="title" :disabled="disabled" style="width: 718px;"
     :zoom="zoom" @zoom="onZoom" @print="print"> -->
     <div ref="print-content" :style="{ zoom: zoom + '%' }">
-        <div class="mt-1">
-            <spec :value="value"/>
-            <obespechenie  :value="value"/>
+        <div class="mt-3 mb-3">
+            <spec :value="value" class="mb-3" />
+            <obespechenie :value="value"/>
             <div class="row m-0" style="font-style: italic;">
                 <span class="pl-4 pr-5"><strong>М.П.</strong></span>
                 <span class="p-1" style="border: 2px solid;">
@@ -16,9 +16,9 @@
                 <span style="font-size: 10px;">{{ kassir }}</span>
             </div>
         </div>
-        <div class="mt-3 " style="border: 1px dashed;"></div>
+        <div class="mt-5 mb-5" style="border: 1px dashed;"></div>
         <div class="mt-3 ">
-            <spec :value="value"/>
+            <spec :value="value" class="mb-3"/>
             <div class="row">
                 <obespechenie class="col-9" :value="value" style="font-size: 10px;"/>
                 <div class="col-3" style="border-top: 1px dashed; border-left: 1px dashed;">

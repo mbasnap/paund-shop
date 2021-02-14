@@ -1,28 +1,29 @@
 <template>
-  <b-modal v-model="modal" content-class="order-dialog" :hide-footer="true" :title="t(type)">
+  <b-modal v-model="modal" content-class="user-dialog" :hide-footer="true" :title="t(type)">
     <div class="modal-body mb-5">
       <div class="form-row mb-2">
-        <named-input class="form-control col-6 mr-1" name="summ" :placeholder="t('summ')"
-        :value="model" />
-        <named-select class="form-control col" :name="account" :placeholder="t('account')"
-        :value="model" :options="options" @change="change" :tostring="toStringAccount"/>
+          <named-input class="form-control col-6 mr-1" name="summ" :placeholder="t('summ')"
+          :value="model" />
+          <named-select class="form-control col" :name="account" :placeholder="t('account')"
+          :value="model" :options="options" @change="change" :tostring="toStringAccount"/>
       </div> 
       <div class="form-row mb-2">
-        <named-select class="form-control col" name="klient" :placeholder="t('from')"
-        :value="model" :options="usersOptions" @change="change"
-        :tostring="fio" :tovalue="toValueKlient"/>
+          <named-select class="form-control col" name="klient" :placeholder="t('from')"
+          :value="model" :options="usersOptions" @change="change"
+          :tostring="fio" :tovalue="toValueKlient"/>
       </div> 
       <div class="form-row mb-2">
-        <named-textarea class="form-control col" name="title"
-        :placeholder="t('discription')" :value="model"/>
+          <named-textarea class="form-control col" name="title"
+          :placeholder="t('discription')" :value="model"/>
       </div>
     </div>
     <modal-footer ok="save" :loading="loading" @ok="onSave(values)" @cansel="close"/>
   </b-modal>
+
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import { toDouble } from '@/functions'
 import mix from '@/widgets/named-input/mix.js'
 import ModalFooter from '@/widgets/ModalFooter'
@@ -39,8 +40,8 @@ export default {
   }),
   computed: {
     ...mapGetters({
-      users: 'users',
-      company: 'company',
+        users: 'users',
+        company: 'company',
     }),
     account({ type }) {
       return type === 'dt' ? 'ct' : 'dt'
@@ -60,7 +61,7 @@ export default {
     usersOptions({ users, excludesUsers, fio }) {
       return users
         .filter(({ name }) => !excludesUsers.includes(name))
-          .filter(v => v.active && fio(v))
+            .filter(v => v.active && fio(v))
     },
     options({ accounts, account, company }) {
       const excludes = v => !(company.excludes || []).includes(v)
@@ -68,6 +69,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions({ remove: 'reestr/remove' }),
     onSave(v) {
       this.loading = true
       this.resolve(v)
@@ -96,7 +98,7 @@ export default {
     },
     toStringAccount(v) {
         const { accounts, account } = this
-        const { title } = accounts[account][v]
+        const title = accounts[account][v]
         return `${v} ${title}`
     },
   }
@@ -104,7 +106,7 @@ export default {
 </script>
 
 <style >
- .order-dialog {
+ .user-dialog {
     height: auto;
 }
 </style>

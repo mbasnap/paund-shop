@@ -46,15 +46,19 @@ const reestr = sync(local(lombard), { filter: doc => doc.type === 'reestr' && do
 const db = { company, users, klients, reestr }
 
 
+const updateDoc = async (name, value) => {
+  const { _rev } = await db[name].get(value._id)
+  return db[name].put({...value, _rev })
+}
 
 const post = async (name, v) => {
   return testAuth().then(() => {
-    const { put, post } = db[name]
     const value = { lombard, ...v }
-    return v._id ? put(value) : post(value)
-  }).catch(
-    ({status}) => store.dispatch('logOut', status === 404)
-  )
+    return v._id ? updateDoc(name, value) : db[name].post(value)
+  })
+  // .catch( 
+  //   ({status}) => store.dispatch('logOut', status === 404)
+  // )
 }
 
 const get = async (name, id) => {
@@ -62,9 +66,10 @@ const get = async (name, id) => {
     return id ? db[name].get(id)
     : db[name].allDocs({ include_docs: true })
       .then(({ rows }) => rows.map(v => v.doc))
-  }).catch(
-    ({status}) => store.dispatch('logOut', status === 404)
-  )
+  }).catch(err => {
+    console.log(err);
+    // store.dispatch('logOut', status === 404)
+  })
 }
 
 const testAuth = (password = localStorage.getItem('admin')) => {
@@ -78,6 +83,7 @@ export {
   conn,
   dbsList,
   replicate,
-  destroy
+  destroy,
+  local
 }
 

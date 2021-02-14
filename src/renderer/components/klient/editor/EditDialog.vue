@@ -1,41 +1,66 @@
 <template>
-    <b-modal v-model="modal" content-class="edit-dialog" :hide-footer="true" >
-      <div class="tabs" >
-          <a v-for="(item, i) in ['fio', 'passport', 'address', 'questionnaire']" :key="i" 
-          :class="{ active: activetab === item }"
-          @click="activetab = item"> {{ t(item) }} </a>
-          <div class="row">
-              <div class="col"><svg-print width="25px;" style="text-align: right;"
-              @click="print"/> </div>
-          </div> 
-      </div>
-      <div class="content">
-          <tab-content v-model="fio" v-show="activetab === 'fio'" tabname="fio" 
-          :err="err.fio"
-          :items="fioItems"/>
-          <tab-content v-model="passport"  v-show="activetab === 'passport'" tabname="passport" 
-          :err="err.passport"
-          :items="passportItems"/>
-          <tab-content v-model="address"  v-show="activetab === 'address'" tabname="address" 
-          :err="err.address"
-          :items="addressItems"/>
-          <questionn-aire ref="questionn-aire" v-show="activetab === 'questionnaire'"
-          v-model="questionnaire"/>
-      </div>
-    </b-modal>
+  <b-modal v-model="modal" 
+  height="auto"
+  content-class="edit-dialog" 
+  :hide-footer="true" 
+  :hide-header="true" 
+  size="lg">
+    <template #modal-header="{ close }">
+
+      <b-row>
+        <b-col>
+          <b-button variant="outline-danger" size="sm" class="mb-2" @click="remove">
+            <b-icon icon="trash" aria-hidden="true"></b-icon>
+          </b-button>
+        </b-col>
+        <b-col cols="1">
+          <b-button variant="outline-secondary" size="sm" class="mb-2" @click="print">
+            <b-icon icon="printer" aria-hidden="true"></b-icon>
+          </b-button>
+        </b-col>
+        <b-col cols="1">
+          <button type="button" 
+          class="close" aria-label="Close" 
+          style="outline: none;"
+          @click="close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </b-col>
+      </b-row>
+    </template>
+    <div class="tabs" >
+      <a v-for="(item, i) in ['fio', 'passport', 'address', 'questionnaire']" :key="i" 
+      :class="{ active: activetab === item }"
+      @click="activetab = item"> {{ t(item) }} </a>
+    </div>
+    <div class="content">
+      <tab-content v-model="fio" v-show="activetab === 'fio'" tabname="fio" 
+      :err="err.fio"
+      :items="fioItems"/>
+      <tab-content v-model="passport"  v-show="activetab === 'passport'" tabname="passport" 
+      :err="err.passport"
+      :items="passportItems"/>
+      <tab-content v-model="address"  v-show="activetab === 'address'" tabname="address" 
+      :err="err.address"
+      :items="addressItems"/>
+      <questionn-aire ref="questionn-aire" v-show="activetab === 'questionnaire'"
+      v-model="questionnaire"/>
+    </div>
+    <remove-dialog ref="remove-dialog"/>
+  </b-modal>
 
 </template>
 
 <script>
 import ModalEditor from '@/widgets/Modal.vue'
 import { mapGetters, mapActions } from 'vuex'
-import { SvgPrint } from '@/svg'
 import { toTitleCase, dateFormat, isDateValid } from '@/functions'
 import KlientReport from '@/zvit/klient'
 import TabContent from './TabContent'
 import QuestionnAire from './QuestionnAire'
+import RemoveDialog from './RemoveDialog'
 export default {
-  components: { ModalEditor, SvgPrint, TabContent, QuestionnAire },
+  components: { ModalEditor, TabContent, QuestionnAire, RemoveDialog },
   provide() {
     return { onChange: this.onChange }
   },
@@ -53,8 +78,8 @@ export default {
       get({ selected: id, value }) {
           return {...this.map[id], ...value}
       },
-      set({ name, selected }) {
-          this.value = {...this.value, [name]: selected } 
+      set({ name, value }) {
+          this.value = {...this.value, [name]: value } 
       }
     },
     fioItems() {
@@ -88,9 +113,9 @@ export default {
     address: {
       get({ fio = {}, value = {} }) {
         return {...fio.address, ...value.address }
-        // return {}
       },
       set({ name, value }) {
+
         const address = {...this.address, [name]: value }
         this.value = {...this.value, address } 
       }
@@ -114,23 +139,24 @@ export default {
   },
   methods: {
     toTitleCase, dateFormat,
-    ...mapActions('klient', ['save', 'remove']),
-      onChange() {
-          const { fio, passport, address, questionnaire } = this
-          this.$nextTick(() => {
-              this.save({ ...fio, passport, address, questionnaire })
-          })           
-      },
-      print() {
-          const { model: questionnaire } = this.$refs['questionn-aire']
-          const value = {...this.fio, questionnaire }
-          this.$modal.show(KlientReport, { value }, { width: '850', height: '500'})            
-      },
-    // async onRemove(v) {
-    //   this.loading = true
-    //   await this.remove(v)
-    //   this.resolve(v)
-    // },
+    ...mapActions('klient', ['save']),
+    onChange() {
+      const { fio, passport, address, questionnaire } = this
+      this.$nextTick(() => {
+        this.save({ ...fio, passport, address, questionnaire })
+      })           
+    },
+    print() {
+      const { model: questionnaire } = this.$refs['questionn-aire']
+      const value = {...this.fio, questionnaire }
+      this.close()
+      this.$modal.show(KlientReport, { value }, { width: '850', height: '500'})            
+    },
+    async remove() {
+      await this.$refs['remove-dialog'].show(this.fio)
+      this.modal = false
+      this.resolve()
+    },
     show(v = {}) {
       this.value = v
       this.modal = true
@@ -138,6 +164,7 @@ export default {
     },
     close() {
       this.modal = false
+      this.resolve(this.value)
     },
     t(v) {
       return this.$t(`tabs.${v}`)
@@ -148,6 +175,8 @@ export default {
 
 <style >
  .edit-dialog {
-    height: auto;
+    max-height: none;
+    height: 600px;
+    width: 600px !important;
 }
 </style>

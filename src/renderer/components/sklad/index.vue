@@ -5,12 +5,7 @@
     :filters="['all', 'overdate', 'gold', 'things']"
     @end="onEndTo" @start="target = 'from'" :target="target === 'to'"
     :actions="{ toSklad, statment: () => {} }">
-      <!-- <div class="sklad__header row p-2 form-check" style="text-align: left; height: 40px;">
-        <input type="checkbox" class="form-check-input m-0" id="dropdownCheck2"
-        :checked="showOver" @change="showOver = !showOver"
-        style="position: unset;">
-        <label class="form-check-label" for="dropdownCheck2"> Просроченные </label>
-      </div> -->
+      <b-form-input placeholder="Поиск" type="search" v-model="searchModel"/>
     </list-to>
     <div style="width: 10px;"></div>
     <list-to class="col p-0" :value="listFrom"  name="list-from"
@@ -26,64 +21,75 @@
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import { moment, toSearchString } from '@/functions'
 import ListTo from "./components/ListTo"
-import { Confirm } from '@/widgets'
 export default {
-    components: { ListTo },
-    data() {
-      return {
-        target: false,
-        loading: false
-      }
+  components: { ListTo },
+  data() {
+    return {
+      target: false,
+      loading: false,
+      search: ''
+    }
+  },
+  computed: {
+    ...mapGetters({
+      map: 'reestr/map',
+      empty: 'reestr/empty',
+      dt200: 'reestr/dt200',
+      klients: 'klient/map',
+    }),
+    listTo({ empty, map }) {
+      return Object.values(empty)
+        .map(v => ({...map[v._id]}))
+          .filter(this.searchFilter)
     },
-    computed: {
-      ...mapGetters({
-        map: 'reestr/map',
-        empty: 'reestr/empty',
-        dt200: 'reestr/dt200',
-        
-      }),
-      listTo({ empty, map, isOver }) {
-        return Object.values(empty).map(v => ({...map[v._id]}))
-      },
-      listFrom({ dt200, map }) {
-        return dt200.map(v => ({...map[v._id]}))
-            .map(v => ({ ...map[v.ref], ...v }))
-      }
+    listFrom({ dt200, map }) {
+      return dt200.map(v => ({...map[v._id]}))
+        .map(v => ({ ...map[v.ref], ...v }))
     },
-    methods: {
-      ...mapActions({
-        save: 'reestr/save'
-      }),
-      async update(v) {
-        this.loading = true
-        await this.save(v)
-        this.loading = false
+    searchModel: {
+      get() {
+        return this.search
       },
-       toSklad({ _id: ref, klient = {}, ocenca, deleted }) {
-        const values = { ref, klient: klient._id, values: [
-            { dt: '200', ct: '377', summ: ocenca }
-        ]}
-        this.update(values)
-      },
-      fromSklad (v) {
-        this.update({ ...v, _deleted: true })
-      },
-      // async statment({ _id }, days = 10) {
-      //   this.loading = _id
-      //   const statment = Number(days) && { date: this.date, days }
-      //   await this.save({...this.map[_id], statment })
-      //   this.loading = false
-      // },
-      onEndTo([target, v]) {
-        if (target) this.toSklad(v)
-        this.target = false
-      },
-      onEndFrom([target, v]) {
-        if (target) this.fromSklad(v)
-        this.target = false
+      set(v = '') {
+        this.search = v
       }
     }
+  },
+  methods: {
+    ...mapActions({
+      save: 'reestr/save'
+    }),
+    async update(v) {
+      this.loading = true
+      await this.save(v)
+      this.loading = false
+    },
+      toSklad({ _id: ref, klient = {}, ocenca }) {
+      const values = { ref, klient: klient._id, values: [
+        { dt: '200', ct: '377', summ: ocenca }
+      ]}
+      this.update(values)
+    },
+    fromSklad (v) {
+      this.update({ ...v, _deleted: true })
+    },
+    onEndTo([target, v]) {
+      if (target) this.toSklad(v)
+      this.target = false
+    },
+    onEndFrom([target, v]) {
+      if (target) this.fromSklad(v)
+      this.target = false
+    },
+    searchFilter({ klient, ssuda, date }) {
+      const { family, name, sername } = this.klients[klient]
+      const str = [family, name, sername, ssuda, moment(date).format('L')]
+        .map(toSearchString).reduce((cur, v) => cur + v, '')
+      return !this.search || str.includes(toSearchString(this.search))
+    }
+  }
 }
 </script>
 <style scoped>

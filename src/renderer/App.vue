@@ -55,7 +55,9 @@ body {
     background-color: #e9ecef !important;
     opacity: 1;
 }
-
+a {
+  outline: none;
+}
 
 
 </style>

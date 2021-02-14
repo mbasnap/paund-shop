@@ -2,7 +2,7 @@ import Kassa from '@/components/kassa'
 import Klient from '@/components/klient'
 import Obespechenie from '@/components/obespechenie'
 import Bilet from './Bilet'
-import Editor from './Editor'
+import Perezalog from './Perezalog'
 import mix from '@/components/mix/vidacha-vozvrat'
 
 export {
@@ -10,6 +10,6 @@ export {
     Klient,
     Obespechenie,
     Bilet,
-    Editor,
+    Perezalog,
     mix
 }

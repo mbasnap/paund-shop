@@ -1,9 +1,20 @@
 <template>
   <div class="footer">
     <b-navbar class="footer__navbar" type="dark" variant="info">
-      <brand-version v-if="company && company.name">
-        <button v-show="isOutdate" class="btn" @click="update">update</button>
-      </brand-version>
+      <b-col>
+        <brand-version v-if="company && company.name"/>
+      </b-col>
+      <b-col v-show="isOutdate" id="enabled-version" class="text-right">
+        <b-icon icon="info-circle" variant="light"></b-icon>
+        <b-link href="#foo" 
+        style="color: white;"
+        @click="update"
+        >Доступно обновление v-{{ program.version}}</b-link>
+      </b-col>
+      <b-tooltip
+      variant="light"
+      target="enabled-version"
+      >{{program.description}}</b-tooltip>
     </b-navbar>
   </div>
 </template>
@@ -25,6 +36,7 @@ export default {
   },
   methods: {
     update() {
+      
       shell.openExternal(this.program.link)
     }
   }

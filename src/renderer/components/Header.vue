@@ -3,7 +3,7 @@
 <div class="main-menu">
   <b-navbar toggleable="sm" type="dark" variant="info">
     <b-navbar-brand v-if="company && company.name" class="company" href="#" 
-    :style="{color: conn ? 'green' : 'red'}">
+    :style="{color: !conn && 'red'}">
       {{ company.logo }}</b-navbar-brand>
     <brand-version v-else />
     <div v-if="user && user.name" class="container-fluid" >
@@ -23,7 +23,7 @@
   import { mapGetters } from 'vuex'
   import { Datepicker } from '@/widgets';
   import BrandVersion from './BpandVersion'
-  import User from './User';
+  import User from './user';
 export default {
   components: { Datepicker, User, BrandVersion },
   created() {
@@ -62,6 +62,9 @@ export default {
 }
 .main-menu .navbar {
   height: 60px;
+}
+.main-menu >>> .router-link-active {
+  color: rgba(255, 255, 255, 0.911) !important;
 }
 </style>
 

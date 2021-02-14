@@ -21,7 +21,7 @@
                   </select>                  
                 </div>
                 <div class="col">{{ tostring(item) }}</div>
-                <div class="col" style="text-align: right;">{{ item.ocenca }}</div>
+                <div class="col" style="text-align: right;">{{ item.ssuda }}</div>
               </div>
             </context>
         </draggable>
@@ -34,7 +34,7 @@
             <span class="mr-1">{{ i.proba }}</span>
             <span>{{ i.total }}</span>
           </div>
-          <div class="col p-0">{{i.ocenca}}</div>
+          <div class="col p-0">{{i.ocenca }}</div>
         </div>
       </b-collapse>
     </b-card>

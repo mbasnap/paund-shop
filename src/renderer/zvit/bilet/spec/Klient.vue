@@ -1,9 +1,9 @@
 <template>
     <div>
-        <div class="row" style="margin-top: -11px;">
-          <div class="col " style="font-size: 14px;">
-                <strong>{{company.logo}}</strong>
-            </div>
+        <div class="row" style="margin-top: -2px;">
+          <div class="col mb-2" style="font-size: 14px;">
+              <strong>{{company.logo}}</strong>
+          </div>
         </div>
         <div class="row border-left border-bottom">
             <div class="col-5 border-top border-right">

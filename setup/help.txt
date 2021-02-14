@@ -10,3 +10,4 @@ versions
 v-1.03  24.06.2020 fix penalty
 v-1.04  24.06.2020 fix statments
 v-1.05  04.11.2020 vpn connection
+v-1.07  30.01.2021 program interface change

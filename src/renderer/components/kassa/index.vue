@@ -18,92 +18,92 @@ import { summ, mult, moment } from '@/functions'
 import components from './components'
 
 export default {
-    components,
-    created() {
-      this.update()
-    },
-    provide() {
-			const { grope, addOrder, remove } = this
-			const onStart = () => this.$emit('start')
-			const onEnd = ([{ originalEvent }, v]) => 
-				this.$emit('end', [originalEvent, v.ref ? this.map[v.ref] : v])
-			return { grope, onStart, onEnd, actions: { addOrder, remove } }
-    },
-    data: () => ({
-        selected: ''
-    }),
-    watch: {
-        date() {
-            this.selected = ''
-        }
-    },
-    computed: {
-        ...mapGetters({
-					map: 'reestr/map',
-					dt: 'reestr/dt301',
-					ct: 'reestr/ct301',
-					company: 'company',
-					date: 'date',
-					order: 'reestr/nextOrder'
-        }),
-        accounts({ company = {} }) {
-					const accounts = company.accounts || {} 
-					const account = (key) => (accounts[key] || [])
-						.reduce((cur, { acc, title }) => ({...cur, [acc]: title }), {})
-					return { dt: account('dt'), ct: account('ct') }
-        },
-        ok({ accounts, dt, ct, isBefore, deleted }) {
-            const ok = {...accounts.dt['301']}.summ
-            const debet = summ(...dt.filter(isBefore).filter(deleted).map(v => v.summ))
-            const credit = summ(...ct.filter(isBefore).filter(deleted).map(v => v.summ))
-            return summ(ok, debet, mult(credit, -1))
-        },
-        rows({ company }) {
-            const dt = this.grope('dt')
-            const ct = this.grope('ct')
-            return Math.max( 7, dt.length, ct.length ) 
-        },
-
-        total({ ok, dt, ct, isSame, deleted }) {
-            const debet = summ(...dt.filter(isSame).filter(deleted).map(v => v.summ))
-            const credit = summ(...ct.filter(isSame).filter(deleted).map(v => v.summ))
-            return summ(ok, debet, mult(credit, -1))
-        }
-    },
-    methods: {
-        ...mapActions({
-					saveReestr: 'reestr/save',
-					update: 'update'
-        }),
-        async save(v) {
-					const dt = v.values.map(v => v.dt === '301').includes(true) ? this.order['dt'] : false
-					const ct = v.values.map(v => v.ct === '301').includes(true) ? this.order['ct'] : false
-					const { _id } = await this.saveReestr({...v, order: { dt, ct } })
-					return this.selected = _id
-				},
-				async addOrder(type) {
-					const { show, close } = this.$refs['order-dialog']
-					const order = await show(type)
-					this.save(order).then(close)
-				},
-				remove(id) {
-					return this.$refs['remove-dialog'].show(this.map[id])
-				},
-        grope(type) {
-					const value = this[type].filter(this.isSame)
-					return [ ...value.reduce((cur, v) =>
-							cur.set(v._id, [ ...cur.get(v._id) || [], v]), new Map())]       
-        },    
-        isBefore({ date }) {
-					return moment(date).isBefore(this.date, 'date')
-        },
-        isSame({ date }) {
-					return moment(date).isSame(this.date, 'date')
-        },
-        deleted({ deleted }){
-					return !deleted
-        }
+  components,
+  created() {
+    this.update()
+  },
+  provide() {
+    const { grope, addOrder, remove } = this
+    const onStart = () => this.$emit('start')
+    const onEnd = ([{ originalEvent }, v]) => 
+      this.$emit('end', [originalEvent, v.ref ? this.map[v.ref] : v])
+    return { grope, onStart, onEnd, actions: { addOrder, remove } }
+  },
+  data: () => ({
+    selected: ''
+  }),
+  watch: {
+    date() {
+      this.selected = ''
     }
+  },
+  computed: {
+    ...mapGetters({
+      map: 'reestr/map',
+      dt: 'reestr/dt301',
+      ct: 'reestr/ct301',
+      company: 'company',
+      date: 'date',
+      order: 'reestr/nextOrder'
+    }),
+    accounts({ company = {} }) {
+      const accounts = company.accounts || {} 
+      const account = (key) => (accounts[key] || [])
+        .reduce((cur, { acc, title, summ }) => ({...cur, [acc]: {title, summ} }), {})
+      return { dt: account('dt'), ct: account('ct') }
+    },
+    ok({ accounts, dt, ct, isBefore, deleted }) {
+        const ok = {...accounts.dt['301']}.summ
+        const debet = summ(...dt.filter(isBefore).filter(deleted).map(v => v.summ))
+        const credit = summ(...ct.filter(isBefore).filter(deleted).map(v => v.summ))
+        return summ(ok, debet, mult(credit, -1))
+    },
+    rows() {
+      const dt = this.grope('dt')
+      const ct = this.grope('ct')
+      return Math.max( 7, dt.length, ct.length ) 
+    },
+
+    total({ ok, dt, ct, isSame, deleted }) {
+      const debet = summ(...dt.filter(isSame).filter(deleted).map(v => v.summ))
+      const credit = summ(...ct.filter(isSame).filter(deleted).map(v => v.summ))
+      return summ(ok, debet, mult(credit, -1))
+    }
+  },
+  methods: {
+    ...mapActions({
+      saveReestr: 'reestr/save',
+      update: 'update'
+    }),
+    async save(v) {
+      const dt = v.values.map(v => v.dt === '301').includes(true) ? this.order['dt'] : false
+      const ct = v.values.map(v => v.ct === '301').includes(true) ? this.order['ct'] : false
+      const { _id } = await this.saveReestr({...v, order: { dt, ct } })
+      return this.selected = _id
+    },
+    async addOrder(type) {
+      const { show, close } = this.$refs['order-dialog']
+      const order = await show(type)
+      this.save(order).then(close)
+    },
+    remove(id) {
+      return this.$refs['remove-dialog'].show(this.map[id])
+    },
+    grope(type) {
+      const value = this[type].filter(this.isSame)
+      return [ ...value.reduce((cur, v) =>
+          cur.set(v._id, [ ...cur.get(v._id) || [], v]), new Map())]       
+    },    
+    isBefore({ date }) {
+      return moment(date).isBefore(this.date, 'date')
+    },
+    isSame({ date }) {
+      return moment(date).isSame(this.date, 'date')
+    },
+    deleted({ deleted }){
+      return !deleted
+    }
+  }
 }
 </script>
 

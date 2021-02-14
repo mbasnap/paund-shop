@@ -43,14 +43,14 @@
     <div class="form-row">
     <named-input ref="idn" class="form-control col" name="idn"
     :placeholder="t('idn')" v-model="passport"/>
-    <svg-address-card class="klient__editor col-2" width="30px"
-      :disabled="!model._id" @click="edit(model)"/>
-    <!-- <b-dropdown class="klient-dropdown col-1 p-0 m-0"  variant="link" :disabled="!model._id" >
-        <b-dropdown-item href="#" @click="copy"
-        >{{ $t('btn.copy') }}</b-dropdown-item>
-        <b-dropdown-item href="#" @click="onRemove"
-        >{{ $t('btn.remove') }}</b-dropdown-item>
-    </b-dropdown> -->
+    <b-button size="sm" class="ml-2  col-2" 
+    :disabled="!model._id"
+    @click="edit(model)"
+    width="30px"
+    style="max-width: 43px; margin-right: 5px;"
+    :variant="model._id ? 'outline-primary' : 'outline'">
+      <b-icon icon="person-circle" aria-hidden="true"></b-icon>
+    </b-button>
     </div>
     <b-tooltip target="tooltip-err" variant="danger" triggers="hover">
       Klient {{ getFio(err.klient_exist) }} exist
@@ -63,14 +63,12 @@
 import mix from '@/widgets/named-input/mix.js'
 import { mapGetters, mapActions } from 'vuex'
 import EditDialog from './editor/EditDialog'
-// import { Editor, Confirm, mix } from './editor/index.js'
 import { SvgRowDown, SvgReset, SvgExclamation, SvgAddressCard } from '@/svg'
 import { toTitleCase, dateFormat, isDateValid } from '@/functions'
 export default {
   mixins: [ mix ],
   components: { SvgRowDown, SvgReset, SvgExclamation, SvgAddressCard, EditDialog },
   props: ['value', 'disabled', 'clearable'],
-  // props: { value: String, disabled: Boolean, clearable: Boolean },
   provide() {
     return { change: this.change }
   },
@@ -147,27 +145,13 @@ export default {
     getFio({ family, name, sername } = {}) {
       return `${family} ${name} ${sername}`
     },
-    showModal(title) {
-      this.$nextTick(() => {
-        this.$modal.show(Editor, { title, value: this.model._id }, { height: 'auto' })
-      })
-    },
     async edit(v) {
-      console.log(v);
-      await this.$refs['edit-dialog'].show(v)
+      const res = await this.$refs['edit-dialog'].show(v)
+      if(!res) this.clear()
     },
     // copy() {
     //   const { _id, passport } = {}
     //   this.data = {...this.data, _id, passport }
-    // },
-    // onRemove() {
-    //   const { family, deleted: description } = this.model
-    //   const t = v => this.$t(`confirm.${v}`)
-    //   const html = `<p>${t('enter')} <strong style='color: red;'>${family}</strong> ${t('to confirm')}</p>`
-    //   const action = (description, title) => this.remove({...this.model, description, title}).then(() => this.select())
-    //   const validate = (v) => family === v
-    //   const value = { title: 'remove', html, description }
-    //   this.$modal.show(Confirm, { value, action, validate })
     // },
     select({ _id } = {}) {
       if(!_id) return
@@ -183,8 +167,8 @@ export default {
       // if (Object.values(this.err).some(v => v)) return
       if (['family', 'name', 'sername', 'bithday'].some(v => !this.model[v])) return
       if (['seria', 'number', 'idn'].some(v => !this.passport[v])) return
-      const res = await this.save(this.model)
-      this.select(res)
+      const { id: _id } = await this.save(this.model)
+      this.select({ _id })
     },
     t(v) {
       return this.$t(`klient.${v}`)
@@ -194,13 +178,16 @@ export default {
 </script>
 
 <style scoped>
-.klient__editor {
+/* .klient__editor {
   width: 35px;
   display: flex;
   justify-content: flex-end;
   align-items: center;
   cursor: pointer;
 }
+.klient__editor .active {
+  background-color: blue;
+} */
 /* .klient .klient-dropdown .dropdown-menu {
   left: -130px !important;
 } */

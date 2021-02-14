@@ -50,8 +50,11 @@ export default {
   height: 30px;
   line-height: 30px;
   font-size: 14px;
-  
+  cursor: pointer;
   border: 1px solid rgba(0, 0, 0, 0.08);
+}
+.kassa-list__item:hover {
+  background-color: rgba(0, 0, 0, 0.034);
 }
 .kassa-list__item .deleted {
   color: #ad0a0afa;

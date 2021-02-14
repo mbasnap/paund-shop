@@ -20,15 +20,15 @@ const actions = {
     async save ({ dispatch }, v) {
         const {  date, user } = this.getters
         return post('klients', { ...v, date, user: user._id, type: 'klient' })
-            .then(v => dispatch('update', v))
+        //     .then(v => dispatch('update', v))
     },
     async remove ({ dispatch }, v) {
-        return get('klients', v._id)
-            .then(v => dispatch('save', {...v, deleted: true }))
+      return get('klients', v._id)
+        .then(v => dispatch('save', {...v, deleted: true }))
     },
     async update ({ getters }, {id} = {}) {       
-        await this.dispatch('update')
-        return getters.map[id]
+      await this.dispatch('update')
+      return getters.map[id]
     }
 }
 
