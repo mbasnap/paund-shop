@@ -1,87 +1,109 @@
 <template>
-<div v-if="users && users.length">
-<form>
-    <valid-input type="email" label="name" :isValid="!userErr"
-    :value="username" @input="v => onInput('username', v)">{{ userErr }}</valid-input>
-    <valid-input type="password" :label="$t('auth.password')" :isValid="!err.password"
-    :value="password" @input="v => onInput('password', v)">{{ err.password }}</valid-input>
-    <valid-input v-show="user.active && !user.password" type="password" label="confirm" :isValid="!confirmErr"
-    v-model="confirm" >{{ confirmErr }}</valid-input>
-</form>
-
-<button class="btn btn-primary mt-3" type="button" :disabled="disabled"
-@click="onLogin(user, password).catch(setErr)"> {{$t('auth.login')}}</button>
-
-<div class="mt-3">
-    <a href="#" @click="$router.push('activate')"> {{$t('auth.activate')}}</a>
-</div>
-
-</div>
+  <div class="login" v-if="users && users.length">
+    <form>
+      <valid-input
+        ref="username"
+        label="Логин"
+        @enter="onLogin"
+        :value.sync="value.username"
+        :error.sync="err.username"
+        :validate="[requred, noUser]"/>
+      <valid-input
+        ref="password"
+        type="password"
+        label="Пароль"
+        @enter="onLogin"
+        :value.sync="value.password"
+        :error.sync="err.password"
+        :validate="[requred]"/>
+      <valid-input
+        ref="confirm"
+        v-show="user.active && !user.password"
+        type="password"
+        label="confirm"
+        @enter="onLogin"
+        :value.sync="value.confirm"
+        :error.sync="err.confirm"
+        :validate="[confirmPassword]"/>
+    </form>
+    <button 
+      class="btn btn-primary mt-3"
+      type="button"
+      :disabled="disabled || loading"
+      :loading="loading"
+      @click="onLogin"
+    >{{$t('auth.login')}}</button>
+    <div class="mt-3">
+      <a href="#" @click="$router.push('activate')">{{$t('auth.activate')}}</a>
+    </div>
+  </div>
 </template>
 
 <script>
-import { testAuth } from '@/functions/db'
 import { mapActions, mapGetters } from 'vuex'
-import { isEmail, isLength } from 'validator'
 import { ValidInput } from '@/widgets/valid-input'
 export default {
-    components: { ValidInput },
-    created() {
-        this.$store.dispatch('update')
-    },
-    data() {
-        return {
-            username: '',
-            password: '',
-            confirm: '',
-            passwordErr: '',
-            err: {}
-        }
-    },
-    computed: {
-        ...mapGetters(['usersMap', 'company', 'users']),
-        user({ usersMap, username }) {
-            return {...usersMap[username] }
-        },
-        active({ user = {} }) {
-            return user.name && user.active
-        },
-        userErr({ username, company = {}, user, active }) {
-            const err = { company_not_active: !company.active, not_active: !user.active, no_found: !user.name }
-            return username ? ['company_not_active', 'no_found', 'not_active']
-                .filter(v => err[v])[0] : false
-        },
-        confirmErr({ password, confirm }) {
-            const err = { not_mached: password !== confirm }
-            return password && confirm ? ['not_mached']
-                .filter(v => err[v])[0] : false
-        },
-        mached({ user, password, confirm }) {
-            return user.password || password === confirm
-        },
-        disabled({ password, userErr, passwordErr, confirmErr }) {
-            const length = password.length > 0
-            return [ !length, userErr, passwordErr, confirmErr ]
-                .some(v => v)
-        }
-    },
-    methods: {
-        ...mapActions(['logIn', 'updatePassword' ]),
-        onLogin(user, password) {
-            return !user.password ?  this.updatePassword({ user, password })
-                : this.logIn({ user, password })                   
-        },
-        setErr(err) {
-            this.err = err
-            
-        },
-        onInput(name, value) {
-            this[name] = value
-            this.passwordErr = ''
-        }
+  components: { ValidInput },
+  created() {
+    this.$store.dispatch('update')
+  },
+  data() {
+    return {
+      value: {},
+      err: {},
+      loading: false
     }
+  },
+  computed: {
+    ...mapGetters(['usersMap', 'company', 'users']),
+    user({ usersMap, value }) {
+      return {...usersMap[value.username]}
+    },
+    disabled({ value, err }) {
+      const {length} = Object.values(err).filter(v => !!v)
+      return !(value.username && value.password && !length )
+    }
+  },
+  methods: {
+    ...mapActions(['logIn', 'updatePassword' ]),
+    async onLogin() {
+      const { user, value } = this
+      if (!this.validate()) return
+      try {
+        this.loading = true
+        !user.password ?  await this.updatePassword({ user, password: value.password })
+          : await this.logIn({ user, password: value.password })
+      } catch(err) {
+        this.err = {...this.err, ...err}
+      } finally {
+        this.loading = false
+      }   
+    },
+    validate() {
+      return !['username', 'password', 'confirm'].some(v => !this.$refs[v]._validate())
+    },
+    requred(v) {
+      return !v && 'Обязательное поле'
+    },
+    noUser() {
+      const { name, active } = this.user
+      return [
+        !name && 'Пользователь не найден',
+        !active && 'Пользаватель не активирован'
+      ].filter(v => v)[0]
+    },
+    confirmPassword() {
+      const { password } = this.user
+      return !password && this.password !== this.confirm && 'Не совпадает с паролем'
+    }
+  }
 
 }
 </script>
-
+<style scoped>
+  .login {
+    max-width: 35%;
+    margin: 10% auto;
+  }
+</style>
 

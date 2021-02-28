@@ -19,15 +19,13 @@
           </div>
         </div>                                 
       </div>        
-      <obespechenie ref="obespechenie" v-model="obespechenie"
-      @change="onChange"/>
+      <obespechenie ref="obespechenie" v-model="obespechenie" @change="onChange"/>
     </div>
     <kassa ref="kassa" class="col-4" @start="() => target = true" @end="onEnd"/>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import { Bilet, draggable, mix } from './components'
 import { summ, toNumber } from '@/functions'
 export default {
@@ -82,21 +80,19 @@ computed: {
 methods: {
   onEnd([{ toElement }, v]) {
     const { number, _id } = {}
-    const target = toElement.className === 'target'
-    this.update(target ? {...v, number, _id } : {})
+    if (toElement.className === 'target') {
+      this.bilet = {...v, number, _id }
+    }
+    this.$nextTick(() => this.target = false)
   },
   onChange({name, value}) {
-    this.update({ ...this.bilet, [name]: value })
-  },
-  update(v = {}) {
-    this.bilet = v
-    this.loading = false
-    this.target = false
+    if(this.target) return
+    this.bilet = { ...this.bilet, [name]: value }
   },
   async onSave() {
     this.loading = true
-    const res = await this.saveBilet(this.model)
-    this.update(res)
+    this.bilet = await this.saveBilet(this.model)
+    this.loading = false
   }
 }
 }

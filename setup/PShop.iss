@@ -1,6 +1,6 @@
 
 #define MyAppName "PShop"
-#define MyAppVersion "1.08"
+#define MyAppVersion "1.09"
 #define MyAppPublisher "MbaSnap"
 #define MyAppURL "mbasnap@yandex.ua"
 #define MyAppExeName "paund-shop.exe"

@@ -4,7 +4,7 @@
     <list-to class="col p-0" :value="listTo" name="list-to"
     :filters="['all', 'overdate', 'gold', 'things']"
     @end="onEndTo" @start="target = 'from'" :target="target === 'to'"
-    :actions="{ toSklad, statment: () => {} }">
+    :actions="{ toSklad, statment: () => {}, remove: () => {} }">
       <b-form-input placeholder="Поиск" type="search" v-model="searchModel"/>
     </list-to>
     <div style="width: 10px;"></div>

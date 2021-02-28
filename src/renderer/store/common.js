@@ -17,7 +17,7 @@ const getters = {
     return 'PShop'
   },
   version() {
-    return 1.09
+    return 1.10
   },
   company({ company }) {
     return company
@@ -97,7 +97,7 @@ const actions = {
     return {...user, _id: id, _rev: rev }
   },
   async logIn({ dispatch }, { password, user }) {
-    if (!await compare(password, user.password)) return
+    if (!await compare(password, user.password))  throw { password: 'Неверный пароль'}
     await dispatch('setUser', user)
     window.location.reload()
   },

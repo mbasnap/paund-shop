@@ -7,7 +7,8 @@
         :sort="false" >
             <context  v-b-toggle="`${name}${key}`"
             @action="(key) => actions[key](item)"
-            @statment="addStatment(item)">
+            @statment="addStatment(item)"
+            @remove="remove(item)">
               <div class=" row m-0" :class="{ danger: !!item.deleted }">
                 <div class="col-1 p-0">{{ item.number }}</div>
                 <div class="col-2 p-0" style="text-align: right;">{{ getDate(item) }}</div>
@@ -38,6 +39,7 @@
         </div>
       </b-collapse>
     </b-card>
+    <remove-dialog ref="remove-dialog"/>
   </div>
 </template>
 
@@ -46,9 +48,10 @@ import { mapGetters, mapActions } from 'vuex'
 import draggable from 'vuedraggable'
 import Context from '@/components/Context.vue'
 import { moment, firstChar } from '@/functions'
+import RemoveDialog from '../../kassa/components/RemoveDialog'
 export default {
   props: ['value'],
-  components: { draggable, Context },
+  components: { draggable, Context, RemoveDialog },
   inject: ['onStart', 'onEnd', 'name', 'actions'],
   data() {
       return {
@@ -90,6 +93,9 @@ export default {
       const statment = Number(days) && { date: this.date, days }
       await this.save({...this.map[_id], statment })
       this.loading = false
+    },
+    remove(v) {
+      return this.$refs['remove-dialog'].show(v)
     },
   }
 }

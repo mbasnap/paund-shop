@@ -37,14 +37,18 @@ const getters = {
     return { dt: number(dt) , ct: number(ct) }
   },
   numbers({}, { dt377, map }) {
-    return  dt377.filter(v => !v.deleted)
-      .map(v => map[v._id].number)
+    const res =  dt377.filter(v => !v.deleted )
+      .map(v => map[v._id].number + '')
+    return res
   },
   emptyNumbers({}, { numbers }, { common }) {
     const number = Number(common.company.number)
     if (!number) return []
-    return range(number, number + numbers.length)
-      .filter(v => !numbers.includes(v))
+    const res = range(number, number + numbers.length)
+    .filter(v => {
+      return !numbers.includes(v + '')
+    })
+    return res
   },
   used({}, { ct377, map }) {
     return ct377.map(v => map[v._id]).reduce((obj, v) => ({...obj, [v.ref]: v }), {})
@@ -69,7 +73,7 @@ const actions = {
       .then(v => dispatch('update', v))
   },
   remove ({ dispatch }, { _id, deleted }) {
-    const _deleted =  !deleted && this.getters.isAdmin
+    const _deleted =  deleted === 'remove' && this.getters.isAdmin
     return get('reestr', _id).then(v => dispatch('save', { ...v, deleted, _deleted }))
   },
   async update({ getters }, { id }) {

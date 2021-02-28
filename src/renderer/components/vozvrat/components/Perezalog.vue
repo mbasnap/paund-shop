@@ -26,7 +26,12 @@
       </div>
       <obespechenie v-model="obespechenie"></obespechenie>
     </div>
-    <modal-footer ok="save" :loading="loading" @ok="save" @cansel="close"/>
+    <modal-footer 
+      ok="save" 
+      :loading="loading" 
+      @ok="save" 
+      :disabled="disabled" 
+      @cansel="close"/>
   </b-modal>
 </template>
 
@@ -50,11 +55,13 @@ export default {
   }),
 
   computed: {
+    ...mapGetters({ emptyNumbers: 'reestr/emptyNumbers' }),
     model: {
       get({ data, value, total }) {
         const pay = toNumber(data.pay) * -1
         const ocenca = summ(total, pay)
-        return {...value, ...data, ocenca }
+        const number = data.number || this.emptyNumbers[0]
+        return {...value, ...data, ocenca, number }
       },
       set(v) {
         this.data = { ...this.data, ...v }
@@ -67,6 +74,10 @@ export default {
       set(obespechenie) {
         this.data = { ...this.data, obespechenie }
       }
+    },
+    disabled({ model }) {
+      const sameNumber = this.value.number === model.number
+      return !Number(model.number) || sameNumber
     },
     err({ model, ocenca }) {
       return {

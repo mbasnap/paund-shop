@@ -1,65 +1,67 @@
 <template>
-    <div class="form-group">
-
-        <label >{{label}}</label>
-
-        <input class="form-control"
-        :autocomplete="autocomplete"
-        v-model="model" 
-        :type="type"
-        :autofocus="autofocus"
-        v-bind:class="className"
-        :placeholder="placeholder">
-
-        <div class="invalid-feedback" >
-            <slot></slot>
-        </div>
-    </div>    
+  <div class="form-group">
+    <label>{{label}}</label>
+    <input
+      ref="input"
+      class="form-control"
+      v-on:keyup.enter="$emit('enter')"
+      :autocomplete="autocomplete"
+      v-model="model" 
+      :type="type"
+      :autofocus="autofocus"
+      :class="error ? 'is-invalid' : isValid "
+      :placeholder="placeholder">
+    <div class="invalid-feedback">
+      <slot>{{ error }}</slot>
+    </div>
+  </div>
 </template>
 
 <script>
-import Input from './model'
 export default {
-props: {
-    label: '',
-    type: '',
-    placeholder: '',
-    autofocus: false,
-    isValid: true,
-    autocomplete: '',
-    value: ''
-},
-data(){
-    return {
-        // value: ''
-    }
-},
+  props: ['label', 'type', 'placeholder', 'autofocus', 'autocomplete', 'value', 'validate', 'error'],
+  // props: {
+  //   label: '',
+  //   type: '',
+  //   placeholder: '',
+  //   autofocus: false,
+  //   isValid: true,
+  //   autocomplete: '',
+  //   value: '',
+  //   validate: []
+  // },
 
-computed: {
+  computed: {
     model: {
-        get(){
-            return this.value
-        },
-        set(value){
-            // this.value = value
-            this.$emit('input', value)
-        }
+      get(){
+        return this.value
+      },
+      set(value){
+        this.$emit('update:value', value)
+        this.$nextTick(() => {
+          const err = !this._validate()
+          if(!err) this.$emit('update:error', false)
+        })
+      }
     },
-    className(){
-        return !this.isValid ? 'is-invalid' 
-                    : this.value ? 'is-valid' : ''
+    isValid({ value }){
+      return value ? 'is-valid' : ''
     }
-
-},
-methods: {
-
+  },
+  methods: {
+    _validate() {
+      return !(this.validate || []).some(func => {
+        const err = func(this.value)
+        this.$emit('update:error', err)
+        this.$refs['input'].focus()
+        return !!err
+      })
+    }
+  }
 }
-}
-
 </script>
-
 <style scoped>
-.form-group {
+  .form-group {
     height: 75px;
-}
+  }
 </style>

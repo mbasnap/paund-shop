@@ -147,7 +147,7 @@ export default {
     menu: {
       'vidacha': 'Выдача',
       'vozvrat': 'Возврат',
-      'sklad': 'Склад',
+      'sklad': 'Реестр',
     },
     obespechenie: {
       'title': 'Наименование',

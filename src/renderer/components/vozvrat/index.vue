@@ -36,7 +36,7 @@
 <script>
 import BiletNumber from '@/components/Number'
 import { Bilet, Perezalog, mix } from './components'
-import { moment, toDouble } from '@/functions'
+import { moment } from '@/functions'
 export default {
 components: { BiletNumber, Bilet, Perezalog },
 mixins: [ mix ],
@@ -50,11 +50,15 @@ data() {
 },
 computed: {
   numbers({ empty, date, reestrMap }) {   
-    return Object.values(empty)
+    const res = Object.values(empty)
       .filter(v => moment(v.date).isSameOrBefore(date, 'date'))
         .map(v => reestrMap[v._id])
-          .filter(({ deleted, number }) => 
-            !deleted && !this.number || (number + '').includes(this.number + ''))
+          .filter(({ deleted, number }) => {
+            if(deleted) return false
+            return !this.number || (number + '')
+              .includes(this.number + '')
+          })
+    return res
   },
   bilet: {
     get({ biletId, reestrMap, number }) {
@@ -95,7 +99,7 @@ methods: {
     const { show, close } = this.$refs['perezalog']
     const value = await show(total)
     await this.saveBilet(this.model)
-    await this.saveBilet({...value, _id: undefined, _rev: undefined})
+    await this.saveBilet({...value, date: this.date, _id: undefined})
     close()
   }
 }

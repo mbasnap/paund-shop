@@ -1,7 +1,9 @@
 <template>
   <component :is="teg || 'div'" class="context"
+  @mouseleave="close()"
   @click="$emit('click')"
-  @contextmenu.prevent="onContext($event)" @mouseleave="close()">
+  @contextmenu.prevent="onContext($event)" 
+  >
     <slot ></slot>
     <vue-context ref="context"  class="vue-context" >
        <!-- @mouseleave="close()" -->
@@ -69,8 +71,10 @@ methods: {
   box-sizing: border-box;
 }
 .v-context > li {
-
   margin: 0;
+}
+.v-context > li:hover {
+   background: #dedbdb40;
 }
 .v-context > li > a {
   display: block;
