@@ -20,17 +20,6 @@
 <script>
 export default {
   props: ['label', 'type', 'placeholder', 'autofocus', 'autocomplete', 'value', 'validate', 'error'],
-  // props: {
-  //   label: '',
-  //   type: '',
-  //   placeholder: '',
-  //   autofocus: false,
-  //   isValid: true,
-  //   autocomplete: '',
-  //   value: '',
-  //   validate: []
-  // },
-
   computed: {
     model: {
       get(){
@@ -50,7 +39,8 @@ export default {
   },
   methods: {
     _validate() {
-      return !(this.validate || []).some(func => {
+      return !(this.validate || []).filter(func => !!func)
+      .some(func => {
         const err = func(this.value)
         this.$emit('update:error', err)
         this.$refs['input'].focus()

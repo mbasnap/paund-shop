@@ -17,13 +17,13 @@ const getters = {
     return 'PShop'
   },
   version() {
-    return 1.10
+    return 1.11
   },
   company({ company }) {
     return company
   },
-  user({ user }) {
-    return user
+  user({ user }, { usersMap }) {
+    return user && usersMap[user.name]
   },
   users({ users }) {
     return users
@@ -81,14 +81,16 @@ const actions = {
     return user
   },
 
-  loginAdmin({}, password) {
-    return testAuth(password).then(() => {
-        localStorage.setItem('admin', password)
-    }).catch(err => {
-        console.error(err);
-    })
+  async loginAdmin({}, {url, password}) {
+    try {
+      await testAuth(url, password)
+      localStorage.setItem('admin', password)
+    } catch ({ message }) {
+      localStorage.removeItem('admin')
+      throw { password: message }
+    }
   },
-  async updatePassword({ dispatch }, { user, password } ) {
+  async updatePassword({ dispatch }, {user, password} ) {
     return post('users', {...user, password: await hash(password) })
       .then(() => dispatch('logOut'))
   },

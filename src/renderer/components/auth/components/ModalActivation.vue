@@ -1,47 +1,60 @@
 <template>
-<div class="modal-content">
-    <div class="modal-header">
-    <button type="button" class="close" @click="close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-    </div>
+  <b-modal v-model="modal" content-class="activate-dialog" :hide-footer="true" :title="title">
     <div class="modal-body">
-      <div v-for="({ key, info, error }, i) in test" :key="i">
-        <span v-for="(v, i) in [key, info, error]" :key="i" class="mr-2" >{{ v }}</span>
-      </div>
+      <b-table 
+      hover 
+      :items="items" 
+      :fields="fields" 
+      small
+      :busy="loading === true">
+      <template #cell(action)="{item}">
+        <b-button 
+          v-if="item.action"
+          size="sm" 
+          @click="action(item)" 
+          :disabled="loading === item.action" 
+          class="mr-2">
+            <b-spinner v-if="loading === item.action" small/>
+            <span v-else>{{ item.action }}</span>
+        </b-button>
+      </template>
+      </b-table>
     </div>
-    <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" @click="close">{{ t('cansel') }}</button>
-    <button type="button" class="btn btn-primary" 
-    @click="activate(token)">{{$t('auth.activate')}}</button>
-    </div>
-</div>
+    <modal-footer ok="save" :loading="loading === true" @ok="resolve" @cansel="close" :disabled="loading"/>
+  </b-modal>
 </template>
 
 <script>
+import ModalFooter from '@/widgets/ModalFooter'
 import { dbsList, replicate, destroy } from '@/functions/db'
 export default {
-props: ['token'],
+components: { ModalFooter },
 data: () => ({
-  test: []
+  title: '',
+  modal: false,
+  resolve: () => {},
+  loading: false,
+  fields: ['key', 'info', 'action'],
+  items: []
 }),
-computed: {
-  map({ test }) {
-    return Object.values(test).reduce((cur, v) => ({...cur, [v.key]: v}), {})
-  }
-},
-async created() {
-  const test = ['remote', 'local', 'sync_local', 'clear_local', 'clear_storage' ]
-  try {
-    for (const key of test) {
-      const { info, error } = await this[`test_${key}`](this.token)
-      this.test.push({ key, info, error })
-    }
-  } catch(err) {
-    console.error(err)
-  }
-},
+computed: {},
+
 methods: {
+  async show(token, password) {
+    const { company, lombard } = token
+    this.items = []
+    this.title = `${company} ${lombard}`
+    this.modal = true
+    this.loading = true
+    this.items = await Promise.all(['remote', 'local'].map(async (key) => {
+      return { key, ...await this[`test_${key}`](token, password)}
+    }))
+    this.loading = false
+    return new Promise(resolve => this.resolve = resolve)
+  },
+  close() {
+    this.modal = false
+  },
   t(name) {
     return this.$t(`btn.${name}`)
   },
@@ -51,70 +64,60 @@ methods: {
   close () {
     this.$emit('close')
   },
-  activate({ lombard, company, remote, local }) {
-    localStorage.setItem('lombard', lombard)
-    localStorage.setItem('company', company)
-    localStorage.setItem('remote', remote)
-    localStorage.setItem('local', local)
-    window.location.reload()
-  },
-  async test_remote({ company, remote }) {
+
+  async test_remote(token, password) {
+    const { company, remote } = token
     try {
-      const { data } = await dbsList(remote)
-      const info = data.includes(company) && 'ok'
+      const { data } = await dbsList(remote, password)
+      const info = data.includes(company) && remote
       if (!info) throw { message: 'company not defined' }
-      return { info }
+      return { info, action: 'sync', props: {...token, password} }
     } catch ({ message }) {
-      return { error: message }
+      return { info: message, _cellVariants: { info: 'danger' } }
     }
   },
-  async test_local({ local }) {
+  async test_local(token, password) {
+    const { local } = token
     try {
-      await dbsList(local)
-      return { info: 'ok' }
+      await dbsList(local, password)
+      return { info: local, action: 'clear', props: {...token, password} }
     } catch ({ message }) {
-      return { error: message }
+      return { error: message, _cellVariants: { info: 'danger' } }
     }
   },
-  async test_sync_local() {
-    const local = localStorage.getItem('local')
+  action({ action, props }) {
+    return this[action](props)
+  },
+  async sync({ local: url, remote, company, password }) {
+    this.loading = 'sync'
     try {
-      const { error } = this.test.find(v => v.key === 'remote')
-      if (error) throw { message: error }
-      const { data } = await dbsList(local)
-      await Promise.all(data.map(replicate))
-      return { info: 'ok' }
+      const { data } = await dbsList(url, password)
+      await Promise.all(data.map(db => replicate(db, url, password, `${remote}/${company}`)))
     } catch({ message }) {
+      console.error(message);
       return { error: message }
+    } finally {
+      this.loading = false
     }
   },
-  async test_clear_local() {
-    const local = localStorage.getItem('local')
+  async clear({ local, password }) {
+    this.loading = 'clear'
     try {
-      const { error } = this.test.find(v => v.key === 'remote')
-      if (error) throw { message: error }
-      const { data } = await dbsList(local)
+      const { data } = await dbsList(local, password)
       await Promise.all(data.map(destroy))
-      return { info: 'ok' }
     } catch({ message }) {
+      console.error(message);
       return { error: message }
-    }
-  },
-  test_clear_storage() {
-    const local = localStorage.getItem('local')
-    try {
-      ['remote', 'local', 'company', 'lombard'].forEach(v => {
-        localStorage.removeItem(v)
-      })
-      return { info: 'ok' }
-    } catch({ message }) {
-      return { error: message }
-    }
+    } finally {
+      this.loading = false
+    }   
   }
 }
 }
 </script>
 
 <style>
-
+ .success {
+   color: rgb(78, 151, 4);
+ }
 </style>

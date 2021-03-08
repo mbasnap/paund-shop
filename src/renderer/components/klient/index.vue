@@ -178,18 +178,6 @@ export default {
 </script>
 
 <style scoped>
-/* .klient__editor {
-  width: 35px;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  cursor: pointer;
-}
-.klient__editor .active {
-  background-color: blue;
-} */
-/* .klient .klient-dropdown .dropdown-menu {
-  left: -130px !important;
-} */
+
 
 </style>

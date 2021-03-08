@@ -1,7 +1,7 @@
 <template>
-  <div class="tabcontent">
+  <div class="questionn-aire tabcontent px-2">
     <div class="form-group row m-0 mb-2" v-for="item in Object.keys(items)" :key="item">
-      <label class="col-sm-4 col-form-label">{{ t(item) }}</label>
+      <label class="col-sm-4 col-form-label px-0">{{ t(item) }}</label>
       <select class="col form-control" :value="model[item]" :name="item"
       @change="select($event.target)">
         <option v-for="v in items[item]" :key="v" :value="v">{{ t(v) }}</option>
@@ -62,6 +62,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+  .questionn-aire >>> .col-form-label{
+    font-size: 13px;
+  }
 </style>

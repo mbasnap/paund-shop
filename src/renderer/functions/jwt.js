@@ -8,6 +8,7 @@ const  verify = token => {
   })
 }
 const compare = (v1, v2) => {
+  if(!v2) return true
   return bcrypt.compare(v1, v2)
 }
 const  decode = token => {

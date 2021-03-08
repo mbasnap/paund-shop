@@ -57,15 +57,5 @@ methods: {
 </script>
 
 <style>
-.modal-header button.close {
-    text-align: right;
-    padding-right: 30px;
-}
-.modal-content {
-    height: -webkit-fill-available;
-}
-.modal-body {
-    max-height: 400px;
-    overflow: auto;
-}
+
 </style>

@@ -2,18 +2,19 @@
 import PouchDB from 'pouchdb-browser'
 import { store } from '@/setup'
 import axios from 'axios'
-const auth = { username: 'admin', password: localStorage.getItem('admin') }
+const admin = { username: 'admin', password: localStorage.getItem('admin') }
 
-const local = (name, url = localStorage.getItem('local')) => {
+const local = (name, url = localStorage.getItem('local'), auth = admin) => {
   const local = name ? `${url}/${name}` : url
   return local && new PouchDB(local, { auth })
 }
-const conn = (url, name, auth) => {
+const conn = (url, name, auth = admin) => {
   const conn = name ? `${url}/${name}` : url
   return conn && new PouchDB(conn, { auth })
 }
 
-const dbsList = (url) => {
+const dbsList = (url, password) => {
+  const auth = {...admin, password }
   return axios.get(`${url}/_all_dbs`, { auth });
 }
 
@@ -33,8 +34,9 @@ const sync = (db, params) => {
   return db
 }
 
-const replicate = (name) => {
-  return local(name).replicate.to(new PouchDB(remote))
+const replicate = (name, url, password, remote) => {
+  const auth = {...admin, password }
+  return local(name, url, auth).replicate.to(new PouchDB(remote))
 }
 
 
@@ -67,13 +69,14 @@ const get = async (name, id) => {
     : db[name].allDocs({ include_docs: true })
       .then(({ rows }) => rows.map(v => v.doc))
   }).catch(err => {
-    console.log(err);
+    console.error(err);
     // store.dispatch('logOut', status === 404)
   })
 }
 
-const testAuth = (password = localStorage.getItem('admin')) => {
-  return local('users', password).info()
+const testAuth = (url, password = localStorage.getItem('admin')) => {
+  const auth = {...admin, password }
+  return local('users', url, auth).info()
 }
  
 export {

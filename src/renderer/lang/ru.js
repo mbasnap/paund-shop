@@ -260,6 +260,7 @@ export default {
       email_already_exists: 'Пользователь с таким именем существует',
       incorrect_email: 'Не верный email',
       password: 'Пароль',
+      confirm: "Повторите",
       incorrect_password: 'Не верный пароль',
       enter_password: 'Пароль',
       remind_me_password: 'Напомнить пароль',

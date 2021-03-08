@@ -20,10 +20,13 @@
         :value="{ xDisc }" :options="discounts"/>
       </div>
       <div class="input-group mb-2">
-        <input :class="['form-control col', { 'is-invalid': err.ocenca_over }]"
+        <input id="ocenca" :class="['form-control col', { 'is-invalid': err.ocenca_over }]"
         :disabled="disabled" :value="ocenca" name="ocenca" @input="({ target }) => input(target)"
         @change="input({name: 'ocenca', value: toDouble(ocenca)})"
         />
+        <b-tooltip v-show="err.ocenca_over" target="ocenca" triggers="hover" right variant="danger">
+          I am tooltip <b>component</b> content!
+        </b-tooltip>
         <input v-if="editMode" class="input-group-append form-control col-5 mr-1"
           style="color: red; font-weight: bold; margin-left: 1px;" 
           @change="({target}) => this.$emit('change', { name: 'pay', value: toNumber(target.value) * -1 })"

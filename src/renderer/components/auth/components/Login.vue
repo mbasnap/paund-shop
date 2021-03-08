@@ -4,7 +4,7 @@
       <valid-input
         ref="username"
         label="Логин"
-        @enter="onLogin"
+        @enter="onLogin(user)"
         :value.sync="value.username"
         :error.sync="err.username"
         :validate="[requred, noUser]"/>
@@ -12,7 +12,7 @@
         ref="password"
         type="password"
         label="Пароль"
-        @enter="onLogin"
+        @enter="onLogin(user)"
         :value.sync="value.password"
         :error.sync="err.password"
         :validate="[requred]"/>
@@ -20,8 +20,8 @@
         ref="confirm"
         v-show="user.active && !user.password"
         type="password"
-        label="confirm"
-        @enter="onLogin"
+        :label="$t('auth.confirm')"
+        @enter="onLogin(user)"
         :value.sync="value.confirm"
         :error.sync="err.confirm"
         :validate="[confirmPassword]"/>
@@ -31,7 +31,7 @@
       type="button"
       :disabled="disabled || loading"
       :loading="loading"
-      @click="onLogin"
+      @click="onLogin(user)"
     >{{$t('auth.login')}}</button>
     <div class="mt-3">
       <a href="#" @click="$router.push('activate')">{{$t('auth.activate')}}</a>
@@ -66,31 +66,25 @@ export default {
   },
   methods: {
     ...mapActions(['logIn', 'updatePassword' ]),
-    async onLogin() {
-      const { user, value } = this
-      if (!this.validate()) return
+    async onLogin(user) {
+      if (['username', 'password', 'confirm'].some(v => !this.$refs[v]._validate())) return
       try {
         this.loading = true
-        !user.password ?  await this.updatePassword({ user, password: value.password })
-          : await this.logIn({ user, password: value.password })
+        if (!user.password)  await this.updatePassword({ user, password: this.value.password })
+        await this.logIn({ user, password: this.value.password })
       } catch(err) {
         this.err = {...this.err, ...err}
       } finally {
         this.loading = false
-      }   
-    },
-    validate() {
-      return !['username', 'password', 'confirm'].some(v => !this.$refs[v]._validate())
+      }
     },
     requred(v) {
       return !v && 'Обязательное поле'
     },
     noUser() {
       const { name, active } = this.user
-      return [
-        !name && 'Пользователь не найден',
-        !active && 'Пользаватель не активирован'
-      ].filter(v => v)[0]
+      return [!name && 'Пользователь не найден', !active && 'Пользаватель не активирован']
+        .filter(v => v)[0]
     },
     confirmPassword() {
       const { password } = this.user

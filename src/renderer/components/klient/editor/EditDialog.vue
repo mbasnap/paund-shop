@@ -1,32 +1,32 @@
 <template>
   <b-modal v-model="modal" 
-  height="auto"
   content-class="edit-dialog" 
   :hide-footer="true" 
-  :hide-header="true" 
   size="lg">
     <template #modal-header="{ close }">
 
-      <b-row>
-        <b-col>
-          <b-button variant="outline-danger" size="sm" class="mb-2" @click="remove">
-            <b-icon icon="trash" aria-hidden="true"></b-icon>
-          </b-button>
-        </b-col>
-        <b-col cols="1">
-          <b-button variant="outline-secondary" size="sm" class="mb-2" @click="print">
-            <b-icon icon="printer" aria-hidden="true"></b-icon>
-          </b-button>
-        </b-col>
-        <b-col cols="1">
-          <button type="button" 
-          class="close" aria-label="Close" 
-          style="outline: none;"
-          @click="close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </b-col>
-      </b-row>
+      <div class="row" style="width: 100%">
+        <div class="col">
+          <h3>{{ fio.family + ' ' + fio.name + ' ' + fio.sername  }}</h3>
+        </div>
+        <div class="col-4 p-0">
+          <div class="row">
+            <b-button class="mx-2" variant="outline-danger"  @click="remove">
+              <b-icon icon="trash" aria-hidden="true"></b-icon>
+            </b-button>
+            <b-button class="mx-2" variant="outline-secondary"  @click="print">
+              <b-icon icon="printer" aria-hidden="true"></b-icon>
+            </b-button>
+            <button 
+            type="button" 
+            class="close" 
+            style="outline: none;"
+            @click="close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        </div>
+      </div>
     </template>
     <div class="tabs" >
       <a v-for="(item, i) in ['fio', 'passport', 'address', 'questionnaire']" :key="i" 
@@ -173,10 +173,11 @@ export default {
 }
 </script>
 
-<style >
+<style scoped>
  .edit-dialog {
     max-height: none;
-    height: 600px;
-    width: 600px !important;
+    /* height: 600px; */
+    width: 800px !important;
 }
+
 </style>
