@@ -104,7 +104,7 @@ export default {
 </script>
 
 <style >
- .order-dialog {
-    height: auto;
-}
+  .order-dialog {
+    height: auto !important;
+  }
 </style>

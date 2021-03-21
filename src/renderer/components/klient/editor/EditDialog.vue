@@ -11,7 +11,7 @@
         </div>
         <div class="col-4 p-0">
           <div class="row">
-            <b-button class="mx-2" variant="outline-danger"  @click="remove">
+            <b-button class="mx-2" variant="outline-danger"  @click="$emit('remove')">
               <b-icon icon="trash" aria-hidden="true"></b-icon>
             </b-button>
             <b-button class="mx-2" variant="outline-secondary"  @click="print">
@@ -46,7 +46,6 @@
       <questionn-aire ref="questionn-aire" v-show="activetab === 'questionnaire'"
       v-model="questionnaire"/>
     </div>
-    <remove-dialog ref="remove-dialog"/>
   </b-modal>
 
 </template>
@@ -58,9 +57,8 @@ import { toTitleCase, dateFormat, isDateValid } from '@/functions'
 import KlientReport from '@/zvit/klient'
 import TabContent from './TabContent'
 import QuestionnAire from './QuestionnAire'
-import RemoveDialog from './RemoveDialog'
 export default {
-  components: { ModalEditor, TabContent, QuestionnAire, RemoveDialog },
+  components: { ModalEditor, TabContent, QuestionnAire },
   provide() {
     return { onChange: this.onChange }
   },
@@ -152,11 +150,7 @@ export default {
       this.close()
       this.$modal.show(KlientReport, { value }, { width: '850', height: '500'})            
     },
-    async remove() {
-      await this.$refs['remove-dialog'].show(this.fio)
-      this.modal = false
-      this.resolve()
-    },
+
     show(v = {}) {
       this.value = v
       this.modal = true
@@ -176,7 +170,6 @@ export default {
 <style scoped>
  .edit-dialog {
     max-height: none;
-    /* height: 600px; */
     width: 800px !important;
 }
 

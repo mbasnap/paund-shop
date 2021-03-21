@@ -1,6 +1,4 @@
 <template>
-  <!-- @mouseleave="close" -->
-      <!-- :value="format ? format(value[name]) : value[name]" -->
   <div class="suggest dropdown" @mouseleave="close" >
     <slot></slot>
     <textarea class="named-input editor" ref="editor"
@@ -15,7 +13,8 @@
       @keydown.esc.prevent="highlight(-1)"/>
       
     <ul :class="[ 'options dropdown-menu m-0', { 'show': options.length && index >= 0 }]">
-      <li v-for="(item, key) in options" :key="key" v-show="!show || show(key)" :class="['pl-1', { highlight: key === index}]"            
+      <li v-for="(item, key) in options" :key="key" v-show="!show || show(key)" 
+      :class="['pl-1', { highlight: key === index, deleted: !!item.deleted}]"            
        @click="select(item, key)">
         <div class="pl-3">{{ getSuggest(item) }}</div>
       </li>
@@ -91,14 +90,12 @@ export default {
   overflow-x: hidden;
 }
 .suggest .dropdown-menu {
-  max-height: calc(30vh);
+  max-height: calc(50vh);
   overflow: auto;
 }
 
 .suggest .options li {
-  max-width: 250px;
   white-space: nowrap;
-  text-overflow: ellipsis;
   cursor: pointer;
 } 
 .suggest .options li:hover {

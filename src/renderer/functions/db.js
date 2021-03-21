@@ -29,7 +29,7 @@ const sync = (db, params) => {
     .on('change', async () => {
       store.dispatch('update')
     })
-    .on('error', err => console.log(err))
+    .on('error', err => console.error(err))
   } catch (err) {}
   return db
 }

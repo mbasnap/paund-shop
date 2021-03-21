@@ -34,28 +34,24 @@
           <svg-row-down v-show="passports.length > 0" class="reset"
           @click="$refs['passport'].highlight(0, true)"/>
           </suggest>
-          <div v-show="err.klient_exist" id="tooltip-err" class="border-0 form-control col-1">
-            <svg-exclamation  width="8px;" @click="select(err.klient_exist)"/>
-          </div>
         </div>
       </div>
     </div>
     <div class="form-row">
     <named-input ref="idn" class="form-control col" name="idn"
     :placeholder="t('idn')" v-model="passport"/>
-    <b-button size="sm" class="ml-2  col-2" 
-    :disabled="!model._id"
+    <b-button size="sm" class="ml-2  col-2"
+    :disabled="!valid"
     @click="edit(model)"
     width="30px"
     style="max-width: 43px; margin-right: 5px;"
-    :variant="model._id ? 'outline-primary' : 'outline'">
-      <b-icon icon="person-circle" aria-hidden="true"></b-icon>
+    :variant="readonly && !valid && 'outline' || warning && 'outline-warning' || success && 'outline-success'">
+      <b-spinner v-if="load" small></b-spinner>
+      <b-icon v-else icon="person-circle" aria-hidden="true"/>
     </b-button>
     </div>
-    <b-tooltip target="tooltip-err" variant="danger" triggers="hover">
-      Klient {{ getFio(err.klient_exist) }} exist
-    </b-tooltip>
-    <edit-dialog ref="edit-dialog"/>
+    <edit-dialog ref="edit-dialog" @remove="() => removeKlient(model)"/>
+    <remove-dialog :value="model.family" ref="remove-dialog"/>
   </div>
 </template>
 
@@ -63,24 +59,27 @@
 import mix from '@/widgets/named-input/mix.js'
 import { mapGetters, mapActions } from 'vuex'
 import EditDialog from './editor/EditDialog'
+import RemoveDialog from './editor/RemoveDialog'
 import { SvgRowDown, SvgReset, SvgExclamation, SvgAddressCard } from '@/svg'
 import { toTitleCase, dateFormat, isDateValid } from '@/functions'
 export default {
   mixins: [ mix ],
-  components: { SvgRowDown, SvgReset, SvgExclamation, SvgAddressCard, EditDialog },
-  props: ['value', 'disabled', 'clearable'],
+  components: { SvgRowDown, SvgReset, SvgExclamation, SvgAddressCard, EditDialog, RemoveDialog },
+  props: ['value', 'clearable', 'disabled' ],
   provide() {
     return { change: this.change }
   },
   data() {
     return {
+      load: false,
       data: {},
     }
   },
   computed: {
     ...mapGetters('klient', ['map', 'docs']),
     group({ docs }) {
-      return docs.filter(({ deleted }) => !deleted)
+      return docs
+        .filter(({ _deleted }) => !_deleted)
     .reduce((cur, v) => {
       const id =  this.getKey(v)
       return {...cur, [id]: [...(cur[id] || []), v]}
@@ -115,14 +114,29 @@ export default {
       }
     },
     passportsMap({ model, docs }) {
-      return docs.filter(v => v._id !== model._id)
+      return docs.filter(v => !v.deleted && v._id !== model._id)
         .reduce((cur, v) => ({...cur, [this.passportId(v.passport)]: v }), {})
     },
-    err({ model, passport }) {
+    err({ model }) {
       return {
-        bithday: model.bithday && !isDateValid(model.bithday),
-        klient_exist: this.passportsMap[this.passportId(passport)]
+        bithday: model.bithday && !isDateValid(model.bithday)
       }
+    },
+    valid() {
+      if (['family', 'name', 'sername'].some(v => !this.model[v])) return false
+      if (['seria', 'number'].some(v => !this.passport[v])) return false
+      return true
+    },
+    warning() {
+      const { passport = {}, address = {} } = this.model
+      return this.valid && 
+      // !!this.model._id &&
+        ['bithday'].some(v => !this.model[v]) ||
+        ['issued', 'date-issue', 'idn'].some(v => !passport[v]) ||
+        ['city', 'home'].some(v => !address[v])
+    },
+    success() {
+      return this.model._id && !this.warning
     }
   },
   methods: { 
@@ -145,30 +159,34 @@ export default {
     getFio({ family, name, sername } = {}) {
       return `${family} ${name} ${sername}`
     },
-    async edit(v) {
-      const res = await this.$refs['edit-dialog'].show(v)
-      if(!res) this.clear()
+    async edit() {
+      const passport = this.passportId(this.passport)
+      const model = this.passportsMap[passport] || this.model
+      const klient = !model._id ? await this.saveKlient() : model
+      this.$refs['edit-dialog'].show(klient)
     },
-    // copy() {
-    //   const { _id, passport } = {}
-    //   this.data = {...this.data, _id, passport }
-    // },
-    select({ _id } = {}) {
-      if(!_id) return
+    select(klient) {
       this.data = {}
-      this.$emit('input', _id)
+      this.$emit('input', klient._id)
+      this.load = false
+      return klient
     },
     clear() {
       this.data = {}
       this.$refs['klients'].highlight(-1)
       this.$emit('input', '')
+      this.load = false
     },
-    async change() {
-      // if (Object.values(this.err).some(v => v)) return
-      if (['family', 'name', 'sername', 'bithday'].some(v => !this.model[v])) return
-      if (['seria', 'number', 'idn'].some(v => !this.passport[v])) return
-      const { id: _id } = await this.save(this.model)
-      this.select({ _id })
+    async saveKlient() {
+      this.load = true
+      const klient = await this.save(this.model)
+      return this.select(klient)
+    },
+    async removeKlient({ _id }) {
+      const deleted = await this.$refs['remove-dialog'].show()
+      await this.remove({ _id, deleted })
+      for (const key of ['edit-dialog', 'remove-dialog']) this.$refs[key].close()
+      this.clear()
     },
     t(v) {
       return this.$t(`klient.${v}`)
@@ -178,6 +196,14 @@ export default {
 </script>
 
 <style scoped>
-
+.klient >>> .btn-outline-warning:hover {
+  color: #fff !important;
+}
+.klient >>> .btn-outline-warning:active {
+  color: #fff !important;
+}
+.klient >>> .deleted {
+  color: red;
+}
 
 </style>

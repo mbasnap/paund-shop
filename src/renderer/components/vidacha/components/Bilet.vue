@@ -24,9 +24,6 @@
         :disabled="disabled" :value="ocenca" name="ocenca" @input="({ target }) => input(target)"
         @change="input({name: 'ocenca', value: toDouble(ocenca)})"
         />
-        <b-tooltip v-show="err.ocenca_over" target="ocenca" triggers="hover" right variant="danger">
-          I am tooltip <b>component</b> content!
-        </b-tooltip>
         <input v-if="editMode" class="input-group-append form-control col-5 mr-1"
           style="color: red; font-weight: bold; margin-left: 1px;" 
           @change="({target}) => this.$emit('change', { name: 'pay', value: toNumber(target.value) * -1 })"
@@ -138,11 +135,6 @@ methods: { toDouble, toNumber,
 </script>
 
 <style >
-/* @media (max-width:950px){
-    .number__label{
-        display: none;
-    }
-} */
 .bilet .form-control:focus  {
 border-color: rgba(56, 61, 65, 0.22);
 box-shadow: none;
@@ -150,5 +142,4 @@ box-shadow: none;
 .bilet input[disabled] {
   background-color: initial;
 }
-
 </style>

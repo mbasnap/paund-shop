@@ -1,10 +1,11 @@
 <template>
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" @click="$emit('cansel')">{{ t('cansel') }}</button>
-    <div class="d-flex justify-content-center" style="width: 100px;">
-      <b-spinner v-if="loading"  variant="primary"></b-spinner>
-      <button v-else type="button" class="btn btn-primary" :disabled="disabled"
-      @click="$emit('ok')" >{{ t(ok) }}</button>
+    <div class="d-flex justify-content-center">
+      <button type="button" class="btn btn-primary" :disabled="disabled" @click="$emit('ok')" >
+        <span>{{ t(ok) }}</span>
+        <b-spinner v-show="loading" small  />
+      </button>
     </div>
   </div>
 </template>
@@ -14,7 +15,7 @@ export default {
   props: ['disabled', 'loading', 'ok', 'loading'],
   methods: {
     t(v) {
-        return this.$t(`btn.${v}`)
+      return this.$t(`btn.${v}`)
     }    
   }
 }
