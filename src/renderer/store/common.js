@@ -17,7 +17,7 @@ const getters = {
     return 'PShop'
   },
   version() {
-    return 1.12
+    return 1.14
   },
   company({ company }) {
     return company

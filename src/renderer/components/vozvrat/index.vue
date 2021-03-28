@@ -1,7 +1,7 @@
 <template>
   <div class="vozvrat row flex-fill  pt-3">
     <div class="col-8">
-      <div class="row" style="height: 300px">
+      <div class="row mb-3">
         <klient ref="klient" class="col" v-model="klient" :disabled="true"/>
         <div class="vozvrat__bilet col">
           <bilet-number 

@@ -7,8 +7,8 @@
     <slot ></slot>
     <vue-context ref="context"  class="vue-context" >
        <!-- @mouseleave="close()" -->
-      <li v-for="action in model" :key="action" 
-      class="pl-2" @click="onAction(action)"> {{ $t(`context.${action}`) }}
+      <li v-for="action in model" :key="action"
+      :class="['pl-2', { disabled: disabled && disabled[action]}]" @click="onAction(action)"> {{ $t(`context.${action}`) }}
       </li>
     </vue-context>   
   </component>
@@ -34,7 +34,6 @@ computed: {
 },
 methods: {
     open(e, v) {
-      // console.log(v);
         this.context.open(e, v)
         return this
     },
@@ -43,10 +42,11 @@ methods: {
           || this.context.close()
     },
     onContext(e) {
-      if (!this.disabled)
+      // if (!this.disabled)
       this.$emit('context', this.open(e))
     },
     onAction(action) {
+      if (this.disabled && this.disabled[action]) return
       this.$emit('action', action)
       this.$emit(action)
     }
@@ -97,8 +97,10 @@ methods: {
 .v-context:focus {
   outline: 0;
 }
-
 .context  ul li {
-    cursor: pointer;
+  cursor: pointer;
+}
+.context  ul li.disabled  {
+  color: rgba(77, 75, 75, 0.705);
 }
 </style>

@@ -52,7 +52,8 @@ data: () => ({
 computed: {
   ...mapGetters({ company: 'company', emptyNumbers: 'reestr/emptyNumbers' }),
   number({ value, emptyNumbers }) {
-    return value.number || emptyNumbers[0]
+    if(value.number === undefined) return emptyNumbers[0]
+    else return value.number
   },
   biletNumber: {
     get({ number }) {

@@ -1,5 +1,5 @@
 <template>
-  <div class="suggest dropdown" @mouseleave="close" >
+  <div class="suggest dropdown" @mouseleave="close">
     <slot></slot>
     <textarea class="named-input editor" ref="editor"
       :readonly="readonly() || disabled"
@@ -14,7 +14,7 @@
       
     <ul :class="[ 'options dropdown-menu m-0', { 'show': options.length && index >= 0 }]">
       <li v-for="(item, key) in options" :key="key" v-show="!show || show(key)" 
-      :class="['pl-1', { highlight: key === index, deleted: !!item.deleted}]"            
+      :class="['pl-1', { highlight: key === index }, validate && validate(item)]"            
        @click="select(item, key)">
         <div class="pl-3">{{ getSuggest(item) }}</div>
       </li>
@@ -24,7 +24,7 @@
 
 <script>
 export default {
-  props: ['name', 'value', 'placeholder', 'options', 'disabled', 'suggest', 'show', 'format'],
+  props: ['name', 'value', 'placeholder', 'options', 'disabled', 'suggest', 'show', 'format', 'validate'],
   inject: [ 'input', 'change', 'readonly' ],
   data() {
     return {

@@ -4,12 +4,11 @@
   :hide-footer="true" 
   size="lg">
     <template #modal-header="{ close }">
-
       <div class="row" style="width: 100%">
         <div class="col">
           <h3>{{ fio.family + ' ' + fio.name + ' ' + fio.sername  }}</h3>
         </div>
-        <div class="col-4 p-0">
+        <div class="col p-0">
           <div class="row">
             <b-button class="mx-2" variant="outline-danger"  @click="$emit('remove')">
               <b-icon icon="trash" aria-hidden="true"></b-icon>
@@ -39,7 +38,15 @@
       :items="fioItems"/>
       <tab-content v-model="passport"  v-show="activetab === 'passport'" tabname="passport" 
       :err="err.passport"
-      :items="passportItems"/>
+      :items="passportItems">
+        <template slot="append">
+          <b-row class="ma-0">
+            <b-col>
+              <b-button variant="outline-success" @click="addPassport" size="sm">+</b-button>
+            </b-col>
+          </b-row>
+        </template>
+      </tab-content>
       <tab-content v-model="address"  v-show="activetab === 'address'" tabname="address" 
       :err="err.address"
       :items="addressItems"/>
@@ -47,7 +54,6 @@
       v-model="questionnaire"/>
     </div>
   </b-modal>
-
 </template>
 
 <script>
@@ -59,6 +65,7 @@ import TabContent from './TabContent'
 import QuestionnAire from './QuestionnAire'
 export default {
   components: { ModalEditor, TabContent, QuestionnAire },
+  props: ['passports'],
   provide() {
     return { onChange: this.onChange }
   },
@@ -113,7 +120,6 @@ export default {
         return {...fio.address, ...value.address }
       },
       set({ name, value }) {
-
         const address = {...this.address, [name]: value }
         this.value = {...this.value, address } 
       }
@@ -150,7 +156,6 @@ export default {
       this.close()
       this.$modal.show(KlientReport, { value }, { width: '850', height: '500'})            
     },
-
     show(v = {}) {
       this.value = v
       this.modal = true
@@ -162,15 +167,20 @@ export default {
     },
     t(v) {
       return this.$t(`tabs.${v}`)
+    },
+    addPassport() {
+      this.close()
+      this.$emit('add')
     }
   }
 }
 </script>
 
-<style scoped>
- .edit-dialog {
-    max-height: none;
-    width: 800px !important;
-}
-
+<style >
+  .edit-dialog  .modal-header  {
+    padding-right: 0;
+  }
+  .edit-dialog  .modal-header .close {
+    margin: -1rem 0 -1rem 0;
+  }
 </style>

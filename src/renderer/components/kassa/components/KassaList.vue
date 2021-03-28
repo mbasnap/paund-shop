@@ -1,6 +1,7 @@
 <template>  
   <ul class="kassa-list small p-0 m-0">
     <context  teg="li" v-for="([id, v], i) in items" :key="i" class="kassa-list__item"
+    :disabled="{ remove: !id }"
     @remove="actions.remove(id)"
     @addOrder="actions.addOrder(type)"
     @click="select(id)">
@@ -22,14 +23,14 @@ import Context from '@/components/Context'
 import { summ } from '@/functions'
 import { mapGetters } from 'vuex'
 export default {
-  props: ['value', 'rows', 'type'],
+  props: ['rows', 'type'],
   components: { Draggable, Context },
   inject: ['onStart', 'onEnd', 'grope', 'actions'],
   computed: {
     ...mapGetters({ map: 'reestr/map' }),
-    items({type, rows }) {
+    items({ type }) {
       const items = this.grope(type)
-      return [...Array(this.rows).keys()].map((v, i) => items[i] || [])
+      return [...Array(this.rows).keys()].map((_, i) => items[i] || [])
     },
    },
   methods: {

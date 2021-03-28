@@ -3,6 +3,7 @@
     <div class="form-row mb-2">
       <suggest ref="klients" class="form-control col" name="family"
       :placeholder="t('family')" :format="toTitleCase"
+      :validate="validate"
       :suggest="({ family, name, sername }) => `${family} ${name} ${sername}`"
       v-model="model" :options="options" @select="select" @enter="focus('name')">
         <svg-row-down v-show="!model._id && !disabled" class="reset" @click="$refs['klients'].highlight(0, true)"/>
@@ -41,16 +42,16 @@
     <named-input ref="idn" class="form-control col" name="idn"
     :placeholder="t('idn')" v-model="passport"/>
     <b-button size="sm" class="ml-2  col-2"
-    :disabled="!valid"
+    :disabled="!valid && !danger(model)"
     @click="edit(model)"
     width="30px"
     style="max-width: 43px; margin-right: 5px;"
-    :variant="readonly && !valid && 'outline' || warning && 'outline-warning' || success && 'outline-success'">
+    :variant="variant">
       <b-spinner v-if="load" small></b-spinner>
       <b-icon v-else icon="person-circle" aria-hidden="true"/>
     </b-button>
     </div>
-    <edit-dialog ref="edit-dialog" @remove="() => removeKlient(model)"/>
+    <edit-dialog ref="edit-dialog" @add="() => addKlient(model)" @remove="() => removeKlient(model)"/>
     <remove-dialog :value="model.family" ref="remove-dialog"/>
   </div>
 </template>
@@ -77,13 +78,21 @@ export default {
   },
   computed: {
     ...mapGetters('klient', ['map', 'docs']),
+    variant({ readonly, valid, model }) {
+      const danger = this.danger(model)
+      if (readonly && !valid && !danger) return 'outline'
+      if (danger) return 'outline-danger'
+      if (valid && this.warning(model)) return 'outline-warning'
+      return 'outline-success'
+    },
     group({ docs }) {
       return docs
-        .filter(({ _deleted }) => !_deleted)
-    .reduce((cur, v) => {
-      const id =  this.getKey(v)
-      return {...cur, [id]: [...(cur[id] || []), v]}
-      }, {})
+        .reduce((cur, v, index) => {
+          const { seria, number } = v.passport
+          const danger = [v.deleted, !seria, !number].some(v => v)
+          const id =  this.getKey(v, danger ? index + '' : undefined)
+          return {...cur, [id]: [...(cur[id] || []), v] }
+        }, {})
     },
     options({ model, group }) {
       return Object.keys(group).sort()
@@ -105,7 +114,7 @@ export default {
     },
     passport: {
       get({ model = {} }) {
-        const { nationality = "Украина" } = model.passport || {}
+        const { nationality = this.t('nationality') } = model.passport || {}
         return {...model.passport, nationality }
       },
       set({ name, value }) {
@@ -127,26 +136,31 @@ export default {
       if (['seria', 'number'].some(v => !this.passport[v])) return false
       return true
     },
-    warning() {
-      const { passport = {}, address = {} } = this.model
-      return this.valid && 
-      // !!this.model._id &&
-        ['bithday'].some(v => !this.model[v]) ||
-        ['issued', 'date-issue', 'idn'].some(v => !passport[v]) ||
-        ['city', 'home'].some(v => !address[v])
-    },
-    success() {
-      return this.model._id && !this.warning
-    }
+
   },
   methods: { 
     toTitleCase, dateFormat,
     ...mapActions('klient', ['save', 'remove']),
+    success(v) {
+      return v._id && !this.warning(v)
+    },
+    danger({ deleted, _id, passport }) {
+      if (deleted) return true
+      return _id && ['seria', 'number'].some(v => !passport[v])
+    },
+    warning({ passport, address = {}, bithday }) {
+      return !bithday ||
+        ['issued', 'date-issue', 'idn'].some(v => !passport[v]) ||
+        ['city', 'home'].some(v => !address[v])
+    },
+    validate(v) {
+      return ['danger', 'warning'].filter(method => this[method](v))[0]
+    },
     focus(name) {
       if (name) this.$refs[name].focus()
     },
-    getKey({ family, name, sername }) {
-      return [family, name, sername]
+    getKey({ family, name, sername }, uid) {
+      return [family, name, sername, uid]
         .map((v = '') => v.trim())
           .join('').toLowerCase()
     },
@@ -162,7 +176,7 @@ export default {
     async edit() {
       const passport = this.passportId(this.passport)
       const model = this.passportsMap[passport] || this.model
-      const klient = !model._id ? await this.saveKlient() : model
+      const klient = !model._id ? await this.saveKlient(model) : model
       this.$refs['edit-dialog'].show(klient)
     },
     select(klient) {
@@ -177,9 +191,9 @@ export default {
       this.$emit('input', '')
       this.load = false
     },
-    async saveKlient() {
+    async saveKlient(model) {
       this.load = true
-      const klient = await this.save(this.model)
+      const klient = await this.save(model)
       return this.select(klient)
     },
     async removeKlient({ _id }) {
@@ -190,6 +204,14 @@ export default {
     },
     t(v) {
       return this.$t(`klient.${v}`)
+    },
+    async addKlient(model) {
+      const { _id, _rev } = {}
+      const { idn, nationality } = model.passport
+      const passport = { idn, nationality }
+      const klient = await this.saveKlient({...model, _id, _rev, passport })
+      this.$refs['edit-dialog'].show(klient)
+
     }
   }
 }
@@ -202,8 +224,8 @@ export default {
 .klient >>> .btn-outline-warning:active {
   color: #fff !important;
 }
-.klient >>> .deleted {
-  color: red;
+.klient >>> .warning {
+  color: #ff7707e3;
 }
 
 </style>

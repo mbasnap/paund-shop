@@ -1,11 +1,11 @@
 <template>
   <div class="row vidacha  pt-3">
     <div  class="col-8">
-      <div class="row" style="height: 300px;">
+      <div class="row mb-3" >
         <klient ref="klient" class="col" v-model="klient" :disabled="!!klient" :clearable="true"/>
         <div class="vidacha__bilet col pl-2 border-left">
           <draggable v-if="target" class="target" group="bilet"/>
-          <bilet ref="bilet" class="row" style="height: 75%;" 
+          <bilet ref="bilet" class="row"
           :err="err" 
           v-model="bilet"
           @reset="bilet = {}"
@@ -39,7 +39,6 @@ data() {
   }
 },
 computed: {
-
   obespechenie: {
     get({ bilet }) {
       const { obespechenie = [] } = bilet || {}
@@ -80,13 +79,11 @@ computed: {
 methods: {
   onEnd([{ toElement }, v]) {
     const { number, _id } = {}
-    if (toElement.className === 'target') {
-      this.bilet = {...v, number, _id }
-    }
+    if (toElement.className === 'target') this.bilet = {...v, number, _id }
     this.$nextTick(() => this.target = false)
   },
   onChange({name, value}) {
-    if(this.target) return
+    if (this.target) return
     this.bilet = { ...this.bilet, [name]: value }
   },
   async onSave() {
@@ -115,7 +112,6 @@ methods: {
 }
 .vidacha__actions {
   position: absolute !important;
-  bottom: 10px;
   right: 10px;
 }
 </style>
