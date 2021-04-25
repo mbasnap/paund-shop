@@ -1,5 +1,7 @@
 <template>
-  <div class="suggest dropdown" @mouseleave="close">
+  <div class="suggest dropdown"
+  @mouseleave="close"
+  >
     <slot></slot>
     <textarea class="named-input editor" ref="editor"
       :readonly="readonly() || disabled"
@@ -9,8 +11,9 @@
       @change="change($event.target)"
       @keydown.up.prevent="highlight(index > 0 ? index - 1 : 0)"
       @keydown.down.prevent="highlight(index < 0 ? 0 : index + 1)"
+      @keydown.esc.prevent="highlight(-1)"
       @keydown.enter.prevent="select(options[index], index)"
-      @keydown.esc.prevent="highlight(-1)"/>
+      />
       
     <ul :class="[ 'options dropdown-menu m-0', { 'show': options.length && index >= 0 }]">
       <li v-for="(item, key) in options" :key="key" v-show="!show || show(key)" 
@@ -46,6 +49,7 @@ export default {
   },
   methods: {
     select(v, index) {
+      if(!v) return
       this.$emit('select', v)
       this.$emit('selectIndex', index)
       this.$emit('enter', index)

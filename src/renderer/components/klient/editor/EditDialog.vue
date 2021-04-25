@@ -5,8 +5,11 @@
   size="lg">
     <template #modal-header="{ close }">
       <div class="row" style="width: 100%">
-        <div class="col">
-          <h3>{{ fio.family + ' ' + fio.name + ' ' + fio.sername  }}</h3>
+        <div :class="['col', { danger: value.deleted }]">
+          <h3>{{ title  }}</h3>
+          <div v-if="value.deleted" class="danger">
+            <em>! {{ toTitleCase(value.deleted) }}</em>
+          </div>
         </div>
         <div class="col p-0">
           <div class="row">
@@ -59,13 +62,14 @@
 <script>
 import ModalEditor from '@/widgets/Modal.vue'
 import { mapGetters, mapActions } from 'vuex'
-import { toTitleCase, dateFormat, isDateValid } from '@/functions'
+import { toTitleCase, dateFormat, isDateValid, validDate, required } from '@/functions'
 import KlientReport from '@/zvit/klient'
 import TabContent from './TabContent'
 import QuestionnAire from './QuestionnAire'
+ 
 export default {
   components: { ModalEditor, TabContent, QuestionnAire },
-  props: ['passports'],
+  props: ['title'],
   provide() {
     return { onChange: this.onChange }
   },
@@ -89,11 +93,11 @@ export default {
     },
     fioItems() {
       return [
-        { name: 'family', format: toTitleCase },
-        { name: 'name', format: toTitleCase },
+        { name: 'family', format: toTitleCase, rules: [required('danger')] },
+        { name: 'name', format: toTitleCase, rules: [required('danger')] },
         { name: 'sername', format: toTitleCase },
-        { name: 'city', format: toTitleCase },
-        { name: 'bithday', format: dateFormat }
+        { name: 'city', format: toTitleCase, rules: [required('danger')] },
+        { name: 'bithday', format: dateFormat, rules: [required('danger'), validDate('danger')] }
         ]
     },
     passport: {
@@ -107,12 +111,12 @@ export default {
     },
     passportItems() {
       return [
-        { name: 'nationality', format: toTitleCase },
-        { name: 'seria', format: (v = '') => v.toUpperCase() },
-        { name: 'number' },
-        { name: 'issued', teg: 'textarea', format: toTitleCase },
-        { name: 'date-issue', format: dateFormat },
-        { name: 'idn' },
+        { name: 'nationality', format: toTitleCase, rules: [required('warning')] },
+        { name: 'seria', format: (v = '') => v.toUpperCase(), rules: [required('danger')] },
+        { name: 'number',  rules: [required('danger')] },
+        { name: 'issued', teg: 'textarea', format: toTitleCase, rules: [required('warning')] },
+        { name: 'date-issue', format: dateFormat, rules: [required('warning'), validDate('danger') ] },
+        { name: 'idn', rules: [required('warning')] },
       ]
     },
     address: {
@@ -182,5 +186,8 @@ export default {
   }
   .edit-dialog  .modal-header .close {
     margin: -1rem 0 -1rem 0;
+  }
+  .edit-dialog .danger {
+    color: brown;
   }
 </style>

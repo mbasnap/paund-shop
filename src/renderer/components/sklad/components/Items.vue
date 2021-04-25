@@ -21,8 +21,8 @@
                   <option v-for="(v, i) in statmentOptions" :key="i">{{ v }}</option>
                   </select>                  
                 </div>
-                <div class="col">{{ tostring(item) }}</div>
-                <div class="col" style="text-align: right;">{{ item.ssuda }}</div>
+                <div class="col">{{ shortFio(item.klient) }}</div>
+                <div class="col" style="text-align: right;">{{ item.deleted ? '(удалён)' : item.ssuda }}</div>
               </div>
             </context>
         </draggable>
@@ -35,7 +35,7 @@
             <span class="mr-1">{{ i.proba }}</span>
             <span>{{ i.total }}</span>
           </div>
-          <div class="col p-0">{{i.ocenca }}</div>
+          <div class="col pl-0">{{i.ocenca }}</div>
         </div>
       </b-collapse>
     </b-card>
@@ -47,7 +47,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import draggable from 'vuedraggable'
 import Context from '@/components/Context.vue'
-import { moment, firstChar } from '@/functions'
+import { moment, firstChar, shortFio } from '@/functions'
 import RemoveDialog from '../../kassa/components/RemoveDialog'
 export default {
   props: ['value'],
@@ -78,15 +78,12 @@ export default {
     }
   },
   methods: {
+    shortFio,
     ...mapActions ({
       save: 'reestr/save'
     }),
     getDate({ date }) {
       return moment(date).format('L')
-    },
-    tostring({ klient }) {
-      const { family, name, sername } = { ...klient}
-      return `${family} ${firstChar(name)}. ${firstChar(sername)}.` 
     },
     async addStatment({ _id }, days = 10) {
       this.loading = _id

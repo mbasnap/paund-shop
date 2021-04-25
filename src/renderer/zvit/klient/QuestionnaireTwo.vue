@@ -284,7 +284,7 @@ export default {
             return {...value.passport }
         },
         passportString({ passport }) {
-            const { seria = '', number = '', issued = '' } = passport
+            const { seria = '', number = '', issued = '' } = passport || {}
             return `${seria} ${number} выдан ${issued} ${passport['date-issue']} г.`
         },
         userFio({ user }) {

@@ -40,8 +40,8 @@ export default {
       await this.remove(v)
       this.resolve(v)
     },
-    show(v = {}) {
-      this.value = v
+    show(v) {
+      this.value = {...v}
       this.modal = true
       return new Promise(resolve => this.resolve = resolve)
     },

@@ -24,8 +24,8 @@ const getOcenca = (v, isAfter, rate ) => {
 const getProcent = ({ ocenca, procent, days }) => {
   return proc(ocenca, procent * toNumber(days))
 }
-const firstChar = v => {
-  return (v + '').charAt(0).toUpperCase()
+const firstChar = (v, add = '') => {
+  return v ? (v + '').charAt(0).toUpperCase() + add : ''
 }
 moment.locale('ru')
 const months = {
@@ -42,7 +42,7 @@ const toTitleCase = (txt = '') => {
   return txt.charAt(0).toUpperCase() + txt.substr(1)
 }
 const toSearchString = (v) => {
-  return v.replace(/[.,\s]/g, '').toLowerCase()
+  return v && (v + '').replace(/[.,\s]/g, '').toLowerCase()
 }
 const dateFormat = (txt = '') => {
   return txt.split(/[,-/\\]/).join('.')
@@ -52,6 +52,12 @@ const isDateValid = (v) => !v || moment(v, 'DD.MM.YYYY', true).isValid()
 const reduceBy = (key, arr = []) => arr.reduce((cur, v) => ({...cur, [v[key]]: v }), {})
 
 const range = (start, end) => Array(end - start + 1).fill().map((_, idx) => start + idx)
+
+const validDate = (type) => (value) => !moment(value, 'DD.MM.YYYY', true).isValid() && type
+const required = (type) => (value) => !value && type
+
+const shortFio = ({ family = '', name = '', sername = '' } = {}) => 
+ `${family} ${firstChar(name, '.')} ${firstChar(sername, '.')}` 
 
 export  {
   numberFormat,
@@ -66,7 +72,6 @@ export  {
   months,
   getOcenca,
   getProcent,
-  // rorrect,
   round,
   firstChar,
   daysDiff,
@@ -75,5 +80,8 @@ export  {
   dateFormat,
   range,
   toSearchString,
-  reduceBy
+  reduceBy,
+  validDate,
+  required,
+  shortFio
 }

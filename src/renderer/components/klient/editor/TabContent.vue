@@ -1,13 +1,17 @@
 <template>
 	<div class="tabcontent">
 		<slot name="prepend"></slot>
-		<div v-for="({ name, teg, type, format }) in fields" :key="name" class="form-group row m-0 mt-2">
+		<div v-for="({ name, teg, type, format, rules }) in fields" :key="name" class="form-group row m-0 mt-2">
 			<label class="col-sm-4 col-form-label">{{ t(name) }}</label>
 			<div v-if="value" class="col">
 				<component 
-					:ref="name" :is="teg" :type="type" :class="['form-control', { 'is-invalid': err && err[name] }]" :name="name"
-				:value="format(value[name])" @input="input($event.target, format)"
-				@change="onChange" @enter="focus(name)"
+					:ref="name" 
+					:is="teg" 
+					:type="type" 
+					:class="['form-control', ...rules.map((rule) => rule(value[name])) ]" 
+					:name="name"
+					:value="format(value[name])" @input="input($event.target, format)"
+					@change="onChange" @enter="focus(name)"
 				>{{ format(value[name]) }}</component>
 			</div>
 		</div>
@@ -24,14 +28,17 @@ export default {
 	computed: {
 		fields({ items }) {
 			return items.map(v => {
-				const { name = v, teg = 'input', type = 'text', format = this.format } = v
-				return { name, teg, type, format }
+				const { name = v, teg = 'input', type = 'text', format = this.format, rules = [] } = v
+				return { name, teg, type, format, rules }
 			})
 		}
 	},
 	methods: {
 		focus(name) {
 			if (name) this.$refs[name].focus()
+		},
+		validate(rules) {
+
 		},
 		input({ name, value }, format) {
 			this.$emit('input', { name, value: format(value) })
@@ -43,6 +50,14 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+	.tabcontent .danger {
+		color: red;
+		border: 1px solid red;
+	}
+	.tabcontent .warning {
+		color: rgb(255, 166, 0);
+		border: 1px solid   rgb(255, 166, 0);
+	}
 
 </style>

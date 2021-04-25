@@ -29,7 +29,8 @@ export default {
       "name": "Имя",
       "sername": "Отчество",
       "city": "Место рождения",
-      "bithday": "Дата рождения"
+      "bithday": "Дата рождения",
+      "avatar": "Аватар"
     },
     passport: {
       "nationality": "Гражданство",
@@ -163,7 +164,8 @@ export default {
       'sername': 'Отчество',
       'seria': 'Серия',
       'number': 'Номер',
-      'idn': 'Идн',
+      'number-passport': 'Номер паспорта',
+      'idn': 'Инн',
       'issued': 'Выдан',
       'address': 'Адрес',
       'post': 'Индекс',

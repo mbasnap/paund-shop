@@ -337,7 +337,7 @@ export default {
       return value.order
     },
     docToString({ value, t }) {
-      const { seria, number, issued } = { ...value.doc }
+      const { seria, number, issued } = value.doc || {}
       return `${t('passport')}: ${seria} ${number} ${t('issued')}: ${issued}`
     }
   },

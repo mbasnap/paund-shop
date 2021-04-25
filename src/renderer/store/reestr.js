@@ -42,7 +42,7 @@ const getters = {
     return res
   },
   emptyNumbers({}, { numbers }, { common }) {
-    const number = Number(common.company.number)
+    const number = common.company && Number(common.company.number || 0)
     if (!number) return []
     const res = range(number, number + numbers.length)
     .filter(v => {

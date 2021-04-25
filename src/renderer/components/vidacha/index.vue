@@ -10,10 +10,10 @@
           v-model="bilet"
           @reset="bilet = {}"
           @change-number="(number) => bilet = Object.assign({}, bilet, { number })"/>
-          <div class="vidacha__actions">
-            <b-spinner v-if="loading" variant="primary"></b-spinner>
-            <button v-else class="btn btn-primary" :disabled="disabled"
+          <div class="vidacha__actions" :style="{ position: 'relative' }">
+            <button class="btn btn-primary" :disabled="loading || disabled"
               @click="onSave">
+            <b-spinner v-if="loading" class="absolute-center"/>
               {{ t('btn', 'save') }}
             </button>
           </div>
@@ -113,6 +113,7 @@ methods: {
 .vidacha__actions {
   position: absolute !important;
   right: 10px;
+  bottom: -5px;
 }
 </style>
 

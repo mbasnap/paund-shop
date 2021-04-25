@@ -172,7 +172,7 @@ export default {
         return { ...value.doc }
     },
     docToString({ passport, t }) {
-      const { seria = '', number = '', issued = '' } = passport
+      const { seria = '', number = '', issued = '' } = passport || {}
       return `${seria} ${number} ${t('issued')}: ${issued}`
     }
   },

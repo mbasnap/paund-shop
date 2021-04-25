@@ -4,7 +4,7 @@
       <suggest ref="klients" class="form-control col" name="family"
       :placeholder="t('family')" :format="toTitleCase"
       :validate="validate"
-      :suggest="({ family, name, sername }) => `${family} ${name} ${sername}`"
+      :suggest="(v) => getFio(v)"
       v-model="model" :options="options" @select="select" @enter="focus('name')">
         <svg-row-down v-show="!model._id && !disabled" class="reset" @click="$refs['klients'].highlight(0, true)"/>
       </suggest>
@@ -21,38 +21,46 @@
     <div class="form-row mb-2">
       <named-input ref="city" class="form-control col mr-1" name="city" :placeholder="t('city')"
       v-model="model" @enter="focus('bithday')"/>
-      <named-input ref="bithday" :class="['form-control col', { 'is-invalid': err.bithday }]" name="bithday"
+      <named-input 
+      ref="bithday"
+      :class="['form-control col-4', { 'is-invalid': err.bithday }]" 
+      name="bithday"
       v-model="model" :placeholder="t('bithday')" :format="dateFormat" @enter="focus('seria')"/>
     </div>
     <div class="form-row mb-2">
       <named-input ref="seria" class="form-control col-3" :placeholder="t('seria')" name="seria"
       :format="v => (v || '').toUpperCase()" v-model="passport" @enter="focus('passport')"/>
-      <div class="col">
-        <div class="row m-0">
-          <suggest ref="passport" class="form-control col" name="number" :placeholder="t('number')"
-          :suggest="({ passport = {} }) => `${passport.seria} ${passport.number}`"
-          v-model="passport" :options="passports" @select="select" @enter="focus('idn')">
+      <div class="col pr-0">
+        <suggest ref="passport" class="form-control col" name="number" :placeholder="t('number-passport')"
+        :suggest="({ passport = {} }) => `${passport.seria} ${passport.number}`"
+        v-model="passport" :options="passports" @select="select" @enter="focus('idn')">
           <svg-row-down v-show="passports.length > 0" class="reset"
           @click="$refs['passport'].highlight(0, true)"/>
-          </suggest>
-        </div>
+        </suggest>
       </div>
     </div>
     <div class="form-row">
     <named-input ref="idn" class="form-control col" name="idn"
     :placeholder="t('idn')" v-model="passport"/>
-    <b-button size="sm" class="ml-2  col-2"
+    <b-button size="sm" class="ml-2"
     :disabled="!valid && !danger(model)"
     @click="edit(model)"
     width="30px"
-    style="max-width: 43px; margin-right: 5px;"
+    style="max-width: 43px"
     :variant="variant">
       <b-spinner v-if="load" small></b-spinner>
       <b-icon v-else icon="person-circle" aria-hidden="true"/>
     </b-button>
     </div>
-    <edit-dialog ref="edit-dialog" @add="() => addKlient(model)" @remove="() => removeKlient(model)"/>
-    <remove-dialog :value="model.family" ref="remove-dialog"/>
+    <edit-dialog ref="edit-dialog"
+    :title="getFio(model)" 
+    @add="() => addKlient(model)" 
+    @remove="() => removeKlient(model)"
+    />
+    <remove-dialog 
+    ref="remove-dialog"
+    :value="getFio(model)" 
+    />
   </div>
 </template>
 
@@ -87,9 +95,10 @@ export default {
     },
     group({ docs }) {
       return docs
-        .reduce((cur, v, index) => {
-          const { seria, number } = v.passport
-          const danger = [v.deleted, !seria, !number].some(v => v)
+        .reduce((cur, v = {}, index) => {
+          const { passport, deleted } = v
+          const { seria, number } = v.passport || {}
+          const danger = [!passport, deleted, !seria, !number].some(v => v)
           const id =  this.getKey(v, danger ? index + '' : undefined)
           return {...cur, [id]: [...(cur[id] || []), v] }
         }, {})
@@ -132,7 +141,7 @@ export default {
       }
     },
     valid() {
-      if (['family', 'name', 'sername'].some(v => !this.model[v])) return false
+      if (['family', 'name'].some(v => !this.model[v])) return false
       if (['seria', 'number'].some(v => !this.passport[v])) return false
       return true
     },
@@ -144,9 +153,9 @@ export default {
     success(v) {
       return v._id && !this.warning(v)
     },
-    danger({ deleted, _id, passport }) {
+    danger({ _id, family, name, passport, deleted }) {
       if (deleted) return true
-      return _id && ['seria', 'number'].some(v => !passport[v])
+      return _id && [family, name, passport.seria, passport.number].some(v => !v)
     },
     warning({ passport, address = {}, bithday }) {
       return !bithday ||
@@ -170,14 +179,13 @@ export default {
     passportId({ seria, number } = {}) {
       return ('' + seria + number).toLowerCase()
     },
-    getFio({ family, name, sername } = {}) {
-      return `${family} ${name} ${sername}`
+    getFio({ family, name, sername = '' } = {}) {
+      const noValidName = [family, name].some(v => !v) && 'Не валидное Фамилия Имя'
+      return noValidName || `${family} ${name} ${sername}`
     },
     async edit() {
-      const passport = this.passportId(this.passport)
-      const model = this.passportsMap[passport] || this.model
-      const klient = !model._id ? await this.saveKlient(model) : model
-      this.$refs['edit-dialog'].show(klient)
+      const klient = !this.model._id && await this.saveKlient(this.model)
+      this.$refs['edit-dialog'].show(klient || this.model)
     },
     select(klient) {
       this.data = {}
@@ -211,13 +219,18 @@ export default {
       const passport = { idn, nationality }
       const klient = await this.saveKlient({...model, _id, _rev, passport })
       this.$refs['edit-dialog'].show(klient)
-
     }
   }
 }
 </script>
 
 <style scoped>
+.klient >>> input[name='bithday']{
+  text-align: center;
+}
+.klient >>> input[name='bithday']::placeholder {
+  font-size: 14px;
+}
 .klient >>> .btn-outline-warning:hover {
   color: #fff !important;
 }
@@ -226,6 +239,9 @@ export default {
 }
 .klient >>> .warning {
   color: #ff7707e3;
+}
+.klient >>> .danger {
+  color: brown;
 }
 
 </style>

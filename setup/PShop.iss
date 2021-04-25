@@ -1,11 +1,12 @@
 
 #define MyAppName "PShop"
-#define MyAppVersion "1.13"
+#define MyAppVersion "1.18"
 #define MyAppPublisher "MbaSnap"
 #define MyAppURL "mbasnap@yandex.ua"
 #define MyAppExeName "paund-shop.exe"
 #define MyAppDir "D:\P-Shop"
 #define MyAppOutputDir "C:\Users\stalker\Documents"
+
 
 [Setup]
 PrivilegesRequired=admin

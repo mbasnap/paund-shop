@@ -5,7 +5,6 @@ import BiletOrder from './BiletOrder'
 // import { store } from '@/setup'
 // const ipcRenderer = require("electron").ipcRenderer
 // ipcRenderer.on('show-zvit', (e, path) => {
-//     console.log(store);  
 // })
 export default {
     Kassa

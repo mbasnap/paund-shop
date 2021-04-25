@@ -33,8 +33,6 @@ export default {
     inject: ['t'],
     computed: {
         bilet({ value }) {
-            // console.log(value);
-            
             return {...value}
         },
 

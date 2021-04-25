@@ -1,10 +1,10 @@
 <template>
   <div id="app">
-        <app-header></app-header>
-        <div class="container-body">
-          <router-view ></router-view>
-        </div>
-        <app-footer></app-footer>
+    <app-header></app-header>
+    <div class="container-body">
+      <router-view ></router-view>
+    </div>
+    <app-footer></app-footer>
   </div>
 </template>
 
@@ -18,11 +18,6 @@
     components: { AppHeader, AppFooter } ,
     async created () {
       this.$router.push('login')
-      // if (localStorage.getItem('settings'))
-      // this.$store.dispatch('update').then(() =>{
-      //   this.$router.push('login')
-      // })
-      // else this.$router.push('activate')
       ipcRenderer.on('show-zvit', (e, name) => {
           this.$modal.show(zvit[name], { }, { height: '550px', width: '800px'})
       })
@@ -31,7 +26,6 @@
 </script>
 
 <style>
- /* @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro'); */
 
 * {
   box-sizing: border-box;
@@ -47,7 +41,6 @@ body {
 }
 .container-body{
   margin-top: 60px;
-  /* padding-bottom: 115px; */
   height: 100%;
   padding: 0 20px 115px;
 }
@@ -113,5 +106,30 @@ a {
 .modal-body .content {
     overflow: hidden;
 }
-
+.display-none {
+  display: none !important;
+}
+.link {
+  cursor: pointer;
+}
+.link.disabled {
+  color: gray;
+  text-decoration: initial;
+}
+.flex-center {
+  display: flex;
+  align-items: center;
+}
+button:focus {
+  outline: none  !important;
+}
+.absolute-center {
+  margin: auto;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+}
+input[type='date']::-webkit-clear-button,
+input[type='date']::-webkit-inner-spin-button {
+    display: none;
+}
 </style>

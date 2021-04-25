@@ -27,7 +27,6 @@ const router = new Router({
   ]
 })
 // router.beforeEach( async ({ name }, from, next) => {
-  // console.log(name, from);
   // next()
   // if (name !== 'activate') router.push('/activate')
   // else next()

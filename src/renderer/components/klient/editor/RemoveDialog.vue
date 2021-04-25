@@ -1,5 +1,19 @@
 <template>
   <b-modal v-model="modal" content-class="remove-dialog" :hide-footer="true" >
+    <template #modal-header="{ close }">
+      <div class="row" style="width: 100%">
+        <div :class="['col', 'danger']">
+          <h4> Удаление {{ value  }}</h4>
+        </div>
+            <button 
+            type="button" 
+            class="close pr-0" 
+            style="outline: none;"
+            @click="close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+    </template>
     <div class="modal-body mb-5">
       <p>
         {{ t('enter') }} 
@@ -9,7 +23,7 @@
       <input type="text" class="form-control" v-model="input"/>
       <textarea class="form-control mt-2" :placeholder="t('description')" v-model="description"/>
     </div>
-    <modal-footer ok="remove" :loading="modal && loading" :disabled="disabled"
+    <modal-footer ok="save" :loading="modal && loading" :disabled="disabled"
     @ok="onResolve(description)" @cansel="close"/>
   </b-modal>
 </template>
@@ -28,7 +42,7 @@ export default {
   }),
   computed: {
     disabled({ value, input }) {
-      return value + '' !== input.trim()
+      return value.trim() !== input.trim()
     }
   },
   methods: {
@@ -56,5 +70,8 @@ export default {
 <style >
   .remove-dialog  {
     height: auto !important;
+  }
+  .remove-dialog .danger  {
+    color: brown;
   }
 </style>

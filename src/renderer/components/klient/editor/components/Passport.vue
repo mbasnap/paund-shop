@@ -47,12 +47,15 @@ export default {
             const { family, name, sername } = {...map[err]}
             return `${family} ${name} ${sername}`
         },
+        model() {
+            return {}
+        },
         passports({ value }) {
             return (value.passports || [])
         },
         err({ passportsMap, model, value }) {
             const lowerCase = v => (v || '').toLowerCase()
-            const { seria, number, _id } = model
+            const { seria, number, _id } = model || {}
             const err = passportsMap[lowerCase(seria) + lowerCase(number)]
             return value._id === err ? false : err
         },
@@ -65,8 +68,6 @@ export default {
             return [!err, isFields].every(v => v)
         },
         options({ passports }) {
-            console.log(passports);
-            
            return passports
         },
         passport({ passports }) {
@@ -78,15 +79,10 @@ export default {
     },
     methods: {
         select(passport, silent) {
-            console.log(passport);
-            
            this.update({ passport })
            if (!silent) this.change() 
         },
-        selectKlient() {
-           console.log(this.err);
-           
-        },
+        selectKlient() {},
         remove(index) {
             const passports = this.passports.filter((v, i) => i !== index)
             const passport = passports.length - 1 || 0
@@ -111,8 +107,6 @@ export default {
         },
         change() {            
             this.$nextTick(() => {
-                console.log(this.isValid);
-                
                 // if (this.isValid) this.$emit('change' )  
             })
         },

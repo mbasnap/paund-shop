@@ -1,20 +1,26 @@
 <template>
-  <div >
-    <b-nav-item-dropdown :text="user.name" right >
-      <div class="dropdown-item px-2 pointer" @click="edit(user)">
-        <b-icon class="mr-2" icon="person-circle" aria-hidden="true"></b-icon>
-        {{ t('tabs', 'profile') }}
-      </div>
-      <div class="dropdown-item px-2 pointer" @click="logOut()">
-        <b-icon class="mr-2"  icon="arrow-left-square" aria-hidden="true" variant="danger"></b-icon>
-        <span class="danger">{{ t('tabs', 'logout') }}</span>
-      </div>
-      
-      <b-link v-show="isAdmin" 
+  <div class="user">
+    <b-dropdown right variant="outline pr-0">
+      <template #button-content>
+        <b-avatar :src="user.fio.avatar"></b-avatar>
+      </template>
+      <b-dropdown-item-button @click="edit(user)">
+         <b-icon icon="person-circle" :aria-hidden="true"/>
+         {{ t('tabs', 'profile') }}        
+      </b-dropdown-item-button>
+      <b-dropdown-item-button 
+      v-show="isAdmin"
       v-for="({ key }, i) in companys" :key="i"
-      class="dropdown-item" 
-      @click="setCompany(key)">{{ key }}</b-link>
-    </b-nav-item-dropdown>
+      @click="setCompany(key)">
+      <b-icon icon="shield-lock" :aria-hidden="true" variant=""/>
+         {{ key }}       
+      </b-dropdown-item-button>
+      <b-dropdown-divider></b-dropdown-divider>
+      <b-dropdown-item-button @click="logOut()">
+         <b-icon icon="arrow-left-square" :aria-hidden="true" variant="danger"/>
+         {{ t('tabs', 'logout') }}
+      </b-dropdown-item-button>
+    </b-dropdown>
     <edit-dialog ref="edit-dialog" :loading="loading" :value="user"/>
   </div>
 </template>
@@ -41,12 +47,13 @@ export default {
     ...mapActions(['logOut', 'updateUser', 'updatePassword', 'reload']),
 
     async edit(user) {
-      const { show } = this.$refs['edit-dialog']
+      const { show, close } = this.$refs['edit-dialog']
       const { fio, passport, address, password } = await show(user)
       try {
         this.loading = true
         await this.updateUser({...user, fio, passport, address })
         if (password) this.updatePassword({user, password})
+        close()
       } catch({message}) {
         console.error(message)
       } finally {
@@ -68,11 +75,14 @@ export default {
 }
 </script>
 
-<style>
-  .pointer {
+<style >
+.user  .dropdown-toggle::after {
+  color: white !important;
+}
+  /* .pointer {
     cursor: pointer;
   }
   .danger {
     color: brown;
-  }
+  } */
 </style>

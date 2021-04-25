@@ -8,8 +8,6 @@ separator - разделитель тысячных
 ***/
 export default function (number, decimals, dec_point, separator ) {
   number = (number + '').replace(',', '.')
-  // console.log(number);
-  
     number = number.replace(/[^0-9+\-Ee.]/g, '');
     var n = !isFinite(+number) ? 0 : +number,
       prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),

@@ -2,7 +2,7 @@
   <div class="obespechenie" >
     <table class="obespechenie__table table-sm">
       <thead >
-        <tr style="font-size: 12px;">
+        <tr style="font-size: 12px;" :class="{ disabled }">
           <th class="index"></th>
           <th class="title" width="50%">{{ t('title') }}</th>
           <th v-for="({ name, width = '10%' }, i) in headers" :key="i"
@@ -16,14 +16,16 @@
         @context="onContext"/>
         <tr class="add">
           <td>
-            <svg-plus-circle v-if="!disabled"
-            :disabled="!canAdd" width="15px;" @click="add"/>
+            <svg-plus-circle 
+            :disabled="disabled || !canAdd" 
+            width="15px;" 
+            @click="add"/>
           </td>
           <td></td>
           <td></td>
-          <td>{{ ves }}</td>
-          <td>{{ derty }}</td>
-          <td class="total ocenca">{{ ocenca }}</td>
+          <th>{{ ves }}</th>
+          <th>{{ derty }}</th>
+          <th class="total ocenca">{{ ocenca }}</th>
         </tr>       
       </tbody>
     </table> 
@@ -32,8 +34,8 @@
 
 <script>
 
-import { mapActions, mapGetters } from 'vuex'
-import { toDouble, toNumber, summ } from '@/functions'
+import { mapGetters } from 'vuex'
+import { toNumber, summ } from '@/functions'
 import { SvgPlusCircle } from '@/svg'
 import Row from './Rows'
 export default {
@@ -59,7 +61,7 @@ export default {
       ]
     },
     model({ value }) {
-      return value || []
+      return value || [{}]
     },
     ves({ model }) {
       return summ( ...model.map(v => v.ves))
@@ -99,6 +101,9 @@ export default {
 </script>
 
 <style scoped>
+  .obespechenie {
+    color: #00000099;
+  }
   .obespechenie {
     overflow: hidden !important;
     border: 1px solid rgba(0, 0, 0, 0.22);

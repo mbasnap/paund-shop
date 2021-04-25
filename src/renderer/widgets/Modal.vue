@@ -1,5 +1,5 @@
 <template>
-<div class="modal-content">
+  <div class="modal-content">
     <div class="modal-header">
     <h5 class="modal-title"> {{ title }} </h5>
     <button type="button" class="close" @click="close">
@@ -7,15 +7,13 @@
     </button>
     </div>
     <div class="modal-body">
-
-    <slot></slot>
-
+      <slot></slot>
     </div>
     <div class="modal-footer" v-if="footer">
     <button type="button" class="btn btn-secondary" @click="close">{{ t('cansel') }}</button>
     <button type="button" class="btn btn-primary" @click="save" :disabled="disabled">{{ t('save') }}</button>
     </div>
-</div>
+  </div>
 </template>
 
 <script>
@@ -33,15 +31,15 @@ created() {
 computed: {},
 
 methods: {
-    t(name) {
-        return this.$t(`btn.${name}`)
-    },
-    save () {
-        this.$emit('save', this)
-    },
-    close () {
-        this.$emit('close')
-    }
+  t(name) {
+    return this.$t(`btn.${name}`)
+  },
+  save () {
+    this.$emit('save', this)
+  },
+  close () {
+    this.$emit('close')
+  }
 }
 
 }
@@ -49,11 +47,4 @@ methods: {
 
 <style>
 
-.modal-content {
-    /* height: -webkit-fill-available; */
-}
-.modal-body {
-    /* max-height: 400px; */
-    /* overflow: auto; */
-}
 </style>

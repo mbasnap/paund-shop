@@ -17,7 +17,7 @@
 <script>
 import mix from '@/widgets/named-input/mix.js'
 import { mapGetters } from 'vuex'
-import { proc, daysDiff, toNumber, toDouble,  moment } from '@/functions'
+import { daysDiff, toNumber, toDouble,  moment } from '@/functions'
 export default {
   props: {
     value: { type: Object,

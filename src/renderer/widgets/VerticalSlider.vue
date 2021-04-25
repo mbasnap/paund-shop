@@ -39,8 +39,6 @@ export default {
                 return this.value || this.max
             },
             set(v) {
-                // console.log(v);
-                
                 this.$emit('input', v)
             }
         }
@@ -48,10 +46,7 @@ export default {
     methods: {
         onChange({ target }) {
             const { value } = target
-            // console.log(value);
-            
             this.$emit('change', value)
-            
         }
     }
 }

@@ -4,7 +4,8 @@
       <bilet-number class="mb-2"
         v-model="biletNumber"
         @reset="$emit('reset')"
-        :options="options"/>
+        :options="options"
+        :highlight="false"/>
       <div class="input-group mb-2">
         <input class='form-control' name="ssuda" :disabled="disabled" :value="ssuda"
         @change="({target}) => calculate(target.value)"/>
@@ -41,13 +42,14 @@ import { mapGetters } from 'vuex'
 import mix from '@/widgets/named-input/mix.js'
 import DaySlider from './DaySlider'
 import { SvgExclamation } from '@/svg'
-import { toNumber, proc, toDouble, summ } from '@/functions'
+import { toNumber, proc, toDouble, summ, toSearchString } from '@/functions'
 export default {
 mixins: [ mix ],
 components: { DaySlider, SvgExclamation, BiletNumber },
 props: ['value', 'err', 'disabled', 'editMode' ],
 data: () => ({
-  from: 'ocenca'
+  from: 'ocenca',
+  search: ''
 }),
 computed: {
   ...mapGetters({ company: 'company', emptyNumbers: 'reestr/emptyNumbers' }),
@@ -60,7 +62,9 @@ computed: {
       return { number }
     },
     set({ number }) {
-      this.$emit('change-number', number)
+      // if (this.emptyNumbers.includes(number))
+      // console.log(this.emptyNumbers.includes(number));
+      this.$emit('change-number', number + '')
     }
   },
   options({ emptyNumbers }) {
@@ -111,6 +115,7 @@ computed: {
   }
 },
 methods: { toDouble, toNumber,
+
   getProcent(value) {
     const procent = proc(value, this.xProc) * this.days
     return procent - proc(procent, this.xDisc)

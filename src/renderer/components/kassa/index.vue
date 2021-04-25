@@ -1,8 +1,11 @@
 <template>
 	<div class="kassa">
-		<b-card class="mb-1" header-tag="header" footer-tag="footer" body-class="scroll-auto"
+		<b-card class="mb-1" header-tag="header" footer-tag="footer" 
+    body-class="scroll-auto"
+    :footer-class="[toNumber(total) < 0 && 'danger']"
+    :header-class="[toNumber(ok) < 0 && 'danger']"
 		:header="ok" :footer="total">
-		<div class="row">
+		<div class="row mx-0">
 			<kassa-list v-model="selected" class="col" :rows="rows" type="dt"/>
 			<kassa-list v-model="selected"  class="col" :rows="rows" type="ct"/>
 		</div>
@@ -14,7 +17,7 @@
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { summ, mult, moment } from '@/functions'
+import { summ, mult, moment, toNumber } from '@/functions'
 import components from './components'
 
 export default {
@@ -61,7 +64,7 @@ export default {
     rows() {
       const dt = this.grope('dt')
       const ct = this.grope('ct')
-      return Math.max( 7, dt.length, ct.length ) 
+      return Math.max( 8, dt.length, ct.length ) 
     },
 
     total({ ok, dt, ct, isSame, deleted }) {
@@ -75,6 +78,7 @@ export default {
       saveReestr: 'reestr/save',
       update: 'update'
     }),
+    toNumber,
     async save(v) {
       const dt = v.values.map(v => v.dt === '301').includes(true) ? this.order['dt'] : false
       const ct = v.values.map(v => v.ct === '301').includes(true) ? this.order['ct'] : false
@@ -110,7 +114,7 @@ export default {
 <style scoped>
 
 .kassa >>> .card {
-    max-height: 330px;
+    max-height: 325px;
 }
 .kassa >>> .card-body{
     flex: unset;
@@ -126,6 +130,9 @@ export default {
     text-align: right;
     border-top :none;
     border-bottom :none;
+}
+.kassa >>> .card-header .card-footer, .danger {
+    color: brown;
 }
 .kassa >>> header, footer {
     border-radius: 0;

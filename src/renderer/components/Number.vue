@@ -4,8 +4,9 @@
       :placeholder="t('number')"
       :disabled="disabled"
       v-model="model" 
-      :options="items" 
-      @select="({ number: value, _id }) => model = { value, _id }">
+      :options="items"
+      :suggest="suggest"
+      @select="({ number: value, _id, index }) => model = { value, _id, index }">
       <svg-row-down v-if="options && !value._id"  
         class="reset" @click="$refs['numbers'].highlight(0, true)"/>
     </suggest>
@@ -21,7 +22,7 @@ import mix from '@/widgets/named-input/mix.js'
 export default {
   mixins: [ mix ],
   components: { SvgRowDown, SvgReset },
-  props: ['options', 'value', 'disabled'],
+  props: ['options', 'value', 'disabled', 'suggest', 'highlight'],
   data: () => ({
   }),
   computed: {
@@ -32,9 +33,9 @@ export default {
       get({ value }) {
         return value
       },
-      set({ value: number, _id }) {
-        this.$emit('input', { ...this.value, number, _id })
-        this.$refs['numbers'].highlight(0)
+      set({ value: number, _id, index }) {
+        this.$emit('input', { ...this.value, number, _id, index })
+        if (this.highlight !== false) this.$refs['numbers'].highlight(0)
       }
     }
   },

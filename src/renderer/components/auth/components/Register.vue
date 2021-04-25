@@ -82,16 +82,9 @@ export default {
         }
     },
     methods: {
-        ...mapActions({
-            register: 'register'
-        }), getValues, setErrors,
-
-        // onRegister(info) {
-        //     this.register(this.userData).then(res => {
-        //         console.log(res)
-        //     })
-        //     // this.router.push({ path: 'info', params: info })
-        // }
+      ...mapActions({
+          register: 'register'
+      }), getValues, setErrors,
     }
 }
 </script>

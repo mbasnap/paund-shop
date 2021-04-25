@@ -1,45 +1,56 @@
 <template>
   <b-modal v-model="modal" content-class="user-dialog" :hide-footer="true" :title="data.name">
-    <div class="modal-body mb-5">
-      <div class="tabs" >
-          <a v-for="(item) in Object.keys(tabs)" :key="item" :class="{ active: activetab === item }"
-          @click="activetab = item" > {{ t('tabs', item) }} </a>
+    <div class="modal-body">
+      <div class="tabs ma-0" >
+        <a v-for="(item) in Object.keys(tabs)" :key="item" :class="{ active: activetab === item }"
+        @click="activetab = item" > {{ t('tabs', item) }} </a>
       </div>
       <div class="content">
-          <div v-for="([key, item]) in Object.entries(tabs)" :key="key" class="tabcontent" v-show="activetab === key" >
-            <div v-for="({ name, teg, type }) in fields(item)" :key="name" class="form-group row m-0 mt-2">
-              <label class="col-sm-4 col-form-label">{{ t(key, name) }}</label>
-              <div class="col">
-                <component :is="teg || 'input'" :type="type || 'text'"
-                :class="['form-control', { 'is-invalid': err[name] }]" :value="(data[key] || {})[name]" :name="name"
-                @input="({target}) => update(key, target)">{{ (data[key] || {})[name] }}</component>
-                <div v-if="err[name]" class="invalid-feedback">{{ t('err', err[name]) }}</div>
-              </div>
+        <div v-for="([key, item]) in Object.entries(tabs)" :key="key" class="tabcontent" v-show="activetab === key" >
+          <div v-for="({ name, teg, type }) in fields(item)" :key="name" class="form-group row m-0 mt-2">
+            <label class="col-sm-4 col-form-label">{{ t(key, name) }}</label>
+            <div class="col">
+              <component 
+              :is="teg || 'b-form-input'" 
+              :type="type || 'text'"
+              :class="[{ 'is-invalid': err[name] }]" 
+              :value="(data[key] || {})[name]" 
+              @input="(value) => update(key, { [name]: value })">
+                {{ (data[key] || {})[name] }}
+              </component>
+              <div v-if="err[name]" class="invalid-feedback">{{ t('err', err[name]) }}</div>
             </div>
           </div>
+        </div>
       </div>
     </div>
     <modal-footer ok="save" :loading="loading" @ok="onSave" @cansel="close" :disabled="disabled"/>
   </b-modal>
-
 </template>
 
 <script>
-
 import mix from '@/widgets/named-input/mix.js'
+import { Avatar } from '@/widgets'
 import ModalFooter from '@/widgets/ModalFooter'
+
 export default {
-  components: { ModalFooter },
+  components: { ModalFooter, Avatar },
   props: ['loading', 'value'],
   mixins: [ mix ],
   data: () => ({
     modal: false,
     resolve: null,
     tabs: { 
-      'fio': ['family', 'name', 'sername'], 
-      'passport': ['seria', 'number', { name: 'issued', teg: 'textarea'}, 'idn'],
+      'fio': ['family', 'name', 'sername', { name: 'avatar', teg: 'avatar'}], 
+      'passport': [
+        'seria',
+        'number',
+        { name: 'issued', teg: 'b-form-textarea'},
+        { name: 'date-issue', type: 'date'},
+        'idn'
+       ],
       'address': ['post', 'city', 'street', 'home', 'phone', 'email'],
-      'password': [{ name: 'password', type: 'password'}, { name: 'confirm', type: 'password'}]
+      'password': [{ name: 'password', type: 'password'}, { name: 'confirm', type: 'password'}],
     },
     activetab: 'fio',
     data: {}
@@ -55,7 +66,8 @@ export default {
     },
     disabled({ value, data, password, err, loading}) {
       const values = (obj) => (cur, key) => ({...cur, [key]: obj[key]})
-      const stringify = (obj) => JSON.stringify(['fio', 'passport', 'address'].reduce(values(obj), {}))
+      const stringify = (obj) => 
+        JSON.stringify(['fio', 'passport', 'address'].reduce(values(obj), {}))
       if (err.confirm || loading) return true
       if (password) return false
       return stringify(value) === stringify(data)
@@ -71,12 +83,12 @@ export default {
         return { name: name || v, teg, type }
       })
     },
-    update(key, { name, value }) {
-      const data = {...this.data[key], [name]: value}
+    update(key, value) {
+      const data = {...this.data[key], ...value }
       this.data = {...this.data, [key]: data }
     },
-    show(v = {}) {
-      this.data = v
+    show(v) {
+      this.data = {...v}
       this.modal = true
       return new Promise(resolve => this.resolve = resolve)
     },
@@ -95,8 +107,12 @@ export default {
 </script>
 
 <style >
- .user-dialog {
-    height: auto;
-    width: 600px !important;
-}
+
+  .user-dialog  .avatar.form-control {
+    height: auto !important;
+  }
+  .user-dialog {
+    height: auto !important;
+  }
+
 </style>

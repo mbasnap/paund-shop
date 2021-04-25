@@ -43,15 +43,11 @@ export default {
   },
   computed: {
     model({ value, questionnaire }) {
-      // console.log(value);
-      
       return {...questionnaire, ...value}
     }
   },
   methods: {
     select({ name, value }) {
-      // const data = { ...this.value, [name]: value }
-      
       this.$emit('input', {...this.value, [name]: value })
       this.onChange()
     },

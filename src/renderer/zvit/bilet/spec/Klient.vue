@@ -83,11 +83,11 @@ computed: {
         return bilet.from
     },
     passport({ bilet }) {
-        const { seria, number } = { ...bilet.doc}
+        const { seria, number } = bilet.doc || {}
         return `${seria || ''} ${number || ''}`
     },
     issued({ bilet }) {
-        const { issued } = { ...bilet.doc}
+        const { issued } = bilet.doc || {}
         return issued ? `, выдан: ${issued}` : ''
     },
     klient({ bilet }) {

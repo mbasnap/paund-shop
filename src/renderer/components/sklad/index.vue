@@ -84,7 +84,7 @@ export default {
       this.target = false
     },
     searchFilter({ klient, ssuda, date }) {
-      const { family, name, sername } = this.klients[klient]
+      const { family, name, sername } = this.klients[klient] || {}
       const str = [family, name, sername, ssuda, moment(date).format('L')]
         .map(toSearchString).reduce((cur, v) => cur + v, '')
       return !this.search || str.includes(toSearchString(this.search))
