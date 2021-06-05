@@ -74,7 +74,7 @@ const actions = {
   },
   remove ({ dispatch }, { _id, deleted }) {
     const _deleted =  deleted === 'remove' && this.getters.isAdmin
-    return get('reestr', _id).then(v => dispatch('save', { ...v, deleted, _deleted }))
+    return get('reestr', _id).then(v => dispatch('save', { ...v, deleted: deleted || undefined, _deleted }))
   },
   async update({ getters }, { id }) {
     await this.dispatch('update')

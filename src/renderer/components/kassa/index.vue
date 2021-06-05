@@ -50,15 +50,17 @@ export default {
       order: 'reestr/nextOrder'
     }),
     accounts({ company = {} }) {
-      const accounts = company.accounts || {} 
+      const { accounts = {} } = company
       const account = (key) => (accounts[key] || [])
         .reduce((cur, { acc, title, summ }) => ({...cur, [acc]: {title, summ} }), {})
-      return { dt: account('dt'), ct: account('ct') }
+      return { dt: account('dt'), ct: account('ct'), date: accounts.date }
     },
-    ok({ accounts, dt, ct, isBefore, deleted }) {
+    ok({ accounts, dt, ct, isBefore, isAfter, deleted }) {
         const ok = {...accounts.dt['301']}.summ
-        const debet = summ(...dt.filter(isBefore).filter(deleted).map(v => v.summ))
-        const credit = summ(...ct.filter(isBefore).filter(deleted).map(v => v.summ))
+        const debet = summ(...dt.filter(deleted)
+          .filter(isAfter).filter(isBefore).map(v => v.summ))
+        const credit = summ(...ct.filter(deleted)
+          .filter(isAfter).filter(isBefore).map(v => v.summ))
         return summ(ok, debet, mult(credit, -1))
     },
     rows() {
@@ -100,6 +102,9 @@ export default {
     },    
     isBefore({ date }) {
       return moment(date).isBefore(this.date, 'date')
+    },
+    isAfter({ date }) {
+      return moment(date).isAfter(this.accounts.date)
     },
     isSame({ date }) {
       return moment(date).isSame(this.date, 'date')
