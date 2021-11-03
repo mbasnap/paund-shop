@@ -59,7 +59,7 @@
     "rxdb": "^8.7.5",
     "rxjs": "^6.5.4",
     "socket.io-client": "^2.3.0",
-    "validator": "^10.11.0",
+    "validator": "^13.7.0",
     "vue": "^2.6.12",
     "vue-bootstrap-slider": "^2.1.8",
     "vue-context": "^4.1.1",
