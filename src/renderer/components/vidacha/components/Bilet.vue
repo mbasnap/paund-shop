@@ -5,6 +5,7 @@
         v-model="biletNumber"
         @reset="$emit('reset')"
         :options="options"
+        :editMode="editMode"
         :highlight="false"/>
       <div class="input-group mb-2">
         <input class='form-control' name="ssuda" :disabled="disabled" :value="ssuda"
@@ -15,7 +16,7 @@
         :value="toNumber(value.pay) > 0 ? value.pay : '0.00 '"/>
       </div>
       <div class=" input-group mb-2">
-        <input class="form-control" :value="procent" :disabled="disabled"/>
+        <input class="form-control" :value="procent" :disabled="disabled" @change="({ target }) => setProcent(target)"/>
         <named-select class="input-group-append form-control col-4" name="xDisc"
         @change="input"
         :value="{ xDisc }" :options="discounts"/>
@@ -42,13 +43,14 @@ import { mapGetters } from 'vuex'
 import mix from '@/widgets/named-input/mix.js'
 import DaySlider from './DaySlider'
 import { SvgExclamation } from '@/svg'
-import { toNumber, proc, toDouble, summ, toSearchString } from '@/functions'
+import { toNumber, proc, toDouble, summ } from '@/functions'
 export default {
 mixins: [ mix ],
 components: { DaySlider, SvgExclamation, BiletNumber },
 props: ['value', 'err', 'disabled', 'editMode' ],
 data: () => ({
   from: 'ocenca',
+  fromProcent: false,
   search: ''
 }),
 computed: {
@@ -62,8 +64,6 @@ computed: {
       return { number }
     },
     set({ number }) {
-      // if (this.emptyNumbers.includes(number))
-      // console.log(this.emptyNumbers.includes(number));
       this.$emit('change-number', number + '')
     }
   },
@@ -86,9 +86,6 @@ computed: {
   xPen({ type, company }) {
     return {...company.penalty}[type ]
   },
-  xDisc({ value, discounts  }) {
-    return toNumber(value.xDisc || discounts[0])
-  },
   minProcent({ value,  company }) {
     return toNumber(value.ocenca) ? {...company.procent}.min : 0
   },
@@ -97,15 +94,21 @@ computed: {
     return toDouble(ssuda > 0 ? ssuda : 0)
   },
   procent({ minProcent, ocenca}) {
+    if(this.fromProcent) return toDouble(this.value.procent)
     const procent = this.getProcent(ocenca)
     return toDouble(procent > minProcent ? procent : minProcent)
   },
   ocenca({ value }) {
     return value.ocenca || value.ocenca === '' ? value.ocenca : '0.00'
   },
-  model({ number, type, days, xProc, xPen, ssuda, procent, ocenca }) {
+  fullProcent({ocenca, xProc, days}) {
+    return toDouble(proc(ocenca, xProc) * days)
+  },
+  xDisc({ value, discounts  }) {
+    return toNumber(value.xDisc || discounts[0])
+  },
+  model({ number, type, days, xProc, xPen, ssuda, procent, ocenca, fullProcent }) {
     const xDisc = toNumber(procent) > this.minProcent ? this.xDisc : 0
-    const fullProcent = toDouble(proc(ocenca, xProc) * days)
     const discount = xDisc ? toDouble(proc(fullProcent, xDisc)) : '0.00'
     return { number, zalog: type, days, xProc, xPen, xDisc, ssuda, procent, fullProcent, discount, ocenca, 
     values: [
@@ -114,8 +117,9 @@ computed: {
     ].filter(v => toNumber(v.summ)) }
   }
 },
-methods: { toDouble, toNumber,
-
+methods: { 
+  toDouble, 
+  toNumber,
   getProcent(value) {
     const procent = proc(value, this.xProc) * this.days
     return procent - proc(procent, this.xDisc)
@@ -129,13 +133,18 @@ methods: { toDouble, toNumber,
     this.$emit('input', {...this.value, ocenca })
   },
   input({ name, value }) {
+    this.fromProcent = false
     const ssuda = this.ssuda
-    if(name === 'ocenca') this.from = 'ocenca'
+    if (name === 'ocenca') this.from = 'ocenca'
     this.$emit('input', {...this.value, [name]: value })
     if (this.from === 'ssuda') this.$nextTick(() => {
       this.calculate(ssuda)
     })
-  }
+  },
+  setProcent({ value }) {
+      this.fromProcent = true
+      this.$emit('input', {...this.value, procent: value })
+  },
 }
 }
 </script>

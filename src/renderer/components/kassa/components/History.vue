@@ -1,11 +1,11 @@
 <template>
-  <div v-if="bilet._id" class="history">
+  <div v-if="bilet._id" class="history mt-2">
     <ul class="history__item">
       <li class="row m-0">
         <div  class="col p-0">
           <strong v-if=" model.number">Билет № {{ model.number }}</strong>
         </div>
-        <div class="col-1 p-0" style="text-align: center;">
+        <div class="col-1 p-0" style="text-align: center; cursor: pointer">
           <svg-print width="20px;" @click="print"/>
         </div>
       </li>

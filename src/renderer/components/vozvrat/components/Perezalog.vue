@@ -117,6 +117,8 @@ export default {
   }
   .perezalog .modal-body {
     max-height: none !important;
+    overflow: visible;
+    /* padding: 0; */
   }
 
 </style>

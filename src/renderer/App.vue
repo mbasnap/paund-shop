@@ -48,6 +48,13 @@ body {
     background-color: #e9ecef !important;
     opacity: 1;
 }
+.form-row {
+  margin: 0 !important;
+}
+.btn-outline-secondary {
+    color: #6c757df7;
+    border-color: #6c757d69;
+}
 a {
   outline: none;
 }

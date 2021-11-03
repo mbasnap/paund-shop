@@ -1,6 +1,6 @@
 <template>
 	<div class="kassa">
-		<b-card class="mb-1" header-tag="header" footer-tag="footer" 
+		<b-card header-tag="header" footer-tag="footer" 
     body-class="scroll-auto"
     :footer-class="[toNumber(total) < 0 && 'danger']"
     :header-class="[toNumber(ok) < 0 && 'danger']"

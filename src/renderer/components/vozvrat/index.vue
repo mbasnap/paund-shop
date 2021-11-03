@@ -5,15 +5,16 @@
         <klient ref="klient" class="col" v-model="klient" :disabled="true"/>
         <div class="vozvrat__bilet col">
           <bilet-number 
+            class="mb-2"
             v-model="bilet"
-            :disabled="!!bilet._id" 
+            :disabled="!bilet._id" 
             :options="numbers"
             :suggest="(v) => suggest(v)"
             :filter="(v) => search(v)"
             @reset="bilet = {}"/>
           <div  class="row m-0" style="line-height: 15px;">                        
             <div v-if="bilet._id" style="width: 100%;">
-              <bilet  ref="bilet"  v-model="bilet" :disabled="disabled"/>
+              <bilet  ref="bilet" v-model="bilet" :disabled="disabled"/>
             </div>
           </div>
           <div class="vozvrat__actions" :style="{ position: 'relative' }">
@@ -24,8 +25,8 @@
             :disabled="loading || disabled"
             @click="onSave"
             :text="t('btn','save')">
-              <b-dropdown-item href="#" @click="showPerezalog">
-                {{ t('btn','perezalog') }}
+              <b-dropdown-item href="#" @click="modalPerezalog">
+                Перезалог
               </b-dropdown-item>
             </b-dropdown>
           </div>
@@ -34,15 +35,12 @@
       <obespechenie :value="bilet.obespechenie || [{}]" :disabled="true"/>
     </div>
     <kassa ref="kassa" class="col-4"></kassa>
-    <perezalog ref="perezalog" :value="bilet">
-
-    </perezalog>
+    <perezalog ref="perezalog" :value="bilet"/>
   </div>
 </template>
 <script>
-import BiletNumber from '@/components/Number'
 import { mapGetters } from 'vuex'
-import { Bilet, Perezalog, mix } from './components'
+import { Bilet, BiletNumber, Perezalog, mix } from './components'
 import { moment, shortFio, toSearchString } from '@/functions'
 export default {
 components: { BiletNumber, Bilet, Perezalog },
@@ -82,7 +80,7 @@ computed: {
   klient: {
     get({ bilet, klientId }) {
       const { _id } = bilet.klient || {}
-        return klientId || _id || bilet.klient
+      return klientId || _id || bilet.klient
     },
     set(v) {
       this.klientId = v
@@ -91,8 +89,8 @@ computed: {
   model({ klient }) {        
     return { ...this.$refs['bilet'].model, klient }
   },
-  statment({ bilet }) {
-    return {...bilet.statment}
+  statment() {
+    return this.bilet.statmen || {}
   },
   disabled({ biletId, used }) {
     return !biletId || !!used[biletId]
@@ -107,7 +105,7 @@ methods: {
     await this.saveBilet(this.model)
     this.loading = false
   },
-  async showPerezalog() {
+  async modalPerezalog() {
     const { total } = this.$refs['bilet']
     const { show, close } = this.$refs['perezalog']
     const value = await show(total)
@@ -129,8 +127,8 @@ methods: {
 }
 .vozvrat__actions {
   position: absolute !important;
-  bottom: -5px;
-  right: 10px;
+  bottom: 0;
+  right: 15px;
   width: fit-content;
 }
 .klient .btn.edit {

@@ -3,11 +3,11 @@
     <div  class="col-8">
       <div class="row mb-3" >
         <klient ref="klient" class="col" v-model="klient" :disabled="!!klient" :clearable="true"/>
-        <div class="vidacha__bilet col pl-2 border-left">
+        <div class="vidacha__bilet col">
           <draggable v-if="target" class="target" group="bilet"/>
           <bilet ref="bilet" class="row"
           :err="err" 
-          v-model="bilet"
+          v-model="biletModel"
           @reset="bilet = {}"
           @change-number="(number) => bilet = Object.assign({}, bilet, { number })"/>
           <div class="vidacha__actions" :style="{ position: 'relative' }">
@@ -39,6 +39,14 @@ data() {
   }
 },
 computed: {
+  biletModel: {
+    get() {
+      return this.bilet
+    },
+    set(v) {
+      this.bilet = v
+    }
+  },
   obespechenie: {
     get({ bilet }) {
       const { obespechenie = [] } = bilet || {}

@@ -6,7 +6,9 @@
 				@click="activetab = i" > {{ name }} </a>
 			</div>
 			<div class="content" ref="print-content">
-				<component v-for="({ tag, value }, i) in tabs" :key="i" :is="tag" class="tabcontent"
+				<component v-for="({ tag, value }, i) in tabs" :key="i" 
+				:is="tag" 
+				class="tabcontent"
 				v-show="activetab === i" :value="value">
 				</component>
 			</div> 
@@ -21,7 +23,7 @@ import Bilet from './bilet'
 import Order from './order'
 export default {
 	components: { ModalEditor, Bilet, Order },
-	props: { value: Object },
+	props: ['value'],
 	data() {
 		return {
 			activetab: 0,
@@ -38,14 +40,16 @@ export default {
 		...mapGetters({
 			settings: 'settings',
 		}),
-		model({ value }) {
-			return {...value}
+		model() {
+			return this.value || {}
 		},
 		tabs({ model }) {
 			const { number } = model
-			const values = (model.values || []).map(value => this.getProps(value))   
-			const bilet = { value: model, tag: 'Bilet', name: number ? `${this.t('bilet')} № ${number}` : false }     
-			return [bilet, ...values].filter(v => v.name)
+			const {order} = this.value
+			const dt = order.dt && { tag:'Order', name: `ПКО № ${order.dt}`, value: {...this.model, type: 'dt'} }
+			const ct = order.ct && { tag:'Order', name: `РКО № ${order.dt}`, value: {...this.model, type: 'ct'} }
+			const bilet = { tag: 'Bilet', name: number ? `${this.t('bilet')} № ${number}` : false, value: this.model }     
+			return [bilet, dt, ct].filter((v) => v)
 		},
 		tabName({ activetab, tabs }) {
 			const { tag } = tabs[activetab]
@@ -53,12 +57,6 @@ export default {
 		}
 	},
 	methods: {
-		getProps({ dt, ct, summ }) {
-			const { order } = this.model
-			const type = dt === '301' ? 'dt' : 'ct'
-			const value = {...this.model, type, dt, ct, summ }
-			return { value, tag:'Order', name: `${this.t(type + '-short')} № ${order[type]}` }
-		},
 		t(v) {
 			return this.$t('order.' + v)
 		},

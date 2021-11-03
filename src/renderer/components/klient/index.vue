@@ -8,9 +8,14 @@
       v-model="model" :options="options" @select="select" @enter="focus('name')">
         <svg-row-down v-show="!model._id && !disabled" class="reset" @click="$refs['klients'].highlight(0, true)"/>
       </suggest>
-      <div v-if="clearable" class="col" style="max-width: 30px">
-        <svg-reset  @click="clear" width="8px"/>
-      </div>
+    <b-button size="sm" class="col ml-2"
+    v-if="clearable"
+    :disabled="!model._id"
+    @click="clear"
+    style="max-width: 42px"
+    variant="outline-secondary">
+      <b-icon icon="x-circle" aria-hidden="true"/>
+    </b-button>
     </div>
     <div class="form-row mb-2">
       <named-input ref="name" class="form-control col-5 mr-1" name="name" :placeholder="t('name')"

@@ -10,9 +10,14 @@
       <svg-row-down v-if="options && !value._id"  
         class="reset" @click="$refs['numbers'].highlight(0, true)"/>
     </suggest>
-    <div class="col" style="max-width: 30px;">
-      <svg-reset  width="8px;" @click="reset"/>
-    </div>  
+    <b-button size="sm" class="col ml-2"
+    @click="reset"
+    v-if="!editMode"
+    :disabled="disabled"
+    style="max-width: 42px"
+    variant="outline-secondary">
+      <b-icon icon="x-circle" aria-hidden="true"/>
+    </b-button>
   </div>    
 </template>
 
@@ -22,7 +27,7 @@ import mix from '@/widgets/named-input/mix.js'
 export default {
   mixins: [ mix ],
   components: { SvgRowDown, SvgReset },
-  props: ['options', 'value', 'disabled', 'suggest', 'highlight'],
+  props: ['options', 'value', 'disabled', 'suggest', 'highlight', 'editMode'],
   data: () => ({
   }),
   computed: {

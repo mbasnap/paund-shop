@@ -1,6 +1,6 @@
 <template>
 <div :class="['bilet', { disabled }]" style="font-size: 14px;">
-  <table class="table table-sm table-bordered table-hover my-2"
+  <table class="table table-sm table-bordered table-hover"
   style="text-align:center;">
   <tbody>
     <tr v-for="({ title, count, summ }, i) in items" :key="i">
@@ -30,8 +30,8 @@ export default {
   mixins: [ mix ],
   computed: {
     ...mapGetters({
-        date: 'date',
-        company: 'company'
+      date: 'date',
+      company: 'company'
     }),
     type({ value }) {
       return value.zalog
@@ -99,7 +99,7 @@ export default {
     items({ value, statment, penalty, ocenca, procent, days, daysBefore, daysAfter, datePlan, total, t }) {
       return [
         { title: moment(value.date).format('L'), count: datePlan.format('L'), summ: ocenca },
-        { title: `${t('procent')} ${value.xProc}%`, count: `${value.days}дн.`, summ: value.procent },
+        { key: 'procent', title: `${t('procent')} ${value.xProc}%`, count: `${value.days}дн.`, summ: value.procent },
         { title: `${t('discount')}`, count: `${value.xDisc}%`, summ: value.discount },
         { title: `${t('statment')} ${value.xProc}`, count: `${statment.count}дн.`, summ: statment.summ },
         { title: `${t('penalty')} ${value.xPen}%`, count: `${daysAfter}дн.`, summ: penalty.summ },

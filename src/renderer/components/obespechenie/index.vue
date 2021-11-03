@@ -107,8 +107,8 @@ export default {
   .obespechenie {
     overflow: hidden !important;
     border: 1px solid rgba(0, 0, 0, 0.22);
-    margin-left: -5px;
-    margin-right: -5px;
+    /* margin-left: -5px;
+    margin-right: -5px; */
   }
   .obespechenie .add{
     border-bottom: none;

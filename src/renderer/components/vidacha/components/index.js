@@ -5,10 +5,10 @@ import Bilet from './Bilet'
 import draggable from 'vuedraggable'
 import mix from '@/components/mix/vidacha-vozvrat'
 export {
-    Kassa,
-    Klient,
-    Obespechenie,
-    Bilet,
-    draggable,
-    mix
+	Kassa,
+	Klient,
+	Obespechenie,
+	Bilet,
+	draggable,
+	mix
 }

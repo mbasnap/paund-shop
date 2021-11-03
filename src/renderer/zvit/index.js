@@ -2,17 +2,12 @@ import Bilet from './bilet'
 import Kassa from './kassa'
 import Order from './order'
 import BiletOrder from './BiletOrder'
-// import { store } from '@/setup'
-// const ipcRenderer = require("electron").ipcRenderer
-// ipcRenderer.on('show-zvit', (e, path) => {
-// })
-export default {
-    Kassa
-}
+
+export default { Kassa }
 
 export {
-    Bilet,
-    Kassa,
-    Order,
-    BiletOrder
+	Bilet,
+	Kassa,
+	Order,
+	BiletOrder
 }
