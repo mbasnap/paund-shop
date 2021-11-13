@@ -1,5 +1,5 @@
 <template>
-<div class="row">
+<div class="row my-3">
   <div class="col border-right" style="font-size: 14px;"> <!--Left side-->
     <div class="row pr-3" style="font-size: 12px;"> <!--по ОКПО Форма по ОКУД -->
       <div class="col p-0" >
@@ -65,13 +65,13 @@
         </div>
         <div class="row border" >
           <div class="col-5 p-0 border-right">
-            <strong>№ {{order.dt}}</strong>
+            <!-- <strong>№ {{order.dt}}</strong> -->
           </div>
           <div class="col p-0" style="font-size: 13px;">{{date}}</div>
         </div>
       </div>
     </div>
-    <div class="mt-2" >
+    <div class="mt-3" >
       <table  border="1" style="border: 1px solid; border-color: #b3b1b1;">
         <tbody>
           <tr style="font-size: 12px;">
@@ -137,7 +137,7 @@
         <div class="col p-0 border-bottom">{{ fullName }}</div>
       </div>
 
-      <div class="row" > 
+      <div class="row mt-2" > 
         <div class="col" >
           <div class=" border-bottom"> Основание: {{ purposeOfPayment}}</div>
           <div class=" border-bottom" style="height: 15px;"></div>
@@ -158,9 +158,9 @@
       </div>
       <div class="row m-0 mt-3"> <!-- Приложение-->
         <div class="col-2 p-0">Приложение</div>
-        <div class="col border-bottom" style="font-size: 12px;">{{ docToString }}</div>
+        <div class="col border-bottom" style="font-size: 14px;">{{ docToString }}</div>
       </div>
-      <div class="row m-0 mt-2"> <!-- Главный бухгалтер -->
+      <div class="row m-0 mt-3"> <!-- Главный бухгалтер -->
         <div class="col-4 p-0">Главный бухгалтер</div>
         <div class="col p-0">
           <div class="row m-0" style="height: 25px; text-align: center;">
@@ -178,7 +178,7 @@
           </div>
         </div>
       </div>
-       <div class="row m-0 mt-2"> <!-- Получил кассир -->
+       <div class="row m-0 mt-3"> <!-- Получил кассир -->
         <div class="col-4 p-0">Получил кассир</div>
         <div class="col ">
           <div class="row" style="height: 25px; text-align: center;">
@@ -200,7 +200,7 @@
   </div>
 
   </div>
-  <div class="col-4" style="font-size: 14px;">
+  <div class="col-4 mt-2" style="font-size: 14px;">
     <div >
       <div class="row" style="font-size: 12px;">
         <div class="col"><strong>{{ company.title }}</strong></div>
@@ -209,14 +209,14 @@
         <div class="col p-0 border-top">(юридическое лицо предприниматель)</div>
       </div>
     </div>
-    <div class="row"> <!--КВИТАНЦИЯ-->
+    <div class="row mt-2"> <!--КВИТАНЦИЯ-->
       <div class="col" style="text-align: center;"><strong>КВИТАНЦИЯ</strong></div>
     </div>
     <div class="row mt-2" style="font-size: 12px;"> 
       <!--к приходному кассовому ордеру №-->
       <div class="col pr-0">	к приходному кассовому ордеру</div>
       <div class="col-2 p-0 border-bottom" style="text-align: left;">
-        <strong>№ {{ order.dt }}</strong>
+        <!-- <strong>№ {{ order.dt }}</strong> -->
       </div>
     </div>
     <div class="row" style="font-size: 14px;">  <!--от «_____»	__________________г.-->
@@ -263,13 +263,13 @@
         <strong class="border-bottom">{{ date }}</strong>
       </div>
     </div>
-    <div class="row mt-2">
+    <div class="row mt-4">
       <div class="col">
         <strong>М. П.</strong>
         <span style="font-style: italic; font-size: 12px; text-align: center;">(штампа)</span>
       </div>
     </div>
-    <div class="row mt-2" style="font-size: 12px;">
+    <div class="row mt-4" style="font-size: 12px;">
       <div class="col-3 pr-0">Главный бухгалтер</div>
       <div class="col">
         <div class="row" style="height: 20px;">

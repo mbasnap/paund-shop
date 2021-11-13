@@ -37,7 +37,7 @@
       <div class="col-5 border">
         <div class="row " style="font-size: 12px; height: 25px; text-align: center;">
           <div class="col-5 p-0 border-right">
-            <strong>№ {{order.dt}}</strong>
+            <!-- <strong>№ {{order.ct}}</strong> -->
           </div>
           <div class="col p-0">{{date}}</div>
         </div>
