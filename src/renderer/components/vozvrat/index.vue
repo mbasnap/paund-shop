@@ -7,7 +7,6 @@
           <bilet-number 
             class="mb-2"
             v-model="bilet"
-            :disabled="!bilet._id" 
             :options="numbers"
             :suggest="(v) => suggest(v)"
             :filter="(v) => search(v)"

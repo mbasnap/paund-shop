@@ -31,6 +31,7 @@
           @change="({target}) => this.$emit('change', { name: 'pay', value: toNumber(target.value) * -1 })"
           :value="toNumber(value.pay) < 0 ? value.pay : '0.00 '"/>
       </div>
+      <slot :ssuda="ssuda"></slot>
     </div>
     <day-slider class="col-3" :value="{ days }" @input="input"/>
   </div>
