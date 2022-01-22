@@ -41,7 +41,7 @@
     "lodash.groupby": "^4.6.0",
     "moment": "^2.24.0",
     "moment-range": "^4.0.2",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^3.1.1",
     "number-to-words-ru": "^2.0.1",
     "pouch-vue": "^0.3.5",
     "pouchdb": "^7.1.1",
