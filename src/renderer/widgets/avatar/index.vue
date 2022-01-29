@@ -1,6 +1,6 @@
 <template>
   <div class="avatar">
-    <b-avatar class="mr-3" :src="value"/>
+    <b-avatar class="mr-3" :src="value.target && value.target.value "/>
     <a class="link mr-3" @click="upload">Загрузить</a>
     <a :class="['link danger', { disabled: !value }]" 
     @click="remove">Удалить</a>

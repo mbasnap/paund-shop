@@ -36,7 +36,7 @@
           <div class="col">Код</div>
         </div>
         <div class="row border-bottom" style="height: 25px;">
-          <div class="col">{{ depKod }}</div>
+          <div class="col">{{ company.main && company.main.idn }}</div>
         </div>
         <div class="row border-bottom" style="height: 25px;">
           <div class="col"></div>
@@ -116,7 +116,7 @@
               </td>
               <td></td>
               <td style="text-align: center;">
-                <span v-if="i===0">{{depKod}}</span>
+                <span v-if="i===0">{{company.main && company.main.kod}}</span>
               </td>
               <td class="pl-1" style="width: 93px; " colspan="2">
                 <span>{{getAccount(v)}}</span>

@@ -13,7 +13,7 @@ export default {
       "klient-report": "Карточка клиента"
     },
     tabs: {
-      "fio": "Ф.И.О",
+      "main": "Ф.И.О",
       "passport": "Паспорт",
       "address": "Адрес",
       "password": "Пароль",
@@ -24,7 +24,7 @@ export default {
       "questionnaire": "Анкета",
       "questionnaire2": "Вопросник",
     },
-    fio: {
+    main: {
       "family": "Фамилия",
       "name": "Имя",
       "sername": "Отчество",

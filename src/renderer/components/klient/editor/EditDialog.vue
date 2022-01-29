@@ -31,9 +31,10 @@
       </div>
     </template>
     <div class="tabs" >
-      <a v-for="(item, i) in ['fio', 'passport', 'address', 'questionnaire']" :key="i" 
-      :class="{ active: activetab === item }"
-      @click="activetab = item"> {{ t(item) }} </a>
+      <a v-for="(item, i) in tabs" :key="i" 
+      :class="{ active: activetab === item.key }"
+      @click="() => activetab = item.key"> 
+      {{ item.value }} </a>
     </div>
     <div class="content">
       <tab-content v-model="fio" v-show="activetab === 'fio'" tabname="fio" 
@@ -83,6 +84,14 @@ export default {
   }),
   computed: {
     ...mapGetters('klient', ['map', 'docs', 'group']),
+    tabs() {
+      return [
+        {key: 'fio', value: 'ФИО'},
+        {key: 'passport', value: 'Паспорт'},
+        {key: 'address', value: 'Адрес'},
+        {key: 'questionnaire', value: 'Анкета'}
+      ]
+    },
     fio: {
       get({ selected: id, value }) {
           return {...this.map[id], ...value}
@@ -93,11 +102,11 @@ export default {
     },
     fioItems() {
       return [
-        { name: 'family', format: toTitleCase, rules: [required('danger')] },
-        { name: 'name', format: toTitleCase, rules: [required('danger')] },
-        { name: 'sername', format: toTitleCase },
-        { name: 'city', format: toTitleCase, rules: [required('danger')] },
-        { name: 'bithday', format: dateFormat, rules: [required('danger'), validDate('danger')] }
+        { name: 'family', value: 'Фамилия', format: toTitleCase, rules: [required('danger')] },
+        { name: 'name', value: 'Имя', format: toTitleCase, rules: [required('danger')] },
+        { name: 'sername', value: 'Отчество', format: toTitleCase },
+        { name: 'city', value: 'Город', format: toTitleCase, rules: [required('danger')] },
+        { name: 'bithday', value: 'Дата рождения', format: dateFormat, rules: [required('danger'), validDate('danger')] }
         ]
     },
     passport: {
@@ -111,12 +120,12 @@ export default {
     },
     passportItems() {
       return [
-        { name: 'nationality', format: toTitleCase, rules: [required('warning')] },
-        { name: 'seria', format: (v = '') => v.toUpperCase(), rules: [required('danger')] },
-        { name: 'number',  rules: [required('danger')] },
-        { name: 'issued', teg: 'textarea', format: toTitleCase, rules: [required('warning')] },
-        { name: 'date-issue', format: dateFormat, rules: [required('warning'), validDate('danger') ] },
-        { name: 'idn', rules: [required('warning')] },
+        { name: 'nationality', value: 'Гражданство', format: toTitleCase, rules: [required('warning')] },
+        { name: 'seria', value: 'Серия', format: (v = '') => v.toUpperCase(), rules: [required('danger')] },
+        { name: 'number', value: 'Номер',  rules: [required('danger')] },
+        { name: 'issued', value: 'Выдан', teg: 'textarea', format: toTitleCase, rules: [required('warning')] },
+        { name: 'date-issue', value: 'Дата выдачи', format: dateFormat, rules: [required('warning'), validDate('danger') ] },
+        { name: 'idn', value: 'Идн.', rules: [required('warning')] },
       ]
     },
     address: {
@@ -129,11 +138,18 @@ export default {
       }
     },
     addressItems() {
-      return ['city', 'street', 'home', 'phone', 'email']
+      return [
+      {name: 'city', value: 'Город'},
+      {name: 'street', value: 'Улица'},
+      {name: 'home', value: 'Дом/квартира'},
+      {name: 'phone', value: 'Телефон'},
+      {name: 'email', value: 'E-mail'}
+      ]
     },
     questionnaire: {
       get({ fio = {}, value = {} }) {
-        return {...fio.questionnaire, ...value.questionnaire}
+        const date = (value.questionnaire || {}).date || fio.date
+        return {...fio.questionnaire, ...value.questionnaire, date}
       },
       set(questionnaire) {
         this.value = {...this.value, questionnaire }
@@ -151,6 +167,7 @@ export default {
     onChange() {
       const { fio, passport, address, questionnaire } = this
       this.$nextTick(() => {
+        console.log(questionnaire);
         this.save({ ...fio, passport, address, questionnaire })
       })           
     },

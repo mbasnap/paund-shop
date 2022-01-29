@@ -15,7 +15,7 @@
           <div class="col-1 pt-3" style="text-align: right; font-size: 12px;">ИНН</div>
           <div class="col-2 p-0 border" style="text-align: center; font-size: 12px;">
             <div class="border-bottom" style="height: 20px;">КОД</div>
-            <div class="border-bottom" style="height: 20px;">{{ depKod }}</div>
+            <div class="border-bottom" style="height: 20px;">{{ company.main && company.main.idn }}</div>
             <div style="height: 20px;"></div>
           </div>
         </div>
@@ -62,7 +62,7 @@
         </div>
         <div v-for="(v, i) in values" :key="i" class="row" style="text-align: center; height: 20px; font-size: 12px;">
           <div class="border-right" style="width: 20px"></div>
-          <div class="col-3 p-0 border-right"><span>{{depKod}}</span></div>
+          <div class="col-3 p-0 border-right"><span>{{company.main && company.main.kod}}</span></div>
           <div class="col p-0 border-right"><span>{{getAccount(v)}}</span></div>
           <div class="col-3 p-0"></div>
         </div>

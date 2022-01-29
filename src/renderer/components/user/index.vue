@@ -2,7 +2,7 @@
   <div class="user">
     <b-dropdown right variant="outline pr-0">
       <template #button-content>
-        <b-avatar :src="user.fio.avatar"></b-avatar>
+        <b-avatar :src="avatar"></b-avatar>
       </template>
       <b-dropdown-item-button @click="edit(user)">
          <b-icon icon="person-circle" :aria-hidden="true"/>
@@ -41,17 +41,21 @@ export default {
     this.companys = rows.filter(v => v.key !== localStorage.getItem('lombard'))
   },
   computed: {
-    ...mapGetters(['isAdmin'])
+    ...mapGetters(['isAdmin']),
+    avatar() {
+      const {avatar} = this.user.main || {}
+      return avatar && avatar.target.value
+    }
   },
   methods: {
     ...mapActions(['logOut', 'updateUser', 'updatePassword', 'reload']),
 
     async edit(user) {
       const { show, close } = this.$refs['edit-dialog']
-      const { fio, passport, address, password } = await show(user)
+      const { main, passport, address, password } = await show(user)
       try {
         this.loading = true
-        await this.updateUser({...user, fio, passport, address })
+        await this.updateUser({...user, main, passport, address })
         if (password) this.updatePassword({user, password})
         close()
       } catch({message}) {

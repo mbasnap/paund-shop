@@ -1,5 +1,9 @@
 <template>
   <div class="questionn-aire tabcontent px-2">
+    <div class="form-group row m-0 mb-2" >
+      <label class="col-sm-4 col-form-label px-0">Дата заполнения</label>
+      <input class="col form-control" type="date" v-model="date"/>
+    </div>
     <div class="form-group row m-0 mb-2" v-for="item in Object.keys(items)" :key="item">
       <label class="col-sm-4 col-form-label px-0">{{ t(item) }}</label>
       <select class="col form-control" :value="model[item]" :name="item"
@@ -11,8 +15,10 @@
 </template>
 
 <script>
+import moment from 'moment'
+
 export default {
-  props: { value: Object },
+  props: ['value'],
   inject: ['onChange'],
   data() {
     return {
@@ -44,6 +50,16 @@ export default {
   computed: {
     model({ value, questionnaire }) {
       return {...questionnaire, ...value}
+    },
+    date: {
+      get() {
+        return moment(this.value.date).format('YYYY-MM-DD')
+      },
+      set(date) {
+        console.log(date, this.value);
+      this.$emit('input', {...this.value, date })
+      this.onChange()
+      }
     }
   },
   methods: {

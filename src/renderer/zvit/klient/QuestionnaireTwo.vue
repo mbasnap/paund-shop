@@ -265,8 +265,8 @@ export default {
             const { user } = {...value}
             return {...usersMap[user]}
         },
-        date({ value }) {
-            return moment(value.date).format('L')
+        date({ value, questionnaire }) {
+            return moment(questionnaire.date || value.date).format('L')
         },
         fio({ value }) {
             const { family = '', name = '', sername = '' } = {...value}

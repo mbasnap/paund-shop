@@ -11,12 +11,6 @@ export default {
       user: 'user',
       usersMap: 'usersMap'
     }),
-    depKod() {
-      return this.company.kod
-    },
-    // summ() {
-    //   return this.value.summ
-    // },
     toWordsRu() {
       return this.summ && numberToWordsRu.convert(this.summ)
     },

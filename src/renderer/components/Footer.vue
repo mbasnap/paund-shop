@@ -36,7 +36,6 @@ export default {
   },
   methods: {
     update() {
-      
       shell.openExternal(this.program.link)
     }
   }

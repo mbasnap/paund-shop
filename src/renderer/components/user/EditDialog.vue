@@ -7,11 +7,11 @@
       </div>
       <div class="content">
         <div v-for="([key, item]) in Object.entries(tabs)" :key="key" class="tabcontent" v-show="activetab === key" >
-          <div v-for="({ name, teg, type }) in fields(item)" :key="name" class="form-group row m-0 mt-2">
+          <div v-for="({ name, is, type }) in fields(item)" :key="name" class="form-group row m-0 mt-2">
             <label class="col-sm-4 col-form-label">{{ t(key, name) }}</label>
             <div class="col">
               <component 
-              :is="teg || 'b-form-input'" 
+              :is="is || 'b-form-input'" 
               :type="type || 'text'"
               :class="[{ 'is-invalid': err[name] }]" 
               :value="(data[key] || {})[name]" 
@@ -41,18 +41,18 @@ export default {
     modal: false,
     resolve: null,
     tabs: { 
-      'fio': ['family', 'name', 'sername', { name: 'avatar', teg: 'avatar'}], 
+      'main': ['family', 'name', 'sername', { name: 'avatar', is: 'avatar'}], 
       'passport': [
         'seria',
         'number',
-        { name: 'issued', teg: 'b-form-textarea'},
+        { name: 'issued', is: 'b-form-textarea'},
         { name: 'date-issue', type: 'date'},
         'idn'
        ],
       'address': ['post', 'city', 'street', 'home', 'phone', 'email'],
       'password': [{ name: 'password', type: 'password'}, { name: 'confirm', type: 'password'}],
     },
-    activetab: 'fio',
+    activetab: 'main',
     data: {}
   }),
   computed: {
@@ -67,7 +67,7 @@ export default {
     disabled({ value, data, password, err, loading}) {
       const values = (obj) => (cur, key) => ({...cur, [key]: obj[key]})
       const stringify = (obj) => 
-        JSON.stringify(['fio', 'passport', 'address'].reduce(values(obj), {}))
+        JSON.stringify(['main', 'passport', 'address'].reduce(values(obj), {}))
       if (err.confirm || loading) return true
       if (password) return false
       return stringify(value) === stringify(data)
@@ -79,8 +79,8 @@ export default {
     },
     fields(v) {
       return v.map(v => {
-        const { name, teg, type } = v
-        return { name: name || v, teg, type }
+        const { name, is, type } = v
+        return { name: name || v, is, type }
       })
     },
     update(key, value) {

@@ -64,8 +64,8 @@ export default {
 		bilet() {
 			const value = this.value.ref ? this.reestr[this.value.ref] : this.value || {}
       const { klient, doc, from, company } = this.value
-      const date = moment(value.date).format('L')
-			const returnDate = moment(value.date).add(value.days, 'd').format('L')
+			const date = moment(value.date).isValid() ? moment(value.date).format('L') : value.date
+			const returnDate = moment(date, 'L').add(value.days, 'd').format('L')
 			return { ...value, klient, doc, from, date, returnDate, company }
 		},
 		kassir({ value, usersMap }) {
