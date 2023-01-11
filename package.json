@@ -36,7 +36,7 @@
     "express": "^4.17.1",
     "express-pouchdb": "^4.2.0",
     "googleapis": "^39.2.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "jwt-decode": "^2.2.0",
     "lodash.groupby": "^4.6.0",
     "moment": "^2.24.0",
